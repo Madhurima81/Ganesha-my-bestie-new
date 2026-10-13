@@ -108,15 +108,7 @@ const wasStepVoSpokenRecently = (key) => {
 };
 
 const getStoryStorageKey = (profileId) => `${STORAGE_KEY_BASE}_${profileId || 'default'}`;
-const RESUMABLE_STEPS = new Set([
-  STEPS.GANESHA_HOME,
-  STEPS.CHILD_HOME,
-  STEPS.LANGUAGE_GANESHA,
-  STEPS.LANGUAGE_CHILD,
-  STEPS.FESTIVALS_GANESHA,
-  STEPS.FESTIVALS_CHILD,
-  STEPS.ORIGIN_CARD,
-]);
+const EMPTY_LIST = [];
 
 // ─── DATA ─────────────────────────────────────────────────────────
 const REGION_ICONS = {
@@ -284,6 +276,10 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
           discoveredLocations: [],
           showCelebration: false,
           completed: false,
+          langGuessSolved: false,       // correct language tapped (saved at the tap)
+          langGuessSuccessDone: false,  // its success line finished (Continue replays it only if the child left during it)
+          festGuessSolved: false,
+          festGuessSuccessDone: false,
         }}
       >
         {({ sceneState, sceneActions, isReload }) => (
@@ -465,9 +461,27 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   }, []);
 
   // ─── STATE ───────────────────────────────────────────────────────
-  const [selectedRegion, setSelectedRegion] = useState(null);
-  const [selectedLanguages, setSelectedLanguages] = useState([]);
-  const [selectedFestivals, setSelectedFestivals] = useState([]);
+  // The child's picks live in sceneState (SceneManager), the one saved copy. Every change is a
+  // checkpoint, so a Continue / refresh / tab return finds them (they used to be local state).
+  const stateRef = useRef(sceneState);
+  stateRef.current = sceneState;
+  const selectedRegion = sceneState.selectedRegion ?? null;
+  const selectedLanguages = sceneState.selectedLanguages ?? EMPTY_LIST;
+  const selectedFestivals = sceneState.selectedFestivals ?? EMPTY_LIST;
+  // Setters take a value or an updater, like useState, and read the latest saved list.
+  const writePick = (key, next) => {
+    stateRef.current = { ...stateRef.current, [key]: next };
+    sceneActions.checkpoint({ [key]: next });
+  };
+  const setSelectedRegion = (v) => writePick('selectedRegion', v);
+  const setSelectedLanguages = (v) => writePick('selectedLanguages', typeof v === 'function' ? v(stateRef.current.selectedLanguages ?? EMPTY_LIST) : v);
+  const setSelectedFestivals = (v) => writePick('selectedFestivals', typeof v === 'function' ? v(stateRef.current.selectedFestivals ?? EMPTY_LIST) : v);
+  // Which guess phases were already solved when the scene mounted (Continue / refresh): they show
+  // the finished state and replay the success line only if the child left during it.
+  const solvedAtMountRef = useRef({
+    lang: phase === STEPS.LANGUAGE_GANESHA && !!sceneState.langGuessSolved,
+    fest: phase === STEPS.FESTIVALS_GANESHA && !!sceneState.festGuessSolved,
+  });
 
   // Phase 1 state
   const [discoveredLocations, setDiscoveredLocations] = useState([]);
@@ -487,19 +501,19 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const [childHomePromptReady, setChildHomePromptReady] = useState(false);
 
   // Language phase state
-  const [langGuessPhase, setLangGuessPhase] = useState('guessing');
+  const [langGuessPhase, setLangGuessPhase] = useState(solvedAtMountRef.current.lang ? 'correct' : 'guessing');
   const [wrongLangGuesses, setWrongLangGuesses] = useState(new Set());
   const [shakeLang, setShakeLang] = useState(null);
   const [langWrongReaction, setLangWrongReaction] = useState(null);
-  const [hasPressedLanguagePlay, setHasPressedLanguagePlay] = useState(false);
+  const [hasPressedLanguagePlay, setHasPressedLanguagePlay] = useState(solvedAtMountRef.current.lang);
   const [playPulseKey, setPlayPulseKey] = useState(0); // bumped to replay the Play button's 2-pulse nudge
-  const [showLanguageCards, setShowLanguageCards] = useState(false); // Show cards only after mantra finishes
+  const [showLanguageCards, setShowLanguageCards] = useState(solvedAtMountRef.current.lang); // Show cards only after mantra finishes
   const [languageGuessPromptReady, setLanguageGuessPromptReady] = useState(false);
   const [languageChildPromptReady, setLanguageChildPromptReady] = useState(false);
   const [swappingOutLangId, setSwappingOutLangId] = useState(null); // Track which language is being swapped out
 
   // Festival phase state
-  const [guessPhase, setGuessPhase] = useState('guessing');
+  const [guessPhase, setGuessPhase] = useState(solvedAtMountRef.current.fest ? 'correct' : 'guessing');
   const [wrongGuesses, setWrongGuesses] = useState(new Set());
   const [shakeGuess, setShakeGuess] = useState(null);
   const [activeFestReaction, setActiveFestReaction] = useState(null);
@@ -869,6 +883,9 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     };
     const info = voiceMap[phase];
     if (!info?.text) return;
+    // A solved guess phase resumes with its success line (below), not the entry line.
+    if ((phase === STEPS.LANGUAGE_GANESHA && solvedAtMountRef.current.lang) ||
+        (phase === STEPS.FESTIVALS_GANESHA && solvedAtMountRef.current.fest)) return;
     const phaseEntryKey = `${phase}:${info.text}`;
     if (entryVoPlayedForPhaseRef.current === phaseEntryKey) return;
     const playEntry = () => {
@@ -1188,49 +1205,11 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   }, [phase, VOICE.child_home_entry, speakIfUnmuted, childAge, isAudioOn, isReload]);
 
 
-  // Reload restore: recover last saved scene step on reload.
-  // If SceneManager restore is slightly stale (debounced save race), prefer the later saved step.
+  // One-time cleanup of the old private save (gmb_indian_story_<profile>): sceneState is the only
+  // copy now, and a stale step in the old key must never resurrect.
   useEffect(() => {
-    if (!isReload) return;
-    try {
-      const raw = localStorage.getItem(storyStorageKey);
-      if (!raw) return;
-      const saved = JSON.parse(raw);
-      const savedStep = saved?.step;
-      if (!savedStep || !RESUMABLE_STEPS.has(savedStep)) return;
-      const stepOrder = {
-        [STEPS.OPENING]: 0,
-        [STEPS.GANESHA_HOME]: 1,
-        [STEPS.CHILD_HOME]: 2,
-        [STEPS.LANGUAGE_GANESHA]: 3,
-        [STEPS.LANGUAGE_CHILD]: 4,
-        [STEPS.FESTIVALS_GANESHA]: 5,
-        [STEPS.FESTIVALS_CHILD]: 6,
-        [STEPS.ORIGIN_CARD]: 7,
-        [STEPS.COMPLETE]: 8,
-      };
-      const currentOrder = stepOrder[phase] ?? 0;
-      const savedOrder = stepOrder[savedStep] ?? 0;
-      const shouldRestoreSavedStep = phase === STEPS.OPENING || savedOrder >= currentOrder;
-      if (!shouldRestoreSavedStep) return;
-
-      const restoredRegion = saved?.region ?? null;
-      const restoredLanguages = saved?.languages ?? [];
-      const restoredFestivals = saved?.festivals ?? [];
-
-      setSelectedRegion(restoredRegion);
-      setSelectedLanguages(restoredLanguages);
-      setSelectedFestivals(restoredFestivals);
-
-      sceneActions.updateState({
-        phase: savedStep,
-        selectedRegion: restoredRegion,
-        selectedLanguages: restoredLanguages,
-        selectedFestivals: restoredFestivals,
-      });
-    } catch (e) {}
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- sceneActions is a new object every SceneManager render; including it here retriggers this effect in a loop (it calls sceneActions.updateState, which causes that new render)
-  }, [isReload, phase, storyStorageKey]);
+    try { localStorage.removeItem(storyStorageKey); } catch (e) {}
+  }, [storyStorageKey]);
 
   // ── RELOAD: Restart each phase state; entry VO is handled by phase-entry effects ─────────
   useEffect(() => {
@@ -1263,12 +1242,14 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
     // Phase 3: Language Ganesha (Guess) — reset guessing state
     if (phase === STEPS.LANGUAGE_GANESHA) {
-      setLangGuessPhase('guessing');
-      setWrongLangGuesses(new Set());
-      setShakeLang(null);
-      setLangWrongReaction(null);
-      setShowLanguageCards(false);
-      setHasPressedLanguagePlay(false);
+      if (!solvedAtMountRef.current.lang) {
+        setLangGuessPhase('guessing');
+        setWrongLangGuesses(new Set());
+        setShakeLang(null);
+        setLangWrongReaction(null);
+        setShowLanguageCards(false);
+        setHasPressedLanguagePlay(false);
+      }
       setLangGuessIdleLevel(0);
       langGuessIdleVoiceRef.current = false;
       setCurrentPhase('language_ganesha');
@@ -1285,7 +1266,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
     // Phase 5: Festival Ganesha (Guess) — reset guessing state
     if (phase === STEPS.FESTIVALS_GANESHA) {
-      setGuessPhase('guessing');
+      if (!solvedAtMountRef.current.fest) setGuessPhase('guessing');
       setWrongGuesses(new Set());
       setShakeGuess(null);
       setActiveFestReaction(null);
@@ -1321,11 +1302,11 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       setMglassPosition({ top: '30%', left: '20%' });
     }
     if (phase === STEPS.FESTIVALS_GANESHA || phase === STEPS.FESTIVALS_CHILD) {
-      setGuessPhase('guessing');
+      if (!solvedAtMountRef.current.fest) setGuessPhase('guessing');
       setWrongGuesses(new Set());
       setShakeGuess(null);
     }
-    if (phase === STEPS.LANGUAGE_GANESHA) {
+    if (phase === STEPS.LANGUAGE_GANESHA && !solvedAtMountRef.current.lang) {
       setLangGuessPhase('guessing');
       setWrongLangGuesses(new Set());
       setShakeLang(null);
@@ -1339,7 +1320,43 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     }
   }, [phase, isReload]);
 
-  // Step 1 UX: once all locations are found, advance
+  // Resume on a SOLVED guess phase (Continue / refresh): show the finished state, replay the success
+  // line only if the child left during it, then advance. The flag is cleared when the timer FIRES,
+  // never before it (StrictMode cleanup clears the timer; KNOWN_PITFALLS 1).
+  const playLangSuccessRef = useRef(null);
+  const playFestSuccessRef = useRef(null);
+  playLangSuccessRef.current = playLangSuccess;
+  playFestSuccessRef.current = playFestSuccess;
+  useEffect(() => {
+    const solved = solvedAtMountRef.current;
+    if (phase === STEPS.LANGUAGE_GANESHA && solved.lang) {
+      const t = setTimeout(() => {
+        solved.lang = false;
+        if (stateRef.current.langGuessSuccessDone) {
+          setLangGuessPhase('revealed');
+          sceneActions.updateState({ phase: STEPS.LANGUAGE_CHILD });
+        } else {
+          playLangSuccessRef.current();
+        }
+      }, 500);
+      return () => clearTimeout(t);
+    }
+    if (phase === STEPS.FESTIVALS_GANESHA && solved.fest) {
+      const t = setTimeout(() => {
+        solved.fest = false;
+        if (stateRef.current.festGuessSuccessDone) {
+          setGuessPhase('revealed');
+          sceneActions.updateState({ phase: STEPS.FESTIVALS_CHILD });
+        } else {
+          playFestSuccessRef.current();
+        }
+      }, 500);
+      return () => clearTimeout(t);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- sceneActions is a new object every SceneManager render
+  }, [phase]);
+
+  // Complete scene
   useEffect(() => {
     if (phase !== STEPS.GANESHA_HOME) return;
     if (discoveredLocations.length !== PHASE1_LOCATIONS.length) return;
@@ -1559,40 +1576,6 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     };
   }, [phase, guessPhase, returnHintNonce, speakIfUnmuted, childAge, festivalGuessPromptReady, VOICE.festivals_guess_hint]);
 
-  // Save progress
-  const saveProgress = (region, langs, fests, stepValue = phase) => {
-    try {
-      localStorage.setItem(storyStorageKey, JSON.stringify({
-        region: region ?? selectedRegion,
-        languages: langs ?? selectedLanguages,
-        festivals: fests ?? selectedFestivals,
-        step: stepValue,
-        completedAt: new Date().toISOString(),
-      }));
-    } catch (e) {}
-  };
-
-  const clearProgress = useCallback(() => {
-    try {
-      localStorage.removeItem(storyStorageKey);
-    } catch (e) {}
-  }, [storyStorageKey]);
-
-  // Persist phase and selections on reload
-useEffect(() => {
-  if (!RESUMABLE_STEPS.has(phase)) return;
-  // Only save if there's actual data
-  if (selectedRegion || selectedLanguages.length > 0 || selectedFestivals.length > 0) {
-    saveProgress(null, null, null, phase);
-    sceneActions.updateState({
-      selectedRegion: selectedRegion || undefined,
-      selectedLanguages: selectedLanguages?.length > 0 ? selectedLanguages : undefined,
-      selectedFestivals: selectedFestivals?.length > 0 ? selectedFestivals : undefined,
-    });
-  }
-// eslint-disable-next-line react-hooks/exhaustive-deps -- sceneActions is a new object every SceneManager render; including it here retriggers this effect in a loop (it calls sceneActions.updateState, which causes that new render)
-}, [phase, selectedRegion, selectedLanguages, selectedFestivals]);
-
   // Check location discovery
   // percentX/percentY are the glass's top-left corner. The child aims the LENS, so
   // test the lens centre (measured from the PNG: ~43% / 40% into the image box),
@@ -1678,7 +1661,6 @@ const discoverLocation = useCallback((index) => {
     childHomePostSelectTimerRef.current = setTimeout(() => {
       setIsChildHomeContinueEnabled(true);
     }, 900);
-    saveProgress(region, null, null);
   };
 
   // Handle language toggle
@@ -1759,6 +1741,40 @@ const discoverLocation = useCallback((index) => {
     speakIfUnmuted(fest.label, { age: childAge, moment: 'encouragement' });
   };
 
+  // Language success: sparkle + line, then on to the child's languages. The line only counts as
+  // finished when it really played to its end (not cancelled, not after leaving, not an instant
+  // error), and only then is langGuessSuccessDone saved (KNOWN_PITFALLS 7, 11c).
+  const playLangSuccess = ({ celebrate = false } = {}) => {
+    setLangGuessPhase('correct');
+    if (celebrate) {
+      triggerSparkle('all', 2000);
+      playSparkle();
+      triggerMiniGesture(1500);
+      playChime();
+    }
+    let advanced = false;
+    const advanceToNextPhase = () => {
+      if (advanced) return;
+      advanced = true;
+      safeSetTimeout(() => {
+        setLangGuessPhase('revealed');
+        sceneActions.updateState({ phase: STEPS.LANGUAGE_CHILD });
+      }, 2000);
+    };
+    const startedAt = Date.now();
+    speakIfUnmuted(VOICE.language_correct, {
+      age: childAge,
+      moment: 'celebration',
+      ignoreCancel: true,
+      onEnd: () => {
+        if (Date.now() - startedAt >= 1000) sceneActions.checkpoint({ langGuessSuccessDone: true });
+        advanceToNextPhase();
+      },
+      onError: advanceToNextPhase
+    });
+    safeSetTimeout(advanceToNextPhase, 5000);
+  };
+
   // Handle language guess
   const handleLanguageGuess = (guessLang) => {
     playUiTap();
@@ -1770,28 +1786,9 @@ const discoverLocation = useCallback((index) => {
       setLangGuessIdleLevel(0);
       langGuessIdleVoiceRef.current = false;
       if (langGuessIdleTimerRef.current) clearTimeout(langGuessIdleTimerRef.current);
-      setLangGuessPhase('correct');
-      triggerSparkle('all', 2000);
-      playSparkle();
-      triggerMiniGesture(1500);
-      playChime();
-      let advanced = false;
-      const advanceToNextPhase = () => {
-        if (advanced) return;
-        advanced = true;
-        safeSetTimeout(() => {
-          setLangGuessPhase('revealed');
-          sceneActions.updateState({ phase: STEPS.LANGUAGE_CHILD });
-        }, 2000);
-      };
-      speakIfUnmuted(VOICE.language_correct, {
-        age: childAge,
-        moment: 'celebration',
-        ignoreCancel: true,
-        onEnd: advanceToNextPhase,
-        onError: advanceToNextPhase
-      });
-      safeSetTimeout(advanceToNextPhase, 5000);
+      // Saved at the tap, not by the autosave: leaving now resumes on the solved state.
+      sceneActions.checkpoint({ langGuessSolved: true, langGuessSuccessDone: false });
+      playLangSuccess({ celebrate: true });
     } else {
       setWrongLangGuesses(prev => new Set(prev).add(guessLang.id));
       setShakeLang(null);
@@ -1806,6 +1803,50 @@ const discoverLocation = useCallback((index) => {
     }
   };
 
+  // Festival success: the tapped label, then "Yes - Ganesh Chaturthi!", then on to the child's
+  // festivals. Resuming (label = null) replays only the interrupted closing line.
+  const playFestSuccess = ({ celebrate = false, label = null } = {}) => {
+    setGuessPhase('correct');
+    if (celebrate) {
+      triggerSparkle('all', 2000);
+      playSparkle();
+      triggerMiniGesture(1500);
+      playChime();
+    }
+    let advanced = false;
+    const goToFestivalChildPhase = () => {
+      if (advanced) return;
+      advanced = true;
+      setGuessPhase('revealed');
+      sceneActions.updateState({ phase: STEPS.FESTIVALS_CHILD });
+    };
+    const speakCorrectFeedback = () => {
+      const startedAt = Date.now();
+      speakIfUnmuted('Yes \u2014 Ganesh Chaturthi!', {
+        age: childAge,
+        moment: 'celebration',
+        ignoreCancel: true,
+        onEnd: () => {
+          if (Date.now() - startedAt >= 1000) sceneActions.checkpoint({ festGuessSuccessDone: true });
+          goToFestivalChildPhase();
+        },
+        onError: goToFestivalChildPhase
+      });
+    };
+    if (label) {
+      speakIfUnmuted(label, {
+        age: childAge,
+        moment: 'default',
+        ignoreCancel: true,
+        onEnd: speakCorrectFeedback,
+        onError: speakCorrectFeedback
+      });
+    } else {
+      speakCorrectFeedback();
+    }
+    safeSetTimeout(goToFestivalChildPhase, 6500);
+  };
+
   // Handle festival guess
   const handleFestivalGuess = (fest) => {
     playUiTap();
@@ -1817,36 +1858,8 @@ const discoverLocation = useCallback((index) => {
       setFestGuessIdleLevel(0);
       festGuessIdleVoiceRef.current = false;
       if (festGuessIdleTimerRef.current) clearTimeout(festGuessIdleTimerRef.current);
-      setGuessPhase('correct');
-      triggerSparkle('all', 2000);
-      playSparkle();
-      triggerMiniGesture(1500);
-      playChime();
-      let advanced = false;
-      const goToFestivalChildPhase = () => {
-        if (advanced) return;
-        advanced = true;
-        setGuessPhase('revealed');
-        sceneActions.updateState({ phase: STEPS.FESTIVALS_CHILD });
-      };
-
-      const speakCorrectFeedback = () => {
-        speakIfUnmuted('Yes — Ganesh Chaturthi!', {
-          age: childAge,
-          moment: 'celebration',
-          ignoreCancel: true,
-          onEnd: goToFestivalChildPhase,
-          onError: goToFestivalChildPhase
-        });
-      };
-      speakIfUnmuted(fest.label, {
-        age: childAge,
-        moment: 'default',
-        ignoreCancel: true,
-        onEnd: speakCorrectFeedback,
-        onError: speakCorrectFeedback
-      });
-      safeSetTimeout(goToFestivalChildPhase, 6500);
+      sceneActions.checkpoint({ festGuessSolved: true, festGuessSuccessDone: false });
+      playFestSuccess({ celebrate: true, label: fest.label });
     } else {
       if (!wrongGuesses.has(fest.id)) {
         setWrongGuesses(prev => new Set(prev).add(fest.id));
@@ -1864,7 +1877,6 @@ const discoverLocation = useCallback((index) => {
 
   // Complete scene
 const handleComplete = () => {
-  saveProgress(selectedRegion, selectedLanguages, selectedFestivals, STEPS.COMPLETE);
   SimpleSceneManager.clearCurrentScene();
   sceneActions.updateState({ completed: true, phase: STEPS.COMPLETE, showingCompletionScreen: true });
   
@@ -1943,7 +1955,6 @@ const handleComplete = () => {
             stop();
             setVoiceVolume(isAudioOn ? 1 : 0);
             startMusic();
-            //clearProgress();
             setSelectedRegion(null);
             setSelectedLanguages([]);
             setSelectedFestivals([]);
@@ -1993,7 +2004,6 @@ const handleComplete = () => {
             stopVoice();
             stop();
             stopMusic();
-            clearProgress();
 
             if (ganeshaHomeIdleTimerRef.current) clearTimeout(ganeshaHomeIdleTimerRef.current);
             if (langGuessIdleTimerRef.current) clearTimeout(langGuessIdleTimerRef.current);
@@ -2050,8 +2060,13 @@ const handleComplete = () => {
               discoveredLocations: [],
               showCelebration: false,
               completed: false,
-              showingCompletionScreen: false
+              showingCompletionScreen: false,
+              langGuessSolved: false,
+              langGuessSuccessDone: false,
+              festGuessSolved: false,
+              festGuessSuccessDone: false
             });
+            solvedAtMountRef.current = { lang: false, fest: false };
           }}
           onExploreZones={() => {
             SimpleSceneManager.clearCurrentScene();
@@ -2502,7 +2517,6 @@ const handleComplete = () => {
               const goToLanguagePhase = () => {
                 if (advanced) return;
                 advanced = true;
-                saveProgress(selectedRegion, null, null, STEPS.LANGUAGE_GANESHA);
                 sceneActions.updateState({ phase: STEPS.LANGUAGE_GANESHA });
               };
 

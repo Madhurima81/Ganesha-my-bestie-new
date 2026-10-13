@@ -873,6 +873,19 @@
   animation: misContinuePulse 3.5s ease-in-out infinite;
 }
 
+/* App.css `button:focus` paints a purple shadow that sticks after a tap; keep the scene's own shadow. */
+.mis-continue-btn-uniform:focus,
+.mis-continue-btn-uniform:focus-visible {
+  outline: none;
+  box-shadow:
+    0 4px 0 rgba(0,0,0,0.12),
+    0 8px 18px rgba(0,0,0,0.12);
+}
+
+.mis-continue-btn-uniform:active:not(:disabled) {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+}
+
 .mis-continue-btn-uniform:hover:not(:disabled) {
   transform: var(--mis-continue-hover-transform, translateY(-3px));
   filter: brightness(1.02);
