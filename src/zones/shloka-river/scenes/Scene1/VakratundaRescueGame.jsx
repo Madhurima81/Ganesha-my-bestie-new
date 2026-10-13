@@ -387,7 +387,7 @@ export default function VakratundaRescueGame({
     markLevel2VoiceStarted: markStartDragLevel2VoiceStarted,
     markLevel2VoiceEnded: markStartDragLevel2VoiceEnded,
   } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && phase === 'trace' && introVoDone && !isDragging && !hasStartedDrag && stuckLevel === 0,
+    enabled: isActive && !isPaused && phase === 'trace' && introVoDone && !isDragging && stuckLevel === 0,
     stageKey: 'vakratunda-start-drag',
     initialDelay: 10000,
     pulseCountBeforeEscalation: 3,
@@ -609,12 +609,13 @@ export default function VakratundaRescueGame({
 
   // Start-drag hint ladder: L1 is visual-only, L2 replays the core "drag Frog"
   // instruction once, and L3 becomes the most explicit hand demo. Once the
-  // child grabs Frog, this ladder stays dismissed and the obstacle stuck-hints
-  // take over.
+  // child grabs Frog the ladder pauses; when they let go and go quiet it starts
+  // again from where the frog is (the bump-based stuck hints still take over
+  // whenever the frog is pressed against an obstacle).
   useEffect(() => {
-    if (!isActive || phase !== 'trace' || isPaused || hasStartedDrag || startDragHintLevel !== 2) return;
+    if (!isActive || phase !== 'trace' || isPaused || startDragHintLevel !== 2) return;
     if (playSceneLine) markStartDragLevel2VoiceStarted();
-    playSceneLine?.('scene10_vak_intro', markStartDragLevel2VoiceEnded);
+    playSceneLine?.(hasStartedDrag ? 'scene10_vak_drag' : 'scene10_vak_intro', markStartDragLevel2VoiceEnded);
   }, [
     hasStartedDrag,
     isActive,
@@ -929,6 +930,17 @@ export default function VakratundaRescueGame({
   // One-time onboarding drag: bank -> nearest open water.
   const introGestureTo = findNearbyOpening(startPos, obstacles, waterPoly, familyPoint.x)
     ?? { x: clamp(startPos.x + 12, EDGE.minX, EDGE.maxX), y: clamp(startPos.y - 8, EDGE.minY, EDGE.maxY) };
+
+  // Idle-hint hand: before the first grab it shows the bank-to-water drag; after the child has dragged and
+  // paused, it starts from where the frog now sits and points along the real route toward the family.
+  const idleHintFrom = hasStartedDrag ? frogPos : startPos;
+  const idleHintTo = (() => {
+    if (!hasStartedDrag || startDragHintLevel < 2 || isDragging) return introGestureTo;
+    const route = findRoute(frogPos, familyPoint, obstacles, waterPoly);
+    return route.length > 1
+      ? pointAlongRoute(route, 12)
+      : (findNearbyOpening(frogPos, obstacles, waterPoly, familyPoint.x) ?? introGestureTo);
+  })();
 
   const frogRenderPos = phase === 'reunion' ? familyPoint : frogPos;
   const frogWidth = phase === 'reunion' ? frogW * (REUNION_FROG_W / FROG_W) : frogW;
@@ -1274,17 +1286,17 @@ export default function VakratundaRescueGame({
         iterations={2}
       />
 
-      {startDragHintLevel >= 2 && isPlaying && !showDebugPanel && !hasStartedDrag && (
+      {startDragHintLevel >= 2 && isPlaying && !showDebugPanel && !isDragging && (
         <GestureDemo
           key={`vak-start-drag-hint-${startDragHintLevel}-${startDragPulseTick}`}
           type="drag"
-          from={{ x: startPos.x, y: startPos.y }}
+          from={{ x: idleHintFrom.x, y: idleHintFrom.y }}
           to={
             startDragHintLevel >= 3
-              ? { x: introGestureTo.x, y: introGestureTo.y }
+              ? { x: idleHintTo.x, y: idleHintTo.y }
               : {
-                  x: startPos.x + ((introGestureTo.x - startPos.x) * 0.45),
-                  y: startPos.y + ((introGestureTo.y - startPos.y) * 0.45),
+                  x: idleHintFrom.x + ((idleHintTo.x - idleHintFrom.x) * 0.45),
+                  y: idleHintFrom.y + ((idleHintTo.y - idleHintFrom.y) * 0.45),
                 }
           }
           active
