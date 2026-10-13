@@ -137,6 +137,12 @@ coding bug (logic, timing, state, voice) could recur in another scene. Not for C
   `stopAllVoice()`), then set `welcomeShown`. Any new scene with its own opening VO needs this.
 - **Seen in:** Symbol (scene 3), Sacred Assembly (2026-10-13). Other live scenes audited: they already stop their voice.
 
+## 11g. A resumed line is spoken twice and the first is cut ("Cho... Choose your color")
+- **Symptom:** after Continue the question starts, stops after a word or two, then plays again in full.
+- **Cause:** two things speak: the scene's resume code (timer, ~500 ms) AND the phase-entry effect that fires for the restored phase. The second cancels the first.
+- **Fix:** keep the phase-entry effect silent until the resume line plays (a sentinel in the expected-phase ref, released inside the resume timer), and have the resume line arm the hint clock with its own `onEnd`. Do not gate the resume line on audio being on: muted speech completes on a silent timer.
+- **Seen in:** Favourite Food (2026-10-13).
+
 ## 12. Tooling gotchas (Windows dev machine)
 - **Two builds at once** (two sessions running `vite build`) clobber `dist/` — you get
   `ENOENT … dist/images/…`. Run one build at a time.
@@ -147,6 +153,7 @@ coding bug (logic, timing, state, voice) could recur in another scene. Not for C
   dev, suspect #1 / #4 first.
 - **The built-in browser pane can refuse `localhost`** ("site not approved"), so a bug cannot be reproduced by the
   assistant; ask what the screen looked like and whether it was dev or deployed before guessing.
+- **Never stage hunks with `git diff -U0` + `git apply --unidiff-zero` after dropping some hunks:** the dropped hunks shift line numbers and the rest land a line or two off. 34998eac committed Familytreegame.jsx with a syntax error that way. Stage with normal context, or stage the whole file, and parse the staged copy (`git show :path | esbuild --loader:.jsx=jsx`) before committing.
 - **No local test runner:** `package.json` says `jest` but it isn't installed, and
   `BeatPlayerGame.test.jsx` uses `jest.mock`. Those tests can't run.
 

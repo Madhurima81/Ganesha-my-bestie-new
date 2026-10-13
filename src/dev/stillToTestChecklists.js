@@ -38,42 +38,63 @@ const ZONE_WELCOME_ROW = {
 const list = (title, items) => ({ title: `Still to test - ${title}`, items: [...items, ...NEVER_RUN] });
 
 export const STILL_TO_TEST_CHECKLISTS = {
-  'todo-aboutme-step1': list('About Me Hut - Step 1 (voice + timer fixes, all 4 scenes)', [
-    { text: leave('Family Tree: place 2 or 3 family members.'), expect: 'The scene resumes, the line plays, nothing freezes.' },
-    { text: 'Family Tree: place all 4 members, leave, tap Continue.', expect: 'The all-placed sparkle shows (it used to be missing in dev).' },
-    { text: 'Family Tree: tap Done, then tap the zone badge in the middle of "You met everyone in my family".', expect: 'Zone Welcome speaks alone; nothing from the scene speaks over it.' },
-    { text: leave('Favourite Food: a question is showing.'), expect: 'The scene resumes about half a second after load and the question line plays. Not frozen or silent.' },
-    { text: 'Favourite Food: leave by the back button (not the badge) while a line is playing.', expect: 'No timer advances the game after you left; Continue resumes where you were.' },
-    { text: leave('Dreams: wish 1 or wish 3 active.'), expect: 'The scene resumes and the instruction line plays. Nothing frozen.' },
-    { text: 'Dreams: tap the zone badge during the wish 1 (or wish 3) intro line.', expect: 'Zone Welcome speaks alone; the instruction line does NOT start after you left.' },
-    { text: 'Indian Story: pick the correct language (or festival), then tap the zone badge during the success line.', expect: 'Zone Welcome speaks alone; the scene does not advance after you left.' },
-    { text: leave('Indian Story: any step.'), expect: 'The entry line plays about half a second after load, once. A fresh start from the opening modal has no extra delay.' },
-    { text: 'Any of the four: tap the zone badge, then Continue, a few times in a row.', expect: 'Never a frozen scene and never a line firing right after the badge tap.' },
-    { text: 'Tab switch (Family Tree child-input step, and Favourite Food at a Ganesha question and a child question): leave the scene idle, switch to another tab for about 10 seconds, come back.', expect: 'No hint voice or glow while the tab was hidden. 3-2-1 countdown on return, then the hints work normally (Food re-asks the question first; hints start after it ends).' },
-    { text: 'NOT fixed yet - expected to fail: Indian Story picks (places, languages, festivals) after Continue; Food/Dreams answers or taps made within 1 second of leaving.', expect: 'Step 2 and Step 3 of the About Me work fix these. Do not mark them as failures of Step 1.' },
+  // About Me Hut: one list per scene, in the order a tester plays it (zone order: Family Tree, Food,
+  // Dreams, Indian Story). Each list runs: normal play -> leave mid-game -> leave during / after a success
+  // line -> leave within 1 s of a solve -> unsolved beat -> comparison/completion -> tab switch -> Play Again.
+  'todo-aboutme-1-family-tree': list('About Me Hut 1 - Family Tree', [
+    { text: 'Play it through WITHOUT leaving: place the 3 family members, wait for "And that\'s me", tap Done, make your tree, tap Done.', expect: 'One chime per member (not two). "You met everyone in my family" plays after Done. After your Done, "Our family trees are different..." plays. Normal flow is unchanged.' },
+    { text: leave('Ganesha tree: place 2 or 3 family members.'), expect: 'The scene resumes, the placed members stay, nothing freezes.' },
+    { text: 'Ganesha tree: place all 4 members, leave, tap Continue.', expect: 'The all-placed sparkle shows. The Done button is there; no line is replayed.' },
+    { text: 'Ganesha tree: all 4 placed, tap Done, then leave DURING "You met everyone in my family".', expect: 'Zone Welcome speaks alone. Continue replays that line once (about half a second after load), then moves to "Now let\'s make your family tree".' },
+    { text: 'Ganesha tree: tap Done, then leave within 1 second and tap Continue.', expect: 'Same as above: the Done tap was saved instantly.' },
+    { text: 'Ganesha tree: tap Done, wait for the line to finish and the transition screen to show, then leave.', expect: 'Continue shows the transition screen. The "You met everyone" line is NOT replayed.' },
+    { text: 'Tap Done twice quickly, or tap Done then the zone badge immediately.', expect: 'Never a frozen scene; Continue does not skip the transition.' },
+    { text: 'Your tree: add a family member, leave within 1 second, tap Continue.', expect: 'The member is still there with the name you gave it.' },
+    { text: leave('Your tree: a name modal is open (typing a name).'), expect: 'The modal is closed; the family built so far is kept. No stale text.' },
+    { text: 'Your tree: tap Done to see both trees, then leave and Continue.', expect: 'Both trees show and "Our family trees are different..." plays.' },
+    { text: 'Your tree, idle: switch to another browser tab for about 10 seconds, come back.', expect: 'No hint voice while the tab was hidden. 3-2-1 countdown on return, then the hint works normally.' },
+    PLAY_AGAIN_ROW('family members'),
   ]),
 
-  'todo-aboutme-food-step2': list('Favourite Food - Step 2 (save at solve + success-line markers)', [
-    { text: 'Ganesha food: tap Modak, then leave within 1 second and tap Continue.', expect: 'The food answer was saved at the tap: Continue shows the celebration, replays "Yes - I love modak!" once, then asks the colour question. Modak is in the header.' },
-    { text: `Ganesha colour, activity, friend: ${DURING}`, expect: 'Continue shows the celebration state, replays that success line once, then moves to the next question. The header shows every answer found so far (Modak, Red...).' },
+  'todo-aboutme-2-food': list('About Me Hut 2 - Favourite Food', [
+    { text: 'Play it through WITHOUT leaving: answer all four of Ganesha\'s questions, then your food (draw it), colour, activity and friend name.', expect: 'Normal flow is unchanged. Your drawn food shows as your drawing in the header (not a pencil). The comparison line plays.' },
+    { text: leave('Favourite Food: a question is showing (Ganesha\'s or yours), not answered yet.'), expect: 'The scene resumes about half a second after load. The question line plays ONCE, whole (not "Cho... Choose your colour").' },
+    { text: 'Ganesha food: tap Modak, then leave within 1 second and tap Continue.', expect: 'The answer was saved at the tap: Continue shows the celebration, replays "Yes - I love modak!" once, then asks the colour question. Modak is in the header.' },
+    { text: `Ganesha colour, activity, friend: ${DURING}`, expect: 'Continue shows the celebration state, replays that success line once, then the next question. The header shows every answer found so far.' },
     { text: `Ganesha colour, activity, friend: ${AFTER}`, expect: 'Continue goes straight to the next question after about half a second. The success line is NOT replayed.' },
-    { text: `Your food, colour, activity (pick, drawing or typed): ${DURING}`, expect: 'Continue keeps your choice (a drawing shows as your drawing in the header, not a pencil), replays the success line once ("Yummy!" etc.), then asks the next question. It is not asked again.' },
+    { text: 'Leave by the back button (not the badge) while a line is playing.', expect: 'No timer advances the game after you left; Continue resumes where you were.' },
+    { text: `Your food, colour, activity (pick, drawing or typed): ${DURING}`, expect: 'Continue keeps your choice (a drawing shows as your drawing), replays the success line once ("Yummy!" etc.), then asks the next question. It is not asked again.' },
     { text: `Your food, colour, activity: ${AFTER}`, expect: 'Continue keeps your choice and goes straight to the next question with no replay.' },
     { text: `Your friend name: ${DURING}`, expect: 'Your typed name is kept, "Thanks for telling me!" replays once, then the comparison card shows.' },
-    { text: 'Leave in the middle of a question you have NOT answered yet (Ganesha or yours).', expect: 'That question restarts cleanly and its line plays once (not twice, not cut off).' },
-    { text: 'Continue on the comparison card.', expect: 'The comparison card shows with your food, colour, activity and friend, and "Now we know some things we each enjoy." plays.' },
+    { text: 'Continue on the comparison card.', expect: 'The card shows your food, colour, activity and friend, and "Now we know some things we each enjoy." plays.' },
+    { text: 'Ganesha question and your question, idle: switch to another browser tab for about 10 seconds, come back.', expect: 'No hint voice or glow while the tab was hidden. 3-2-1 countdown on return, the question replays, then hints work normally (they start after the question ends).' },
     PLAY_AGAIN_ROW('answers'),
   ]),
 
-  'todo-aboutme-tree-step2': list('Family Tree - Step 2 (Done tap saved at the tap)', [
-    { text: 'Ganesha tree: all 4 placed, tap Done, then leave during "You met everyone in my family".', expect: 'Continue replays that line once (about half a second after load), then moves to "Now let\'s make your family tree". The Done button is not needed again.' },
-    { text: 'Ganesha tree: tap Done, then leave within 1 second and tap Continue.', expect: 'Same as above: the Done tap was saved instantly.' },
-    { text: 'Ganesha tree: tap Done, wait for the line to finish and the transition screen to show, then leave.', expect: 'Continue shows the transition screen. The "You met everyone" line is NOT replayed.' },
-    { text: 'Ganesha tree: all 4 placed but Done NOT tapped, then leave.', expect: 'Continue shows the finished tree with the Done button. No line is replayed.' },
-    { text: 'Your tree: add a family member, leave within 1 second, tap Continue.', expect: 'The member is still there with the name you gave it.' },
-    { text: 'Your tree: tap Done to see both trees, then leave and Continue.', expect: 'Both trees show and "Our family trees are different..." plays.' },
-    { text: 'Tap Done twice quickly, or tap Done then the zone badge immediately.', expect: 'Never a frozen scene; Continue does not skip the transition.' },
-    PLAY_AGAIN_ROW('family members'),
+  'todo-aboutme-3-dreams': list('About Me Hut 3 - Dreams and Wishes', [
+    { text: 'Play it through WITHOUT leaving: wish 1, wish 2, wish 3, then draw your dream, clear the clouds, comparison.', expect: 'Normal flow is unchanged: each wish plays its intro, instruction and success line, then moves on.' },
+    { text: leave('Wish 1 or wish 3 part-way (not solved).'), expect: 'The wish restarts and you hear BOTH lines: "My first/next wish is for..." then the instruction.' },
+    { text: leave('Wish 2 part-way (not solved).'), expect: 'The plates restart empty and the instruction plays once.' },
+    { text: 'Tap the zone badge during the wish 1 (or wish 3) intro line.', expect: 'Zone Welcome speaks alone; the instruction line does NOT start after you left.' },
+    { text: `Wish 1, 2 and 3: ${DURING}`, expect: 'Continue shows the finished board (header has Kindness/Sharing/Nature), replays the success line once, then the next wish starts.' },
+    { text: `Wish 1, 2 and 3: ${AFTER}`, expect: 'Continue shows the finished board, then the next wish starts after about half a second. The success line is NOT replayed.' },
+    { text: 'Solve a wish, then leave within 1 second and tap Continue.', expect: 'The wish is still solved (saved at the solving move), never restarted.' },
+    { text: leave('Dream drawing: the pad is open with a few strokes.'), expect: 'The drawing pad comes back with Done and Save.' },
+    { text: 'Dream drawing: tap Done, then leave during the success part. Also leave on the cloud-clearing step.', expect: 'Your drawing is kept every time; the clouds restart.' },
+    { text: leave('Comparison card is showing.'), expect: 'The comparison card comes back with your drawing and its line plays.' },
+    PLAY_AGAIN_ROW('wishes'),
+  ]),
+
+  'todo-aboutme-4-indian-story': list('About Me Hut 4 - My Indian Story (Step 1 voice fixes; the single-source-of-truth work is a separate session)', [
+    { text: 'Play it through WITHOUT leaving.', expect: 'Normal flow is unchanged: each step plays its entry line, each correct guess plays its success line and moves on.' },
+    { text: leave('Indian Story: any step.'), expect: 'The entry line plays about half a second after load, once. A fresh start from the opening modal has no extra delay.' },
+    { text: 'Pick the correct language (or festival), then tap the zone badge during the success line.', expect: 'Zone Welcome speaks alone; the scene does not advance after you left.' },
+    PLAY_AGAIN_ROW('story choices'),
+  ]),
+
+  'todo-aboutme-5-all-four': list('About Me Hut - all four scenes', [
+    { text: 'In each of the four: tap the zone badge, then Continue, a few times in a row.', expect: 'Never a frozen scene and never a line firing right after the badge tap.' },
+    ZONE_WELCOME_ROW,
   ]),
 
   'todo-vakratunda': list('Vakratunda Grove + Mahakaya (Shloka River 1)', [
@@ -159,4 +180,4 @@ export const STILL_TO_TEST_CHECKLISTS = {
   ]),
 };
 
-export const STILL_TO_TEST_GROUP_LABEL = 'Still to test - other scenes (About Me Step 1, Shloka River)';
+export const STILL_TO_TEST_GROUP_LABEL = 'Still to test - About Me Hut (4 scenes), Shloka River';
