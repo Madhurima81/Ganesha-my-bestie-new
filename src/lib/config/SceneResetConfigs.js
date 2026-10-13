@@ -879,6 +879,7 @@ export const SCENE_RESET_CONFIGS = {
   specificResets: {
     finalCardCollected: false,
     cardsDone: 0,
+    cardOrder: null,
     timesDone: 0,
     phase: 'initial',
     learnedWords: {

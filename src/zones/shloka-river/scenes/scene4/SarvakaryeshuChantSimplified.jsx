@@ -142,6 +142,7 @@ const SarvakaryeshuChantSimplified = ({
         welcomeShown: false,
         finalCardCollected: false,
         cardsDone: 0,
+        cardOrder: null,
         timesDone: 0,
         currentPopup: null,
         showingCompletionScreen: false,
@@ -738,6 +739,8 @@ const SarvakaryeshuChantContent = ({
                   voiceGuidance={{
                     playVoice: playGuidanceVoice,
                     playWord: (word, onEnded) => playTracked('word', (done) => playWordAudio(word, done), onEnded),
+                  initialOrder={sceneState.cardOrder}
+                  onOrderChosen={(o) => sceneActions.checkpoint({ cardOrder: o })}
                     playSyllable: (syllable, onEnded) => {
                       playTracked('syllable', (done) => playSyllable('sarvakaryeshu', syllable, done), onEnded);
                     },
@@ -909,6 +912,7 @@ const SarvakaryeshuChantContent = ({
               />
             )}
 
+                    cardOrder: null,
             <SceneCompletionCelebration
               show={showSceneCompletion && !showMandala}
               zoneId={zoneId}

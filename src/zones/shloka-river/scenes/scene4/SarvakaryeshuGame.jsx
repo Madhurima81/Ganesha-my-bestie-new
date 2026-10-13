@@ -1,5 +1,5 @@
 import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
 import useWarmSanskritAudio from '../../../../lib/hooks/useWarmSanskritAudio';
@@ -28,12 +28,19 @@ import earsIcon from '../../../../zones/symbol-mountain/shared/images/icons/symb
 const SYLLABLES = ['Sar', 'va', 'kar', 'yeshu'];
 const AUDIO = ['sar', 'va', 'kar', 'yeshu'];
 const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
-const SYLLABLE_INDEX_BY_CHUNK = {
-  SAR: 1,
-  VA: 2,
-  KAR: 3,
-  YESHU: 4,
+
+// Card order is random for every new game. Syllables light by POSITION (Sar, va, kar, yeshu in order), so
+// whichever card comes Nth earns the Nth syllable.
+const shuffleIds = () => {
+  const ids = SITUATIONS.map((x) => x.id);
+  for (let i = ids.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [ids[i], ids[j]] = [ids[j], ids[i]];
+  }
+  return ids;
 };
+const isValidOrder = (o) => Array.isArray(o) && o.length === SITUATIONS.length
+  && SITUATIONS.every((x) => o.includes(x.id));
 
 const SITUATIONS = [
   {
@@ -152,6 +159,10 @@ export default function SarvakaryeshuGame({
   voiceGuidance = {},
   // Resume: cards already finished (0-3). Applied only when the game mounts active (Continue).
   initialCards = 0,
+  // Saved card order for a Continue (so already-answered cards are not repeated) and a callback that
+  // reports a freshly chosen order so the scene can checkpoint it.
+  initialOrder = null,
+  onOrderChosen = () => {},
   // Fired with the finished-card count each time the game moves on to the next card (checkpoint).
   onBeatComplete = () => {},
 }) {
@@ -162,6 +173,8 @@ export default function SarvakaryeshuGame({
     // SITUATIONS.length = left after the last card: resume straight into the word + success line.
     isActive ? Math.max(0, Math.min(SITUATIONS.length, Number(initialCards) || 0)) : 0
   ));
+  const [order, setOrder] = useState(() => (isActive && isValidOrder(initialOrder) ? initialOrder : shuffleIds()));
+  const cards = useMemo(() => order.map((id) => SITUATIONS.find((x) => x.id === id)), [order]);
   const [cardIndex, setCardIndex] = useState(Math.min(seedCards, SITUATIONS.length - 1));
   const [picked, setPicked] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
@@ -214,7 +227,7 @@ export default function SarvakaryeshuGame({
       return;
     }
 
-    const situation = SITUATIONS[cardIndex];
+    const situation = cards[cardIndex];
     const hintVoiceKey = `scene13_hint_${situation.id}_${hintLevel}`;
     if (lastHintVoiceKeyRef.current === hintVoiceKey) return;
 
@@ -243,9 +256,17 @@ export default function SarvakaryeshuGame({
     clearPausable();
   }, [clearPausable]);
 
+  // Tell the scene which order this game uses (checkpointed, so Continue keeps it).
+  const onOrderChosenRef = useRef(onOrderChosen);
+  onOrderChosenRef.current = onOrderChosen;
+  useEffect(() => {
+    if (isActive) onOrderChosenRef.current?.(order);
+  }, [isActive, order]);
+
   useEffect(() => {
     if (!isActive) {
       clearTimers();
+      setOrder(shuffleIds()); // a new game gets a new random order
       setCardIndex(0);
       setPicked(null);
       setIsCorrect(null);
@@ -269,7 +290,7 @@ export default function SarvakaryeshuGame({
 
   useEffect(() => {
     if (!isActive || phase !== 'play') return undefined;
-    const s = SITUATIONS[cardIndex];
+    const s = cards[cardIndex];
     setShowAfter(false);
     setCanPick(false);
     setPicked(null);
@@ -290,11 +311,10 @@ export default function SarvakaryeshuGame({
 
     const t1 = pausableAfter(500, () => {
       if (cancelled) return;
-      const pickFallback = addFallback(2500, () => {
-        if (!cancelled) setCanPick(true);
-      });
+      // Choices are live while the setup VO speaks. A pick stops the VO in
+      // handlePick, matching the Symbol Mountain interaction rhythm.
+      setCanPick(true);
       playSceneLine?.(s.voKeyBefore, () => {
-        cancelPausable(pickFallback);
         if (!cancelled) setCanPick(true);
       });
     });
@@ -327,10 +347,20 @@ export default function SarvakaryeshuGame({
     const voFallback = pausableAfter(9000, finish);
     safeAfter(500, () => {
       playWord?.('sarvakaryeshu', () => {
-        playSceneLine?.('scene13_success', () => {
-          cancelPausable(voFallback);
-          finish();
-        }, { stripLeadingText: 'Sarvakaryeshu' });
+        // On a Continue the line can be dropped (it "ends" at once without being heard): if it reports
+        // done in well under a second, say it once more before handing off.
+        const playSuccess = (retry) => {
+          const startedAt = Date.now();
+          playSceneLine?.('scene13_success', () => {
+            if (retry && Date.now() - startedAt < 800) {
+              safeAfter(250, () => playSuccess(false));
+              return;
+            }
+            cancelPausable(voFallback);
+            finish();
+          }, { stripLeadingText: 'Sarvakaryeshu' });
+        };
+        playSuccess(true);
       });
     });
   }, [cancelPausable, onGameComplete, onPhaseComplete, pausableAfter, playSceneLine, playWord, safeAfter, stopSceneVoice]);
@@ -345,7 +375,7 @@ export default function SarvakaryeshuGame({
   const handlePick = useCallback((powerId) => {
     if (isPaused || phaseRef.current !== 'play' || resolvingRef.current || !canPick) return;
 
-    const situation = SITUATIONS[cardIndex];
+    const situation = cards[cardIndex];
     const correct = powerId === situation.correct;
     stopSceneVoice?.();
     if (hintLevel === 2) markLevel2VoiceEnded();
@@ -369,7 +399,7 @@ export default function SarvakaryeshuGame({
     setGuidanceMessage('');
     setGuidedPowerId(null);
 
-    const syllableIndex = SYLLABLE_INDEX_BY_CHUNK[situation.syllableChunk] ?? (cardIndex + 1);
+    const syllableIndex = cardIndex + 1;
 
     const optionRect = optionRefs.current[powerId]?.getBoundingClientRect?.();
     const syllableRect = syllableAnchorRefs.current[syllableIndex]?.getBoundingClientRect?.();
@@ -484,7 +514,7 @@ export default function SarvakaryeshuGame({
 
   if (!isActive) return null;
 
-  const situation = SITUATIONS[cardIndex];
+  const situation = cards[cardIndex];
   return (
     <div className={`sarva-game${hideElements ? ' is-hidden' : ''}${isPaused ? ' is-paused' : ''}`} onContextMenu={(e) => e.preventDefault()}>
       <div className="sarva-stage" style={{ backgroundImage: `url(${bgImg})` }}>
