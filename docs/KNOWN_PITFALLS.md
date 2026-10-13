@@ -410,6 +410,31 @@ coding bug (logic, timing, state, voice) could recur in another scene. Not for C
 - **Cause:** `useGaneshaVoice` cancels speech on unmount and reports that as `onEnd`. The scene's `aliveRef` cleanup was declared AFTER the hook, so it was still true when `onEnd` ran, and the next line started. Unmount cleanups run in declaration order.
 - **Fix:** declare `aliveRef` (and its effect) BEFORE `useGaneshaVoice`. Also: unlock a Continue button from the line's end (with a failsafe timer), not a short fixed delay, or the next step's voice cuts the line.
 
+## 44. A button keeps a purple shadow after it is tapped
+- **Symptom:** a Continue / See Our Story button shows a purple shadow that stays after the tap (My Indian Story, 2026-10-13).
+- **Cause:** `App.css` has a global `button:focus, button:focus-visible { box-shadow: 0 6px 0 #5a3fc0 }`. A tapped button keeps focus, and a scene class like `.btn` (one class) loses to `button:focus` (element + pseudo-class).
+- **Fix:** give the scene's button its own `:focus, :focus-visible` rule that restates its normal shadow (specificity 0,2,0 beats 0,1,1). Do not edit the global rule: every scene relies on it.
+
+## 45. The child's picks vanish after Continue (picks in local state or a private storage key)
+- **Symptom:** the comparison card shows `?` and empty rows after Continue; the picks only came back on F5.
+- **Cause:** picks lived in `useState` and a private `localStorage` key restored only when `isReload` was true. A plain Continue (not a reload) mounted with empty state.
+- **Fix:** keep picks in `sceneState` and write each change with `checkpoint()`; no second private copy. Clear any old private key once so a stale step cannot resurrect.
+
+## 46. A solved guess phase restarts on Continue
+- **Symptom:** the child answered correctly, left during the success line, and Continue asks the guess again (or replays the entry line).
+- **Cause:** the correct tap was only local state (`'correct'`), and the entry/reset effects set `'guessing'` on mount.
+- **Fix:** `...Solved` checkpointed at the tap and `...SuccessDone` checkpointed when the line really ends (not cancelled, not unmounted, not an instant error). Capture "solved at mount" in a ref and gate the reset effects, entry voice and hint effects on it. Resume replays only an unfinished line, then advances; the flag is cleared when the timer FIRES (pitfall 1). Add every marker to `initialState` and Play Again (pitfall 11d).
+
+## 47. A line starts the instant the previous phase's line ends, and is dropped
+- **Symptom:** the next step's intro (e.g. child home) is silent after the closing line of the step before it.
+- **Cause:** same family as pitfalls 2 and 3: speech started in the same moment another line ends or is cancelled is lost.
+- **Fix:** every phase-entry line waits ~500 ms, not only the first one after a resume. A closing line's `onEnd` must use `ignoreCancel` so a cancelled line is not treated as finished (pitfall 11c).
+
+## 48. Blank "Reload Scene" screen after adding a function used by an effect
+- **Symptom:** the scene shows only the error boundary's Reload Scene button; console says "Cannot access 'x' before initialization".
+- **Cause:** a ref assignment (`xRef.current = x`) or effect dependency placed ABOVE the `const x = ...` it reads. eslint and esbuild did not flag it.
+- **Fix:** put the effect and ref assignments BELOW the handlers they read. After adding such code, open the scene in the browser; lint and a syntax check are not enough.
+
 ## Quick debugging snippets (paste in the browser console)
 Log every speech call and cancel (find who cancels a line):
 ```js
