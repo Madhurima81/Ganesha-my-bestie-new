@@ -2,7 +2,7 @@
 
 Read this before touching resume / Continue, voice lines, timers, shared components or CSS.
 Each entry: **symptom → cause → how to spot it → fix → where it happened.** Add a new entry whenever a
-bug could recur in another scene (not only when it cost hours). (Started 2026-10-12 from the Continue/resume work.)
+coding bug (logic, timing, state, voice) could recur in another scene. Not for CSS/layout tweaks inside one scene. (Started 2026-10-12 from the Continue/resume work.)
 
 ---
 
