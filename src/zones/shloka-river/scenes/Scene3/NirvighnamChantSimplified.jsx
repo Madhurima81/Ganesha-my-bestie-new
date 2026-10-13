@@ -33,6 +33,9 @@ import { SCENE_TO_OUTER_PETAL_ID } from '../../../../lib/components/navigation/P
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
+import useSceneWatchdog from '../../../../lib/hooks/useSceneWatchdog';
+import { logSceneEvent } from '../../../../lib/utils/sceneEventLog';
+import SceneStallPrompt from '../../../../lib/components/feedback/SceneStallPrompt';
 import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
 import ResumeCountdown from '../../../../lib/components/feedback/ResumeCountdown';
 import GaneshaGestureCue from '../../../../lib/components/gesture/GaneshaGestureCue';
@@ -467,6 +470,7 @@ const NirvighnamChantContent = ({
     if (symbolId === 'nirvighnam') {
       const timer = safeSetTimeout(() => {
         sceneActions.updateState({
+    logSceneEvent('nirvighnam', 'reveal:complete', { symbolId });
           unlockedApps: { ...appsNow, nirvighnam: true },
           phase: PHASES.KURUMEDEVA_GAME,
           roundsDone: 0,
@@ -597,6 +601,65 @@ const NirvighnamChantContent = ({
   // this races the live completion handler's own reveal trigger for the same
   // phase transition and both fire playChime()/setRevealConfig() (double SFX).
   const hasRestoredRevealRef = useRef(false);
+  // ── Stall watchdog: a finished word whose card never shows ─────────────────
+  // The card paths above (live timer, restore, 1.8s fallback) all share `revealStartedRef`, which says "a
+  // card was STARTED", not "a card was SHOWN": if something started it and the card was lost (e.g. the
+  // scene was re-mounted by Next adventure), every path stays blocked and the scene sits there for good.
+  // This watches what is really on screen: if a finished word has shown no card after 12s it logs the
+  // recent events, forces the card once, and if that fails shows a "Tap to keep going" button.
+  const revealConfigRef = useRef(null);
+  revealConfigRef.current = revealConfig;
+  const sceneStateRef = useRef(sceneState);
+  sceneStateRef.current = sceneState;
+  const revealShownRef = useRef(new Set());
+  const { arm: armWatchdog, disarm: disarmWatchdog, stall, resolveStall } = useSceneWatchdog({
+    sceneKey: 'nirvighnam',
+    paused: isRecorderOpen || sidebarPause.isSidebarPaused,
+    getSnapshot: () => ({
+      phase: sceneStateRef.current?.phase,
+      revealConfig: revealConfigRef.current?.symbolId || null,
+      revealStarted: [...revealStartedRef.current],
+      revealShown: [...revealShownRef.current],
+      finalCardCollected: !!sceneStateRef.current?.finalCardCollected,
+    }),
+  });
+
+  useEffect(() => {
+    const word = revealConfig?.symbolId;
+    if (!word) return;
+    revealShownRef.current.add(word);
+    logSceneEvent('nirvighnam', 'reveal:shown', { word });
+    disarmWatchdog('reveal-card');
+  }, [revealConfig?.symbolId, disarmWatchdog]);
+
+  useEffect(() => {
+    const phase = sceneState?.phase;
+    const word = [PHASES.NIRVIGHNAM_COMPLETE, PHASES.NIRVIGHNAM_POWER].includes(phase) ? 'nirvighnam'
+      : ([PHASES.KURUMEDEVA_COMPLETE, PHASES.KURUMEDEVA_POWER].includes(phase) && !sceneState?.finalCardCollected) ? 'kurumedeva'
+        : null;
+    if (!word || revealConfig || revealShownRef.current.has(word)) {
+      disarmWatchdog('reveal-card');
+      return;
+    }
+    logSceneEvent('nirvighnam', 'reveal:waiting', { word, phase });
+    armWatchdog('reveal-card', 12000, () => {
+      // Safe to run twice: it acts only if no card is on screen and this word's card never showed.
+      if (revealConfigRef.current || revealShownRef.current.has(word)) return;
+      revealStartedRef.current.add(word);
+      const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
+      playChime();
+      setShowSparkle(null);
+      setRevealConfig({
+        symbolId: word,
+        symbolImage: powerConfig[word].image,
+        symbolName: discoveryData?.title || powerConfig[word].name,
+        affirmation: discoveryData?.affirmation || powerConfig[word].affirmation,
+        sidebarTarget: getSidebarTarget(word),
+      });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sceneState?.phase, sceneState?.finalCardCollected, !!revealConfig]);
+
   useEffect(() => {
     if (!sceneState || revealConfig) return;
     if (hasRestoredRevealRef.current) return;
@@ -615,6 +678,7 @@ const NirvighnamChantContent = ({
         setShowSparkle(null);
         setRevealConfig({
           symbolId: word,
+        logSceneEvent('nirvighnam', 'reveal:start:restore', { word });
           symbolImage: powerConfig[word].image,
           symbolName: discoveryData?.title || powerConfig[word].name,
           affirmation: discoveryData?.affirmation || powerConfig[word].affirmation,
@@ -659,6 +723,7 @@ const NirvighnamChantContent = ({
       setShowSparkle(null);
       setRevealConfig({
         symbolId: word,
+      logSceneEvent('nirvighnam', 'reveal:start:fallback', { word });
         symbolImage: powerConfig[word].image,
         symbolName: discoveryData?.title || powerConfig[word].name,
         affirmation: discoveryData?.affirmation || powerConfig[word].affirmation,
@@ -676,6 +741,7 @@ const NirvighnamChantContent = ({
     window.setTimeout(() => setShowWordStar(false), 1500);
     stopIdleTimer();
     setCurrentPhase(null);
+    logSceneEvent('nirvighnam', 'phase-complete', { word });
 
     sceneActions.updateState({
       learnedWords:  { ...sceneState.learnedWords, [word]: true },
@@ -695,6 +761,7 @@ const NirvighnamChantContent = ({
       playChime();
       setRevealConfig({
         symbolId:      word,
+      logSceneEvent('nirvighnam', 'reveal:start:live', { word });
         symbolImage:   powerConfig[word].image,
         symbolName:    discoveryData?.title || powerConfig[word].name,
         affirmation:   discoveryData?.affirmation || powerConfig[word].affirmation,
@@ -957,6 +1024,7 @@ const NirvighnamChantContent = ({
                 setShowPowerOverlay(false);
                 setOpeningButtonVisible(true);
                 resetScene();
+                revealShownRef.current.clear();
               }}
               onContinue={() => { stopAllVoice(); onNavigate?.('scene-complete-continue'); }}
             />
@@ -964,6 +1032,8 @@ const NirvighnamChantContent = ({
             {/* ProgressiveHintSystem disabled per request */}
           </div>
         </div>
+            <SceneStallPrompt show={!!stall} onTap={resolveStall} />
+
       </MessageManager>
     </InteractionManager>
   );
