@@ -599,10 +599,10 @@ if (tempData) {
           tempState.showingCompletionScreen === true
         );
       } else if (scene.id === 'family-tree') {
-        // Complete if: sideBySide phase reached (both trees shown) OR completion screen showing
+        // Complete only when explicitly completed or the completion screen is showing. The side-by-side
+        // comparison screen is a leave point (Continue), not a completed scene (Madhurima, 2026-10-13).
         isCompleteInTemp = (
           tempState.completed === true ||
-          tempState.gamePhase === 'sideBySide' ||
           tempState.showingCompletionScreen === true
         );
       } else if (scene.id === 'my-indian-story') {

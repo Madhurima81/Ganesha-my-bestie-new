@@ -1218,7 +1218,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     if (sceneState.gamePhase === 'intro') {
       phaseVoiceRef.current = {};
       setVoiceVolume(isAudioOn ? OPENING_VO_VOLUME : 0);
-      playVoice('opening');
+      // No playVoice('opening') here: the shared OpeningModal speaks this same line itself on mount, and
+      // a second copy cut the first (same fix as Family Tree and Dreams). The replay button still plays it.
     }
   }, [sceneState.gamePhase, isAudioOn, playVoice, setVoiceVolume]);
 

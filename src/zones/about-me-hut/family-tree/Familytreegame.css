@@ -4925,6 +4925,8 @@
 .member-avatar-small {
   width: clamp(58px, 8vw, 88px) !important;
   height: clamp(58px, 8vw, 88px) !important;
+  /* The base rule's 12px padding left the picture ~24px inside a ~58px circle. */
+  padding: clamp(2px, 0.4vw, 4px);
 }
 
 .member-name-small {

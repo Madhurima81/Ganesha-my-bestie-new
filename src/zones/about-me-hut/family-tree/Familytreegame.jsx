@@ -149,6 +149,9 @@ const FamilyTreeGame = ({
  placedGaneshaMembers: [],
  // Done tapped on the finished Ganesha tree; saved at the tap, cleared by Play Again (KNOWN_PITFALLS 11d)
  ganeshaDoneTapped: false,
+ // Id of the member whose line is playing ('myself' = Ganesha's own line). Saved at the placement, cleared
+ // when the line really ends; Continue replays it if the child left during it. Cleared by Play Again.
+ pendingMemberLine: null,
  tappedMembers: [],
 
  justPlacedId: null,
@@ -247,6 +250,9 @@ const FamilyTreeGameContent = ({
  const profileAvatar = (typeof rawProfileAvatar === 'string' && rawProfileAvatar.trim().length <= 2)
 ? rawProfileAvatar
 : profileDisplayName.charAt(0).toUpperCase();
+ // Spoken on Continue when all 4 members are met but Done has not been tapped (new line, needs the VO handoff).
+ const RESUME_VO = { allPlaced: "You've met my whole family. Tap Continue.", keepTapping: "Continue tapping." };
+ const MYSELF_LINE = "And that's me, Ganesha!";
  const FINAL_VO = {
  comparison: "Our family trees are different, and each one tells a story.",
  completion: ""
@@ -577,6 +583,40 @@ const FamilyTreeGameContent = ({
  { id: 'pet', label: 'Pet', image: childPetImg, color: '#F2D3A2', row: 3 }
  ];
 
+ // A member's line only counts as finished when it really played to its end: not cancelled, scene not left.
+ // Then the saved pendingMemberLine is cleared (Continue replays it only if the child left during it).
+ const memberLineCallbacks = () => {
+ let cancelled = false;
+ const startedAt = Date.now();
+ return {
+ onError: (e) => { if (e?.error === 'canceled' || e?.error === 'interrupted') cancelled = true; },
+ onEnd: () => {
+ if (!aliveRef.current || cancelled || Date.now() - startedAt < 300) return;
+ sceneActions.checkpoint({ pendingMemberLine: null });
+ },
+ };
+ };
+ // Continue in the Ganesha tree: replay the interrupted member's line (if any), then the short next-step line.
+ const speakResumeLines = (afterLine) => {
+ const pending = sceneState.pendingMemberLine;
+ const pendingLine = pending === 'myself' ? MYSELF_LINE : ganeshaFamily.find(m => m.id === pending)?.voiceLine;
+ const say = (text, onDone) => {
+ let cancelled = false;
+ speakHint(text, {
+ age: 7,
+ style: 'child',
+ moment: 'encouragement',
+ onError: (e) => { if (e?.error === 'canceled' || e?.error === 'interrupted') cancelled = true; },
+ onEnd: () => { if (!aliveRef.current || cancelled) return; onDone?.(); },
+ });
+ };
+ if (pendingLine) {
+ say(pendingLine, () => { sceneActions.checkpoint({ pendingMemberLine: null }); if (afterLine) say(afterLine); });
+ } else if (afterLine) {
+ say(afterLine);
+ }
+ };
+
  // ==================== RELOAD DETECTION (Exactly like Modak) ====================
  useEffect(() => {
  // If we are reloading and haven't handled it yet
@@ -615,6 +655,11 @@ showTreeSparkles: false,
  setResumeMessage(`Great progress! You've placed ${placedGaneshaMembers.length}/4 family members. Keep going!`);
  setShowResumePopup(true);
  resumePopupTimeoutRef.current = scheduleTimeout(() => setShowResumePopup(false), 5000);
+ // Continue: replay the interrupted member's line (if any), then "Continue tapping." after the 500 ms
+ // first-instant wait. The idle 'tapCircle' hint line is unchanged.
+ // With exactly 3 met, Ganesha fills his own place next ("And that's me, Ganesha!"), so no extra line.
+ const ganeshaFillsNext = placedGaneshaMembers.length === 3 && !placedGaneshaMembers.includes('myself');
+ scheduleTimeout(() => { stopVoice(); stopSpokenVoice(); speakResumeLines(ganeshaFillsNext ? null : RESUME_VO.keepTapping); }, 500);
  return;
  }
 
@@ -631,6 +676,8 @@ showTreeSparkles: false,
  setResumeMessage(`Amazing! You completed Ganesha's family tree! Tap "Continue" to continue.`);
  setShowResumePopup(true);
  resumePopupTimeoutRef.current = scheduleTimeout(() => setShowResumePopup(false), 5000);
+ // Continue with all 4 met but Done not tapped: say what to do next.
+ scheduleTimeout(() => { stopVoice(); stopSpokenVoice(); speakResumeLines(RESUME_VO.allPlaced); }, 500);
  return;
  }
 
@@ -639,6 +686,8 @@ showTreeSparkles: false,
  setResumeMessage(`You've added ${childFamily.length} family member${childFamily.length > 1? 's': ''} to your tree!`);
  setShowResumePopup(true);
  resumePopupTimeoutRef.current = scheduleTimeout(() => setShowResumePopup(false), 5000);
+ // Continue while adding family: remind the child they can keep adding (existing 'childStart' line).
+ scheduleTimeout(() => { stopVoice(); stopSpokenVoice(); if (isAudioOn) playVoice('childStart'); }, 500);
  return;
  }
 
@@ -694,29 +743,8 @@ showTreeSparkles: false,
  // VOICE: Play welcome on OPENING MODAL (before game starts)
  // Button is visible immediately (like ModakScene)
  // ========================================
- useEffect(() => {
- // Play welcome voice when opening modal is shown (phase is intro)
- if (sceneState.gamePhase === 'intro') {
- setOpeningButtonVisible(true);
- // Always play welcome VO on opening modal regardless of audio preference.
- // Audio-off is applied in handleStartGame when "Let's Explore" is tapped.
- const timer = scheduleTimeout(() => {
- // Check if welcome uses Web Speech API
- const welcomeScript = getVoiceScript('about-me-hut', 'family-tree', 'welcome');
- if (welcomeScript?.useWebSpeech) {
- // Use Web Speech API stop both engines first in case a prior
- // scene instance (reload/remount) left something mid-line.
- stopVoice();
- stopSpokenVoice();
- speakHint(welcomeScript.text);
- } else {
- // Use file-based audio
- playVoice('welcome');
- }
- }, 800);
- return () => clearTimeout(timer);
- }
- }, [sceneState.gamePhase]);
+ // The shared OpeningModal speaks the welcome line itself on mount. A second copy here (800 ms later)
+ // cut the first one off, so it was removed (same as Dreams). Replay still uses the welcome script.
 
  // Show "Voice is off" nudge pill when game begins with audio off
  // Only fires when game phase starts (not on opening modal)
@@ -1172,7 +1200,8 @@ sceneState.isSequencePlaying,
  sceneActions.updateState({
  placedGaneshaMembers: updatedMembers,
  justPlacedId: circleId,
- isSequencePlaying: true
+ isSequencePlaying: true,
+ pendingMemberLine: circleId
  });
 
  playSparkle();
@@ -1194,11 +1223,13 @@ sceneState.isSequencePlaying,
  });
  };
 
+ const memberCb = memberLineCallbacks();
  speakHint(member.voiceLine, {
  age: 7,
  style: 'child',
  moment: 'story',
- onEnd: () => { voDone = true; finishSequence(); }
+ onError: memberCb.onError,
+ onEnd: () => { memberCb.onEnd(); voDone = true; finishSequence(); }
  });
  // Safety net: if the VO's onEnd never fires (speechSynthesis.cancel()
  // race, no TTS engine available, etc.), don't leave the child stuck
@@ -1211,6 +1242,9 @@ sceneState.isSequencePlaying,
  useEffect(() => {
  if (sceneState.gamePhase !== 'ganeshaTree') return;
  if (sceneState.isSequencePlaying || sceneState.flippedMember) return;
+ // Wait for the last member's line to finish. After Continue the resume code replays it first, then this
+ // runs: otherwise "And that's me, Ganesha!" cut the replayed line off.
+ if (sceneState.pendingMemberLine) return;
 
  const hasFather = sceneState.placedGaneshaMembers.includes('father');
  const hasMother = sceneState.placedGaneshaMembers.includes('mother');
@@ -1226,7 +1260,8 @@ sceneState.isSequencePlaying,
  'myself'
  ],
  justPlacedId: 'myself',
- isSequencePlaying: true
+ isSequencePlaying: true,
+ pendingMemberLine: 'myself'
  });
 
  playSparkle();
@@ -1246,11 +1281,13 @@ sceneState.isSequencePlaying,
 
  stopVoice();
  stopSpokenVoice();
- speakHint("And that's me, Ganesha!", {
+ const myselfCb = memberLineCallbacks();
+ speakHint(MYSELF_LINE, {
  age: 7,
  style: 'child',
  moment: 'story',
- onEnd: () => { voDone = true; finishSequence(); }
+ onError: myselfCb.onError,
+ onEnd: () => { myselfCb.onEnd(); voDone = true; finishSequence(); }
  });
  // Safety net: if the VO's onEnd never fires (speechSynthesis.cancel()
  // race, no TTS engine available, etc.), don't leave the child stuck
@@ -1266,6 +1303,7 @@ sceneState.isSequencePlaying,
  sceneState.placedGaneshaMembers,
  sceneState.isSequencePlaying,
  sceneState.flippedMember,
+ sceneState.pendingMemberLine,
  isAudioOn
  ]);
 
@@ -1703,7 +1741,7 @@ sceneActions.updateState({ gamePhase: 'transition' });
  sceneActions.updateState({ selectedMemberIndex: isSelected? null: actualIdx });
  }}
  >
- <img src={member.image} alt={member.label} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '5px' }} />
+ <img src={member.image} alt={member.label} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '1px' }} />
  </div>
  <div className="member-name-small">{member.callName}</div>
  </div>
@@ -2014,6 +2052,7 @@ if (window.matchMedia(PHONE_LANDSCAPE_QUERY).matches) setFamilyTrayOpen(true);
  gamePhase: 'intro',
  placedGaneshaMembers: [],
  ganeshaDoneTapped: false,
+ pendingMemberLine: null,
  tappedMembers: [],
  childFamily: [],
  showBottomTray: false,

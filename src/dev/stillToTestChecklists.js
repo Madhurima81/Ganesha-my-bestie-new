@@ -42,13 +42,14 @@ export const STILL_TO_TEST_CHECKLISTS = {
   // Dreams, Indian Story). Each list runs: normal play -> leave mid-game -> leave during / after a success
   // line -> leave within 1 s of a solve -> unsolved beat -> comparison/completion -> tab switch -> Play Again.
   'todo-aboutme-1-family-tree': list('About Me Hut 1 - Family Tree', [
-    { text: 'Play it through WITHOUT leaving: place the 3 family members, wait for "And that\'s me", tap Done, make your tree, tap Done.', expect: 'One chime per member (not two). "You met everyone in my family" plays after Done. After your Done, "Our family trees are different..." plays. Normal flow is unchanged.' },
+    { text: 'Play it through WITHOUT leaving: place the 3 family members, wait for "And that\'s me", tap Continue, make your tree, tap Done.', expect: 'One chime per member (not two). "You met everyone in my family" plays after Done. After your Done, "Our family trees are different..." plays. Normal flow is unchanged.' },
     { text: leave('Ganesha tree: place 2 or 3 family members.'), expect: 'The scene resumes, the placed members stay, nothing freezes.' },
-    { text: 'Ganesha tree: place all 4 members, leave, tap Continue.', expect: 'The all-placed sparkle shows. The Done button is there; no line is replayed.' },
-    { text: 'Ganesha tree: all 4 placed, tap Done, then leave DURING "You met everyone in my family".', expect: 'Zone Welcome speaks alone. Continue replays that line once (about half a second after load), then moves to "Now let\'s make your family tree".' },
-    { text: 'Ganesha tree: tap Done, then leave within 1 second and tap Continue.', expect: 'Same as above: the Done tap was saved instantly.' },
-    { text: 'Ganesha tree: tap Done, wait for the line to finish and the transition screen to show, then leave.', expect: 'Continue shows the transition screen. The "You met everyone" line is NOT replayed.' },
-    { text: 'Tap Done twice quickly, or tap Done then the zone badge immediately.', expect: 'Never a frozen scene; Continue does not skip the transition.' },
+    { text: 'Ganesha tree: place a member, then leave DURING "This is my father..." (or any member line), and tap Continue.', expect: 'That member stays placed. Continue replays the line of the member you were on once, then says "Continue tapping." Leaving AFTER the line finished gives only "Continue tapping."' },
+    { text: 'Ganesha tree: place all 4 members, leave, tap Continue.', expect: 'The all-placed sparkle shows and the Continue button is there. If you left during a member line it replays, then a short line tells you to tap Continue.' },
+    { text: 'Ganesha tree: all 4 placed, tap Continue, then leave DURING "You met everyone in my family".', expect: 'Zone Welcome speaks alone. Continue replays that line once (about half a second after load), then moves to "Now let\'s make your family tree".' },
+    { text: 'Ganesha tree: tap Continue, then leave within 1 second and tap Continue on Zone Welcome.', expect: 'Same as above: the Continue tap was saved instantly.' },
+    { text: 'Ganesha tree: tap Continue, wait for the line to finish and the transition screen to show, then leave.', expect: 'Continue shows the transition screen. The "You met everyone" line is NOT replayed.' },
+    { text: 'In the Ganesha tree tap Continue twice quickly, or tap Continue then the zone badge immediately.', expect: 'Never a frozen scene; Continue does not skip the transition.' },
     { text: 'Your tree: add a family member, leave within 1 second, tap Continue.', expect: 'The member is still there with the name you gave it.' },
     { text: leave('Your tree: a name modal is open (typing a name).'), expect: 'The modal is closed; the family built so far is kept. No stale text.' },
     { text: 'Your tree: tap Done to see both trees, then leave and Continue.', expect: 'Both trees show and "Our family trees are different..." plays.' },

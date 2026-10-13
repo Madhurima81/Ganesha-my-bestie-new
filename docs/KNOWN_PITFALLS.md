@@ -37,6 +37,7 @@ coding bug (logic, timing, state, voice) could recur in another scene. Not for C
 - **Fix:** read callbacks through a ref (`xRef.current = x`), depend on the specific values you read
   (`sceneState?.phase`), and never cancel a one-shot sequence in the cleanup.
 - **Seen in:** Eyes (reveal never played after the last target), Suryakoti (reveal effect; and the bunny-hop effect in SuryakotiGame - a wrapper re-render cancelled the hop timers, so the scene froze after the success voice in NORMAL play, not just Continue), Sarvada.
+- **Also (Family Tree comparison line, 2026-10-13):** the effect called `setFinalRevealPlayed(true)` and listed `finalRevealPlayed` in its own deps, so it re-ran at once and its cleanup cancelled the 500 ms timer it had just scheduled; the second run then skipped. The line never played. An effect must not cancel, in its cleanup, a one-shot it started when its own state change re-runs it.
 - Note: `checkpoint()` re-renders the scene, so adding a save can expose this in code that was fine before.
 
 ## 5. Counters lag after a resume (the next card repeats)
@@ -141,7 +142,27 @@ coding bug (logic, timing, state, voice) could recur in another scene. Not for C
 - **Symptom:** after Continue the question starts, stops after a word or two, then plays again in full.
 - **Cause:** two things speak: the scene's resume code (timer, ~500 ms) AND the phase-entry effect that fires for the restored phase. The second cancels the first.
 - **Fix:** keep the phase-entry effect silent until the resume line plays (a sentinel in the expected-phase ref, released inside the resume timer), and have the resume line arm the hint clock with its own `onEnd`. Do not gate the resume line on audio being on: muted speech completes on a silent timer.
-- **Seen in:** Favourite Food (2026-10-13).
+- **Same family:** an effect that acts on mount can also cut a resume line. Family Tree's auto-fill ("And that's me, Ganesha!", 0.9 s after load when 3 members are placed) cut the replayed third-member line. Gate such an effect on the saved "line still pending" marker (`pendingMemberLine`) so it runs only after the replay ends.
+- **Seen in:** Favourite Food, Family Tree (2026-10-13).
+
+## 11h. The opening line is spoken twice (shared OpeningModal + the scene)
+- **Symptom:** the opening line plays, is cut after a word or two, and plays again.
+- **Cause:** the shared `OpeningModal` speaks its own `voiceover` on mount. A scene that also speaks the same line at intro (a `playVoice('opening')` / welcome effect, 0.8 s later) cuts the first.
+- **Fix:** the scene must not speak the opening line itself; keep only the replay button's call. See also 11f (stop the scene's own opening voice when Let's Explore is tapped).
+- **Seen in:** Dreams, Family Tree, Favourite Food (2026-10-13).
+
+## 11i. A "sequence finished" function is called from two paths and runs twice
+- **Symptom:** a chime (or a state clear) plays twice, sometimes only after a short pause.
+- **Cause:** the finish function is called from the line's `onEnd` AND from a failsafe timer, and nothing makes it one-shot (Family Tree `finishSequence`: chime when the line ended, again when the 4 s failsafe fired).
+- **Fix:** a local `finished` flag checked and set inside the function.
+- **Seen in:** Family Tree (2026-10-13).
+
+## 11j. Zone Welcome treats a leave point as "completed" (shows Play Again, not Continue)
+- **Symptom:** leave on a scene's last screen before the completion modal (Family Tree's side-by-side comparison); Zone Welcome shows Play Again and Continue is gone.
+- **Cause:** `ZoneWelcome` decides completion per scene from the temp session, and the Family Tree branch counted `gamePhase === 'sideBySide'` as complete.
+- **Fix:** count a scene as completed only on `completed` / `showingCompletionScreen` (or the scene's real completion phase). A screen the child can still act on is a leave point.
+- **Check:** for every scene, leave on the screen just before the completion modal and read the Zone Welcome card.
+- **Seen in:** Family Tree (2026-10-13).
 
 ## 12. Tooling gotchas (Windows dev machine)
 - **Two builds at once** (two sessions running `vite build`) clobber `dist/` — you get
