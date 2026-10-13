@@ -218,6 +218,186 @@ coding bug (logic, timing, state, voice) could recur in another scene. Not for C
 - Before telling Madhurima something is still open (e.g. the Mahakaya syllable clip), read the LATER entries in
   DECISIONS.md and CHANGELOG.md: a PENDING line is often superseded by a LOCKED entry or already built.
 
+## 22. Web Speech `onend` never fires, so the scene waits forever
+- **Symptom:** a beat finishes speaking, but the next beat / hint / reveal never starts.
+- **Cause:** browser speech events are not reliable. `speechSynthesis` may drop `onend`, especially after tab
+  hide, cancel, mute, or rapid line replacement.
+- **Fix:** every voice-gated step needs a watchdog/fallback timer. The fallback should advance only the intended
+  step, and must still respect "left scene" / cancelled guards so it does not save a cut-off line as complete.
+- **Seen in:** Kurumedeva / BeatPlayer work (2026-09-15), hint L2->L3 gating.
+
+## 23. Replay repeats the wrong or stale line
+- **Symptom:** Replay speaks an old scene line while a mini-game is active, does nothing during a silent phase, or
+  repeats a line from the previous beat.
+- **Cause:** some mini-games speak through their own `speechSynthesis` path, so the wrapper's `lastVoice` ref never
+  learns the current line. Or Replay remains enabled during phases that have no valid VO.
+- **Fix:** mini-games that own speech must report each spoken line to the wrapper (`onLineSpoken`-style), and Replay
+  should be disabled whenever there is no current contextual line.
+- **Seen in:** Flower Journey, Garland, Eyes/Ears, Sacred Assembly card intro (2026-10-07).
+
+## 24. Mute skips timing instead of silently preserving it
+- **Symptom:** turning voice off skips a step, instantly marks a line done, or unmuting replays a stale line.
+- **Cause:** treating mute as "do not run voice logic" instead of "run the voice timeline silently".
+- **Fix:** voice-off should silence current/future narration but keep the same line-duration timer and callback
+  semantics. Mute mid-line silences immediately; its callback still fires on schedule. Unmute must not replay old
+  lines automatically. SFX stay on by design unless a separate sound setting changes.
+- **Seen in:** voice-mute standardization (2026-09-29 / 2026-10-09).
+
+## 25. Hint clocks start before the child has heard the instruction
+- **Symptom:** hints appear or speak while the intro/teaching line is still playing; L3 cuts off L2.
+- **Cause:** the idle ladder is armed on scene entry or fixed wall-clock timing instead of after the relevant VO
+  has finished.
+- **Fix:** start the first hint clock from the instruction VO's real `onEnd` (with a fallback). L3 should be armed
+  after the L2 line finishes, not at a fixed "26s from idle start" time.
+- **Seen in:** GMB Hint Standard v1 rollout, Shloka River and Symbol Mountain hint passes (2026-09-21 to 2026-10-05).
+
+## 26. Random touches dismiss help
+- **Symptom:** the child taps scenery or wiggles the pointer and the visible hint disappears / timer restarts, leaving
+  them stuck again.
+- **Cause:** code treats any pointer movement or any tap as "interaction".
+- **Fix:** only meaningful progress clears a hint. A genuine but incomplete attempt keeps the visible hint; wrong
+  attempts escalate; random background touches do nothing. `GestureDemo` is display-only and should not decide this.
+- **Seen in:** hint-system pass (2026-10-01), choice-game ladders.
+
+## 27. GestureDemo does not replay on L2 -> L3 escalation
+- **Symptom:** the teaching hand plays at L2, but when the hint escalates to L3 nothing replays even though the hint
+  level changed.
+- **Cause:** `active={hintLevel >= 2}` stays true across both levels, so GestureDemo never sees a false->true edge.
+- **Fix:** pass `replayKey={hintLevel}` (or another changing key) whenever one active condition covers multiple hint
+  levels.
+- **Seen in:** GestureDemo shared-component audit (2026-09-24).
+
+## 28. Sidebar / tab pause loses the pending replay
+- **Symptom:** open the sidebar or hide the tab during an intro; close/return; the interrupted line never replays, so
+  the intro callback or hint clock never starts.
+- **Cause:** a line is waiting in a replay window, then a second sidebar/tab interruption clears the pending replay
+  without putting it back into the interrupted slot.
+- **Fix:** track pending replays explicitly. If interrupted again before replay starts, preserve that line as the
+  interrupted line so its normal callback can still run exactly once after replay.
+- **Seen in:** sidebar-pause race fixes, Ears tab-hide, Flower Journey/Garland/Eyes (2026-10-01).
+
+## 29. Drag/hold cleanup misses `pointercancel`, pause, or disabled state
+- **Symptom:** an item stays grabbed, a hold ring keeps filling, RAF/timers continue, or a disabled drag still calls
+  completion after tab hide / pause / touch interruption.
+- **Cause:** cleanup handles only `pointerup` / `touchend`, not `pointercancel`, `isPaused`, unmount, or a `disabled`
+  prop flipping while the gesture is active.
+- **Fix:** every drag/hold must cancel active state on `pointercancel`, pause/tab-hide, unmount, and disabled changes.
+  RAF loops need explicit cancellation too.
+- **Seen in:** FreeDraggableItem, BeatPlayerGame, Kurumedeva, Garland, Pond-style holds (2026-09-18).
+
+## 30. Completion saves or actions fire more than once
+- **Symptom:** completion saves repeatedly while fireworks render, Continue double-navigates, or a fast double tap queues
+  the completion handler twice.
+- **Cause:** completion effects depend on fresh object identities (`completionData={{...}}`) or action buttons are
+  still live during exit animations.
+- **Fix:** dedupe completion saves by a stable key/payload per show cycle, and lock completion modal actions after the
+  first tap.
+- **Seen in:** `SceneCompletionCelebration.jsx` shared-layer fixes (2026-09-18/19).
+
+## 31. Progress state treats `false` as missing
+- **Symptom:** a scene or zone is marked complete when it should remain incomplete, or an explicit `completed:false`
+  is overwritten by a default.
+- **Cause:** merge/default logic uses `||` or other truthy checks where `false` is a valid value.
+- **Fix:** use nullish checks (`??`) / explicit property checks for progress booleans. Preserve `false`.
+- **Seen in:** ProgressManager `completed:false` fix (2026-09-27).
+
+## 32. The wrong saved-state bucket is being tested
+- **Symptom:** Continue looks fixed in one browser but broken in another; `?checklist=1` looks reset; Replay brings back
+  old state after "fresh" start.
+- **Cause:** `localhost:5173`, `127.0.0.1:5173`, normal profile storage, `gametest` harness storage, `temp_session_*`,
+  and `replay_session_*` are separate buckets.
+- **Fix:** when testing Continue/Replay, identify the active profile and origin, and clear both temp and replay keys
+  for that scene. Do not read harness state as live app state without checking the prefix.
+
+## 33. Dev harness / webSpeech scripts drift from live scene code
+- **Symptom:** a VO line or intro works in the scene but not in the harness, or the harness plays old copy and sends the
+  fix hunt to the wrong file.
+- **Cause:** `src/dev/webSpeechScripts.js`, GameTestHarness maps, and live wrappers can duplicate the same VO/config.
+- **Fix:** trace the live route from `App.jsx` and compare the harness copy before changing production code. Keep dev
+  maps updated when VO keys change.
+- **Seen in:** Sarvakaryeshu stale dev script and Samaprabha intro mapping issues.
+
+## 34. Debug UI leaks into child gameplay
+- **Symptom:** a child can open a layout panel, copy debug JSON, or trigger dev-only controls in a live scene.
+- **Cause:** debug buttons/panels are rendered without `import.meta.env.DEV` / `DEBUG_UI_ENABLED` gates.
+- **Fix:** gate every debug panel, copy-layout button, debug console line, and phase-jump UI. Confirm the live scene
+  has no visible debug affordance.
+- **Seen in:** Kurumedeva debug toggle, Samaprabha debug console calls, several layout-debug panels.
+
+## 35. Hit area is smaller than the art looks, or art is smaller than the hit area rule
+- **Symptom:** a control is hard to tap on phone/iPad, or audit says "looks fine" while the actual button is under
+  60px.
+- **Cause:** checking the visible icon/card instead of the real interactive box, or shrinking `min-width` /
+  `min-height` at a breakpoint.
+- **Fix:** measure the actual clickable element. Keep at least a 60px transparent hit area even when the visible icon
+  is smaller.
+- **Seen in:** Favorite Food, Family Tree, Pond reeds/lotus, phone chrome and modal passes.
+
+## 36. Layout/debug coordinates use the wrong coordinate system
+- **Symptom:** the hand points beside the target, a hit zone misses the visible object, or an imported editor layout
+  appears shifted/scaled.
+- **Cause:** mixing center-anchored vs top-left coordinates, stage vs background coordinates, shadow vs object
+  placement, or a different basis between debug overlay and gameplay.
+- **Fix:** write down the coordinate basis for each debug panel. Hit zones, glows, hands, and success checks should
+  share the same element/coordinate space.
+- **Seen in:** Eyes layout port, Samaprabha shadow/bank placement, Pond hand cues, Tusk/Kurumedeva debug tools.
+
+## 37. Editing a dead duplicate file
+- **Symptom:** a fix "lands" but the app does not change, or an audit flags console/CSS in a file the app never imports.
+- **Cause:** the repo has obsolete Meaning Cave files, parked Festival Square scenes, backup/copy files, and old
+  component folders.
+- **Fix:** before editing or reporting, trace the live scene from `src/App.jsx` import mapping. Treat folder names and
+  `sceneRegistry.js` as clues, not proof.
+
+## 38. Asset path casing works locally but fails elsewhere
+- **Symptom:** audio/image works on Windows dev but fails in build/deploy, or a fallback old recording plays.
+- **Cause:** file path casing or public-path filenames differ (`KuruMeDeva` vs `kurumedeva`, uppercase/lowercase
+  audio names, `.wav`/`.mp3` mismatch).
+- **Fix:** match import/public paths exactly to disk casing and deployed filenames. For public audio maps, verify the
+  key and extension against the actual file.
+- **Seen in:** Scene3 filename casing, lowercase `/audio/words/*.mp3`, syllable mapping issues.
+
+## 39. Service worker / cache hides asset fixes
+- **Symptom:** deployed app still shows old art/audio after the code was fixed, or a cache-clear behaves differently
+  from a normal reload.
+- **Cause:** scene-bundled assets, public assets, or the app shell are cached by the service worker.
+- **Fix:** when an asset fix does not appear on staging/prod, test after cache clear / update-manager reload and check
+  service-worker precache rules before assuming the scene code is wrong.
+
+## 40. Animation callbacks are used as the only completion save
+- **Symptom:** progress is lost if the child leaves during an animation or if the animation callback is skipped.
+- **Cause:** completion/progress writes happen inside `onAnimationEnd`, fireworks callbacks, fly-to-sidebar callbacks,
+  or delayed visual cleanup instead of at the solve moment.
+- **Fix:** save completion/progress at state-write / solve time. Animation callbacks may show visuals, but should not
+  be the only source of truth for progress.
+- **Seen in:** Scene completion persistence fixes and DECISIONS.md completion rule.
+
+## 41. Beat transitions update pose, position, and carried objects separately
+- **Symptom:** a character teleports, flickers back to idle, appears behind/in front of the wrong object, or a carried
+  item snaps back before sliding.
+- **Cause:** separate timers/effects update pose, position, z-index, placed/carry state, and "after" art independently.
+- **Fix:** model each beat transition as one explicit state. Update pose/position/z-index/carry/placed art together,
+  or use a single timeline that cannot briefly render impossible combinations.
+- **Seen in:** Kurumedeva bridge work, Tusk bunny/bird/nest fixes.
+
+## 42. A scene freezes and nobody can say why (use the stall watchdog + event log)
+- **Symptom:** the game plays, then nothing happens: a card never shows (Nirvighnam after Next adventure), a
+  game is dead after several Continues (Ears). The cause differs each time (StrictMode, a lost timer, a
+  cancelled line), so fixing one at a time does not stop the next.
+- **Tool:** `lib/hooks/useSceneWatchdog.js` + `lib/utils/sceneEventLog.js` + `lib/components/feedback/SceneStallPrompt.jsx`.
+  `arm('reveal-card', 12000, recover)` when the GAME owes the child something; `disarm('reveal-card')` when it
+  happens. On timeout: the last 40 scene events + a state snapshot are dumped (console + `localStorage.gmb_scene_stall_dumps`),
+  `recover()` runs once, and if it still does not happen a big "Tap to keep going" button shows.
+- **Rules:** (1) only for waits the game controls, never for "child should act" (idle is not stuck);
+  (2) `recover()` must be idempotent - route it through the same guarded function as the normal path
+  (the `revealStartedRef` Set, pitfall 13) so a slow-but-fine original path can't show two cards;
+  (3) the clock freezes while the tab is hidden or the sidebar is open; (4) call `log(name, data)` at the steps you
+  would want to see in a dump (line start/end/cancel, checkpoint, card set).
+- **Reading a dump:** the table lists events with how long ago each was; the missing step is the cause. If the
+  same cause shows up twice, give it its own fix and a pitfall entry.
+- **Status:** built 2026-10-13, not yet adopted in any scene. Adopt first in the Shloka River card reveals and the
+  Ears/Eyes start/resume, then only where a freeze has been seen.
+
 ## Quick debugging snippets (paste in the browser console)
 Log every speech call and cancel (find who cancels a line):
 ```js
