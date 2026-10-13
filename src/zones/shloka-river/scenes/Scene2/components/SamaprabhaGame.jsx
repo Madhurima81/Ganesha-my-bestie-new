@@ -532,6 +532,9 @@ export default function SamaprabhaGame({
 
     if (holdingClueIndexRef.current === clueIndex && holdRafRef.current) return;
 
+    // A hold starting (pressed on the clue, or slid onto it) stops any spoken line; never a syllable.
+    if (!syllableSeqRef.current.busy && !syllableSeqRef.current.queue.length) stopVoice?.();
+
     // Resume from the current (possibly still-decaying) ring value.
     const resumeFrom = holdProgressRef.current;
     cancelHold();
@@ -569,7 +572,7 @@ export default function SamaprabhaGame({
     };
 
     holdRafRef.current = window.requestAnimationFrame(tick);
-  }, [CLUES, cancelHold, markInteraction, phase, revealCurrentClue, setHoldProgressValue, stopHoldDrain]);
+  }, [CLUES, cancelHold, markInteraction, phase, revealCurrentClue, setHoldProgressValue, stopHoldDrain, stopVoice]);
 
   const getStagePoint = useCallback((event) => {
     const rect = stageRef.current?.getBoundingClientRect();
@@ -707,13 +710,23 @@ export default function SamaprabhaGame({
       setClueVoComplete(true);
       if (index === 0) {
         // Clue 1's "line" includes the follow-up: it counts as finished only once that has played.
-        safeAfter(300, () => playSceneLine('scene11_sama_find_another', () => onClueVoDone?.(1), { replayOnReturn: false }));
+        // Skipped (but counted) if the child is already pressing the next clue: touching stops the voice.
+        safeAfter(300, () => {
+          if (holdingClueIndexRef.current !== null) { onClueVoDone?.(1); return; }
+          playSceneLine('scene11_sama_find_another', () => onClueVoDone?.(1), { replayOnReturn: false });
+        });
       } else {
         onClueVoDone?.(index + 1);
       }
       afterReveal?.();
     };
 
+    // The child pressed the next clue while the syllable was still playing: the reveal line is not spoken over
+    // their hold (the touch is the action; the line is only guidance).
+    if (holdingClueIndexRef.current !== null) {
+      finishRevealVo();
+      return;
+    }
     playSceneLine(revealVo, finishRevealVo, { replayOnReturn: false });
     safeAfter(4000, finishRevealVo);
   }, [onClueVoDone, playSceneLine, safeAfter]);

@@ -14,12 +14,14 @@ import { getSceneResetConfig } from '../../../../lib/config/SceneResetConfigs';
 import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
+import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
 import { useGameSounds } from '../../../../lib/hooks/useGameSounds';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
 
 import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
+import ResumeCountdown from '../../../../lib/components/feedback/ResumeCountdown';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import ZoneCompletionFireworks from '../../../../lib/components/feedback/ZoneCompletionFireworks';
@@ -50,6 +52,7 @@ const ORB_APP_IMAGES = {
   sarvada: revealSarvada,
 };
 
+const RESUME_DELAY_MS = 3000; // 3-2-1 after coming back to the tab; voice and timers resume with it
 const OPENING_SCENE_GANESHA = '/images/new-ganesha-sit-modak.webp';
 const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
 
@@ -312,9 +315,17 @@ const ShlokaRiverFinaleContent = ({
   const { stopVoice, playVoice, playSfx, playWord: playWordAudio, setCurrentPhase, setVoiceVolume } = useVoiceGuidance(
     zoneId,
     sceneId,
-    { enableMusic: false, idleTimeout: 999999 }
+    { enableMusic: false, idleTimeout: 999999, resumeDelay: RESUME_DELAY_MS }
   );
-  const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({});
+  // Tab hidden: the whole-Shloka recording (its own Audio element) pauses with everything else and picks up
+  // again after the 3-2-1 countdown; pending safeSetTimeout timers freeze and resume with their remaining time.
+  const tabPauseRef = useRef({ hide: null, show: null });
+  const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
+    resumeDelay: RESUME_DELAY_MS,
+    onHide: () => tabPauseRef.current.hide?.(),
+    onShow: () => tabPauseRef.current.show?.(),
+  });
+  const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
   const { playUiTap, playSparkle } = useGameSounds();
 
   // Resume: words already placed correctly (checkpointed per word). Only honoured when
@@ -370,6 +381,13 @@ const ShlokaRiverFinaleContent = ({
   const [allBoatsCelebrate, setAllBoatsCelebrate] = useState(false);
 
   const stageRef = useRef(null);
+  tabPauseRef.current = {
+    hide: () => { fullShlokaAudioRef.current?.pause?.(); },
+    show: () => {
+      const a = fullShlokaAudioRef.current;
+      if (a && !a.ended) a.play?.().catch(() => {});
+    },
+  };
   const fullShlokaAudioRef = useRef(null);
   const fullShlokaPlaybackTokenRef = useRef(0);
   const resumeHandledRef = useRef(false);
@@ -1169,6 +1187,7 @@ const ShlokaRiverFinaleContent = ({
           {/* [per-scene mute removed 2026-10-09] <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} /> */}
           <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 
+          <ResumeCountdown value={countdownValue} />
           {phase === PHASES.INITIAL && (
             <OpeningModal
               zoneId={zoneId}
