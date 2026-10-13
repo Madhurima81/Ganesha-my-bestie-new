@@ -78,8 +78,8 @@ const KURUMEDEVA_LAYOUT_DEFAULT = {
   // planks alone, no third helper. Positions match the BeatPlayer prototype's
   // beat 1 snapshot.
   friends: [
-    { id: 'elephant', label: 'Elephant', brings: 'support', l: 35.8, t: 46.4, w: 13, flip: false },
-    { id: 'monkey', label: 'Monkey', brings: 'ropes', l: 4.1, t: 55.2, w: 10, flip: false },
+    { id: 'elephant', label: 'Elephant', brings: 'support', l: 27, t: 46.4, w: 13, flip: false },
+    { id: 'monkey', label: 'Monkey', brings: 'ropes', l: 7.7, t: 62.2, w: 10, flip: false },
   ],
   beaverPath: [
     { l: 39.7, t: 62.9 },
