@@ -152,6 +152,72 @@ coding bug (logic, timing, state, voice) could recur in another scene. Not for C
 
 ---
 
+## 13. A reveal card is missing, or shows twice (more than one path shows the same card)
+- **Symptom:** after a word is finished the discovery card never appears (Nirvighnam, first play after Next adventure;
+  replay showed it), or it appears twice and replays the chime / word voice, cutting the success lines (Samaprabha).
+- **Cause:** a wrapper has several independent ways to show the same card: the live completion timer, a "pending
+  phase" effect, and the reload restore. Each sets `revealConfig` on its own. Whichever fires, the others either
+  duplicate it or, when the live timer is lost, nothing is left to show it. (Nirvighnam's lost-timer cause was NOT
+  found; its live timer is the pause-aware `safeSetTimeout`, the other scenes use `window.setTimeout`.)
+- **Fix:** one `revealStartedRef` Set of words already revealed, checked and filled by every path, cleared in the
+  Replay handler; plus a fallback effect that shows the card ~1.8s after a finished word if none was started.
+  Done in `SuryakotiBankSimplified.jsx` and `NirvighnamChantSimplified.jsx`; check Sarvakaryeshu / Vakratunda
+  wrappers if the same symptom appears.
+- **Check:** finish the word, count the cards and the word voice (one each); Next adventure -> finish -> card; Play Again.
+
+## 14. A later audio cuts the Sanskrit syllable (the full word, or the next beat's English line)
+- **Symptom:** the last syllable ("deva") is never heard; "Elephant helped..." is cut by the Monkey intro.
+- **Cause:** starting any new clip stops the voice channel. The last syllable starts when the final step lands and
+  the full word / next ask line starts a moment later. A syllable's chained after-line is also not a syllable, so it
+  was not protected.
+- **Fix:** keep the voice "busy" from the syllable through its after-line, and make the next line wait
+  (`afterSyllableRef` + `voiceFreeTick` in `KurumedevaGame.jsx`); a watchdog releases it if `onEnded` is lost.
+
+## 15. A syllable has no recording mapped, so a different (old) file plays
+- **Symptom:** a syllable sounds wrong or silent; "backup TTS" plays.
+- **Cause:** `getSyllablePath` uses `PRERECORDED_SYLLABLE_PATHS[word][syllable]`, else falls back to
+  `/audio/voiceover/<word>/<syllable>.mp3` (older files). Kurumedeva's recordings were split `de` + `va` but the scene
+  asks for `deva`, so the fallback file played.
+- **Fix:** map every syllable key the scene uses (`voiceGuidance.js`). `deva` = `kurumedeva-deva.mp3`, made by
+  trimming and joining the two recordings with ffmpeg. Match the keys in `AUDIO.syllables` to this map.
+
+## 16. Opening voice is silent (first play and Play Again)
+- **Cause:** the shared `OpeningModal` speaks only if its config has a `voiceover` (the Shloka River scenes have none)
+  and, ~300ms after it appears, nothing else is playing; it never retries. A scene that relied on it was silent.
+- **Fix:** the scene speaks its own opening line (~500ms after the opening phase shows), through a ref to
+  `playVoice` so the effect does not re-run. NOTE: another session's uncommitted Finale change removed the old
+  opening-voice effect; whichever version is committed, the opening line must be spoken exactly once.
+
+## 17. A hint ladder is dismissed for good after the first action
+- **Symptom:** Vakratunda: drag the frog, let go and wait: no hint (only the 3-bump "stuck" hint existed).
+- **Cause:** the idle ladder was enabled only `!hasStartedDrag`.
+- **Fix:** enable it again whenever the child is not dragging; the hand starts from the object's current position.
+
+## 18. An action should stop the voice (fast press / hold / tap), but a queued line still plays over it
+- **Symptom:** Samaprabha: pressing the next clue quickly does not stop the VO; the previous clue's reveal line
+  starts after its syllable, over the new hold.
+- **Cause:** the stop ran only for a press ON the clue and only if no syllable was playing; the reveal line was
+  queued behind the syllable and played later.
+- **Fix:** stop spoken lines whenever a hold starts (press or slide-on); skip the queued line if the next hold is
+  already active. A syllable is still never cut. In Sarvada the search was gated behind the intro voice-over; the
+  tap target must be live as soon as the picture is shown.
+
+## 19. The 3-2-1 countdown shows but the game is not paused
+- **Cause:** the scene only rendered the overlay. Pausing needs `resumeDelay` on `useVoiceGuidance` AND
+  `usePauseAwareTimeout`, and any scene-owned `Audio` element (the Finale's whole-Shloka recording) must be paused
+  in `onHide` and resumed in `onShow`. Timers made with `window.setTimeout` are not paused at all.
+- **Check:** switch tab for ~10s mid-recap and mid-play; the recording and timers must wait for the countdown.
+
+## 20. Shuffled cards break position-based progress
+- **Rule:** if card order is random per game, syllables / progress must follow POSITION (Nth card lights the Nth
+  syllable), and the order must be saved with the checkpoint (`cardOrder`) so Continue does not repeat a card;
+  clear it in the reset config and the Replay handler. Shuffle the answer options too, or the right symbol is always
+  in the same place (Sarvakaryeshu).
+
+## 21. Reading old PENDING lines as if they were open
+- Before telling Madhurima something is still open (e.g. the Mahakaya syllable clip), read the LATER entries in
+  DECISIONS.md and CHANGELOG.md: a PENDING line is often superseded by a LOCKED entry or already built.
+
 ## Quick debugging snippets (paste in the browser console)
 Log every speech call and cancel (find who cancels a line):
 ```js
