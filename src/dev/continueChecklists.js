@@ -72,14 +72,31 @@ export const CONTINUE_CHECKLISTS = {
     { text: leave('Comparison card is showing.'), expect: 'The comparison card comes back.' },
   ]),
 
-  'continue-indian-story': list('My Indian Story (About Me Hut 4)', [
-    { text: 'Finish a step (e.g. pick a region), go to the next step, then leave within 1 second and tap Continue.', expect: 'Continue starts at the step you reached, restarted fresh (saved instantly).' },
-    { text: 'Midway through the story, tap Replay after finishing, or Play Again.', expect: 'Starts at the opening, nothing from the old run comes back.' },
+  'continue-indian-story': list('My Indian Story (About Me Hut 4) - in play order', [
+    // 1. Ganesha's home
     { text: leave("Ganesha's home: after finding one or two places."), expect: 'Step restarts with the places reset; the magnifier is back; the line replays.' },
+    { text: 'Find all the places in Ganesha home and do not touch anything.', expect: 'It moves to Your home. Within about 1 second the voice says "Now choose a place your family feels connected to." Never silent.' },
+    // 2. Your home
     { text: leave('Your home: a region chosen.'), expect: 'Step restarts with the region cleared; you can choose again.' },
-    { text: leave('Languages step (Ganesha or yours).'), expect: 'The same step shows; your earlier choices are kept.' },
-    { text: leave('Festivals step (Ganesha or yours).'), expect: 'The same step shows; choices are kept.' },
-    { text: leave('Origin card is showing.'), expect: 'The origin card comes back.' },
+    { text: 'Choose a region, tap Continue, then leave within 1 second and tap Continue.', expect: 'Continue starts at the Ganesha language step, restarted fresh (saved instantly).' },
+    // 3. Ganesha's language guess
+    { text: leave('Ganesha language guess: tap Sanskrit and leave DURING the success line.'), expect: 'The solved card shows (Sanskrit selected, other cards visible); the success line replays once, then it moves on to your languages. The guess is not asked again.' },
+    { text: leave('Ganesha language guess: tap Sanskrit, let the success line FINISH, then leave before the next step shows.'), expect: 'Goes straight on to your languages without replaying the line.' },
+    // 4. Your languages
+    { text: leave('Your languages: 1-3 languages picked.'), expect: 'The same step shows; your earlier choices are kept.' },
+    { text: 'Tap Continue on your languages (watch the button after the tap).', expect: 'The shadow stays the normal soft grey. No purple shadow stays on the button.' },
+    // 5. Ganesha's festival guess
+    { text: leave('Ganesha festival guess: tap Ganesh Chaturthi and leave DURING the success line.'), expect: 'The solved card shows; only "Yes - Ganesh Chaturthi!" replays, then it moves on to your festivals.' },
+    { text: leave('Ganesha festival guess: tap Ganesh Chaturthi, let the success line FINISH, then leave.'), expect: 'Goes straight on to your festivals without replaying the line.' },
+    // 6. Your festivals
+    { text: leave('Your festivals: 1-4 festivals picked.'), expect: 'The same step shows; choices are kept.' },
+    { text: 'Tap See Our Story (watch the button after the tap).', expect: 'The shadow stays the normal soft grey. No purple shadow stays on the button.' },
+    // 7. Origin card
+    { text: leave('Origin card is showing after you picked a home, 1-3 languages and 1-4 festivals.'), expect: 'Your side shows the home icon, every language icon and every festival icon you picked. Never "?" or empty rows.' },
+    { text: 'On the origin card, press the browser refresh (F5).', expect: 'The origin card comes back with all your picks. Never an empty "Your Story" side.' },
+    // 8. Finish and replay
+    { text: 'Finish a step, go to the next step, then leave within 1 second and tap Continue.', expect: 'Continue starts at the step you reached, restarted fresh (saved instantly).' },
+    { text: 'Finish the scene, tap Play Again on the completion modal, then play through to each guess and the origin card.', expect: 'Opens at the opening modal. Both guesses are asked again, picks are empty, nothing from the old run comes back, and no completion modal re-opens by itself.' },
   ]),
 };
 
