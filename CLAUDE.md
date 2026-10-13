@@ -166,6 +166,9 @@ Vakratunda · Mahakaya · Suryakoti · Samaprabha · Nirvighnam · Kurumedeva ·
 - ❌ Never hardcode incorrect Sanskrit
 - ❌ Never add an unprefixed `@keyframes` name or a generic global class (`.hint-glow`, `.pulse`, `.glow`…) in a scene/component CSS file. Vite bundles all CSS into ONE global stylesheet, so a same-named rule in another scene silently wins (Kurumedeva's friend glow broke this way, 2026-10-12). Prefix every animation with the scene/component (`kuruHintGlow`, `vakStageHintPulse`) and scope classes under the scene's root class. Run `npm run check:css` before committing.
 - 📖 Before touching resume/Continue, voice, timers, shared components or CSS, read `docs/KNOWN_PITFALLS.md` (bugs that cost hours before) and add a new entry whenever one does.
+- ❌ Never save a `...SuccessDone` marker or advance a sequence from a voice `onEnd`/`onerror` without ignoring cancelled/interrupted lines and unmounted scenes (a cancelled line is not a finished line). Never set a "started" ref before the timer it guards (StrictMode freezes resume). See KNOWN_PITFALLS 1, 11b, 11c.
+- ❌ Never ship a scene whose Play Again does not clear every saved flag it reads (its `SceneResetConfigs.js` entry), its local `useState`, and every flag that gates the completion modal. Test: finish the scene, tap Play Again on the completion modal. See KNOWN_PITFALLS 11d.
+- ❌ Hand/glow cues: use `GestureDemo anchor="fingertip"`, centre glows on the hit zone, and give layout-debug cue points visible draggable handles. See KNOWN_PITFALLS 11e.
 
 ---
 

@@ -85,6 +85,43 @@ bug costs more than an hour. (Started 2026-10-12 from the Continue/resume work.)
 - **Fix:** when LEAVING (badge / back / unmount), detach `onend/onerror` and clear the tracked utterance BEFORE cancelling (`abortWebSpeech`). Keep the plain cancel for "a new line takes over", where the interrupted line's callback is expected to fire.
 - **Seen in:** Suryakoti (Samaprabha) and Sarvakaryeshu wrappers (2026-10-12).
 
+## 11c. A cancelled voice line saves "done" or advances the game
+- **Symptom:** leave during a success line, tap Continue: the line is skipped and only the next card shows.
+  Or two steps run at once / a voice overlaps another line.
+- **Cause:** `cancel()` (a newer line, leaving, unmount) fires `onerror` ('canceled'/'interrupted') or `onend`
+  on the old utterance. If the callback then saves `...SuccessDone` or runs the next step, a line that never
+  finished counts as finished.
+- **Fix:** in every `onEnd` that saves a marker or advances: ignore cancelled/interrupted errors; ignore the
+  callback once the component is unmounted (an `aliveRef`/`leftSceneRef` set in the effect cleanup); and only
+  save "success line done" if the line really played (check elapsed time as a backstop, e.g. >= 1.5 s).
+- **Seen in:** Pond lotus success line, Ears game (fresh start + lines replacing each other), Flower Journey.
+
+## 11d. Play Again leaves the old state on screen or re-opens the completion modal
+- **Symptom:** tap Play Again on the completion modal: the opening modal shows but the finished scene is still
+  behind it (rock moved, lotus bloomed), or the completion modal immediately comes back.
+- **Cause (three separate gaps):**
+  1. The scene uses the shared `useSceneReset` and its entry in `SceneResetConfigs.js` clears fields the scene
+     does not use, but not the flags it actually draws from (Pond: `rockMoved`, `reedsParted`, `lotusBloomed`...).
+  2. The scene stays mounted, so local React state (`useState`) is not reset by the saved-state reset.
+  3. An effect shows the completion modal while "finished" flags are true and the modal is closed
+     (Sacred Assembly: `fireworksFinished` + `sceneCompleteVOFinished` were never cleared).
+- **Fix:** list every saved flag the scene reads in its reset config; reset local state in the Replay handler
+  (or remount with a `key`); clear every "finished/celebration done" flag that gates the completion modal.
+- **Spot it:** `grep` the scene's `initialState` and make sure each key is in the reset config; search effects
+  that call `setShowSceneCompletion(true)` and list what they depend on.
+- **Check:** finish the scene, tap Play Again on the completion modal, look at the board behind the opening modal.
+- **Seen in:** Pond, Sacred Assembly (2026-10-12).
+
+## 11e. Hand / glow cues look "offset" (GestureDemo)
+- The hand image's centre is not its fingertip: the touch circle sits ~38% from the left and ~18% from the
+  top. A cue point placed by eye on the target puts the fingertip up-left of it. Use `anchor="fingertip"` so
+  the touch circle lands exactly on the cue point (hold rings are drawn centred on the point).
+- Glows must share the hit zone's centre: put them inside the hit-zone element, not inside the art element
+  (their boxes have different sizes and centres).
+- Layout-debug panels must show a visible, draggable handle for every cue point; invisible points cannot be
+  placed. A reeds-style swipe must be longer than the game's success distance (Pond: 68 px) or a child who
+  copies the hand fails.
+
 ## 12. Tooling gotchas (Windows dev machine)
 - **Two builds at once** (two sessions running `vite build`) clobber `dist/` — you get
   `ENOENT … dist/images/…`. Run one build at a time.
