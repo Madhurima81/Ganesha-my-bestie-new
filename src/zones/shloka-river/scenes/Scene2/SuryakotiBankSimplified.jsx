@@ -187,6 +187,9 @@ const SuryakotiBankContent = ({
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
   const [showMandala, setShowMandala] = useState(false);
   const [revealConfig, setRevealConfig] = useState(null);
+  // Words whose reveal card has already been started. The live completion timer, the pending-phase effect and
+  // the reload restore can all fire for the same word; only the first may show the card (and its chime/voice).
+  const revealStartedRef = useRef(new Set());
   const [showTapSparkles, setShowTapSparkles] = useState(false);
   const [showWordStar, setShowWordStar] = useState(false);
   const fxBgRef = useRef(null);
@@ -525,6 +528,8 @@ const SuryakotiBankContent = ({
 
     const restoreReveal = (word) => {
       restoreTimer = window.setTimeout(() => {
+        if (revealStartedRef.current.has(word)) return;
+        revealStartedRef.current.add(word);
         hasRestoredRevealRef.current = true;
         const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
         playChime();
@@ -712,6 +717,8 @@ const SuryakotiBankContent = ({
       });
 
       setShowSparkle(`${word}-celebration`);
+        if (revealStartedRef.current.has(word)) return;
+        revealStartedRef.current.add(word);
 
       const triggerReveal = () => {
         setShowSparkle(null);
@@ -760,6 +767,8 @@ const SuryakotiBankContent = ({
     const word = isSuryakotiPending ? 'suryakoti' : isSamaprabhaPending ? 'samaprabha' : null;
 
     if (!word) return undefined;
+      if (revealStartedRef.current.has(word)) return;
+      revealStartedRef.current.add(word);
 
     const timer = window.setTimeout(() => {
       const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
@@ -1080,6 +1089,7 @@ const SuryakotiBankContent = ({
               onReplay={() => {
                 clearAllTimeouts();
                 stopAllVoice();
+                revealStartedRef.current.clear();
                 setShowSceneCompletion(false);
                 setShowMandala(false);
                 setRevealConfig(null);
