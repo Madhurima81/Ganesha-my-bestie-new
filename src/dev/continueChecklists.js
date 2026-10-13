@@ -75,21 +75,31 @@ export const CONTINUE_CHECKLISTS = {
   'continue-indian-story': list('My Indian Story (About Me Hut 4) - in play order', [
     // 1. Ganesha's home
     { text: leave("Ganesha's home: after finding one or two places."), expect: 'Step restarts with the places reset; the magnifier is back; the line replays.' },
+    { text: leave('Ganesha home: find the last place and leave DURING the closing line ("You found some places...").'), expect: 'All three places show as found; the closing line replays once, then it moves on to Your home. The places are not searched for again.' },
+    { text: leave('Ganesha home: let the closing line FINISH, then leave before Your home shows.'), expect: 'Goes straight to Your home without replaying the line.' },
     { text: 'Find all the places in Ganesha home and do not touch anything.', expect: 'It moves to Your home. Within about 1 second the voice says "Now choose a place your family feels connected to." Never silent.' },
     // 2. Your home
     { text: leave('Your home: a region chosen.'), expect: 'Step restarts with the region cleared; you can choose again.' },
+    { text: 'Your home: pick a region (it says the place name), then tap Continue.', expect: 'Continue plays "This is the place you chose." in full, then it moves on to the Ganesha language step. Nothing cuts the line.' },
+    { text: leave('Your home: pick a region, tap Continue and leave DURING the confirm line.'), expect: 'Your region is still chosen; only the confirm line replays, then it moves on. "Now choose a place..." does not repeat.' },
+    { text: leave('Your home: tap Continue, let the confirm line FINISH, then leave.'), expect: 'Goes straight on to the Ganesha language step without replaying the line.' },
+    { text: 'Ganesha festival guess: tap Ganesh Chaturthi and leave to the map while "Yes - Ganesh Chaturthi!" is playing.', expect: 'The voice stops at once. Nothing keeps talking on Zone Welcome.' },
     { text: 'Choose a region, tap Continue, then leave within 1 second and tap Continue.', expect: 'Continue starts at the Ganesha language step, restarted fresh (saved instantly).' },
     // 3. Ganesha's language guess
     { text: leave('Ganesha language guess: tap Sanskrit and leave DURING the success line.'), expect: 'The solved card shows (Sanskrit selected, other cards visible); the success line replays once, then it moves on to your languages. The guess is not asked again.' },
     { text: leave('Ganesha language guess: tap Sanskrit, let the success line FINISH, then leave before the next step shows.'), expect: 'Goes straight on to your languages without replaying the line.' },
     // 4. Your languages
     { text: leave('Your languages: 1-3 languages picked.'), expect: 'The same step shows; your earlier choices are kept.' },
+    { text: leave('Your languages: pick some, tap Continue and leave DURING the confirm line ("These are the languages you chose.").'), expect: 'Your picks are still shown; the confirm line replays once, then it moves on to the festival guess. No "choose your languages" line repeats.' },
+    { text: leave('Your languages: tap Continue, let the confirm line FINISH, then leave before the next step shows.'), expect: 'Goes straight on to the festival guess without replaying the line.' },
     { text: 'Tap Continue on your languages (watch the button after the tap).', expect: 'The shadow stays the normal soft grey. No purple shadow stays on the button.' },
     // 5. Ganesha's festival guess
     { text: leave('Ganesha festival guess: tap Ganesh Chaturthi and leave DURING the success line.'), expect: 'The solved card shows; only "Yes - Ganesh Chaturthi!" replays, then it moves on to your festivals.' },
     { text: leave('Ganesha festival guess: tap Ganesh Chaturthi, let the success line FINISH, then leave.'), expect: 'Goes straight on to your festivals without replaying the line.' },
     // 6. Your festivals
     { text: leave('Your festivals: 1-4 festivals picked.'), expect: 'The same step shows; choices are kept.' },
+    { text: leave('Your festivals: pick some, tap See Our Story and leave DURING the confirm line ("These are the festivals you chose.").'), expect: 'Your picks are still shown; the confirm line replays once, then it moves on to the origin card.' },
+    { text: leave('Your festivals: tap See Our Story, let the confirm line FINISH, then leave.'), expect: 'Goes straight on to the origin card without replaying the line.' },
     { text: 'Tap See Our Story (watch the button after the tap).', expect: 'The shadow stays the normal soft grey. No purple shadow stays on the button.' },
     // 7. Origin card
     { text: leave('Origin card is showing after you picked a home, 1-3 languages and 1-4 festivals.'), expect: 'Your side shows the home icon, every language icon and every festival icon you picked. Never "?" or empty rows.' },

@@ -405,6 +405,11 @@ coding bug (logic, timing, state, voice) could recur in another scene. Not for C
 - **Status:** built 2026-10-13, not yet adopted in any scene. Adopt first in the Shloka River card reveals and the
   Ears/Eyes start/resume, then only where a freeze has been seen.
 
+## 43. A two-line voice sequence keeps talking after the scene is left
+- **Symptom:** leave during line 1 of "line 1, then line 2" and line 2 plays on Zone Welcome.
+- **Cause:** `useGaneshaVoice` cancels speech on unmount and reports that as `onEnd`. The scene's `aliveRef` cleanup was declared AFTER the hook, so it was still true when `onEnd` ran, and the next line started. Unmount cleanups run in declaration order.
+- **Fix:** declare `aliveRef` (and its effect) BEFORE `useGaneshaVoice`. Also: unlock a Continue button from the line's end (with a failsafe timer), not a short fixed delay, or the next step's voice cuts the line.
+
 ## Quick debugging snippets (paste in the browser console)
 Log every speech call and cancel (find who cancels a line):
 ```js
