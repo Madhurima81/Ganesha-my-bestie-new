@@ -319,6 +319,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   // ── Resume Delay (shared across pause/resume logic) ──────────────────────────
   const RESUME_DELAY_MS = 3000;
+  const RESUME_SETTLE_SENTINEL = '__resume__';
   const OPENING_VO_VOLUME = 0.55;
   const DISCOVERY_FLY_TOTAL_MS = 3200;
   const DISCOVERY_CENTER_REACH_MS = 900;
@@ -434,6 +435,21 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   useEffect(() => {
     audioStopFnsRef.current = { stopVoice, stopSpokenVoice, clearAllTimeouts };
   }, [stopVoice, stopSpokenVoice, clearAllTimeouts]);
+
+  // Leaving the scene (any route, not only the zone badge): pending scene timers must not fire
+  // afterwards - an advance timer would write the next phase to saved progress after the child left
+  // (KNOWN_PITFALLS 11c). The resume effect's handled flag is reset here too, so StrictMode's
+  // simulated remount re-schedules the resume timers this cleanup just cleared (KNOWN_PITFALLS 1).
+  // Set alive true in the effect body so that remount leaves it true.
+  const aliveRef = useRef(true);
+  useEffect(() => {
+    aliveRef.current = true;
+    return () => {
+      aliveRef.current = false;
+      reloadHandledRef.current = false;
+      clearAllTimeouts();
+    };
+  }, [clearAllTimeouts]);
 
   const hardStopSceneAudio = useCallback(() => {
     const stopFns = audioStopFnsRef.current;
@@ -559,7 +575,9 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     // (same two-speech-source issue as Family Tree).
     stopVoice();
     stopSpokenVoice();
-    speak(text, { age: 7, style: 'child', moment, onEnd });
+    // A line that ends (or is cancelled) after the scene was left must not run its callback
+    // (KNOWN_PITFALLS 11b/11c).
+    speak(text, { age: 7, style: 'child', moment, onEnd: () => { if (aliveRef.current) onEnd?.(); } });
   }, [isAudioOn, speak, stopVoice, stopSpokenVoice]);
   const replayCurrentVoice = useCallback(() => {
     if (sceneState.showingCompletionScreen) {
@@ -857,7 +875,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       if (gamePhase === 'child-intro') {
         suppressPhaseVoUntilReloadSettlesRef.current = true;
-        expectedReloadPhaseRef.current = 'child-intro';
+        expectedReloadPhaseRef.current = RESUME_SETTLE_SENTINEL;
         clearAllTimeouts();
         interruptCurrentVoice();
         phaseVoiceRef.current = {};
@@ -869,19 +887,22 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             reloadVoFired.fired = true;
             phaseVoiceRef.current.childIntro = true;
             speakLine(VOICE_LINES.childIntro, { moment: 'encouragement' });
-          }, 180);
+          }, 500);
         }
         safeSetTimeout(() => {
           suppressPhaseVoUntilReloadSettlesRef.current = false;
           expectedReloadPhaseRef.current = null;
-        }, 220);
+        }, 520);
         return;
       }
 
       const restartPhase = ganeshaRestartPhaseMap[gamePhase];
+        // The phase-entry effect must stay silent until the resume line below plays: if it also
+        // speaks, the first line is cut ~0.5 s in by the second ("Cho... Choose your color").
+        // '__resume__' never matches a phase, so the effect keeps returning until the timer releases it.
       if (restartPhase) {
         suppressPhaseVoUntilReloadSettlesRef.current = true;
-        expectedReloadPhaseRef.current = restartPhase;
+        expectedReloadPhaseRef.current = RESUME_SETTLE_SENTINEL;
         // Reload rule: in any Ganesha phase (choice/hint/celebration), restart from phase entry.
         // Celebration phases now resume at the next question, so there is no celebration VO to suppress.
         suppressCelebrationVoOnReloadRef.current = false;
@@ -926,21 +947,17 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           // Keep false until playback starts.
           phaseVoiceRef.current[ganeshaVoiceKey] = false;
           const reloadVoFired = { fired: false };
-          if (isAudioOn) {
-            safeSetTimeout(() => {
-              if (reloadVoFired.fired) return;
-              reloadVoFired.fired = true;
-              phaseVoiceRef.current[ganeshaVoiceKey] = true;
-              speakLine(ganeshaEntryLine, { moment: 'thinking' });
-            }, 160);
-          }
-        }
-        if (gamePhase === restartPhase) {
-          // Same-phase reload can skip phase-effect rerun; clear suppress manually.
+          // Muted: speakLine finishes on the hook's silent timer, so onEnd still arms the hint clock.
           safeSetTimeout(() => {
-            suppressPhaseVoUntilReloadSettlesRef.current = false;
-            expectedReloadPhaseRef.current = null;
-          }, 200);
+            if (reloadVoFired.fired) return;
+            reloadVoFired.fired = true;
+            phaseVoiceRef.current[ganeshaVoiceKey] = true;
+            speakLine(ganeshaEntryLine, { moment: 'thinking', onEnd: () => setPhaseVoiceDone(true) });
+          }, 500);
+        safeSetTimeout(() => {
+          suppressPhaseVoUntilReloadSettlesRef.current = false;
+          expectedReloadPhaseRef.current = null;
+        }, 520);
         }
         return;
       }
@@ -1004,21 +1021,20 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         if (childEntryLine && childVoiceKey) {
           phaseVoiceRef.current[childVoiceKey] = false;
           const reloadVoFired = { fired: false };
-          suppressPhaseVoUntilReloadSettlesRef.current = false;
-          expectedReloadPhaseRef.current = null;
-          if (isAudioOn) {
-            safeSetTimeout(() => {
-              if (reloadVoFired.fired) return;
-              reloadVoFired.fired = true;
-              phaseVoiceRef.current[childVoiceKey] = true;
-              speakLine(childEntryLine, { moment: 'thinking' });
-            }, 160);
-          }
+          // Keep the phase-entry effect silent until this line plays (see the Ganesha branch above).
+          suppressPhaseVoUntilReloadSettlesRef.current = true;
+          expectedReloadPhaseRef.current = RESUME_SETTLE_SENTINEL;
+          safeSetTimeout(() => {
+            if (reloadVoFired.fired) return;
+            reloadVoFired.fired = true;
+            phaseVoiceRef.current[childVoiceKey] = true;
+            speakLine(childEntryLine, { moment: 'thinking', onEnd: () => setPhaseVoiceDone(true) });
+          }, 500);
           // Same-phase child reloads may skip phase-effect rerun; keep guard state clean.
           safeSetTimeout(() => {
             suppressPhaseVoUntilReloadSettlesRef.current = false;
             expectedReloadPhaseRef.current = null;
-          }, 200);
+          }, 520);
         }
         return;
       }
@@ -1286,7 +1302,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     // Final comparison card VO (starts after hearts appear)
     if (sceneState.gamePhase === 'comparison-card' && !phaseVoiceRef.current.friendCelebration) {
-      phaseVoiceRef.current.friendCelebration = true;
+      // Flag is set when the timer FIRES: this effect's cleanup clears the timer (StrictMode remount
+      // on Continue), and a flag set up front kept the second run from re-scheduling it, so the line
+      // never played (KNOWN_PITFALLS 1).
+        phaseVoiceRef.current.friendCelebration = true;
       const comparisonVoTimer = setTimeout(() => {
         speakLine(VOICE_LINES.friendCelebration, { moment: 'celebration' });
       }, 1000);
@@ -1583,10 +1602,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     playChime();
     setShowDrawingPad(false);
     setDrawingMode(null);
-    triggerDiscoveryFly({ image: pencilImg, name: 'My Food' }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
+    triggerDiscoveryFly({ image: data.image, name: 'My Food' }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
     sceneActions.updateState({
       childFoodDrawing: data.image,
-      childDiscoveries: [{ image: pencilImg, name: 'My Food' }],
+      childDiscoveries: [{ image: data.image, name: 'My Food' }],
       currentModal: null,
       draftData: null
     });

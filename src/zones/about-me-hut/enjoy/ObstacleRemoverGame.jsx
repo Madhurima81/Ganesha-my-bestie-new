@@ -126,15 +126,18 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
           // --- COUNTERS & INTERACTIVE STATES ---
           wish1Taps: 0,
           wish1FinalMoment: false,
+          wish1SuccessDone: false, // success line finished (Continue replays it only if the child left during it)
 
           wish2Taps: 0,
           wish2FinalMoment: false,
+          wish2SuccessDone: false,
           bowlStates: [false, false, false], // Track individual bowls
           wish2PlateFoods: [null, null, null],
           wish2FoodPool: ['apple', 'banana', 'rice'],
 
           wish3Taps: 0,
           wish3FinalMoment: false,
+          wish3SuccessDone: false,
           parkStates: [false, false, false], // Track individual park items (Grass, Butterfly, Slide)
 
           trunkTaps: 0,
@@ -393,6 +396,12 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const { playUiTap, playPlace, playWrongTap, playSparkle, playChime, playGlow, setGlobalVolume } = useGameSounds();
   const { speak, stop: stopSpokenVoice, mute: muteSpokenVoice, isSpeaking } = useGaneshaVoice();
   const isSpeakingRef = useRef(false);
+  // False once the scene is left (set true in the effect body so StrictMode's remount keeps it true).
+  const aliveRef = useRef(true);
+  useEffect(() => {
+    aliveRef.current = true;
+    return () => { aliveRef.current = false; };
+  }, []);
   const isAudioOnRef = useRef(isAudioOn);
   const latestSceneStateRef = useRef(sceneState);
   const wish1TapCountRef = useRef(sceneState?.wish1Taps || 0);
@@ -539,14 +548,30 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       options.onEnd?.();
       return;
     }
-    const { onStart, onEnd, onError, moment = 'encouragement' } = options;
+    const { onStart, onEnd, onError, moment = 'encouragement', ignoreCancel = false } = options;
     // Stop both engines first: useVoiceGuidance's own idle timer can fire its
     // hook-driven playVoice() independently of this scene's speakLine calls —
     // without this, a still-playing idle-hint MP3 keeps going under this line
     // (same two-speech-source issue as Family Tree).
     stopVoice();
     stopSpokenVoice();
-    speak(text, { age: 7, style: 'child', moment, onStart, onEnd, onError });
+    // Callbacks are ignored once the scene is left, so a chained line never starts on Zone Welcome
+    // (KNOWN_PITFALLS 11b). `ignoreCancel` is for lines whose end chains/advances: a cancelled or
+    // interrupted line is not a finished line (11c).
+    let cancelled = false;
+    speak(text, {
+      age: 7, style: 'child', moment, onStart,
+      onEnd: () => {
+        if (!aliveRef.current) return;
+        if (ignoreCancel && cancelled) return;
+        onEnd?.();
+      },
+      onError: (e) => {
+        if (e?.error === 'canceled' || e?.error === 'interrupted') cancelled = true;
+        if (!aliveRef.current) return;
+        onError?.(e);
+      },
+    });
   };
 
   const interruptCurrentVoice = () => {
@@ -692,11 +717,24 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   }, []);
 
   const queueCompletionWithCheer = useCallback((completionLine, options = {}) => {
-    const { startDelayMs = COMPLETION_CHEER_DELAY_MS } = options;
+    const { startDelayMs = COMPLETION_CHEER_DELAY_MS, wishNumber = null, onDone = null } = options;
     const cheer = getCompletionCheer();
     safeSetTimeout(() => {
-      speakLine(`${cheer} ${completionLine}`, { moment: 'celebration' });
+      const startedAt = Date.now();
+      // The success line only counts as finished when it really played to its end: not cancelled,
+      // not after the scene was left (speakLine ignores those), and not an instant error (< 1 s).
+      // Continue replays an unfinished line and skips a finished one (KNOWN_PITFALLS 7, 11c).
+      speakLine(`${cheer} ${completionLine}`, {
+        moment: 'celebration',
+        ignoreCancel: true,
+        onEnd: () => {
+          if (Date.now() - startedAt < 1000) return;
+          if (wishNumber) sceneActions.checkpoint({ [`wish${wishNumber}SuccessDone`]: true });
+          onDone?.();
+        },
+      });
     }, startDelayMs);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- checkpoint reads refs inside SceneManager
   }, [getCompletionCheer, safeSetTimeout, speakLine]);
 
   // --- RELOAD DETECTION & RESTORATION ---
@@ -727,23 +765,74 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     // Completion phases: that wish is finished, so resume at the NEXT beat (never redo it).
     // wish1-complete -> wish2, wish2-complete -> wish3, wish3-complete -> all-wishes-complete.
 
-    // Active phases — reset counters, replay entry VO
+    // Active phases. A SOLVED wish (3/3 saved at the solving move) shows its finished board, replays
+    // its success line only if the child left during it, then moves on. An unsolved wish restarts
+    // cleanly with its full intro. (KNOWN_PITFALLS 7)
+    const wishDiscoveries = {
+      1: { name: 'Kindness', image: kindnessHeaderIcon },
+      2: { name: 'Sharing', image: sharingHeaderIcon },
+      3: { name: 'Nature', image: natureHeaderIcon },
+    };
+    const wishSolved = {
+      1: (sceneState.wish1Taps || 0) >= 3,
+      2: (sceneState.wish2Taps || 0) >= 3 || ((sceneState.bowlStates || []).length === 3 && sceneState.bowlStates.every(Boolean)),
+      3: (sceneState.wish3Taps || 0) >= 3 || ((sceneState.parkStates || []).length === 3 && sceneState.parkStates.every(Boolean)),
+    };
+    const advanceFromWish = (n) => {
+      const cur = latestSceneStateRef.current || sceneState;
+      const storyDiscoveries = appendUniqueDiscovery(cur.storyDiscoveries, wishDiscoveries[n]);
+      if (n === 1) {
+        sceneActions.updateState({ storyDiscoveries, gamePhase: 'wish2-active', wish1FinalMoment: false, wish2Taps: 0, bowlStates: [false, false, false], wish2PlateFoods: [null, null, null], wish2FoodPool: [...WISH2_FOOD_KEYS], wish2FinalMoment: false });
+      } else if (n === 2) {
+        sceneActions.updateState({ storyDiscoveries, gamePhase: 'wish3-active', wish2FinalMoment: false, wish3Taps: 0, parkStates: [false, false, false], wish3FinalMoment: false });
+      } else {
+        sceneActions.updateState({ storyDiscoveries, gamePhase: 'all-wishes-complete', wish3FinalMoment: false });
+      }
+    };
+    const resumeSolvedWish = (n) => {
+      // The FinalMoment effects would speak the success line again; this branch owns it.
+      phaseVoiceRef.current[`wish${n}FinalMomentVo`] = true;
+      // Header shows the finished wish's discovery now (its save used to lag the solve).
+      sceneActions.updateState({ storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, wishDiscoveries[n]) });
+      if (sceneState[`wish${n}SuccessDone`]) {
+        // Finished before the child left: go straight on (after the 500 ms first-instant wait).
+        safeSetTimeout(() => advanceFromWish(n), 500);
+        return;
+      }
+      queueCompletionWithCheer(VOICE_LINES[`wish${n}Complete`], {
+        wishNumber: n,
+        startDelayMs: 500,
+        onDone: () => { safeSetTimeout(() => advanceFromWish(n), 800); },
+      });
+    };
+    const speakWishIntroThenActive = (introLine, activeLine, phaseKey) => {
+      safeSetTimeout(() => {
+        speakLine(introLine, {
+          moment: 'story',
+          ignoreCancel: true,
+          onEnd: () => speakLine(activeLine, { moment: 'encouragement', onEnd: () => setPhaseVoiceDoneFor(phaseKey) }),
+        });
+      }, 500);
+    };
     if (gamePhase === 'wish1-active') {
+      if (wishSolved[1]) { resumeSolvedWish(1); return; }
       phaseVoiceRef.current.wish1Active = true;
       sceneActions.updateState({ wish1Taps: 0, wish1FinalMoment: false });
-      safeSetTimeout(() => { speakLine(VOICE_LINES.wish1Active, { moment: 'encouragement' }); }, 500);
+      speakWishIntroThenActive(VOICE_LINES.wish1Intro, VOICE_LINES.wish1Active, 'wish1-active');
       return;
     }
     if (gamePhase === 'wish2-active') {
+      if (wishSolved[2]) { resumeSolvedWish(2); return; }
       phaseVoiceRef.current.wish2Active = true;
       sceneActions.updateState({ wish2Taps: 0, bowlStates: [false, false, false], wish2PlateFoods: [null, null, null], wish2FoodPool: [...WISH2_FOOD_KEYS], wish2FinalMoment: false });
       safeSetTimeout(() => { speakLine(VOICE_LINES.wish2Active, { moment: 'encouragement' }); }, 500);
       return;
     }
     if (gamePhase === 'wish3-active') {
+      if (wishSolved[3]) { resumeSolvedWish(3); return; }
       phaseVoiceRef.current.wish3Active = true;
       sceneActions.updateState({ wish3Taps: 0, parkStates: [false, false, false], wish3FinalMoment: false });
-      safeSetTimeout(() => { speakLine(VOICE_LINES.wish3Active, { moment: 'encouragement' }); }, 500);
+      speakWishIntroThenActive(VOICE_LINES.wish3Intro, VOICE_LINES.wish3Active, 'wish3-active');
       return;
     }
 
@@ -859,6 +948,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       phaseVoiceRef.current.wish1Active = true;
       speakLine(VOICE_LINES.wish1Intro, {
         moment: 'story',
+        ignoreCancel: true,
         onEnd: () => {
           speakLine(VOICE_LINES.wish1Active, { moment: 'encouragement', onEnd: () => setPhaseVoiceDoneFor('wish1-active') });
         }
@@ -866,7 +956,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
     if (sceneState.gamePhase === 'wish1-complete' && !phaseVoiceRef.current.wish1Complete) {
       phaseVoiceRef.current.wish1Complete = true;
-      queueCompletionWithCheer(VOICE_LINES.wish1Complete, { startDelayMs: 0 });
+      queueCompletionWithCheer(VOICE_LINES.wish1Complete, { wishNumber: 1, startDelayMs: 0 });
     }
 
     // Wish 2
@@ -891,6 +981,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       phaseVoiceRef.current.wish3Active = true;
       speakLine(VOICE_LINES.wish3Intro, {
         moment: 'story',
+        ignoreCancel: true,
         onEnd: () => {
           speakLine(VOICE_LINES.wish3Active, { moment: 'encouragement', onEnd: () => setPhaseVoiceDoneFor('wish3-active') });
         }
@@ -978,7 +1069,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   useEffect(() => {
     if (sceneState.wish1FinalMoment && !phaseVoiceRef.current.wish1FinalMomentVo) {
       phaseVoiceRef.current.wish1FinalMomentVo = true;
-      queueCompletionWithCheer(VOICE_LINES.wish1Complete, { startDelayMs: 0 });
+      queueCompletionWithCheer(VOICE_LINES.wish1Complete, { wishNumber: 1, startDelayMs: 0 });
     }
     if (!sceneState.wish1FinalMoment) {
       phaseVoiceRef.current.wish1FinalMomentVo = false;
@@ -988,7 +1079,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   useEffect(() => {
     if (sceneState.wish2FinalMoment && !phaseVoiceRef.current.wish2FinalMomentVo) {
       phaseVoiceRef.current.wish2FinalMomentVo = true;
-      queueCompletionWithCheer(VOICE_LINES.wish2Complete, { startDelayMs: 0 });
+      queueCompletionWithCheer(VOICE_LINES.wish2Complete, { wishNumber: 2, startDelayMs: 0 });
     }
     if (!sceneState.wish2FinalMoment) {
       phaseVoiceRef.current.wish2FinalMomentVo = false;
@@ -998,7 +1089,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   useEffect(() => {
     if (sceneState.wish3FinalMoment && !phaseVoiceRef.current.wish3FinalMomentVo) {
       phaseVoiceRef.current.wish3FinalMomentVo = true;
-      queueCompletionWithCheer(VOICE_LINES.wish3Complete, { startDelayMs: 0 });
+      queueCompletionWithCheer(VOICE_LINES.wish3Complete, { wishNumber: 3, startDelayMs: 0 });
     }
     if (!sceneState.wish3FinalMoment) {
       phaseVoiceRef.current.wish3FinalMomentVo = false;
@@ -1170,7 +1261,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     triggerMiniGesture('thumbsup', 'center', 1500);
     const newTaps = currentTaps + 1;
     wish1TapCountRef.current = newTaps;
-    sceneActions.updateState({ wish1Taps: newTaps });
+    // The solving tap is saved the moment it happens (checkpoint), not by the 1 s autosave.
+    if (newTaps >= 3) sceneActions.checkpoint({ wish1Taps: newTaps });
+    else sceneActions.updateState({ wish1Taps: newTaps });
 
     if (newTaps >= 3) {
       wish1CompletionQueuedRef.current = true;
@@ -1194,7 +1287,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           storyDiscoveries: appendUniqueDiscovery(currentState.storyDiscoveries, discovery)
         });
       }, (fromBubble ? WISH1_FINAL_ICON_DELAY_MS : DISCOVERY_FLY_START_DELAY_MS) + DISCOVERY_CENTER_REACH_MS);
-      queueCompletionWithCheer(VOICE_LINES.wish1Complete, {
+      queueCompletionWithCheer(VOICE_LINES.wish1Complete, { wishNumber: 1,
         startDelayMs: fromBubble ? WISH1_FINAL_CHEER_DELAY_MS : COMPLETION_CHEER_DELAY_MS
       });
       safeSetTimeout(() => {
@@ -1408,10 +1501,13 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const getTestResetState = useCallback(() => ({
     wish1Taps: 0,
     wish1FinalMoment: false,
+    wish1SuccessDone: false, // success line finished (Continue replays it only if the child left during it)
     wish2Taps: 0,
     wish2FinalMoment: false,
+    wish2SuccessDone: false,
     wish3Taps: 0,
     wish3FinalMoment: false,
+    wish3SuccessDone: false,
     bowlStates: [false, false, false],
     wish2PlateFoods: [null, null, null],
     wish2FoodPool: [...WISH2_FOOD_KEYS],
@@ -1483,7 +1579,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const newFoodPool = currentFoodPool.filter(key => key !== foodKey);
     const count = newStates.filter(Boolean).length;
 
-    sceneActions.updateState({
+    // The solving drop (3rd plate) is saved the moment it happens (checkpoint), not by the 1 s autosave.
+    (count === 3 ? sceneActions.checkpoint : sceneActions.updateState)({
       bowlStates: newStates,
       wish2Taps: count,
       wish2PlateFoods: newPlateFoods,
@@ -1501,7 +1598,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       playChime();
       // Trigger completion VO immediately on final tap (more reliable than waiting for effect timing).
       phaseVoiceRef.current.wish2FinalMomentVo = true;
-      queueCompletionWithCheer(VOICE_LINES.wish2Complete, { startDelayMs: COMPLETION_CHEER_DELAY_MS });
+      queueCompletionWithCheer(VOICE_LINES.wish2Complete, { wishNumber: 2, startDelayMs: COMPLETION_CHEER_DELAY_MS });
       sceneActions.updateState({
         wish2FinalMoment: true
       });
@@ -1537,7 +1634,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     playUiTap();
     triggerMiniGesture('thumbsup', 'center', 1500);
     const newTaps = sceneState.wish3Taps + 1;
-    sceneActions.updateState({ wish3Taps: newTaps });
+    if (newTaps >= 3) sceneActions.checkpoint({ wish3Taps: newTaps });
+    else sceneActions.updateState({ wish3Taps: newTaps });
 
     if (newTaps >= 3) {
       const discovery = { name: 'Nature', image: natureHeaderIcon };
@@ -1549,7 +1647,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       playChime();
       // Trigger completion VO immediately on final tap (prevents missed/cut playback).
       phaseVoiceRef.current.wish3FinalMomentVo = true;
-      queueCompletionWithCheer(VOICE_LINES.wish3Complete, { startDelayMs: COMPLETION_CHEER_DELAY_MS });
+      queueCompletionWithCheer(VOICE_LINES.wish3Complete, { wishNumber: 3, startDelayMs: COMPLETION_CHEER_DELAY_MS });
       sceneActions.updateState({
         wish3FinalMoment: true
       });
@@ -1584,7 +1682,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     newStates[index] = true;
     const count = newStates.filter(Boolean).length;
 
-    sceneActions.updateState({ parkStates: newStates, wish3Taps: count });
+    // The solving move is saved the moment it happens (checkpoint), not by the 1 s autosave.
+    if (count === 3) sceneActions.checkpoint({ parkStates: newStates, wish3Taps: count });
+    else sceneActions.updateState({ parkStates: newStates, wish3Taps: count });
 
     if (count === 3) {
       const discovery = { name: 'Nature', image: natureHeaderIcon };
@@ -1596,7 +1696,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       playChime();
       // Ensure completion VO is spoken before advancing to drawing intro.
       phaseVoiceRef.current.wish3FinalMomentVo = true;
-      queueCompletionWithCheer(VOICE_LINES.wish3Complete, { startDelayMs: COMPLETION_CHEER_DELAY_MS });
+      queueCompletionWithCheer(VOICE_LINES.wish3Complete, { wishNumber: 3, startDelayMs: COMPLETION_CHEER_DELAY_MS });
       sceneActions.updateState({
         wish3FinalMoment: true
       });
@@ -2408,10 +2508,13 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 gamePhase: 'intro',
                 wish1Taps: 0,
                 wish1FinalMoment: false,
+                wish1SuccessDone: false, // success line finished (Continue replays it only if the child left during it)
                 wish2Taps: 0,
                 wish2FinalMoment: false,
+                wish2SuccessDone: false,
                 wish3Taps: 0,
                 wish3FinalMoment: false,
+                wish3SuccessDone: false,
                 bowlStates: [false, false, false],
                 wish2PlateFoods: [null, null, null],
                 wish2FoodPool: [...WISH2_FOOD_KEYS],

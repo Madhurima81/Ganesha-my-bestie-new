@@ -371,6 +371,13 @@ const FamilyTreeGameContent = ({
  // --- LOCAL REFS & STATE (Not persisted in SceneManager) ---
 
  // --- RELOAD DETECTION STATE ---
+ // False once the scene is left: a line that ends or is cancelled after unmount must not advance
+ // or save (KNOWN_PITFALLS 11b/11c). Set true in the effect body so StrictMode's remount keeps it true.
+ const aliveRef = useRef(true);
+ useEffect(() => {
+ aliveRef.current = true;
+ return () => { aliveRef.current = false; };
+ }, []);
  const reloadHandledRef = useRef(false);
  const resumePopupTimeoutRef = useRef(null);
  const [showResumePopup, setShowResumePopup] = useState(false);
@@ -827,13 +834,15 @@ showTreeSparkles: false,
  }
 
  if (allPlacedSequenceStartedRef.current) return;
- allPlacedSequenceStartedRef.current = true;
+ // The started flag is set when the timer FIRES, not here: StrictMode's simulated unmount clears
+ // the timer, and a flag set up front would stop the second run from rescheduling it (KNOWN_PITFALLS 1).
  if (import.meta.env.DEV) console.log(" allPlaced sequence STARTED");
 
  // Wait for last deity VO to complete (varies by deity: 2.5-3.5s) + 1s gap
  // Using 5000ms to safely account for all deity VOs + TTS variation
  const ALL_PLACED_SPARKLE_DELAY_MS = 5000;
  const ALL_PLACED_SPARKLE_MS = 2500;
+allPlacedSequenceStartedRef.current = true;
 
 allPlacedSequenceTimerRef.current = scheduleTimeout(() => {
 if (import.meta.env.DEV) console.log(" allPlaced timeout FIRED, calling speakHint");
@@ -841,6 +850,7 @@ sceneActions.updateState({ showTreeSparkles: true });
 allPlacedSparkleTimerRef.current = scheduleTimeout(() => {
 sceneActions.updateState({ showTreeSparkles: false });
 }, ALL_PLACED_SPARKLE_MS);
+return () => { cancelTimer(allPlacedSequenceTimerRef); };
 allPlacedSequenceTimerRef.current = null;
 }, ALL_PLACED_SPARKLE_DELAY_MS);
 }, [
@@ -1069,9 +1079,9 @@ sceneState.isSequencePlaying,
  }, 500);
  }
  }
- return () => {
- cancelTimer(finalComparisonTimerRef);
- };
+ // No cleanup that cancels the timer: setFinalRevealPlayed(true) above re-runs this effect, and its
+ // cleanup cancelled the 500 ms comparison line every time, so it never played (KNOWN_PITFALLS 4).
+ // The effect above cancels it when the child leaves sideBySide; unmount clears all timers.
  }, [sceneState.gamePhase, sceneState.showingCompletionScreen, finalRevealPlayed, isAudioOn, stopVoice, stopSpokenVoice, speakHint]);
 
  useEffect(() => {
@@ -1150,10 +1160,12 @@ sceneState.isSequencePlaying,
  // isSequencePlaying gates the idle-hint ladder (GMB Hint Standard v1) â€”
  // it only clears once BOTH the placement animation and this member's
  // voice line have finished, not on a flat timer alone.
+ let finished = false; // chime + clear once: the 4 s failsafe and onEnd both call finishSequence
  let voDone = false; // muted lines finish on the hook's silent timer, not instantly
  let animDone = false;
  const finishSequence = () => {
- if (!voDone || !animDone) return;
+ if (!voDone || !animDone || finished) return;
+ finished = true;
  playChime();
  sceneActions.updateState({
  justPlacedId: null,
@@ -1198,10 +1210,12 @@ sceneState.isSequencePlaying,
 
  playSparkle();
 
+ let finished = false; // chime + clear once: the 4 s failsafe and onEnd both call finishSequence
  let voDone = false; // muted lines finish on the hook's silent timer, not instantly
  let animDone = false;
  const finishSequence = () => {
- if (!voDone || !animDone) return;
+ if (!voDone || !animDone || finished) return;
+ finished = true;
  playChime();
  sceneActions.updateState({
  justPlacedId: null,
@@ -1256,6 +1270,7 @@ sceneActions.updateState({ gamePhase: 'transition' });
  const cancelAdvanceFailsafe = () => {
  if (typeof advanceFailsafe === 'function') advanceFailsafe();
  else clearTimeout(advanceFailsafe);
+ let lineCancelled = false;
  };
 
  const allPlacedScript = getVoiceScript('about-me-hut', 'family-tree', 'allPlaced');
@@ -1263,13 +1278,18 @@ sceneActions.updateState({ gamePhase: 'transition' });
  allPlacedScript?.text || 'You met everyone in my family.',
  {
  age: 7,
+ // A cancelled/interrupted line is not a finished line, and nothing runs after the scene is
+ // left. The 6 s failsafe above still advances a child who stays.
  style: 'child',
+ if (!aliveRef.current || lineCancelled) return;
  moment: 'celebration',
  onEnd: () => {
  cancelAdvanceFailsafe();
  proceedToTransition();
  },
- onError: () => {
+ onError: (e) => {
+ if (e?.error === 'canceled' || e?.error === 'interrupted') { lineCancelled = true; return; }
+ if (!aliveRef.current) return;
  cancelAdvanceFailsafe();
  proceedToTransition();
  }

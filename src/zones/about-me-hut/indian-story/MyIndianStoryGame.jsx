@@ -570,6 +570,18 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const lastDiscoveryTime = useRef(0);
   const reloadHandledRef = useRef(false);
   const childHomeAdvanceRef = useRef(false);
+  // False once the scene is left: speech callbacks that advance or save must ignore a line that
+  // ends (or is cancelled) after unmount (KNOWN_PITFALLS 11b/11c). Set true in the effect body so
+  // StrictMode's simulated unmount/remount leaves it true.
+  const aliveRef = useRef(true);
+  useEffect(() => {
+    aliveRef.current = true;
+    return () => { aliveRef.current = false; };
+  }, []);
+  // First phase-entry line after mount (Continue / refresh) waits ~500 ms: speech at the very first
+  // instant is dropped, and StrictMode's remount cancels it (KNOWN_PITFALLS 1, 2).
+  // A fresh start (phase 'opening') never needs it.
+  const firstEntryVoRef = useRef(phase !== STEPS.OPENING);
 
   const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
     onHide: () => {
@@ -746,8 +758,27 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
   // Speak a line. When muted, useGaneshaVoice completes it on a silent timer
   // (DECISIONS.md 2026-09-29), so onEnd/onError callbacks keep the scene's pacing.
-  const speakIfUnmuted = useCallback((text, opts) => {
-    if (text) speak(text, opts);
+  // `ignoreCancel: true` for lines whose end advances the game: a cancelled/interrupted line is not a
+  // finished line. Callbacks are always ignored once the scene is unmounted.
+  const speakIfUnmuted = useCallback((text, opts = {}) => {
+    if (!text) return;
+    const { onEnd, onError, ignoreCancel, ...rest } = opts;
+    let cancelled = false;
+    speak(text, {
+      ...rest,
+      onError: (e) => {
+        const isCancel = e?.error === 'canceled' || e?.error === 'interrupted';
+        if (isCancel) cancelled = true;
+        if (!aliveRef.current) return;
+        if (ignoreCancel && isCancel) return;
+        onError?.(e);
+      },
+      onEnd: () => {
+        if (!aliveRef.current) return;
+        if (ignoreCancel && cancelled) return;
+        onEnd?.();
+      },
+    });
   }, [speak]);
 
   // Voice lines
@@ -840,34 +871,45 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     if (!info?.text) return;
     const phaseEntryKey = `${phase}:${info.text}`;
     if (entryVoPlayedForPhaseRef.current === phaseEntryKey) return;
-    const stepVoiceKey = `about-me-hut:my-indian-story:${phase}:${info.text}`;
-    const shouldBypassRecentDedupe = isReload && !reloadHandledRef.current;
-    if (!shouldBypassRecentDedupe && wasStepVoSpokenRecently(stepVoiceKey)) {
-      if (phase === STEPS.GANESHA_HOME) {
-        setGaneshaHomeGestureReady(true);
-      }
-      markPromptReady(phase);
-      return;
-    }
-    speak(info.text, {
-      age: childAge,
-      moment: info.moment,
-      onStart: () => {
-        if (phase === STEPS.GANESHA_HOME) {
-          setGaneshaHomeGestureReady(true);
-        }
-      },
-      onEnd: () => markPromptReady(phase),
-      onError: () => {
-        // Don't strand the visual teaching cue if VO fails.
+    const playEntry = () => {
+      const stepVoiceKey = `about-me-hut:my-indian-story:${phase}:${info.text}`;
+      const shouldBypassRecentDedupe = isReload && !reloadHandledRef.current;
+      if (!shouldBypassRecentDedupe && wasStepVoSpokenRecently(stepVoiceKey)) {
         if (phase === STEPS.GANESHA_HOME) {
           setGaneshaHomeGestureReady(true);
         }
         markPromptReady(phase);
+        return;
       }
-    });
-    RECENT_STEP_VO.set(stepVoiceKey, Date.now());
-    entryVoPlayedForPhaseRef.current = phaseEntryKey;
+      speak(info.text, {
+        age: childAge,
+        moment: info.moment,
+        onStart: () => {
+          if (phase === STEPS.GANESHA_HOME) {
+            setGaneshaHomeGestureReady(true);
+          }
+        },
+        onEnd: () => markPromptReady(phase),
+        onError: () => {
+          // Don't strand the visual teaching cue if VO fails.
+          if (phase === STEPS.GANESHA_HOME) {
+            setGaneshaHomeGestureReady(true);
+          }
+          markPromptReady(phase);
+        }
+      });
+      RECENT_STEP_VO.set(stepVoiceKey, Date.now());
+      entryVoPlayedForPhaseRef.current = phaseEntryKey;
+    };
+    if (firstEntryVoRef.current) {
+      // Flag and refs are set when the timer FIRES, never before it (StrictMode cleanup clears it).
+      const t = setTimeout(() => {
+        firstEntryVoRef.current = false;
+        playEntry();
+      }, 500);
+      return () => clearTimeout(t);
+    }
+    playEntry();
   }, [phase, childAge, isAudioOn, isReload, speak, markPromptReady]);
 
   // Opening VO: dedicated path for reliability on scene entry.
@@ -1119,23 +1161,30 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       setChildHomePromptReady(true);
       return;
     }
-    const childHomeStepVoiceKey = `about-me-hut:my-indian-story:${phase}:${VOICE.child_home_entry}`;
-    const shouldBypassRecentDedupe = isReload && !reloadHandledRef.current;
-    if (!shouldBypassRecentDedupe && wasStepVoSpokenRecently(childHomeStepVoiceKey)) {
-      setChildHomePromptReady(true);
-      return;
-    }
-    speakIfUnmuted(VOICE.child_home_entry, {
-      age: childAge,
-      moment: 'default',
-      onEnd: () => setChildHomePromptReady(true),
-      onError: () => setChildHomePromptReady(true)
-    });
-    RECENT_STEP_VO.set(childHomeStepVoiceKey, Date.now());
-    entryVoPlayedForPhaseRef.current = childHomeEntryKey;
-    return () => {
-      if (childHomeEntryVoiceTimerRef.current) clearTimeout(childHomeEntryVoiceTimerRef.current);
+    const playChildHomeEntry = () => {
+      const childHomeStepVoiceKey = `about-me-hut:my-indian-story:${phase}:${VOICE.child_home_entry}`;
+      const shouldBypassRecentDedupe = isReload && !reloadHandledRef.current;
+      if (!shouldBypassRecentDedupe && wasStepVoSpokenRecently(childHomeStepVoiceKey)) {
+        setChildHomePromptReady(true);
+        return;
+      }
+      speakIfUnmuted(VOICE.child_home_entry, {
+        age: childAge,
+        moment: 'default',
+        onEnd: () => setChildHomePromptReady(true),
+        onError: () => setChildHomePromptReady(true)
+      });
+      RECENT_STEP_VO.set(childHomeStepVoiceKey, Date.now());
+      entryVoPlayedForPhaseRef.current = childHomeEntryKey;
     };
+    // Always wait ~500 ms: this line starts right as Ganesha Home's closing line ends or is cut off,
+    // and speech started that instant is dropped silently (KNOWN_PITFALLS 2, 3). Flag and refs are
+    // set when the timer FIRES, never before it (StrictMode cleanup clears it).
+    const t = setTimeout(() => {
+      firstEntryVoRef.current = false;
+      playChildHomeEntry();
+    }, 500);
+    return () => clearTimeout(t);
   }, [phase, VOICE.child_home_entry, speakIfUnmuted, childAge, isAudioOn, isReload]);
 
 
@@ -1738,6 +1787,7 @@ const discoverLocation = useCallback((index) => {
       speakIfUnmuted(VOICE.language_correct, {
         age: childAge,
         moment: 'celebration',
+        ignoreCancel: true,
         onEnd: advanceToNextPhase,
         onError: advanceToNextPhase
       });
@@ -1784,6 +1834,7 @@ const discoverLocation = useCallback((index) => {
         speakIfUnmuted('Yes — Ganesh Chaturthi!', {
           age: childAge,
           moment: 'celebration',
+          ignoreCancel: true,
           onEnd: goToFestivalChildPhase,
           onError: goToFestivalChildPhase
         });
@@ -1791,6 +1842,7 @@ const discoverLocation = useCallback((index) => {
       speakIfUnmuted(fest.label, {
         age: childAge,
         moment: 'default',
+        ignoreCancel: true,
         onEnd: speakCorrectFeedback,
         onError: speakCorrectFeedback
       });
