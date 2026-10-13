@@ -785,7 +785,9 @@ const PRERECORDED_SYLLABLE_PATHS = {
     kuru: '/audio/syllables/kurume -kuru.mp3',
     me: '/audio/syllables/kurume-me.mp3',
     de: '/audio/syllables/deva-de.mp3',
-    va: '/audio/syllables/deva-va.mp3'
+    va: '/audio/syllables/deva-va.mp3',
+    // The scene's 3rd syllable is the whole "deva" (de + va, trimmed and joined from the two recordings above).
+    deva: '/audio/syllables/kurumedeva-deva.mp3'
   },
   sarvakaryeshu: {
     sar: '/audio/syllables/sarvakaryeshu-sar.mp3',

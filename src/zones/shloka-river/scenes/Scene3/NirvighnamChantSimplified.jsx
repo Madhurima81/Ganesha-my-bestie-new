@@ -196,6 +196,9 @@ const NirvighnamChantContent = ({
   const [showCenteredWord,     setShowCenteredWord]     = useState(null);
   const [showPowerOverlay,     setShowPowerOverlay]     = useState(false);
   const [revealConfig,         setRevealConfig]         = useState(null);
+  // Words whose reveal card was already started (live trigger, reload restore or the fallback effect below):
+  // only the first may show it, so a card can neither be missing nor shown twice.
+  const revealStartedRef = useRef(new Set());
   const [currentWord,          setCurrentWord]          = useState(null);
   const [showTapSparkles,      setShowTapSparkles]      = useState(false);
   const [showWordStar,         setShowWordStar]         = useState(false);
@@ -605,6 +608,8 @@ const NirvighnamChantContent = ({
     const restoreReveal = (word) => {
       restoreTimer = window.setTimeout(() => {
         hasRestoredRevealRef.current = true;
+        if (revealStartedRef.current.has(word)) return;
+        revealStartedRef.current.add(word);
         const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
         playChime();
         setShowSparkle(null);
@@ -637,6 +642,33 @@ const NirvighnamChantContent = ({
     hasRestoredRevealRef.current = true; // nothing to restore
   }, [sceneState?.phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Fallback: a finished word whose card never appeared (the live trigger timer was lost) gets its card after
+  // ~1.8s. Does nothing when a card is showing or was already started for that word.
+  useEffect(() => {
+    if (!sceneState || revealConfig) return undefined;
+    const phase = sceneState.phase;
+    const word = [PHASES.NIRVIGHNAM_COMPLETE, PHASES.NIRVIGHNAM_POWER].includes(phase) ? 'nirvighnam'
+      : ([PHASES.KURUMEDEVA_COMPLETE, PHASES.KURUMEDEVA_POWER].includes(phase) && !sceneState.finalCardCollected) ? 'kurumedeva'
+        : null;
+    if (!word) return undefined;
+    const timer = window.setTimeout(() => {
+      if (revealStartedRef.current.has(word)) return;
+      revealStartedRef.current.add(word);
+      const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
+      playChime();
+      setShowSparkle(null);
+      setRevealConfig({
+        symbolId: word,
+        symbolImage: powerConfig[word].image,
+        symbolName: discoveryData?.title || powerConfig[word].name,
+        affirmation: discoveryData?.affirmation || powerConfig[word].affirmation,
+        sidebarTarget: getSidebarTarget(word),
+      });
+    }, 1800);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revealConfig, sceneState?.phase, sceneState?.finalCardCollected, sceneId, zoneId]);
+
   // ── Phase complete handler ─────────────────────────────────────────────────
   const handlePhaseComplete = useCallback((word) => {
     triggerMiniGesture('blessing', 'center', 2500);
@@ -655,8 +687,9 @@ const NirvighnamChantContent = ({
 
     let revealTriggered = false;
     const triggerReveal = () => {
-      if (revealTriggered) return;
+      if (revealTriggered || revealStartedRef.current.has(word)) return;
       revealTriggered = true;
+      revealStartedRef.current.add(word);
       setShowSparkle(null);
       const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
       playChime();
@@ -919,6 +952,7 @@ const NirvighnamChantContent = ({
                 setShowSceneCompletion(false);
                 setShowMandala(false);
                 setRevealConfig(null);
+                revealStartedRef.current.clear();
                 setShowSparkle(null);
                 setShowPowerOverlay(false);
                 setOpeningButtonVisible(true);

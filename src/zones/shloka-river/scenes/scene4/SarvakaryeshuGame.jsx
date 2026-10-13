@@ -39,6 +39,15 @@ const shuffleIds = () => {
   }
   return ids;
 };
+// The three symbols on each card are shuffled too, so the right one is not always in the same place.
+const shuffleOptions = () => Object.fromEntries(SITUATIONS.map((x) => {
+  const o = [...x.options];
+  for (let i = o.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [o[i], o[j]] = [o[j], o[i]];
+  }
+  return [x.id, o];
+}));
 const isValidOrder = (o) => Array.isArray(o) && o.length === SITUATIONS.length
   && SITUATIONS.every((x) => o.includes(x.id));
 
@@ -174,6 +183,7 @@ export default function SarvakaryeshuGame({
     isActive ? Math.max(0, Math.min(SITUATIONS.length, Number(initialCards) || 0)) : 0
   ));
   const [order, setOrder] = useState(() => (isActive && isValidOrder(initialOrder) ? initialOrder : shuffleIds()));
+  const [optionOrders, setOptionOrders] = useState(shuffleOptions);
   const cards = useMemo(() => order.map((id) => SITUATIONS.find((x) => x.id === id)), [order]);
   const [cardIndex, setCardIndex] = useState(Math.min(seedCards, SITUATIONS.length - 1));
   const [picked, setPicked] = useState(null);
@@ -267,6 +277,7 @@ export default function SarvakaryeshuGame({
     if (!isActive) {
       clearTimers();
       setOrder(shuffleIds()); // a new game gets a new random order
+      setOptionOrders(shuffleOptions());
       setCardIndex(0);
       setPicked(null);
       setIsCorrect(null);
@@ -565,7 +576,7 @@ export default function SarvakaryeshuGame({
             )}
             {canPick && (
               <div className={`sarva-options${hintLevel === 1 ? ' is-hint-l1' : ''}`}>
-                {situation.options.map((powerId) => {
+                {(optionOrders[situation.id] || situation.options).map((powerId) => {
                   const power = POWER_ICONS[powerId];
                   const isRight = picked === powerId && isCorrect;
                   const isSelected = picked === powerId;
