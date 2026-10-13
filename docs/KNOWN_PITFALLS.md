@@ -2,7 +2,7 @@
 
 Read this before touching resume / Continue, voice lines, timers, shared components or CSS.
 Each entry: **symptom → cause → how to spot it → fix → where it happened.** Add a new entry whenever a
-bug costs more than an hour. (Started 2026-10-12 from the Continue/resume work.)
+bug could recur in another scene (not only when it cost hours). (Started 2026-10-12 from the Continue/resume work.)
 
 ---
 
@@ -78,6 +78,9 @@ bug costs more than an hour. (Started 2026-10-12 from the Continue/resume work.)
 ## 11. Several sessions editing the same files / one giant commit
 - Checkpoint commits that mix work from different sessions can't be split or bisected afterwards.
 - Prefer one commit per scene or per fix, made after the checklist passes.
+- **Before `git add <file>`, read `git diff <file>`.** A file another session already edited (uncommitted) gets swept
+  into your commit whole: a 3-line fix became 41 changed lines (Sacred Assembly, 2026-10-13). If the diff has hunks that are not
+  yours, stage only yours with `git add -p`, or stop and ask. Same for shared docs such as CHANGELOG.md.
 
 ## 11b. Voice keeps going after leaving the scene (spills onto Zone Welcome)
 - **Symptom:** tap the zone badge during a line; the next line(s) of that scene speak over Zone Welcome.
@@ -94,7 +97,10 @@ bug costs more than an hour. (Started 2026-10-12 from the Continue/resume work.)
 - **Fix:** in every `onEnd` that saves a marker or advances: ignore cancelled/interrupted errors; ignore the
   callback once the component is unmounted (an `aliveRef`/`leftSceneRef` set in the effect cleanup); and only
   save "success line done" if the line really played (check elapsed time as a backstop, e.g. >= 1.5 s).
-- **Seen in:** Pond lotus success line, Ears game (fresh start + lines replacing each other), Flower Journey.
+- **Also:** a line that keeps speaking AFTER the child left (nothing cancels it on unmount) fires its `onend` later and saves
+  the marker. Clear the saved-marker callback ref in the effect cleanup.
+- **Seen in:** Pond lotus success line, Ears game (fresh start + lines replacing each other), Flower Journey, Eyes game
+  (Continue said "Now find the mango" over a cut-off found line) - 2026-10-12/13.
 
 ## 11d. Play Again leaves the old state on screen or re-opens the completion modal
 - **Symptom:** tap Play Again on the completion modal: the opening modal shows but the finished scene is still
@@ -122,6 +128,15 @@ bug costs more than an hour. (Started 2026-10-12 from the Continue/resume work.)
   placed. A reeds-style swipe must be longer than the game's success distance (Pond: 68 px) or a child who
   copies the hand fails.
 
+## 11f. Let's Explore leaves the scene's opening voice playing
+- **Symptom:** tap the opening modal's button before its voice ends: the opening line keeps playing in the main scene.
+- **Cause:** `OpeningModal` only stops `speechSynthesis` and DOM `<audio>` tags. A scene that speaks its own opening line
+  through the Ganesha voice engine (`useGaneshaVoice().speak`) or a file player is not stopped; the
+  `ganesha:stop-all-audio` event the modal dispatches has no listener.
+- **Fix:** in the scene's `OpeningModal onStart`, stop that engine first (`stopSpokenVoice()` / `stopGaneshaVoice()` /
+  `stopAllVoice()`), then set `welcomeShown`. Any new scene with its own opening VO needs this.
+- **Seen in:** Symbol (scene 3), Sacred Assembly (2026-10-13). Other live scenes audited: they already stop their voice.
+
 ## 12. Tooling gotchas (Windows dev machine)
 - **Two builds at once** (two sessions running `vite build`) clobber `dist/` — you get
   `ENOENT … dist/images/…`. Run one build at a time.
@@ -130,6 +145,8 @@ bug costs more than an hour. (Started 2026-10-12 from the Continue/resume work.)
   `replay_session_*` keys (and the `gametest` profile) make Continue tests confusing; clear them between runs.
 - **Dev only vs production:** StrictMode double-runs effects only in `npm run dev`. If a bug appears only in
   dev, suspect #1 / #4 first.
+- **The built-in browser pane can refuse `localhost`** ("site not approved"), so a bug cannot be reproduced by the
+  assistant; ask what the screen looked like and whether it was dev or deployed before guessing.
 - **No local test runner:** `package.json` says `jest` but it isn't installed, and
   `BeatPlayerGame.test.jsx` uses `jest.mock`. Those tests can't run.
 
