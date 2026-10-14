@@ -364,14 +364,12 @@
 .food-scene .choice-card:nth-child(2) { top: 100px; }   
 .food-scene .choice-card:nth-child(3) { top: -30px; }
 
-
 /* --- SCENE B: FRIEND --- */
 /* Maybe friends are closer together? */
 .friend-scene { gap: 20px; } 
 .friend-scene .choice-card:nth-child(2) { top: -30px; } /* Only middle up */
 .friend-scene .choice-image-container { width: 300px; height: 300px; }
 .friend-scene .choice-image { width: 125% !important; height: 125% !important; }
-
 
 /* --- SCENE C: COLOR --- */
 /* Colors can be smaller */
@@ -582,7 +580,6 @@
   }
 }
 
-
 /* ========================================= */
 /* CHILD FRIEND INTRO & INPUT                */
 /* ========================================= */
@@ -629,7 +626,6 @@
   transform: translateY(3px);
   box-shadow: 0 3px 0 #e5a700;
 }
-
 
 /* ========================================= */
 /* 5. CHILD PHASE ELEMENTS (OVAL LAYOUT)     */
@@ -689,7 +685,6 @@
 .kid-choice-card:nth-child(6) { top: 45px; } /* Inner Left (Lowest) */
 .kid-choice-card:nth-child(7) { top: 45px; } /* Inner Right (Lowest) */
 .kid-choice-card:nth-child(8) { top: 18px; } /* Outer Right */
-
 
 /* Hover Animation */
 .kid-choice-card:hover {
@@ -931,7 +926,6 @@
 .draw-button:hover, .type-button:hover {
   transform: translateY(-3px) scale(1.05);
 }
-
 
 /* ========================================= */
 /* CHILD COLOR PALETTE (INDIVIDUAL POSITIONS) */
@@ -1423,31 +1417,6 @@
 }
 .friend-item-img { width: 80px; height: 80px; object-fit: contain; }
 .friend-item-text { font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 26px; font-weight: 700; color: #3e2723; text-align: center; line-height: 1.1; }
-.friend-connector-hearts {
-  width: 86px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  position: relative;
-  z-index: 5;
-}
-.connector-heart {
-  font-size: 34px;
-  line-height: 1;
-  color: #e94a5f;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  filter: drop-shadow(0 1px 3px rgba(255, 92, 119, 0.35));
-  opacity: 1;
-  transform: scale(1);
-  animation: heartsPopIn 0.25s ease-out 0.8s both, heartsPulseOnce 0.6s ease-in-out 1.05s 1 both, heartsIdlePulse 0.6s ease-in-out 6.8s infinite;
-}
-.connector-heart.heart-2 {
-  animation-delay: 0.86s, 1.05s, 6.9s;
-}
-.connector-heart.heart-3 {
-  animation-delay: 0.92s, 1.05s, 7s;
-}
 
 .primary-cta {
   margin-top: 60px;
@@ -1518,18 +1487,6 @@
   from { opacity: 0; transform: translateY(20px) scale(0.9); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
-@keyframes heartsPopIn {
-  from { opacity: 0; transform: scale(0); }
-  to { opacity: 1; transform: scale(1); }
-}
-@keyframes heartsPulseOnce {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-}
-@keyframes heartsIdlePulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
 @keyframes finalButtonIn {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
@@ -1552,9 +1509,6 @@
   50% { transform: scale(1.06); filter: brightness(1.06); }
   100% { transform: scale(1.03); filter: brightness(1.03); }
 }
-@keyframes sparklePop { 0% { opacity: 0; transform: scale(0.5); } 30% { opacity: 1; } 100% { opacity: 0; transform: scale(1.5) rotate(45deg) translateY(-20px); } }
-@keyframes sparkleFloat { 0%, 100% { opacity: 0; transform: translateY(0) scale(0.5); } 50% { opacity: 1; transform: translateY(-20px) scale(1); } }
-.favorite-food-game .legacy-sparkle { position: absolute; font-size: 30px; animation: sparkleFloat 2s ease-in-out infinite; }
 @keyframes modalRiseIn { 0% { opacity: 0; transform: translateY(30px) scale(0.95); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes popInCard { 0% { transform: translateX(-50%) scale(0.92); opacity: 0; } 100% { transform: translateX(-50%) scale(1); opacity: 1; } }
 
@@ -1648,8 +1602,6 @@
   .friend-item-img { width: 36px; height: 36px; }
   .friend-item-text { font-size: 14px; }
   .friend-item-label { font-size: 10px; }
-  .friend-connector-hearts { width: 40px; gap: 4px; }
-  .connector-heart { font-size: 20px; }
   .primary-cta { margin-top: 12px; margin-bottom: 18px; padding: 14px 30px; font-size: 24px; border-radius: 24px; }
 }
 
@@ -1664,8 +1616,6 @@
   .friend-item { padding: 10px 6px; min-height: 110px; }
   .friend-item-img { width: 52px; height: 52px; }
   .friend-item-text { font-size: 18px; }
-  .friend-connector-hearts { width: 66px; gap: 6px; }
-  .connector-heart { font-size: 28px; }
   .primary-cta { margin-top: 24px; padding: 16px 38px; font-size: 32px; border-radius: 34px; }
 }
 
@@ -1678,8 +1628,6 @@
   .friend-item { padding: 10px 10px 12px; min-height: 156px; }
   .friend-item-img { width: 80px; height: 80px; }
   .friend-item-text { font-size: 26px; }
-  .friend-connector-hearts { width: 86px; gap: 8px; }
-  .connector-heart { font-size: 34px; }
   .primary-cta { margin-top: 60px; padding: 18px 45px; font-size: 40px; border-radius: 50px; }
 }
 
@@ -1719,9 +1667,6 @@
       drop-shadow(0 0 16px rgba(255, 130, 0, 1));
   }
 }
-
-
-
 
 .favorite-sparkle-overlay {
   position: absolute;

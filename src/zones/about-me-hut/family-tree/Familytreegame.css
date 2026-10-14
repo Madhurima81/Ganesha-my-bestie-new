@@ -127,7 +127,6 @@
   /* 4. SHADOWS: Natural depth */
   --modal-shadow-color: rgba(60, 20, 10, 0.18);
 
-
 }
 
 #family-tree-intro .game-modal-icon-label {
@@ -430,7 +429,6 @@
   }
 }
 
-
 /* 2. The Heart Container */
 .hud-hearts-row {
   display: flex;
@@ -477,7 +475,6 @@
   margin-top: clamp(8px, 1.5vh, 16px) !important;
   margin-bottom: clamp(16px, 2.5vh, 28px) !important;
 }
-
 
 /* ─── BUGS 1 & 2 FIX ────────────────────────────────────────────────
    iPad landscape — lift everything up so:
@@ -590,7 +587,6 @@
 .hud-hearts-row .heart-icon:nth-child(4) {
   animation-delay: 0.6s;
 }
-
 
 /* INTRO */
 .intro-overlay {
@@ -843,7 +839,6 @@
     0 0 22px rgba(255, 207, 92, 0.58);
 }
 
-
 .glow-pulse {
   animation: glow-pulse 2.6s ease-in-out infinite;
 }
@@ -866,7 +861,6 @@
   }
 }
 
-
 .circle-label {
   background: rgba(255, 248, 220, 0.85);
   color: #5D4037;
@@ -883,14 +877,10 @@
   margin-top: -2px;
 }
 
-
 /* Optional: Add a tiny string-like effect */
 .circle-label::before {
   display: none;
 }
-
-
-
 
 .circle-spot-with-label.filled .empty-circle {
   border: none;
@@ -953,7 +943,6 @@
 .circle-spot-with-label:nth-child(even) .placed-deity {
   animation-delay: 0s;
 }
-
 
 /* ========================================= */
 /* PLACED DEITY & CARD FLIP LOGIC (UPDATED)  */
@@ -1056,7 +1045,6 @@
   opacity: 0.6;
 }
 
-
 /* Text inside the card */
 .flip-fun-fact {
   color: #6A3B2E;
@@ -1080,10 +1068,6 @@
   /* Remove heavy shadow – keep it story-like */
   text-shadow: none;
 }
-
-
-
-
 
 /* Restored per user request, but without dimensions to allow scaling */
 .deity-circle {
@@ -1183,7 +1167,6 @@
   }
 }
 
-
 @keyframes modal-bounce-in {
   0% {
     opacity: 0;
@@ -1203,7 +1186,6 @@
   color: #5A3A20;
   margin-bottom: 20px;
 }
-
 
 /* ========================================= */
 /* INTEGRATED CHOICE SCREEN (Below Tree)     */
@@ -1335,10 +1317,6 @@
   animation: idleGlowPulse 1.2s ease-in-out infinite;
 }
 
-.choice-image-integrated.idle-sparkle {
-  animation: idleGlowPulse 1.2s ease-in-out infinite, idleBounce 1.4s ease-in-out infinite;
-}
-
 .choice-options {
   display: flex;
   flex-direction: column;
@@ -1364,7 +1342,6 @@
 
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
-
 
 .choice-card:hover {
   transform: translateY(-2px);
@@ -1425,7 +1402,6 @@
   transform: scale(1.1);
 }
 
-
 .choice-emoji {
   font-size: 4.5rem;
   /* Slightly adjusted to fit new box size */
@@ -1466,14 +1442,11 @@
   margin: 0;
 }
 
-
-
 /* Add this safely at the end */
 .family-tree-game img {
   max-width: 100%;
   display: block;
 }
-
 
 /* Fun Fact Modal */
 .fun-fact-modal {
@@ -1508,7 +1481,6 @@
   animation: modal-bounce-in 0.6s ease-out;
 }
 
-
 .modal-deity-image {
   width: 180px;
   height: 180px;
@@ -1524,7 +1496,6 @@
   align-items: center;
   justify-content: center;
 }
-
 
 .modal-deity-image img {
   width: 100%;
@@ -1558,7 +1529,6 @@
   color: #4A3A2F;
 }
 
-
 .modal-emoji {
   font-size: 2.5rem;
   opacity: 0.8;
@@ -1579,7 +1549,6 @@
   line-height: 1.4;
   /* Nice spacing between lines */
 }
-
 
 @keyframes float {
 
@@ -1618,7 +1587,6 @@
   pointer-events: none;
 }
 
-
 .transition-ganesha {
   width: 180px;
   height: auto;
@@ -1649,8 +1617,6 @@
   margin: 0 0 30px 0;
   line-height: 1.6;
 }
-
-
 
 .continue-btn {
 
@@ -1794,7 +1760,6 @@
 .transition-speech.scene-return-scale {
   transform: scale(0.95) !important;
 }
-
 
 /* CHILD'S FAMILY TREE (3 rows) */
 .child-family-tree {
@@ -1966,7 +1931,6 @@
   }
 }
 
-
 /* Make sure the X button sits on top */
 /* Delete button (appears only when selected) */
 .delete-member-btn {
@@ -2033,8 +1997,6 @@
 .delete-member-btn:active {
   transform: scale(0.92);
 }
-
-
 
 /* Bottom Tray */
 .members-tray {
@@ -2492,7 +2454,6 @@
   }
 }
 
-
 .submit-name-btn {
   background: linear-gradient(135deg, #4CAF50, #66BB6A);
   color: #054D3B;
@@ -2519,7 +2480,6 @@
   cursor: not-allowed;
   filter: grayscale(0.4);
 }
-
 
 /* ========================================= */
 /* MAGICAL SIDE-BY-SIDE REVEAL - UPDATED    */
@@ -3141,8 +3101,6 @@
   }
 }
 
-
-
 /* Hide the old white text box */
 .bonding-message {
   display: none !important;
@@ -3169,23 +3127,6 @@
   50% {
     transform: translateY(-10px);
   }
-}
-
-/* ========================================= */
-/* CELEBRATION (End Screen)                  */
-/* ========================================= */
-.celebration-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  animation: fade-in 1s ease-out;
 }
 
 .celebration-content {
@@ -3220,32 +3161,6 @@
   font-size: 1.6rem;
   line-height: 1.6;
   margin-bottom: 10px;
-}
-
-.confetti-piece {
-  position: absolute;
-  animation: fall-confetti 4s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes fall-confetti {
-  0% {
-    opacity: 0;
-    transform: translateY(-100px) rotate(0deg);
-  }
-
-  10% {
-    opacity: 1;
-  }
-
-  90% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translateY(110vh) rotate(720deg);
-  }
 }
 
 /* RESPONSIVE */
@@ -3338,28 +3253,6 @@
   100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
 }
 
-/* Ganesha thumbs-up reaction cue inside choice modal */
-/* ② TREE AVATAR APPEAR (200-600ms) */
-.tree-avatar-appear {
-  animation: treeAvatarPop 400ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-@keyframes treeAvatarPop {
-  0% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-
-  60% {
-    opacity: 1;
-    transform: scale(1.15);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
 /* ③ SPARKLE BURST (Updated for Visibility) */
 .tree-sparkle-burst {
   position: absolute;
@@ -3376,49 +3269,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.sparkle-dot {
-  position: absolute;
-  width: 15px;
-  /* 4. Bigger dots */
-  height: 15px;
-  background: radial-gradient(circle, #FFD700 20%, rgba(255, 215, 0, 0) 70%);
-  border-radius: 50%;
-  box-shadow: 0 0 10px #FFD700;
-  /* 5. Add Glow */
-  animation: sparkleFloat 0.6s ease-out forwards;
-}
-
-/* Spread them out more */
-.sparkle-dot:nth-child(1) {
-  top: 30%;
-  left: 50%;
-  animation-delay: 0ms;
-}
-
-.sparkle-dot:nth-child(2) {
-  top: 70%;
-  left: 20%;
-  animation-delay: 50ms;
-}
-
-.sparkle-dot:nth-child(3) {
-  top: 70%;
-  left: 80%;
-  animation-delay: 100ms;
-}
-
-.sparkle-dot:nth-child(4) {
-  top: 40%;
-  left: 20%;
-  animation-delay: 150ms;
-}
-
-.sparkle-dot:nth-child(5) {
-  top: 40%;
-  left: 80%;
-  animation-delay: 200ms;
 }
 
 @keyframes sparkleFloat {
@@ -3451,70 +3301,6 @@
    ======================================== */
 
 /* Green Checkmark Overlay */
-.correct-checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(76, 175, 80, 0.9);
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  animation: checkmarkAppear 0.4s ease-out;
-}
-
-.checkmark-circle {
-  width: 80px;
-  height: 80px;
-  background: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: checkmarkPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
-
-.checkmark-icon {
-  font-size: 50px;
-  color: #4CAF50;
-  font-weight: bold;
-  animation: checkmarkDraw 0.3s ease-out 0.2s backwards;
-}
-
-@keyframes checkmarkAppear {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes checkmarkPop {
-  0% {
-    transform: scale(0) rotate(-180deg);
-  }
-
-  100% {
-    transform: scale(1) rotate(0deg);
-  }
-}
-
-@keyframes checkmarkDraw {
-  from {
-    transform: scale(0);
-    opacity: 0;
-  }
-
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
 
 /* Card Fade Out */
 .choice-card.correct-selected {
@@ -3629,12 +3415,6 @@
   pointer-events: none;
 }
 
-.circle-sparkle {
-  position: absolute;
-  font-size: 30px;
-  animation: circleSparkleOrbit 2s ease-out;
-}
-
 .cs-1 {
   top: 0;
   left: 50%;
@@ -3661,34 +3441,6 @@
   left: 0;
   transform: translateY(-50%);
   animation-delay: 0.6s;
-}
-
-@keyframes circleSparkleOrbit {
-  0% {
-    transform: translate(-50%, -50%) scale(0) rotate(0deg);
-    opacity: 0;
-  }
-
-  20% {
-    transform: translate(-50%, -50%) scale(1.5) rotate(90deg);
-    opacity: 1;
-  }
-
-  100% {
-    transform: translate(-50%, -50%) scale(1) rotate(360deg);
-    opacity: 0;
-  }
-}
-
-/* "You got it!" - Stays longer, bigger */
-.you-got-it-text {
-  position: absolute;
-  top: -70px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 15;
-  animation: youGotItPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  pointer-events: none;
 }
 
 .you-got-it-bubble {
@@ -3730,22 +3482,6 @@
   border-top: 12px solid #FFA500;
 }
 
-@keyframes youGotItPop {
-  0% {
-    transform: translateX(-50%) scale(0) translateY(20px);
-    opacity: 0;
-  }
-
-  60% {
-    transform: translateX(-50%) scale(1.15) translateY(-5px);
-  }
-
-  100% {
-    transform: translateX(-50%) scale(1) translateY(0);
-    opacity: 1;
-  }
-}
-
 @keyframes gentlePulse {
 
   0%,
@@ -3755,43 +3491,6 @@
 
   50% {
     transform: scale(1.05);
-  }
-}
-
-/* Checkmark - Appears slower */
-.correct-checkmark {
-  animation: checkmarkAppear 0.6s ease-out;
-  /* Slower */
-}
-
-@keyframes checkmarkAppear {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.checkmark-circle {
-  animation: checkmarkPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  /* Slower */
-}
-
-@keyframes checkmarkPop {
-  0% {
-    transform: scale(0) rotate(-180deg);
-  }
-
-  70% {
-    transform: scale(1.1) rotate(10deg);
-  }
-
-  100% {
-    transform: scale(1) rotate(0deg);
   }
 }
 
@@ -3881,14 +3580,6 @@
   overflow: visible;
 }
 
-.circle-sparkle {
-  position: absolute;
-  font-size: 35px;
-  animation: circleSparkleOrbit 2.5s ease-out;
-  z-index: 36;
-  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.85));
-}
-
 .cs-1 {
   top: 0;
   left: 50%;
@@ -3911,32 +3602,6 @@
   top: 50%;
   left: 0;
   animation-delay: 0.9s;
-}
-
-@keyframes circleSparkleOrbit {
-  0% {
-    transform: translate(-50%, -50%) scale(0) rotate(0deg);
-    opacity: 0;
-  }
-
-  15% {
-    opacity: 1;
-  }
-
-  25% {
-    transform: translate(-50%, -50%) scale(1.5) rotate(120deg);
-    opacity: 1;
-  }
-
-  75% {
-    transform: translate(-50%, -50%) scale(1.2) rotate(300deg);
-    opacity: 1;
-  }
-
-  100% {
-    transform: translate(-50%, -50%) scale(0.8) rotate(360deg);
-    opacity: 0;
-  }
 }
 
 /* ========================================
@@ -4258,21 +3923,6 @@
    ======================================== */
 
 /* All-complete celebration overlay */
-.celebration-overlay {
-  animation: celebrationFadeIn 1s ease-out forwards;
-}
-
-@keyframes celebrationFadeIn {
-  0% {
-    opacity: 0;
-    backdrop-filter: blur(0px);
-  }
-
-  100% {
-    opacity: 1;
-    backdrop-filter: blur(8px);
-  }
-}
 
 /* ========================================= */
 /* COOL BUTTON (JUMBO SIZE)                  */
@@ -4615,11 +4265,6 @@
   }
 }
 
-/* Hint Level 3: Glow + Sparkle + Bounce (22s) */
-.choice-image.idle-sparkle {
-  animation: idleGlowPulse 1.2s ease-in-out infinite, idleBounce 1.4s ease-in-out infinite;
-}
-
 @keyframes idleBounce {
   0%, 100% {
     transform: scale(1);
@@ -4649,7 +4294,6 @@
   80% { transform: translateX(3px); }
   100% { transform: translateX(0); }
 }
-
 
 .choice-card-integrated.scene19-correct-hit {
   transform: scale(1.05);
@@ -4801,7 +4445,6 @@
   line-height: 1 !important;
 }
 
-
 /* ============================================================
    SCENE 19 - IPAD CLAMP OVERRIDES
    Imported from Downloads/familytree-ipad-fixes.css
@@ -4861,7 +4504,6 @@
 .choice-name-integrated {
   font-size: clamp(12px, 1.6vw, 18px);
 }
-
 
 /* 8. CHOICE MODAL (floating popup) - scale(2.34) is too large */
 .choice-modal {
@@ -4933,7 +4575,6 @@
   font-size: clamp(0.65rem, 1.2vw, 0.85rem) !important;
   padding: 3px 8px !important;
 }
-
 
 .bottom-member-tray .member-card .member-card-icon-wrap {
   width: clamp(56px, 8vw, 84px) !important;
@@ -5070,7 +4711,6 @@
 .reveal-name {
   font-size: clamp(0.65rem, 1.1vw, 0.85rem) !important;
 }
-
 
 .tree-location {
   font-size: clamp(0.7rem, 1.2vw, 0.9rem) !important;
@@ -5215,8 +4855,6 @@
   }
 }
 
-
-
 /* --------------------------------------------------------------------
    FAMILY TREE � iPad bug fixes (May 2026)
    Paste at the BOTTOM of Familytreegame.css (replaces conflicting rules)
@@ -5238,7 +4876,6 @@
   margin-top: clamp(8px, 1.5vh, 16px) !important;
   margin-bottom: clamp(16px, 2.5vh, 28px) !important;
 }
-
 
 /* --- BUGS 1 & 2 FIX ------------------------------------------------
    iPad landscape � lift everything up so:

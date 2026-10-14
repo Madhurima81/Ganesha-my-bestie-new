@@ -523,6 +523,12 @@ Dump a scene's saved state (replace `final-scene` with the scene id):
 ```js
 Object.keys(localStorage).filter(k => k.includes('final-scene')).map(k => [k, JSON.parse(localStorage[k])]);
 ```
+## 56. Dead CSS survives a refactor, and a duplicated keyframe hides in two games
+- **Symptom:** the same keyframe name (`sparkleFloat`, `discoveryFlyPath`) is defined in many game CSS files; most of the rules using them belong to classes no component renders any more.
+- **Cause:** effects were rebuilt as JSX/shared components but the old class and keyframe rules were never deleted. Two games also each kept a private copy of the same discovery flight.
+- **Fix:** before deleting a rule, search all of `src/` (jsx, js, css, html) for the class including template strings, `classList` and `querySelector`; check who else relies on the keyframe by name (an inline `<style>` copy means it does not). Delete in its own commit. Use one shared component with prefixed names (`AboutMeSparkle`, `DiscoveryFlight`) instead of a copy per game.
+- **Seen in:** About Me Hut Dreams, Food, Family Tree (2026-10-14).
+
 
 ## Before you call a scene "done"
 1. `npm run check:css` — no new clashes. 2. `vite build` passes. 3. The scene's checklist
