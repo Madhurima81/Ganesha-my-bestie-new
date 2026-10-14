@@ -850,7 +850,7 @@ export default function FlowerJourneyGame2({
   }, []);
 
   const handleBushPointerDown = useCallback((e) => {
-    if (phase !== PHASES.FLOWER_BUSH || !bushIntroDone || isPaused) return;
+    if (phase !== PHASES.FLOWER_BUSH || isPaused) return;
     if (!pointInsideBushSwipeZone(e.clientX, e.clientY, e.currentTarget)) {
       bushSwipeStartRef.current = null;
       return;
@@ -859,10 +859,10 @@ export default function FlowerJourneyGame2({
     silenceIntroVO();
     setBushTeachingReady(false);
     bushSwipeStartRef.current = { x: e.clientX, y: e.clientY };
-  }, [phase, bushIntroDone, isPaused, pointInsideBushSwipeZone, silenceIntroVO]);
+  }, [phase, isPaused, pointInsideBushSwipeZone, silenceIntroVO]);
 
   const handleBushPointerUp = useCallback((e) => {
-    if (phase !== PHASES.FLOWER_BUSH || !bushIntroDone || isPaused) return;
+    if (phase !== PHASES.FLOWER_BUSH || isPaused) return;
     const start = bushSwipeStartRef.current;
     bushSwipeStartRef.current = null;
     if (!start) return;
@@ -921,7 +921,7 @@ export default function FlowerJourneyGame2({
       collectChallengeFlowers({ firstEl: bushFlowerOneRef.current, secondEl: bushFlowerTwoRef.current, newFlowerCount: 2 });
       safeTimeout(() => setPhase(PHASES.FLOWER_BRANCH), 2200);
     }, 1350);
-  }, [phase, bushIntroDone, isPaused, resetIdleBaseline, registerFailedAttempt, safeTimeout, speak, speakAsync, collectChallengeFlowers]);
+  }, [phase, isPaused, resetIdleBaseline, registerFailedAttempt, safeTimeout, speak, speakAsync, collectChallengeFlowers]);
 
   const branchFlowerOneRef = useRef(null);
   const branchFlowerTwoRef = useRef(null);
@@ -1017,7 +1017,7 @@ export default function FlowerJourneyGame2({
   }, [clearBranchHold, collectChallengeFlowers, safeTimeout, speak, speakAsync]);
 
   const handleBranchPointerDown = useCallback((e) => {
-    if (phase !== PHASES.FLOWER_BRANCH || !branchIntroDone || branchComplete || isPaused) return;
+    if (phase !== PHASES.FLOWER_BRANCH || branchComplete || isPaused) return;
     if (!pointInsideBranchPullZone(e.clientX, e.clientY, e.currentTarget)) {
       branchDragRef.current = { active: false, startY: 0 };
       return;
@@ -1030,7 +1030,7 @@ export default function FlowerJourneyGame2({
     branchWrongDirectionRef.current = false;
     branchDragRef.current = { active: true, startY: e.clientY };
     clearBranchHold();
-  }, [phase, branchIntroDone, branchComplete, isPaused, clearBranchHold, pointInsideBranchPullZone, silenceIntroVO]);
+  }, [phase, branchComplete, isPaused, clearBranchHold, pointInsideBranchPullZone, silenceIntroVO]);
 
   const handleBranchPointerMove = useCallback((e) => {
     if (!branchDragRef.current.active) return;
@@ -1163,7 +1163,7 @@ export default function FlowerJourneyGame2({
   };
 
   const handleMarshPointerDown = useCallback((e) => {
-    if (phase !== PHASES.FLOWER_MARSH || !marshIntroDone || marshStep >= 4 || marshPointerRef.current || isPaused) return;
+    if (phase !== PHASES.FLOWER_MARSH || marshStep >= 4 || marshPointerRef.current || isPaused) return;
     e.preventDefault();
     silenceIntroVO();
     setMarshTeachingReady(false);
@@ -1174,7 +1174,7 @@ export default function FlowerJourneyGame2({
     marshPointerRef.current = { id: e.pointerId, offsetX: current.x - point.x, offsetY: current.y - point.y };
     e.currentTarget.setPointerCapture?.(e.pointerId);
     setMarshDrag({ active: true, x: current.x, y: current.y });
-  }, [phase, marshIntroDone, marshStep, isPaused, getCurrentMarshPosition, silenceIntroVO]);
+  }, [phase, marshStep, isPaused, getCurrentMarshPosition, silenceIntroVO]);
 
   const handleMarshPointerMove = useCallback((e) => {
     const position = marshLandingFromEvent(e);
@@ -1409,10 +1409,10 @@ export default function FlowerJourneyGame2({
           <button
             type="button"
             className={`fjg2-bush ${bushSpringing ? 'fjg2-bush--springing' : ''} ${bushOpenState ? 'fjg2-bush--open' : ''} ${isBushPhase && bushIntroDone && effectiveHintLevel >= 1 ? 'fjg2-bush--hint-l1' : ''} ${isBushPhase && bushIntroDone && effectiveHintLevel >= 3 ? 'fjg2-bush--hint-l3' : ''}`}
-            onPointerDown={isBushPhase && bushIntroDone ? handleBushPointerDown : undefined}
-            onPointerUp={isBushPhase && bushIntroDone ? handleBushPointerUp : undefined}
+            onPointerDown={isBushPhase ? handleBushPointerDown : undefined}
+            onPointerUp={isBushPhase ? handleBushPointerUp : undefined}
             onPointerCancel={() => { bushSwipeStartRef.current = null; }}
-            disabled={!isBushPhase || !bushIntroDone}
+            disabled={!isBushPhase}
             aria-label="Swipe the leaves apart"
           >
             {SHOW_HIT_ZONES && isBushPhase && !bushOpenState && (
@@ -1462,7 +1462,7 @@ export default function FlowerJourneyGame2({
             onPointerUp={isBranchPhase ? handleBranchPointerEnd : undefined}
             onPointerCancel={isBranchPhase ? handleBranchPointerEnd : undefined}
             onContextMenu={(e) => e.preventDefault()}
-            disabled={!isBranchPhase || !branchIntroDone || branchComplete}
+            disabled={!isBranchPhase || branchComplete}
             aria-label="Pull the branch down and hold"
           >
             {SHOW_HIT_ZONES && isBranchPhase && !branchComplete && (
@@ -1567,11 +1567,11 @@ export default function FlowerJourneyGame2({
                 type="button"
                 className={`fjg2-marsh-mooshika ${marshExiting ? 'fjg2-marsh-mooshika--exiting' : ''} ${marshWobble ? 'fjg2-marsh-mooshika--wobble' : ''} ${marshSlip ? 'fjg2-marsh-mooshika--slip' : ''} ${marshIntroDone && effectiveHintLevel === 1 ? 'fjg2-marsh-mooshika--hint-l1' : ''}`}
                 style={{ left: `${position.x}%`, top: `${position.y}%` }}
-                disabled={!marshIntroDone}
-                onPointerDown={marshIntroDone ? handleMarshPointerDown : undefined}
-                onPointerMove={marshIntroDone ? handleMarshPointerMove : undefined}
-                onPointerUp={marshIntroDone ? handleMarshPointerEnd : undefined}
-                onPointerCancel={marshIntroDone ? handleMarshPointerCancel : undefined}
+                disabled={false}
+                onPointerDown={handleMarshPointerDown}
+                onPointerMove={handleMarshPointerMove}
+                onPointerUp={handleMarshPointerEnd}
+                onPointerCancel={handleMarshPointerCancel}
                 aria-label="Guide Mooshika across the stepping stones"
               >
                 <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} />
