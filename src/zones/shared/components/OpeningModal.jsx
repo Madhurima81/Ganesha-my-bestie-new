@@ -315,8 +315,8 @@ const OpeningModal = ({
 
   if (!hasContent || !visible) return null;
 
-  const openingGaneshaAsset =
-    zoneId === 'about-me-hut' ? GANESHA_POSE_ASSETS.sitHi : GANESHA_POSE_ASSETS.standPoint;
+  // Same standing Ganesha in every zone's opening modal.
+  const openingGaneshaAsset = GANESHA_POSE_ASSETS.standPoint;
 
   return (
     <div
