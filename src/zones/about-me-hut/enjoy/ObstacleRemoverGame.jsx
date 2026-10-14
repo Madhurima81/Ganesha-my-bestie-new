@@ -887,11 +887,15 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     // (no 'intro' case: the shared OpeningModal speaks its own voiceover on mount)
     if (gamePhase === 'comparison-card') {
       phaseVoiceRef.current.comparison = true;
+      // dreamRevealed is saved true by now. Without this, the phase-VO effect speaks "There it is - your
+      // dream!" at the first instant and this line (500 ms later) cuts it off ("The... Everyone can dream...").
+      phaseVoiceRef.current.dreamRevealed = true;
       safeSetTimeout(() => { speakLine(VOICE_LINES.comparison, { moment: 'story' }); }, 500);
       return;
     }
     if (gamePhase === 'ending') {
       phaseVoiceRef.current.ending = true;
+      phaseVoiceRef.current.dreamRevealed = true;
       safeSetTimeout(() => { speakLine(VOICE_LINES.ending, { moment: 'closing' }); }, 500);
       return;
     }
