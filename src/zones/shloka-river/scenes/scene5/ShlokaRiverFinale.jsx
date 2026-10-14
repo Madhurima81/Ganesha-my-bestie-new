@@ -342,7 +342,6 @@ const ShlokaRiverFinaleContent = ({
   const [draggingWord, setDraggingWord] = useState(null);
   const [dragPos, setDragPos] = useState(null);
   const [missDrop, setMissDrop] = useState(null);
-  const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
   const [activeSlotIndex, setActiveSlotIndex] = useState(resumeWords);
   const [rippleSlot, setRippleSlot] = useState(null);
   const [showOrbsCelebration, setShowOrbsCelebration] = useState(false);
@@ -381,6 +380,7 @@ const ShlokaRiverFinaleContent = ({
   const [allBoatsCelebrate, setAllBoatsCelebrate] = useState(false);
 
   const stageRef = useRef(null);
+  const fullShlokaAudioRef = useRef(null);
   tabPauseRef.current = {
     hide: () => { fullShlokaAudioRef.current?.pause?.(); },
     show: () => {
@@ -388,7 +388,6 @@ const ShlokaRiverFinaleContent = ({
       if (a && !a.ended) a.play?.().catch(() => {});
     },
   };
-  const fullShlokaAudioRef = useRef(null);
   const fullShlokaPlaybackTokenRef = useRef(0);
   const resumeHandledRef = useRef(false);
   const dragMovedRef = useRef(false);
@@ -595,7 +594,6 @@ const ShlokaRiverFinaleContent = ({
     finalChantStartedRef.current = false;
     chantRecapStartedRef.current = false;
     successFlowStartedRef.current = false;
-    setOpeningButtonVisible(!isAudioOn);
     setScrambledWords(shuffle(SHLOKA_WORDS));
     setSlots(Array(8).fill(null));
     setWrongWordId(null);
@@ -608,19 +606,8 @@ const ShlokaRiverFinaleContent = ({
     setSailingWordId(null);
     setIntroTeaching(false);
     setIntroSymbolIndex(null);
-    if (!isAudioOn) {
-      return undefined;
-    }
-
-    const revealButton = () => setOpeningButtonVisible(true);
-    const revealFallback = safeSetTimeout(revealButton, 9000);
-    playVoice?.('openingModalPrompt', () => {
-      revealFallback?.();
-      revealButton();
-    }, { replayOnReturn: false });
-
-    return () => revealFallback?.();
-  }, [isAudioOn, phase, playVoice, safeSetTimeout]);
+    return undefined;
+  }, [phase]);
 
   // Finale hint = a 2-step recall system (the boats are already in front of the child, so no
   // "look at the boats" nudge):
@@ -1048,6 +1035,20 @@ const ShlokaRiverFinaleContent = ({
     }
   }, [isAudioOn, phase, playVoice]);
 
+  // The opening line ("You found all eight words...") is the scene's own: the shared OpeningModal has no
+  // voice-over configured for the Finale, so nothing spoke it on a first play or after Play Again. Say it
+  // each time the opening modal appears; ~500ms wait because speech at the very first instant after a mount
+  // or reset is dropped. Flag-free so StrictMode / Play Again re-run it cleanly.
+  const playVoiceRef = useRef(playVoice);
+  playVoiceRef.current = playVoice; // latest, without re-running the effect (it must speak once per opening)
+  useEffect(() => {
+    if (phase !== PHASES.INITIAL || !isAudioOn) return undefined;
+    const t = window.setTimeout(() => {
+      playVoiceRef.current?.('openingModalPrompt', undefined, { replayOnReturn: false });
+    }, 500);
+    return () => window.clearTimeout(t);
+  }, [phase, isAudioOn]);
+
   const handleOrbsComplete = useCallback(() => {
     setShowOrbsCelebration(false);
 
@@ -1186,14 +1187,13 @@ const ShlokaRiverFinaleContent = ({
           {!showOrbsCelebration && <ZoneBadgeButton variant="gameplay" zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />}
           {/* [per-scene mute removed 2026-10-09] <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} /> */}
           <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
-
           <ResumeCountdown value={countdownValue} />
+
           {phase === PHASES.INITIAL && (
             <OpeningModal
               zoneId={zoneId}
               sceneId={sceneId}
               onStart={handleStartGame}
-              showButton={openingButtonVisible}
             />
           )}
 

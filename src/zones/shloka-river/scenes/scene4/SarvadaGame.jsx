@@ -116,6 +116,7 @@ export default function SarvadaGame({
   const [boatGaneshaJoining, setBoatGaneshaJoining] = useState(false);
   const [boatGaneshaCelebrating, setBoatGaneshaCelebrating] = useState(false);
   const lastHintVoiceKeyRef = useRef(null);
+  const symbolFoundRef = useRef(false);
 
   // Tap-to-find: the symbol is hidden — the child taps a spot on the memory
   // image. A tap inside the (invisible) circular zone flies the symbol up to
@@ -135,6 +136,8 @@ export default function SarvadaGame({
   const lastSyllableDoneRef = useRef(true);
   const introPlayedRef = useRef(false);
   const runStartedRef = useRef(false);
+  const searchVoiceTokenRef = useRef(0);
+  symbolFoundRef.current = symbolFound;
 
   // Two-step search support (no hand, no L3 behaviour):
   //   L1 (~12s) = one meaning clue (VO) + the broad search-area glow
@@ -203,7 +206,8 @@ export default function SarvadaGame({
     });
   }, [isPaused, runTimer]);
 
-  const startPhase = useCallback((index) => {
+  const startPhase = useCallback((index, options = {}) => {
+    const promptDelayMs = options.promptDelayMs ?? 300;
     setShowMemory(true);
     setFindMode(false);
     setFindVoComplete(false);
@@ -212,10 +216,14 @@ export default function SarvadaGame({
     setMissRipple(null);
     lastHintVoiceKeyRef.current = null;
     setBeat?.(`round-${index}`);
-
-    const startSearch = () => {
+    safeAfter(300, () => {
       setBeat?.(`find-${index}`);
       setFindMode(true);
+    });
+
+    const startSearchPrompts = () => {
+      const voiceToken = searchVoiceTokenRef.current + 1;
+      searchVoiceTokenRef.current = voiceToken;
 
       let findVoFinished = false;
       const finishFindVo = () => {
@@ -224,29 +232,37 @@ export default function SarvadaGame({
         setFindVoComplete(true);
       };
 
-      if (playSceneLine) {
-        playSceneLine('scene14_find_symbol', finishFindVo);
-        safeAfter(4500, finishFindVo);
-      } else {
-        finishFindVo();
-      }
-    };
+      const playFindPrompt = () => {
+        if (searchVoiceTokenRef.current !== voiceToken || symbolFoundRef.current) {
+          finishFindVo();
+          return;
+        }
+        if (playSceneLine) {
+          playSceneLine('scene14_find_symbol', finishFindVo);
+          safeAfter(4500, finishFindVo);
+        } else {
+          finishFindVo();
+        }
+      };
 
-    safeAfter(300, () => {
       const phaseVoKey = PHASE_VO_KEYS[index];
       if (phaseVoKey && playSceneLine) {
         let phaseVoDone = false;
         const finishPhaseVo = () => {
           if (phaseVoDone) return;
           phaseVoDone = true;
-          startSearch();
+          playFindPrompt();
         };
         playSceneLine(phaseVoKey, finishPhaseVo);
         safeAfter(4500, finishPhaseVo);
       } else {
-        startSearch();
+        playFindPrompt();
       }
-    });
+    };
+
+    // The search target is live as soon as the phase starts. VO is guidance,
+    // not a gate; a child tap stops it in handleImageTap/triggerFound.
+    safeAfter(promptDelayMs, startSearchPrompts);
   }, [playSceneLine, safeAfter, setBeat]);
 
   const runApiRef = useRef({});
@@ -285,33 +301,21 @@ export default function SarvadaGame({
     if (seedTimes > 0) {
       introPlayedRef.current = true;
       setGamePhase('playing');
-      run.safeAfter(500, () => {
-        runStartedRef.current = true;
-        if (seedTimes >= PHASES_CONFIG.length) runApiRef.current.runFinal();
-        else runApiRef.current.startPhase(seedTimes);
-      });
+      runStartedRef.current = true;
+      if (seedTimes >= PHASES_CONFIG.length) runApiRef.current.runFinal();
+      else runApiRef.current.startPhase(seedTimes);
       return () => { clearTimers(); runStartedRef.current = false; };
     }
     run.setBeat?.('intro');
-    run.safeAfter(700, () => {
-      runStartedRef.current = true;
-      const { playSceneLine: speak, safeAfter: after, startPhase: start } = runApiRef.current;
-      if (speak && !introPlayedRef.current) {
-        introPlayedRef.current = true;
-        let introDone = false;
-        const finishIntro = () => {
-          if (introDone) return;
-          introDone = true;
-          start(0);
-        };
-        speak('scene14_intro', finishIntro);
-        after(6000, finishIntro);
-      } else {
-        introPlayedRef.current = true;
-        start(0);
-      }
-    });
     setGamePhase('playing');
+    runStartedRef.current = true;
+    run.startPhase(0, { promptDelayMs: 6200 });
+    if (run.playSceneLine && !introPlayedRef.current) {
+      introPlayedRef.current = true;
+      run.playSceneLine('scene14_intro', undefined, { replayOnReturn: false });
+    } else {
+      introPlayedRef.current = true;
+    }
     return () => { clearTimers(); runStartedRef.current = false; };
   }, [isActive, clearTimers]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -417,6 +421,7 @@ export default function SarvadaGame({
     });
 
     setBeat?.(`found-${phaseIndex}`);
+    searchVoiceTokenRef.current += 1;
     setSymbolFound(true);
     setPopOut(true);
     markInteraction();

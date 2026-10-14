@@ -203,7 +203,6 @@ const SarvakaryeshuChantContent = ({
     };
   }, []);
 
-  const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
   const [savedRecordings, setSavedRecordings] = useState({});
   const handleSaveRecording = useCallback((wordId, data) => {
     setSavedRecordings((prev) => ({ ...prev, [wordId]: data }));
@@ -223,6 +222,15 @@ const SarvakaryeshuChantContent = ({
 
   const activeProfile = GameStateManager.getActiveProfile();
   const profileName = activeProfile?.name || 'explorer';
+  const sidebarUnlockedApps = {
+    ...(sceneState.unlockedApps || {}),
+    vakratunda: true,
+    mahakaya: true,
+    suryakoti: true,
+    samaprabha: true,
+    nirvighnam: true,
+    kurumedeva: true,
+  };
 
   const isFinalCelebrationActive =
     showSparkle === 'final-fireworks' ||
@@ -544,7 +552,6 @@ const SarvakaryeshuChantContent = ({
 
   useEffect(() => {
     if (sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown) {
-      setOpeningButtonVisible(true);
       if (!audioEnabledRef.current) return;
       const timer = setTimeout(() => playGuidanceVoice('welcome', () => playSfx('chime')), 800);
       return () => clearTimeout(timer);
@@ -732,6 +739,8 @@ const SarvakaryeshuChantContent = ({
                   hideElements={!!revealConfig || showPowerOverlay}
                   onMicroWin={handleMicroWin}
                   initialCards={sceneState.cardsDone || 0}
+                  initialOrder={sceneState.cardOrder}
+                  onOrderChosen={(o) => sceneActions.checkpoint({ cardOrder: o })}
                   onBeatComplete={(n) => sceneActions.checkpoint({ cardsDone: n })}
                   onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('sarvakaryeshu'), 0)}
                   onGameComplete={() => {}}
@@ -739,8 +748,6 @@ const SarvakaryeshuChantContent = ({
                   voiceGuidance={{
                     playVoice: playGuidanceVoice,
                     playWord: (word, onEnded) => playTracked('word', (done) => playWordAudio(word, done), onEnded),
-                  initialOrder={sceneState.cardOrder}
-                  onOrderChosen={(o) => sceneActions.checkpoint({ cardOrder: o })}
                     playSyllable: (syllable, onEnded) => {
                       playTracked('syllable', (done) => playSyllable('sarvakaryeshu', syllable, done), onEnded);
                     },
@@ -809,7 +816,7 @@ const SarvakaryeshuChantContent = ({
                   !isFinalCelebrationActive &&
                   !(sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown) && (
                     <AppSidebar
-                      unlockedApps={sceneState.unlockedApps || {}}
+                      unlockedApps={sidebarUnlockedApps}
                       savedRecordings={savedRecordings}
                       onSaveRecording={handleSaveRecording}
                       onDeleteRecording={handleDeleteRecording}
@@ -905,14 +912,13 @@ const SarvakaryeshuChantContent = ({
                     welcomeShown: true,
                     phase: PHASES.SARVAKARYESHU_GAME,
                     cardsDone: 0,
+                    cardOrder: null,
                   });
                 }}
                 characterImg={ganeshaHeadphones}
-                showButton={openingButtonVisible}
               />
             )}
 
-                    cardOrder: null,
             <SceneCompletionCelebration
               show={showSceneCompletion && !showMandala}
               zoneId={zoneId}
@@ -952,7 +958,6 @@ const SarvakaryeshuChantContent = ({
                 setShowMandala(false);
                 setRevealConfig(null);
                 setShowSparkle(null);
-                setOpeningButtonVisible(true);
                 resetScene();
               }}
               onContinue={() => { abortAllVoice(); onNavigate?.('scene-complete-continue'); }}

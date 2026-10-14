@@ -269,9 +269,6 @@ const VakratundaGroveContent = ({
   // Pause Menu State — removed: replaced by home icon
   // const [showPauseMenu, setShowPauseMenu] = useState(false);
 
-  // Opening Modal State
-  const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
-
   const [savedRecordings, setSavedRecordings] = useState({});
   const handleSaveRecording = useCallback((wordId, data) => {
     setSavedRecordings((prev) => ({ ...prev, [wordId]: data }));
@@ -286,6 +283,17 @@ const VakratundaGroveContent = ({
   const [showAppDiscovery, setShowAppDiscovery] = useState(false);
   const activeProfile = GameStateManager.getActiveProfile();
   const profileName = activeProfile?.name || 'explorer';
+  const sidebarUnlockedApps = {
+    ...(sceneState.unlockedApps || {}),
+    ...(
+      sceneState.learnedWords?.vakratunda ||
+      sceneState.phase === PHASES.MAHAKAYA_GAME ||
+      sceneState.learnedWords?.mahakaya
+        ? { vakratunda: true }
+        : {}
+    ),
+    ...(sceneState.learnedWords?.mahakaya ? { mahakaya: true } : {}),
+  };
   const isFinalCelebrationActive =
     showSparkle === 'final-fireworks' ||
     showMandala ||
@@ -711,7 +719,6 @@ const VakratundaGroveContent = ({
   useEffect(() => {
     // Play welcome voice when opening modal is shown (phase is INITIAL and not yet started)
     if (sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown) {
-      setOpeningButtonVisible(true);
       // Use ref (not state) — avoids stale-closure race when resetScene() delays 100ms
       if (!audioEnabledRef.current) {
         return;
@@ -1001,7 +1008,6 @@ const VakratundaGroveContent = ({
                   });
                 }}
                 characterImg={ganeshaHeadphones}
-                showButton={openingButtonVisible}
               />
             )}
 
@@ -1173,7 +1179,7 @@ const VakratundaGroveContent = ({
               !isFinalCelebrationActive &&
               !(sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown) && (
                 <AppSidebar
-                  unlockedApps={sceneState.unlockedApps || {}}
+                  unlockedApps={sidebarUnlockedApps}
                   savedRecordings={savedRecordings}
                   onSaveRecording={handleSaveRecording}
                   onDeleteRecording={handleDeleteRecording}
@@ -1309,7 +1315,6 @@ const VakratundaGroveContent = ({
                 setRevealConfig(null);
                 setShowSparkle(null);
                 setShowPowerOverlay(false);
-                setOpeningButtonVisible(true);
                 setVakratundaStage('intro');
                 resetScene();
               }}

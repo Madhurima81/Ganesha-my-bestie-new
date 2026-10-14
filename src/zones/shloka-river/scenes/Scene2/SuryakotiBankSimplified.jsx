@@ -209,7 +209,6 @@ const SuryakotiBankContent = ({
     };
   }, []);
 
-  const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
   const [savedRecordings, setSavedRecordings] = useState({});
   const handleSaveRecording = useCallback((wordId, data) => {
     setSavedRecordings((prev) => ({ ...prev, [wordId]: data }));
@@ -231,9 +230,9 @@ const SuryakotiBankContent = ({
   const activeProfile = GameStateManager.getActiveProfile();
   const profileName = activeProfile?.name || 'explorer';
   const sidebarUnlockedApps = {
+    ...(sceneState?.unlockedApps || {}),
     vakratunda: true,
     mahakaya: true,
-    ...(sceneState?.unlockedApps || {}),
   };
 
   const isFinalCelebrationActive =
@@ -528,9 +527,9 @@ const SuryakotiBankContent = ({
 
     const restoreReveal = (word) => {
       restoreTimer = window.setTimeout(() => {
+        hasRestoredRevealRef.current = true;
         if (revealStartedRef.current.has(word)) return;
         revealStartedRef.current.add(word);
-        hasRestoredRevealRef.current = true;
         const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
         playChime();
         setShowSparkle(null);
@@ -605,7 +604,6 @@ const SuryakotiBankContent = ({
 
   useEffect(() => {
     if (sceneState?.phase === PHASES.INITIAL && !sceneState?.welcomeShown) {
-      setOpeningButtonVisible(true);
       if (!audioEnabledRef.current) return undefined;
       const timer = window.setTimeout(() => {
         playGuidanceVoice('welcome', () => {
@@ -717,10 +715,10 @@ const SuryakotiBankContent = ({
       });
 
       setShowSparkle(`${word}-celebration`);
-        if (revealStartedRef.current.has(word)) return;
-        revealStartedRef.current.add(word);
 
       const triggerReveal = () => {
+        if (revealStartedRef.current.has(word)) return;
+        revealStartedRef.current.add(word);
         setShowSparkle(null);
         const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
         playChime();
@@ -767,10 +765,10 @@ const SuryakotiBankContent = ({
     const word = isSuryakotiPending ? 'suryakoti' : isSamaprabhaPending ? 'samaprabha' : null;
 
     if (!word) return undefined;
-      if (revealStartedRef.current.has(word)) return;
-      revealStartedRef.current.add(word);
 
     const timer = window.setTimeout(() => {
+      if (revealStartedRef.current.has(word)) return;
+      revealStartedRef.current.add(word);
       const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
       playChime();
       setShowSparkle(null);
@@ -1051,7 +1049,6 @@ const SuryakotiBankContent = ({
                   });
                 }}
                 characterImg={ganeshaHeadphones}
-                showButton={openingButtonVisible}
               />
             )}
 
@@ -1089,12 +1086,11 @@ const SuryakotiBankContent = ({
               onReplay={() => {
                 clearAllTimeouts();
                 stopAllVoice();
-                revealStartedRef.current.clear();
                 setShowSceneCompletion(false);
                 setShowMandala(false);
                 setRevealConfig(null);
+                revealStartedRef.current.clear();
                 setShowSparkle(null);
-                setOpeningButtonVisible(true);
                 resetScene();
               }}
               onContinue={() => {
