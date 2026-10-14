@@ -139,19 +139,28 @@ export const STILL_TO_TEST_CHECKLISTS = {
       { text: 'Modak legacy scene CSS path, if reachable from an old harness route: trigger any fade-out visual.', expect: 'Fade-out still looks local and does not affect AnimationWrapper fadeOut.' },
       { text: 'Parent PIN screen (Parent Dashboard): enter a wrong PIN.', expect: 'The PIN dots shake side to side once (about half a second), the same as before; nothing else on the page moves.' },
       { text: 'Dreams (Wish 1 bubbles): tap a wrong (unkind) bubble.', expect: 'That one bubble shakes and dims briefly, the same as before; the other bubbles stay still.' },
+      { text: 'Modak: play the whole scene once, from the opening modal to the completion screen.', expect: 'Nothing looks or behaves differently (an unused modal import was removed from the scene; a modal that never rendered cannot disappear).' },
       { text: 'Symbol Mountain: complete a symbol and watch its icon bloom in the sidebar.', expect: 'A quick (about 0.9 s) bloom with a soft gold ring around the icon.' },
       { text: 'Shloka River: complete a word and watch its icon bloom in the sidebar.', expect: 'A slightly slower (about 1.2 s) bloom with a bright gold glow around the icon.' },
       { text: 'Go Symbol Mountain, then Shloka River, then back to Symbol Mountain; complete one icon in each.', expect: 'Each zone keeps its OWN bloom (ring in Symbol Mountain, glow in Shloka River) in every order.' },
       { text: 'Both sidebars, otherwise: look at icon sizes, locked vs unlocked icons and the collection.', expect: 'Exactly as before; only the bloom changed.' },
-      { text: 'Modak: play the whole scene once, from the opening modal to the completion screen.', expect: 'Nothing looks or behaves differently (an unused modal import was removed from the scene; a modal that never rendered cannot disappear).' },
     ],
   },
 
   'todo-symbol-mountain-eyes-ears-nest-voice-watchdog': {
     title: 'Still to test - Symbol Mountain Eyes, Ears and nest voice/watchdog',
-    items: [      { text: 'Finish Eyes/Ears/nest once, then tap Play Again from the completion modal or Replay from Zone Welcome.', expect: 'Fresh run starts normally; the first game line after the opening modal is audible.' },
+    items: [
+      { text: 'Finish Eyes.', expect: 'The Eyes reveal card appears once, and only once.' },
+      { text: 'Finish Ears.', expect: 'The Ears reveal card appears once, and only once.' },
+      { text: 'Finish the nest / Tusk game.', expect: 'The Tusk reveal card appears once, and only once.' },
+      { text: 'Leave during the Eyes reveal, then Continue from Zone Welcome.', expect: 'The Eyes reveal card appears once; no blank screen or freeze.' },
+      { text: 'Leave during the Ears reveal, then Continue from Zone Welcome.', expect: 'The Ears reveal card appears once; no blank screen or freeze.' },
+      { text: 'Leave during the Tusk reveal, then Continue from Zone Welcome.', expect: 'The Tusk reveal card appears once; no blank screen or freeze.' },
+      { text: 'Switch tabs during any reveal card, wait about 10 seconds, then return.', expect: 'The reveal continues once after the countdown; no duplicate card or stuck overlay.' },
+      { text: 'Finish Eyes/Ears/nest once, then tap Play Again from the completion modal or Replay from Zone Welcome.', expect: 'Fresh run starts normally; the first game line after the opening modal is audible.' },
     ],
   },
+
   'todo-vakratunda': list('Vakratunda Grove + Mahakaya (Shloka River 1)', [
     { text: leave('Mahakaya: 1 log placed.'), expect: 'You hear "Keep adding logs to the raft" - NOT the intro.' },
     { text: leave('Mahakaya: 2 or 3 logs placed.'), expect: 'You hear "Drag the next log" - NOT the intro.' },
