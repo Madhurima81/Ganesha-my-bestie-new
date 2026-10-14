@@ -7,7 +7,8 @@ import StoryProgressHeader from '../components/StoryProgressHeader';
 import TextInputModal from '../components/Textinputmodal';
 import LetterInputKeyboard from '../components/LetterInputKeyboard';
 import AboutMeGaneshaHost from '../components/AboutMeGaneshaHost';
-import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
+import AboutMeSparkle from '../components/AboutMeSparkle';
+import DiscoveryFlight from '../components/DiscoveryFlight';
 import GaneshaGestureCue from '../../../lib/components/gesture/GaneshaGestureCue';
 import { useMiniGesture } from '../../../lib/hooks/useMiniGesture';
 
@@ -1665,7 +1666,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       resetIdleHints();
       playSparkle();
       triggerMiniGesture('food', 1500);
-      triggerSparkleFx('all', 1700);
+      triggerSparkleFx('all', 2400);
       // Saved at the solving tap (checkpoint): selectedFood marks the beat solved before the 1 s animation.
       sceneActions.checkpoint({ correctChoiceId: foodId, selectedFood: foodId });
       safeSetTimeout(() => {
@@ -1701,7 +1702,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       resetIdleHints();
       playSparkle();
       triggerMiniGesture('color', 1500);
-      triggerSparkleFx('all', 1700);
+      triggerSparkleFx('all', 2400);
       triggerDiscoveryFly({ image: redImg, name: 'Red' }, { durationMs: GANESHA_CORRECT_ADVANCE_DELAY_MS });
       sceneActions.updateState({
         correctChoiceId: colorId,
@@ -1731,7 +1732,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       resetIdleHints();
       playSparkle();
       triggerMiniGesture('activity', 1500);
-      triggerSparkleFx('all', 1700);
+      triggerSparkleFx('all', 2400);
       triggerDiscoveryFly({ image: activity.image, name: activity.name }, { durationMs: GANESHA_CORRECT_ADVANCE_DELAY_MS });
       sceneActions.updateState({
         correctChoiceId: activityId,
@@ -1761,7 +1762,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       resetIdleHints();
       playSparkle();
       triggerMiniGesture('friend', 1500);
-      triggerSparkleFx('all', 1700);
+      triggerSparkleFx('all', 2400);
       triggerDiscoveryFly({ image: mouseImg, name: 'Mooshika' }, { durationMs: GANESHA_FRIEND_CORRECT_ADVANCE_DELAY_MS });
       sceneActions.updateState({
         correctChoiceId: friendId,
@@ -1798,7 +1799,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       childDiscoveries: [{ image: discoveryImage, name: selected.name }]
     });
     triggerMiniGesture('center', 1200);
-    triggerSparkleFx('single', 1500);
+    triggerSparkleFx('single', 1700);
 
     triggerDiscoveryFly({ image: discoveryImage, name: selected.name }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
 
@@ -1826,7 +1827,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       draftData: null
     });
     triggerMiniGesture('center', 1200);
-    triggerSparkleFx('single', 1500);
+    triggerSparkleFx('single', 1700);
 
     safeSetTimeout(() => {
       speakSuccessLine(VOICE_LINES.childFoodCorrect, 'childFoodDone');
@@ -1856,7 +1857,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       })
     });
     triggerMiniGesture('center', 1200);
-    triggerSparkleFx('single', 1500);
+    triggerSparkleFx('single', 1700);
     triggerDiscoveryFly({
       image: selectedColor.image,
       emoji: selectedColor.emoji,
@@ -1896,7 +1897,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       childDiscoveries: appendUniqueDiscovery(currentState.childDiscoveries, { image: discoveryImage, name: selected.name })
     });
     triggerMiniGesture('center', 1200);
-    triggerSparkleFx('single', 1500);
+    triggerSparkleFx('single', 1700);
     triggerDiscoveryFly({ image: discoveryImage, name: selected.name }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
 
     safeSetTimeout(() => {
@@ -1924,7 +1925,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       draftData: null
     });
     triggerMiniGesture('center', 1200);
-    triggerSparkleFx('single', 1500);
+    triggerSparkleFx('single', 1700);
 
     safeSetTimeout(() => {
       speakSuccessLine(VOICE_LINES.childActivityCorrect, 'childActivityDone');
@@ -1960,35 +1961,22 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 
       {discoveryFly && !['food-correct', 'color-correct', 'activity-correct', 'friend-correct'].includes(sceneState.gamePhase) && (
-        <div
+        <DiscoveryFlight
           key={discoveryFly.key}
-          className={`discovery-fly ${discoveryFly.isChild ? 'child' : ''} ${discoveryFly.isModak ? 'modak' : ''}`}
-          style={{ '--discovery-duration': `${discoveryFly.durationMs || DISCOVERY_FLY_TOTAL_MS}ms` }}
-          aria-hidden="true"
-        >
-          {discoveryFly.image ? (
-            <img src={discoveryFly.image} alt={discoveryFly.name} className="discovery-fly-image" />
-          ) : (
-            <span className="discovery-fly-emoji">{discoveryFly.emoji}</span>
-          )}
-          {discoveryFly.showNameBelow && discoveryFly.name && (
-            <div className="discovery-fly-label">{discoveryFly.name}</div>
-          )}
-        </div>
+          image={discoveryFly.image}
+          emoji={discoveryFly.emoji}
+          name={discoveryFly.name}
+          durationMs={discoveryFly.durationMs || DISCOVERY_FLY_TOTAL_MS}
+          size="lg"
+          isChild={discoveryFly.isChild}
+          isModak={discoveryFly.isModak}
+          showName={discoveryFly.showNameBelow}
+        />
       )}
 
       {sparkleState.active && (
         <div className="favorite-sparkle-overlay" key={`favorite-sparkle-${sparkleState.key}`}>
-          <SparkleAnimation
-            type="magic"
-            count={sparkleState.type === 'all' ? 42 : 14}
-            color={sparkleState.type === 'all' ? 'rgba(255, 214, 102, 0.92)' : 'rgba(255, 210, 92, 0.98)'}
-            size={sparkleState.type === 'all' ? 12 : 10}
-            duration={sparkleState.type === 'all' ? 2400 : 1700}
-            fadeOut
-            area="full"
-            key={sparkleState.key}
-          />
+          <AboutMeSparkle key={sparkleState.key} preset={sparkleState.type === 'all' ? 'big' : 'burst'} />
         </div>
       )}
 
@@ -2424,7 +2412,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   childDiscoveries: [...sceneState.childDiscoveries, { image: friendsImg, name }]
                 });
                 triggerMiniGesture('center', 1200);
-                triggerSparkleFx('single', 1500);
+                triggerSparkleFx('single', 1700);
                 triggerDiscoveryFly(
                   { image: friendsImg, name },
                   { isChild: true, showNameBelow: true, durationMs: CHILD_FRIEND_ADVANCE_DELAY_MS }
@@ -2474,7 +2462,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 friendNameDraft: ''
               });
               triggerMiniGesture('center', 1200);
-              triggerSparkleFx('single', 1500);
+              triggerSparkleFx('single', 1700);
               triggerDiscoveryFly(
                 { image: friendsImg, name },
                 { isChild: true, showNameBelow: true, durationMs: CHILD_FRIEND_ADVANCE_DELAY_MS }

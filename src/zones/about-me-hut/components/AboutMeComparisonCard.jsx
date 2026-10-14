@@ -1,5 +1,6 @@
 import React from 'react';
 import './AboutMeComparisonCard.css';
+import AboutMeSparkle from './AboutMeSparkle';
 
 function ComparisonItem({ item }) {
   if (item?.custom) {
@@ -63,6 +64,7 @@ export default function AboutMeComparisonCard({
 }) {
   return (
     <div className={`aboutme-comparison-overlay ${className}`.trim()}>
+      <AboutMeSparkle preset="linger" />
       {title ? <h1 className="aboutme-comparison-title">{title}</h1> : null}
       {subtitle ? <p className="aboutme-comparison-subtitle">{subtitle}</p> : null}
 
