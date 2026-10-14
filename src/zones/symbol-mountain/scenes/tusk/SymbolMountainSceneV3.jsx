@@ -37,6 +37,7 @@ import useSceneReset from '../../../../lib/hooks/useSceneReset';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 import { useGaneshaVoice } from '../../../../lib/hooks/useGaneshaVoice';
+import useSceneWatchdog from '../../../../lib/hooks/useSceneWatchdog';
 import { speakWithRetry } from '../../../../lib/utils/speakWithRetry';
 import GaneshaGestureCue from '../../../../lib/components/gesture/GaneshaGestureCue';
 import { useMiniGesture } from '../../../../lib/hooks/useMiniGesture';
@@ -64,8 +65,10 @@ import AudioToggle from '../../../../lib/components/ui/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import { getCollectionTarget } from '../../../../lib/utils/collectionTarget';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
+import SceneStallPrompt from '../../../../lib/components/feedback/SceneStallPrompt';
 // import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay'; // superseded by SymbolAutoReveal
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
+import { logSceneEvent } from '../../../../lib/utils/sceneEventLog';
 
 // Images
 import mountainBackground from '../tusk/assets/images/eyes-game/symbol_mountain_3_bg.webp';
@@ -84,6 +87,7 @@ import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.webp'
 
 // Shared countdown duration â€” must match across useResumeCountdown + usePauseAwareTimeout
 const RESUME_DELAY_MS = 3000;
+const SCENE_LOG_KEY = 'symbol-scene3';
 
 const VOICE_LINES = {
   opening: "The forest friends need your help. Let’s see what they need.",
@@ -240,6 +244,10 @@ const SymbolMountainSceneContent = ({
 
   // SymbolAutoReveal state
   const [revealConfig, setRevealConfig] = useState(null);
+  const revealConfigRef = useRef(null);
+  revealConfigRef.current = revealConfig;
+  const revealShownRef = useRef(new Set());
+  const firstLineRecoveringRef = useRef(null);
   const isEarRevealActive = revealConfig?.symbolId === 'ear' || revealConfig?.symbolId === 'ears';
   const isTuskGameVisible = sceneState?.showTuskAssemblyGame && !isEarRevealActive;
   const getPromptKeyForPhase = useCallback(() => {
@@ -298,6 +306,23 @@ const SymbolMountainSceneContent = ({
   const scenePaused = isSymbolPopupOpen || sidebarPause.isSidebarPaused;
   // Beat = current phase. Set during render so a clip started this render is tagged with it.
   sidebarPause.setBeat(String(sceneState?.phase));
+  const {
+    arm: armWatchdog,
+    disarm: disarmWatchdog,
+    stall,
+    resolveStall
+  } = useSceneWatchdog({
+    sceneKey: SCENE_LOG_KEY,
+    paused: scenePaused,
+    getSnapshot: () => ({
+      phase: sceneStateRef.current?.phase,
+      revealConfig: revealConfigRef.current?.symbolId || null,
+      revealShown: [...revealShownRef.current],
+      showEyesTelescopeGame: !!sceneStateRef.current?.showEyesTelescopeGame,
+      showEarsRhythmGame: !!sceneStateRef.current?.showEarsRhythmGame,
+      discoveredSymbols: sceneStateRef.current?.discoveredSymbols || {}
+    })
+  });
   const lastAnnouncedPromptRef = useRef(null);
   const openingVoPlayedRef = useRef(false);
   const idleVoGateRef = useRef(false);
@@ -345,6 +370,12 @@ const SymbolMountainSceneContent = ({
     if (!sceneState?.phase) sceneActions.updateState({ phase: PHASES.EYES_GAME });
   }, [sceneState?.phase, sceneActions]);
   useEffect(() => {
+    if (sceneState?.welcomeShown) return;
+    revealShownRef.current.clear();
+    disarmWatchdog('first-line');
+    disarmWatchdog('reveal-card');
+  }, [sceneState?.welcomeShown, disarmWatchdog]);
+  useEffect(() => {
     Analytics.sceneStarted(zoneId, sceneId);
     return () => {
       if (!sceneStateRef.current?.completed) {
@@ -369,6 +400,133 @@ const SymbolMountainSceneContent = ({
     lastIdleInteractionAtRef.current = Date.now();
     l2VoiceEndedAtRef.current = null;
   }, []);
+
+  const getSidebarTarget = useCallback((symbolId) => {
+    const el = getCollectionTarget(symbolId);
+    if (!el) return { x: 220, y: 0 };
+    const r = el.getBoundingClientRect();
+    return {
+      x: (r.left + r.width / 2) - (window.innerWidth / 2),
+      y: (r.top + r.height / 2) - (window.innerHeight / 2)
+    };
+  }, []);
+
+  const getRevealDetails = useCallback((symbolId) => {
+    const normalizedId = symbolId === 'ears' ? 'ear' : symbolId;
+    if (normalizedId === 'eyes') {
+      return {
+        symbolId: 'eyes',
+        symbolImage: symbolEyesColored,
+        symbolName: 'Eyes',
+        affirmation: 'I can focus on what matters.',
+        sidebarTarget: getSidebarTarget('eyes'),
+        sayWithMeDelayMs: REVEAL_SAY_WITH_ME_DELAY_MS
+      };
+    }
+    if (normalizedId === 'ear') {
+      return {
+        symbolId: 'ear',
+        symbolImage: symbolEarColored,
+        symbolName: 'Ears',
+        affirmation: 'I can listen for what helps me.',
+        sidebarTarget: getSidebarTarget('ear'),
+        sayWithMeDelayMs: REVEAL_SAY_WITH_ME_DELAY_MS
+      };
+    }
+    if (normalizedId === 'tusk') {
+      return {
+        symbolId: 'tusk',
+        symbolImage: symbolTuskColored,
+        symbolName: 'Tusk',
+        affirmation: 'I can use what I have for something important.',
+        sidebarTarget: getSidebarTarget('tusk'),
+        sayWithMeDelayMs: REVEAL_SAY_WITH_ME_DELAY_MS
+      };
+    }
+    return null;
+  }, [getSidebarTarget]);
+
+  const showRevealOnce = useCallback((symbolId, source = 'unknown') => {
+    const details = getRevealDetails(symbolId);
+    if (!details) return false;
+    const key = details.symbolId;
+    if (revealShownRef.current.has(key)) {
+      logSceneEvent(SCENE_LOG_KEY, 'reveal:already-shown', { symbolId: key, source });
+      return false;
+    }
+    if (revealConfigRef.current) {
+      logSceneEvent(SCENE_LOG_KEY, 'reveal:already-active', {
+        symbolId: key,
+        active: revealConfigRef.current.symbolId,
+        source
+      });
+      return false;
+    }
+    revealShownRef.current.add(key);
+    logSceneEvent(SCENE_LOG_KEY, 'reveal:start', { symbolId: key, source });
+    setRevealConfig(details);
+    logSceneEvent(SCENE_LOG_KEY, 'reveal:shown', { symbolId: key, source });
+    disarmWatchdog('reveal-card');
+    return true;
+  }, [disarmWatchdog, getRevealDetails]);
+
+  const armRevealWatch = useCallback((symbolId, source) => {
+    const details = getRevealDetails(symbolId);
+    if (!details || revealShownRef.current.has(details.symbolId) || revealConfigRef.current) return;
+    logSceneEvent(SCENE_LOG_KEY, 'reveal:waiting', { symbolId: details.symbolId, source });
+    armWatchdog('reveal-card', 12000, () => {
+      if (revealConfigRef.current || revealShownRef.current.has(details.symbolId)) return;
+      showRevealOnce(details.symbolId, 'watchdog');
+    });
+  }, [armWatchdog, getRevealDetails, showRevealOnce]);
+
+  const recoverFirstLine = useCallback((game) => {
+    if (firstLineRecoveringRef.current === game) return;
+    firstLineRecoveringRef.current = game;
+    logSceneEvent(SCENE_LOG_KEY, 'first-line:recover', { game });
+
+    if (
+      game === 'eyes' &&
+      sceneStateRef.current?.phase === PHASES.EYES_GAME &&
+      sceneStateRef.current?.showEyesTelescopeGame &&
+      !sceneStateRef.current?.discoveredSymbols?.eyes
+    ) {
+      sceneActions.updateState({ showEyesTelescopeGame: false });
+      safeSetTimeout(() => {
+        firstLineRecoveringRef.current = null;
+        if (
+          sceneStateRef.current?.phase === PHASES.EYES_GAME &&
+          !sceneStateRef.current?.showEyesTelescopeGame &&
+          !sceneStateRef.current?.discoveredSymbols?.eyes
+        ) {
+          sceneActions.updateState({ showEyesTelescopeGame: true, earsVisible: false });
+        }
+      }, 250);
+      return;
+    }
+
+    if (
+      game === 'ears' &&
+      sceneStateRef.current?.phase === PHASES.EARS_GAME &&
+      sceneStateRef.current?.showEarsRhythmGame &&
+      !sceneStateRef.current?.discoveredSymbols?.ears
+    ) {
+      sceneActions.updateState({ showEarsRhythmGame: false });
+      safeSetTimeout(() => {
+        firstLineRecoveringRef.current = null;
+        if (
+          sceneStateRef.current?.phase === PHASES.EARS_GAME &&
+          !sceneStateRef.current?.showEarsRhythmGame &&
+          !sceneStateRef.current?.discoveredSymbols?.ears
+        ) {
+          sceneActions.updateState({ showEarsRhythmGame: true, earsVisible: true });
+        }
+      }, 250);
+      return;
+    }
+
+    firstLineRecoveringRef.current = null;
+  }, [safeSetTimeout, sceneActions]);
 
 
   const speakScenePromptRaw = useCallback((key, options = {}) => {
@@ -410,8 +568,16 @@ const SymbolMountainSceneContent = ({
   const gameLineRef = useRef(null);
   const activeGameName = sceneState?.showEyesTelescopeGame ? 'eyes'
     : sceneState?.showEarsRhythmGame ? 'ears' : null;
-  const reportEyesLine = useCallback((line) => { gameLineRef.current = { game: 'eyes', line }; }, []);
-  const reportEarsLine = useCallback((line) => { gameLineRef.current = { game: 'ears', line }; }, []);
+  const reportEyesLine = useCallback((line) => {
+    gameLineRef.current = { game: 'eyes', line };
+    logSceneEvent(SCENE_LOG_KEY, 'first-line:heard', { game: 'eyes', line });
+    disarmWatchdog('first-line');
+  }, [disarmWatchdog]);
+  const reportEarsLine = useCallback((line) => {
+    gameLineRef.current = { game: 'ears', line };
+    logSceneEvent(SCENE_LOG_KEY, 'first-line:heard', { game: 'ears', line });
+    disarmWatchdog('first-line');
+  }, [disarmWatchdog]);
   const getGameReplayLine = useCallback(() => (
     activeGameName && gameLineRef.current?.game === activeGameName ? gameLineRef.current.line : null
   ), [activeGameName]);
@@ -659,15 +825,18 @@ const SymbolMountainSceneContent = ({
     }
 
     if (sceneState.phase === PHASES.EYES_COMPLETE) {
-      safeSetTimeout(() => setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: 'I can focus on what matters.', sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: REVEAL_SAY_WITH_ME_DELAY_MS }), 500);
+      armRevealWatch('eyes', 'restore');
+      safeSetTimeout(() => showRevealOnce('eyes', 'restore'), 500);
       return;
     }
     if (sceneState.phase === PHASES.EARS_COMPLETE) {
-      safeSetTimeout(() => setRevealConfig({ symbolId: 'ear', symbolImage: symbolEarColored, symbolName: 'Ears', affirmation: 'I can listen for what helps me.', sidebarTarget: getSidebarTarget('ear'), sayWithMeDelayMs: REVEAL_SAY_WITH_ME_DELAY_MS }), 500);
+      armRevealWatch('ear', 'restore');
+      safeSetTimeout(() => showRevealOnce('ear', 'restore'), 500);
       return;
     }
     if (sceneState.phase === PHASES.TUSK_COMPLETE) {
-      safeSetTimeout(() => setRevealConfig({ symbolId: 'tusk', symbolImage: symbolTuskColored, symbolName: 'Tusk', affirmation: 'I can use what I have for something important.', sidebarTarget: getSidebarTarget('tusk'), sayWithMeDelayMs: REVEAL_SAY_WITH_ME_DELAY_MS }), 500);
+      armRevealWatch('tusk', 'restore');
+      safeSetTimeout(() => showRevealOnce('tusk', 'restore'), 500);
       return;
     }
 
@@ -676,7 +845,7 @@ const SymbolMountainSceneContent = ({
       return;
     }
 
-  }, [isReload, sceneState.phase, sceneState.welcomeShown, sceneState.showEyesTelescopeGame, sceneState.showEarsRhythmGame, sceneState.showTuskAssemblyGame]);
+  }, [isReload, sceneState.phase, sceneState.welcomeShown, sceneState.showEyesTelescopeGame, sceneState.showEarsRhythmGame, sceneState.showTuskAssemblyGame, armRevealWatch, showRevealOnce]);
 
   // Auto-start games by phase (no symbol tap required).
   useEffect(() => {
@@ -729,6 +898,41 @@ const SymbolMountainSceneContent = ({
     revealConfig
   ]);
 
+  useEffect(() => {
+    if (
+      sceneState?.welcomeShown &&
+      sceneState?.phase === PHASES.EYES_GAME &&
+      sceneState?.showEyesTelescopeGame &&
+      !sceneState?.discoveredSymbols?.eyes
+    ) {
+      armWatchdog('first-line', 10000, () => recoverFirstLine('eyes'));
+      return () => disarmWatchdog('first-line');
+    }
+
+    if (
+      sceneState?.welcomeShown &&
+      sceneState?.phase === PHASES.EARS_GAME &&
+      sceneState?.showEarsRhythmGame &&
+      !sceneState?.discoveredSymbols?.ears
+    ) {
+      armWatchdog('first-line', 10000, () => recoverFirstLine('ears'));
+      return () => disarmWatchdog('first-line');
+    }
+
+    disarmWatchdog('first-line');
+    return undefined;
+  }, [
+    sceneState?.welcomeShown,
+    sceneState?.phase,
+    sceneState?.showEyesTelescopeGame,
+    sceneState?.showEarsRhythmGame,
+    sceneState?.discoveredSymbols?.eyes,
+    sceneState?.discoveredSymbols?.ears,
+    armWatchdog,
+    disarmWatchdog,
+    recoverFirstLine
+  ]);
+
   // ==================== INTERACTION HANDLERS ====================
 
   useEffect(() => {
@@ -769,7 +973,7 @@ const SymbolMountainSceneContent = ({
     triggerMiniGesture('victory', 'center', 2000);
     safeSetTimeout(() => {
       setShowSparkle(null);
-      setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: 'I can focus on what matters.', sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: REVEAL_SAY_WITH_ME_DELAY_MS });
+      showRevealOnce('eyes', 'live');
     }, 1200);
   };
 
@@ -784,6 +988,7 @@ const SymbolMountainSceneContent = ({
       tuskGameActive: false,
       phase: PHASES.TUSK_COMPLETE
     });
+    armRevealWatch('tusk', 'live');
     triggerMiniGesture('victory', 'center', 2200);
     // Just the tusk symbol fading in with a golden burst, then straight to
     // the symbol reveal card — no separate Ganesha character image over it.
@@ -795,7 +1000,7 @@ const SymbolMountainSceneContent = ({
       setTuskTransforming(false);
     }, 2500);
     safeSetTimeout(() => {
-      setRevealConfig({ symbolId: 'tusk', symbolImage: symbolTuskColored, symbolName: 'Tusk', affirmation: 'I can use what I have for something important.', sidebarTarget: getSidebarTarget('tusk'), sayWithMeDelayMs: REVEAL_SAY_WITH_ME_DELAY_MS });
+      showRevealOnce('tusk', 'live');
     }, 3200);
   };
 
@@ -817,18 +1022,8 @@ const SymbolMountainSceneContent = ({
 
   // shouldEnableHints / getHintConfigs removed â€” replaced by inline hint cadence (see useEffect above)
 
-  // -- SymbolAutoReveal helpers -----------------------------------------------
-  const getSidebarTarget = (symbolId) => {
-    const el = getCollectionTarget(symbolId);
-    if (!el) return { x: 220, y: 0 };
-    const r = el.getBoundingClientRect();
-    return {
-      x: (r.left + r.width / 2) - (window.innerWidth / 2),
-      y: (r.top + r.height / 2) - (window.innerHeight / 2)
-    };
-  };
-
   const handleRevealComplete = (symbolId) => {
+    logSceneEvent(SCENE_LOG_KEY, 'reveal:complete', { symbolId });
     setRevealConfig(null);
     if (symbolId === 'eyes') {
       safeSetTimeout(() => {
@@ -902,6 +1097,7 @@ const SymbolMountainSceneContent = ({
               onReplay={replayCurrentVoice}
               disabled={!isAudioOn || !(getPromptKeyForPhase() || getGameReplayLine())}
             />
+            <SceneStallPrompt show={!!stall} onTap={resolveStall} />
             <div className={`mountain-background ${tuskZoomActive ? 'tusk-zoom' : ''} ${tuskFadeOut ? 'tusk-fade-out' : ''}`} style={{ backgroundImage: `url(${mountainBackground})` }}>
               {!isCompletionView && !isFinalFireworksView && (
                 <>
@@ -938,6 +1134,7 @@ const SymbolMountainSceneContent = ({
                       showEyesTelescopeGame: false,
                       phase: PHASES.EYES_COMPLETE
                     });
+                    armRevealWatch('eyes', 'live');
                     // Keep discovered animals visible a bit longer before symbol reveal.
                     safeSetTimeout(() => handleEyesGameComplete(), 1800);
                   }}
@@ -966,6 +1163,7 @@ const SymbolMountainSceneContent = ({
                     });
                   }}
                   onGameComplete={() => {
+                    armRevealWatch('ear', 'live');
                     // Keep matched animals visible briefly before transitioning to reveal.
                     safeSetTimeout(() => {
                       sceneActions.updateState({
@@ -978,14 +1176,7 @@ const SymbolMountainSceneContent = ({
                       triggerMiniGesture('victory', 'center', 2000);
                       safeSetTimeout(() => {
                         setShowSparkle(null);
-                        setRevealConfig({
-                          symbolId: 'ear',
-                          symbolImage: symbolEarColored,
-                          symbolName: 'Ears',
-                          affirmation: 'I can listen for what helps me.',
-                          sidebarTarget: getSidebarTarget('ear'),
-                          sayWithMeDelayMs: REVEAL_SAY_WITH_ME_DELAY_MS
-                        });
+                        showRevealOnce('ear', 'live');
                       }, 2000);
                     }, 1800);
                   }}
@@ -1215,7 +1406,13 @@ const SymbolMountainSceneContent = ({
                 sceneId="symbol"
                 completionData={{ stars: 9, symbols: { eyes: true, ears: true, tusk: true }, completed: true, totalStars: 9 }}
                 onComplete={onComplete}
-                onReplay={() => { setShowSceneCompletion(false); resetScene(); }}
+                onReplay={() => {
+                  setShowSceneCompletion(false);
+                  revealShownRef.current.clear();
+                  disarmWatchdog('first-line');
+                  disarmWatchdog('reveal-card');
+                  resetScene();
+                }}
                 onContinue={() => {
                   stopSpokenVoice();
                   const profileId = localStorage.getItem('activeProfileId');
