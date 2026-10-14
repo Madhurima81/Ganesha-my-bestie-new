@@ -31,7 +31,7 @@ import storyFestivalIcon from './assets/images/festival-icon.webp';
 
 // ─── PHASE 1: NEW IMPORTS ─────────────────────────────────────────
 import FreeDraggableItem from '../../../lib/components/interactive/FreeDraggableItem';
-import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
+import AboutMeSparkle from '../components/AboutMeSparkle';
 import GestureDemo from '../../../lib/components/feedback/GestureDemo';
 import indiaMapImage from './assets/images/ganeshaplace/india-map.webp';
 import mglass from './assets/images/ganeshaplace/mglass.webp';
@@ -741,7 +741,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     triggerMiniGestureRaw('thumbsup', anchor ? 'anchored' : 'center', durationMs, anchor);
   }, [triggerMiniGestureRaw]);
 
-  const triggerSparkle = useCallback((typeOrOptions, durationMs = 1500) => {
+  const triggerSparkle = useCallback((typeOrOptions, durationMs = 1700) => {
     let sparkleType = 'single';
     let sparkleDuration = durationMs;
     let sparklePosition = null;
@@ -768,7 +768,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     }, sparkleDuration + 50);
   }, []);
 
-  const triggerPhase1SpotSparkle = useCallback((spotIndex, durationMs = 1200) => {
+  const triggerPhase1SpotSparkle = useCallback((spotIndex, durationMs = 1700) => {
     if (phase1SpotSparkleTimerRef.current) clearTimeout(phase1SpotSparkleTimerRef.current);
     setPhase1SpotSparkle(prev => ({ index: spotIndex, key: prev.key + 1 }));
     phase1SpotSparkleTimerRef.current = setTimeout(() => {
@@ -1377,7 +1377,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
     const cancel1 = safeSetTimeout(() => {
       setShowCelebration(true);
-      triggerSparkle('all', 2000);
+      triggerSparkle('all', 2400);
       const startedAt = Date.now();
       speakIfUnmuted(VOICE.phase1_complete, {
         age: childAge,
@@ -1611,8 +1611,8 @@ const discoverLocation = useCallback((index) => {
       durationMs: 1500,
       position: { x: location.x, y: Math.max(8, location.y - 8) },
     });
-    triggerSparkle('single', 1500);
-    triggerPhase1SpotSparkle(index, 1200);
+    triggerSparkle('single', 1700);
+    triggerPhase1SpotSparkle(index, 1700);
     speakIfUnmuted(location.name, { age: childAge, moment: 'story' });
   }, [playSparkle, triggerMiniGesture, triggerSparkle, triggerPhase1SpotSparkle, speakIfUnmuted, childAge]);
 
@@ -1648,7 +1648,7 @@ const discoverLocation = useCallback((index) => {
     const regionSparklePosition = regionRect
       ? { x: regionRect.left + regionRect.width / 2, y: regionRect.top + regionRect.height / 2 }
       : null;
-    triggerSparkle({ type: 'single', durationMs: 1200, position: regionSparklePosition, radius: 170 });
+    triggerSparkle({ type: 'single', durationMs: 1700, position: regionSparklePosition, radius: 170 });
     if (childHomeIdleTimerRef.current) clearTimeout(childHomeIdleTimerRef.current);
     if (childHomePostSelectTimerRef.current) clearTimeout(childHomePostSelectTimerRef.current);
     if (childHomeIdleHintTimerRef.current) clearTimeout(childHomeIdleHintTimerRef.current);
@@ -1677,7 +1677,7 @@ const discoverLocation = useCallback((index) => {
     const langSparklePosition = langRect
       ? { x: langRect.left + langRect.width / 2, y: langRect.top + langRect.height / 2 }
       : null;
-    triggerSparkle({ type: 'single', durationMs: 1200, position: langSparklePosition, radius: 170 });
+    triggerSparkle({ type: 'single', durationMs: 1700, position: langSparklePosition, radius: 170 });
     // Reset idle hints on language selection
     if (langGuessIdleLevel > 0) {
       if (import.meta.env.DEV) console.log('[Idle Hint Language] Reset: Child selected language');
@@ -1716,7 +1716,7 @@ const discoverLocation = useCallback((index) => {
     const festSparklePosition = festRect
       ? { x: festRect.left + festRect.width / 2, y: festRect.top + festRect.height / 2 }
       : null;
-    triggerSparkle({ type: 'single', durationMs: 1200, position: festSparklePosition, radius: 170 });
+    triggerSparkle({ type: 'single', durationMs: 1700, position: festSparklePosition, radius: 170 });
     // Reset idle hints on festival selection
     if (festGuessIdleLevel > 0) {
       if (import.meta.env.DEV) console.log('[Idle Hint Festival] Reset: Child selected festival');
@@ -1752,7 +1752,7 @@ const discoverLocation = useCallback((index) => {
   const playLangSuccess = ({ celebrate = false } = {}) => {
     setLangGuessPhase('correct');
     if (celebrate) {
-      triggerSparkle('all', 2000);
+      triggerSparkle('all', 2400);
       playSparkle();
       triggerMiniGesture(1500);
       playChime();
@@ -1813,7 +1813,7 @@ const discoverLocation = useCallback((index) => {
   const playFestSuccess = ({ celebrate = false, label = null } = {}) => {
     setGuessPhase('correct');
     if (celebrate) {
-      triggerSparkle('all', 2000);
+      triggerSparkle('all', 2400);
       playSparkle();
       triggerMiniGesture(1500);
       playChime();
@@ -2019,16 +2019,7 @@ const handleComplete = () => {
               : { position: 'fixed', inset: 0, zIndex: 1500, pointerEvents: 'none' }
           }
         >
-          <SparkleAnimation
-            type="star"
-            count={sparkleState.type === 'all' ? 42 : 14}
-            color={sparkleState.type === 'all' ? 'rgba(255, 214, 102, 0.92)' : 'rgba(255, 210, 92, 0.98)'}
-            size={sparkleState.type === 'all' ? 12 : 10}
-            duration={sparkleState.type === 'all' ? 2400 : 1700}
-            fadeOut={true}
-            area="full"
-            key={sparkleState.key}
-          />
+          <AboutMeSparkle key={sparkleState.key} preset={sparkleState.type === 'all' ? 'big' : 'burst'} />
         </div>
       )}
 
@@ -2281,16 +2272,7 @@ const handleComplete = () => {
                   zIndex: 30,
                 }}
               >
-                <SparkleAnimation
-                  key={`phase1-spot-sparkle-${phase1SpotSparkle.key}`}
-                  type="star"
-                  count={18}
-                  color="rgba(0, 229, 255, 0.9)"
-                  size={8}
-                  duration={1000}
-                  fadeOut={true}
-                  area="full"
-                />
+                <AboutMeSparkle key={`phase1-spot-sparkle-${phase1SpotSparkle.key}`} preset="burst" />
               </div>
             )}
 
@@ -2335,15 +2317,7 @@ const handleComplete = () => {
                   pointerEvents: 'none',
                 }}
               >
-                <SparkleAnimation
-                  type="star"
-                  count={14}
-                  color="rgba(255, 205, 64, 0.95)"
-                  size={7}
-                  duration={1200}
-                  fadeOut={true}
-                  area="full"
-                />
+                <AboutMeSparkle preset="burst" />
               </div>
             ))}
 
@@ -3012,16 +2986,7 @@ const handleComplete = () => {
           {/* Correct Celebration Sparkle */}
           {guessPhase === 'correct' && (
             <div style={{ position: 'fixed', inset: 0, zIndex: 1500, pointerEvents: 'none' }}>
-              <SparkleAnimation
-                type="star"
-                count={20}
-                color="rgba(255, 200, 87, 0.8)"
-                size={6}
-                duration={2000}
-                fadeOut={true}
-                area="full"
-                key={sparkleState.key}
-              />
+              <AboutMeSparkle key={sparkleState.key} preset="linger" />
             </div>
           )}
 

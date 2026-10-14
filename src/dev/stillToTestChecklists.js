@@ -98,6 +98,35 @@ export const STILL_TO_TEST_CHECKLISTS = {
     ZONE_WELCOME_ROW,
   ]),
 
+  // Sparkle cleanup (2026-10-14): all four games use AboutMeSparkle (gold star) and Dreams/Food share DiscoveryFlight.
+  // Looks only - no voice, resume or save changes. Rows are added one game at a time, in the order Dreams, Food, Family Tree, Indian Story.
+  'todo-aboutme-6-sparkle': {
+    title: 'Still to test - About Me Hut sparkle cleanup',
+    items: [
+      { text: 'Dreams, wish 1: tap the earth once, then finish all three.', expect: 'A small gold star pop on each tap, a bigger gold star shower when all three are done. No coloured or round glow dots, nothing left on screen afterwards.' },
+      { text: 'Dreams, wish 2 (plates): drop one right item, then finish the set. Then wish 3.', expect: 'Wish 2 shows the SAME gold stars as wish 1: a small pop on the plate, then the big shower. Wish 3 and the cloud clearing show the same two sizes.' },
+      { text: 'Dreams: the three "wish complete" screens (smiley, heart, flower).', expect: 'One gold star shower over the screen instead of floating emoji. They fade out by themselves after about 2-3 seconds. Ganesha still bounces.' },
+      { text: 'Dreams: clear the clouds to reveal the dream.', expect: 'A gold star burst around your drawing for about 3 seconds, then it stops (it no longer loops). The drawing still pulses.' },
+      { text: 'Dreams: comparison card "We Both Have Wishes".', expect: 'Soft gold stars behind the card, then they fade out after about 3 seconds (they must NOT stay on screen).' },
+      { text: 'Dreams: each time a wish icon pops up in the middle and flies to the top (wishes 1, 2, 3).', expect: 'Icon appears centred, pulses twice, flies up and fades; the success line starts at the same moment as before (not earlier or later). Same size as before.' },
+      { text: 'Turn on "Reduce motion" in the device accessibility settings and replay a wish.', expect: 'The wish icon only fades in and out in the middle (no flying, no pulsing). Nothing breaks.' },
+      { text: 'Food: answer each of the 4 questions (food, colour, activity, friend) correctly.', expect: 'A small gold star pop each time; a bigger gold shower on the last question of a step. Same gold stars as Dreams, no round glow dots. They fade out by themselves.' },
+      { text: 'Food: the picked food / colour / friend icon in the middle of the screen (the flight).', expect: 'Same flight as before: icon centred, pulses twice, floats up. Child choices and the Modak keep their glow; the name label still shows where it did. The success line starts at the same moment as before.' },
+      { text: 'Food: watch the Ganesha celebrating pictures and the comparison card at the end.', expect: 'Ganesha still bounces; the friend pair on the comparison card looks exactly as before.' },
+      { text: 'Food: finish the scene and tap Play Again on the completion modal.', expect: 'Starts fresh at the opening modal; sparkles and flight work again.' },
+      { text: 'Food and Dreams: after any icon flies up in the middle, watch for a second sparkle.', expect: 'No extra sparkle emoji after the gold stars; the flight is just the icon. The comparison card (titled Friends Now) shows soft gold stars that fade out after about 3 seconds.' },
+      { text: 'Family Tree: place the Ganesha-tree members one by one, then wait about 5 seconds after the last one.', expect: 'A small gold star pop each time a member lands (including Ganesha filling himself in). Then, about 5 seconds after the last one, one bigger gold star shower (same as Dreams and Food), gone after about 2.5 seconds. "Tap Continue" still works at once and the tap clears it. No old round glow dots.' },
+      { text: 'Family Tree: on the add-your-family screen, add a few members, then press Done!. Also press Continue on the Ganesha tree.', expect: 'A small gold star pop every time you add a member. A BIG gold star shower when you press Done! (it carries over onto the next screen), and the same big shower when you press Continue on the Ganesha tree, together with the chime and the line. The shower is gone after about 2.5 seconds.' },
+      { text: 'Family Tree: reach the "Our Families!" side-by-side screen.', expect: 'Gold stars twinkle behind the two trees and stay while the screen is showing (this one is meant to stay).' },
+      { text: 'Family Tree: play to the end, then Play Again on the completion modal.', expect: 'Fresh start; sparkles work again; no leftover stars from the last run.' },
+      { text: 'My Indian Story: find each place on the India map in the first step.', expect: 'A small GOLD star pop on the spot you tapped (it used to be blue/cyan). When all places are found, the little hearts and the bigger gold shower play, then the line.' },
+      { text: 'My Indian Story: pick your region, then your language, then your festivals.', expect: 'A small gold star pop around the thing you tapped each time; a bigger gold shower when a step is complete. Same gold stars as the other three games.' },
+      { text: 'My Indian Story: the "your answer is correct" screen at the end of a guess.', expect: 'Soft gold stars for about 3 seconds, no leftover stars after they fade. Nothing is cut off early.' },
+      { text: 'My Indian Story: the comparison card at the end, then Play Again on the completion modal.', expect: 'Soft gold stars behind the card (they fade after about 3 seconds). Play Again starts fresh at the opening modal.' },
+      { text: 'Dreams: finish the scene and tap Play Again on the completion modal.', expect: 'Starts fresh at the opening modal; sparkles play again normally on the next run.' },
+    ],
+  },
+
   'todo-css-clash-batch-1': {
     title: 'Still to test - CSS clash batch 1 (Symbol Mountain scene-only)',
     items: [
