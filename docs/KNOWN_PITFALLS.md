@@ -473,6 +473,32 @@ coding bug (logic, timing, state, voice) could recur in another scene. Not for C
   Log every start/end/cancel/cut to the scene event log (`__sceneLog()`), so the next report comes with evidence.
 - **Seen in:** Favourite Food (2026-10-14). Same pattern likely in Dreams and Family Tree.
 
+## 51. A resume "silence guard" stays on forever if its one release timer is lost
+- **Symptom:** after Continue, every phase line (questions, success lines) is silent for the rest of the scene.
+- **Cause:** resume code sets `suppressPhaseVo = true` and releases it from one `safeSetTimeout`. Another
+  `clearAllTimeouts()`, a remount or a pause can cancel that timer, and nothing else turns the guard off.
+- **Fix:** every "block until X" flag needs a second way out: a short interval or a deadline that releases it
+  and logs `resume-guard:force-released`. Never rely on a single timer to un-silence a scene.
+- **Seen in:** Favourite Food (safety net added 2026-10-14; the main cause that day was pitfall 49).
+
+## 52. Read the scene's event log before guessing at a voice bug
+- **Symptom:** "the line didn't play", "it cut", "it repeated": three scenes, six different causes in a week.
+- **Rule:** put every voice request through one function that writes to the scene event log
+  (`logSceneEvent('food', 'speak:start' ...)`, read with `__sceneLog().food`). Then decide by the log:
+  - the line is NOT in the log -> the scene never asked for it (a guard, an early return, a stale flag: look in the code);
+  - `speak:start` but no sound -> the browser/engine (check cancel/pause state);
+  - `speak:cuts` / `dropped-before-start` -> two requests landed together (add waiting or priority).
+- Ask the tester to run `__sceneLog().<scene>` right after the bug; it survives Continue (it lives in memory).
+- **Seen in:** Favourite Food 2026-10-14: the log showed the missing success line was never requested, which
+  ruled out the engine and pointed at pitfall 49 in one step.
+
+## 53. A shared doc silently loses an entry when two sessions write it
+- **Symptom:** a CHANGELOG entry that was committed is gone from the working copy; `git diff` shows only deletions.
+- **Cause:** a session rewrites the file from an older copy.
+- **Fix:** before editing CHANGELOG / KNOWN_PITFALLS / DECISIONS, `git diff` the file; if it shows deletions you did
+  not make, restore the committed version (`git checkout HEAD -- <file>`) and add your entry on top.
+- **Seen in:** CHANGELOG 2026-10-14 (the 2026-10-13 About Me entry was missing from the working copy).
+
 ## Quick debugging snippets (paste in the browser console)
 Log every speech call and cancel (find who cancels a line):
 ```js
