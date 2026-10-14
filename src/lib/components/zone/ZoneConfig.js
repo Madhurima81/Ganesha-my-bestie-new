@@ -255,17 +255,6 @@ export const ZONE_CONFIGS = {
         position: { top: 30, left: 25 }
       },
       {
-        id: 'my-indian-story',
-        name: 'My Indian Story',
-        emoji: '🌏',
-        iconImage: '/images/zones/about-me-hut/my-indian-story-icon.png',
-        description: 'Discover where you and Ganesha come from in India',
-        unlocked: false,
-        order: 4,
-        totalStars: 3,
-        position: { top: 40, left: 70 }
-      },
-      {
         id: 'favorite-food',
         name: 'Our Favorite Things', // unchanged
         emoji: '🍕',
@@ -286,6 +275,17 @@ export const ZONE_CONFIGS = {
         order: 3,
         totalStars: 3,
         position: { top: 70, left: 35 }
+      },
+      {
+        id: 'my-indian-story',
+        name: 'My Indian Story',
+        emoji: '🌏',
+        iconImage: '/images/zones/about-me-hut/my-indian-story-icon.png',
+        description: 'Discover where you and Ganesha come from in India',
+        unlocked: false,
+        order: 4,
+        totalStars: 3,
+        position: { top: 40, left: 70 }
       }
     ]
   }
