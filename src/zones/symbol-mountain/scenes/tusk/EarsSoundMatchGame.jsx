@@ -7,6 +7,8 @@ import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
 import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
+import { createSpeechStartWatcher } from '../../../../lib/utils/speechStartWatch';
+import { logSceneEvent } from '../../../../lib/utils/sceneEventLog';
 import './EarsSoundMatchGame.css';
 
 // Reuse the shared scene-3 Symbol Mountain background across Eyes, Ears, and Tusk.
@@ -181,29 +183,8 @@ const HINT_TARGET_MS = 26000;
 // Repeated wrong choices accelerate help instead of resetting the clock.
 const WRONG_COUNT_FOR_L2 = 2;
 const WRONG_COUNT_FOR_L3 = 3;
-
-// Returns the utterance so the component can track it for tab-hide handling.
-const speakFallback = (text, onEnd) => {
-  if (!text || typeof window === 'undefined' || !window.speechSynthesis) {
-    onEnd?.();
-    return null;
-  }
-  try {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.92;
-    utterance.pitch = 1;
-    const done = () => onEnd?.();
-    utterance.onend = done;
-    utterance.onerror = done;
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
-    return utterance;
-  } catch {
-    // Speech synthesis is optional.
-    onEnd?.();
-    return null;
-  }
-};
+const SUCCESS_LINE_MIN_MS = 1500;
+const SCENE_LOG_KEY = 'symbol-mountain-ears';
 
 const POSE_ASSETS = [bgImg, leafyBushImg, hiddenSpringImg, revealedSpringImg, hiddenGrassBushImg, revealedGrassBushImg, elephantThirstyImg, elephantDrinkingImg, elephantHappyWaterImg, cowTiredImg, cowHungryImg, cowEatingGrassImg, cowHappyChewingImg];
 
@@ -284,6 +265,15 @@ const EarsSoundMatchGame = ({
   const pendingSidebarEntryRef = useRef(null);
   const wasPausedRef = useRef(false);
   const hintHoldRef = useRef(false);
+  const speechWatcherRef = useRef(null);
+  if (!speechWatcherRef.current) {
+    speechWatcherRef.current = createSpeechStartWatcher({
+      speechSynthesis: typeof window !== 'undefined' ? window.speechSynthesis : null,
+      onDropBeforeStart: ({ attempt }) => logSceneEvent(SCENE_LOG_KEY, 'speak:dropped-before-start', { attempt }),
+    });
+  }
+  const speechTokenRef = useRef(0);
+  const speakingTextRef = useRef(null);
 
   const round = ROUNDS[roundIndex];
   const completedIds = useMemo(() => new Set(completedRounds), [completedRounds]);
@@ -316,7 +306,7 @@ const EarsSoundMatchGame = ({
       interruptedAudioRef.current = entry;
       return;
     }
-    const done = () => {
+    const done = (result) => {
       if (entry.dead) return;
       if (!aliveRef.current) { entry.dead = true; return; }
       if (pausedRef.current) {
@@ -326,7 +316,7 @@ const EarsSoundMatchGame = ({
       }
       entry.dead = true;
       if (activeAudioRef.current === entry) activeAudioRef.current = null;
-      onEnd?.();
+      onEnd?.(result);
     };
     activeAudioRef.current = entry;
     start(done);
@@ -344,6 +334,8 @@ const EarsSoundMatchGame = ({
       }
       audioRef.current = null;
     }
+    speechWatcherRef.current?.cancelPending({ cancelSpeech: false });
+    speakingTextRef.current = null;
     if (typeof window !== 'undefined' && window.speechSynthesis?.cancel) {
       window.speechSynthesis.cancel();
     }
@@ -351,42 +343,106 @@ const EarsSoundMatchGame = ({
 
   // Direct speechSynthesis use (bypasses the scene's useVoiceGuidance hook). Tab-hide and the
   // sidebar both interrupt/replay through track() — see interruptActiveAudio below.
-  const speakingTextRef = useRef(null);
-  const trackUtterance = useCallback((text, utterance, onEnd) => {
-    if (!utterance) {
-      onEnd?.();
-      return;
-    }
-    const done = () => {
-      if (speakingTextRef.current === text) speakingTextRef.current = null;
-      onEnd?.();
-    };
-    utterance.onend = done;
-    // A line cut off by cancel() (a newer line, leaving the scene) is not finished: its end
-    // callback must not run the next step on top of whatever replaced it.
-    utterance.onerror = (e) => {
-      if (e?.error === 'canceled' || e?.error === 'interrupted') return;
-      done();
-    };
-    speakingTextRef.current = text;
-  }, []);
-
-  const speak = useCallback((text, onEnd) => {
+  const speak = useCallback((text, onEnd, options = {}) => {
     // Tell the scene which line is current so its Replay button repeats this game's line.
     if (text) lineSpokenRef.current?.(text);
+    const priority = options.priority || 'normal';
+    const label = options.label || text;
+
+    const runFollowUp = (result = {}) => {
+      onEnd?.(result);
+    };
+
+    if (priority === 'hint' && activeAudioRef.current && !activeAudioRef.current.dead) {
+      const active = activeAudioRef.current;
+      const originalOnEnd = active.onEnd;
+      active.onEnd = (result) => {
+        originalOnEnd?.(result);
+        runFollowUp({ skipped: true, waitedForCurrent: true });
+      };
+      logSceneEvent(SCENE_LOG_KEY, 'speak:hint-waited-and-skipped', { label });
+      return;
+    }
+
     if (!isAudioOn) {
-      onEnd?.();
+      logSceneEvent(SCENE_LOG_KEY, 'speak:muted', { label });
+      runFollowUp({ finished: true, muted: true, elapsedMs: 0 });
       return;
     }
     // Stop the parent scene's own voice engine first — its MP3 audio element
-    // isn't touched by window.speechSynthesis.cancel() inside speakFallback,
-    // so without this a still-playing scene VO keeps going under this
-    // mini-game's line.
+    // is not touched by raw speechSynthesis.cancel(), so without this a
+    // still-playing scene VO keeps going under this mini-game's line.
     track((done) => {
       stopVoice?.();
-      trackUtterance(text, speakFallback(text), done);
+      if (!text || typeof window === 'undefined' || !window.speechSynthesis || typeof SpeechSynthesisUtterance === 'undefined') {
+        done({ finished: true, unsupported: true, elapsedMs: 0 });
+        return;
+      }
+      const token = ++speechTokenRef.current;
+      let startedAt = 0;
+      logSceneEvent(SCENE_LOG_KEY, 'speak:request', { label, priority });
+      try {
+        window.speechSynthesis.cancel();
+        const utterance = speechWatcherRef.current.speak({
+          isStillCurrent: () => speechTokenRef.current === token && aliveRef.current,
+          buildUtterance: (attempt) => {
+            const u = new SpeechSynthesisUtterance(text);
+            u.rate = 0.92;
+            u.pitch = 1;
+            u.onstart = () => {
+              startedAt = Date.now();
+              speakingTextRef.current = text;
+              logSceneEvent(SCENE_LOG_KEY, 'speak:start', { label, attempt });
+            };
+            u.onend = () => {
+              if (speechTokenRef.current !== token || !aliveRef.current) {
+                logSceneEvent(SCENE_LOG_KEY, 'speak:stale-end', { label });
+                return;
+              }
+              if (speakingTextRef.current === text) speakingTextRef.current = null;
+              const elapsedMs = startedAt ? Date.now() - startedAt : 0;
+              logSceneEvent(SCENE_LOG_KEY, 'speak:end', { label, elapsedMs });
+              done({ finished: true, elapsedMs });
+            };
+            u.onerror = (e) => {
+              const error = e?.error || 'unknown';
+              if (speechTokenRef.current !== token || !aliveRef.current) {
+                logSceneEvent(SCENE_LOG_KEY, 'speak:stale-error', { label, error });
+                return;
+              }
+              if (speakingTextRef.current === text) speakingTextRef.current = null;
+              const elapsedMs = startedAt ? Date.now() - startedAt : 0;
+              if (error === 'canceled' || error === 'interrupted') {
+                logSceneEvent(SCENE_LOG_KEY, 'speak:cancel', { label, error, elapsedMs });
+                return;
+              }
+              logSceneEvent(SCENE_LOG_KEY, 'speak:error', { label, error, elapsedMs });
+              done({ finished: elapsedMs >= SUCCESS_LINE_MIN_MS, error, elapsedMs });
+            };
+            return u;
+          },
+        });
+        if (!utterance) done({ finished: true, unsupported: true, elapsedMs: 0 });
+      } catch (error) {
+        logSceneEvent(SCENE_LOG_KEY, 'speak:exception', { label, error: String(error) });
+        done({ finished: true, error: String(error), elapsedMs: 0 });
+      }
     }, onEnd);
-  }, [isAudioOn, stopVoice, trackUtterance, track]);
+  }, [isAudioOn, stopVoice, track]);
+
+  const markSuccessDoneIfFinished = useCallback((lineResult, doneCount) => {
+    if (!aliveRef.current) return;
+    if (!lineResult?.finished || (lineResult.elapsedMs || 0) < SUCCESS_LINE_MIN_MS) {
+      logSceneEvent(SCENE_LOG_KEY, 'success:not-marked-done', {
+        doneCount,
+        elapsedMs: lineResult?.elapsedMs || 0,
+        finished: Boolean(lineResult?.finished),
+      });
+      return;
+    }
+    logSceneEvent(SCENE_LOG_KEY, 'success:marked-done', { doneCount, elapsedMs: lineResult.elapsedMs });
+    onSuccessDoneRef.current?.(doneCount);
+  }, []);
 
   // Shared by sidebar-open and tab-hide: kill the current clip WITHOUT firing its callback
   // (a cancel-triggered end must never advance the game), hold the hint ladder, and remember
@@ -471,7 +527,7 @@ const EarsSoundMatchGame = ({
       // The game's own sounds (water drip, rustle, birds, decoys) ARE the question, so they play
       // whether or not voice is muted. Only the spoken fallback line follows the voice mute.
       if (!src) {
-        if (fallbackText && isAudioOn) trackUtterance(fallbackText, speakFallback(fallbackText));
+        if (fallbackText && isAudioOn) speak(fallbackText, null, { label: `fallback:${fallbackText}` });
         schedule(finish, 850);
         return;
       }
@@ -487,7 +543,7 @@ const EarsSoundMatchGame = ({
         finish();
       }
     }, onDone);
-  }, [isAudioOn, schedule, stopAudio, trackUtterance, track]);
+  }, [isAudioOn, schedule, speak, stopAudio, track]);
 
   // Sidebar open = true pause: kill the current clip WITHOUT firing its callback and hold
   // the hint ladder. On close: after a beat, replay the interrupted clip from the start
@@ -724,10 +780,10 @@ const EarsSoundMatchGame = ({
           playSequence(ROUNDS[startRoundRef.current]);
         } else {
           // Cut off during the success line: replay it, then start this round fresh.
-          speak(VO_TEXTS[ROUNDS[startRoundRef.current - 1].id], () => {
-            onSuccessDoneRef.current?.(startRoundRef.current);
+          speak(VO_TEXTS[ROUNDS[startRoundRef.current - 1].id], (lineResult) => {
+            markSuccessDoneIfFinished(lineResult, startRoundRef.current);
             schedule(() => playSequence(ROUNDS[startRoundRef.current]), 600);
-          });
+          }, { label: `resume-success:${ROUNDS[startRoundRef.current - 1].id}` });
         }
       }, 500);
       return () => clearTimeout(resumeTimer);
@@ -742,7 +798,7 @@ const EarsSoundMatchGame = ({
       schedule(() => playSequence(ROUNDS[0]), INTRO_DELAY_MS);
     }, 0);
     return () => clearTimeout(startTimer);
-  }, [isActive, playSequence, resetGame, schedule, speak]);
+  }, [isActive, markSuccessDoneIfFinished, playSequence, resetGame, schedule, speak]);
 
   // L1: replay all three sources once (memory aid, no VO, no reveal) — a
   // dedicated replay, not a full round restart (no prompt VO, no phase
@@ -788,7 +844,7 @@ const EarsSoundMatchGame = ({
       playSound(targetRound.sounds[targetRound.targetZoneId], '', () => {
         l2FinishedAtRef.current = Date.now();
       }, 0.68);
-    });
+    }, { priority: 'hint', label: `hint:${targetRound.id}` });
     // L3 is gated on L2 "finishing". If the browser never delivers the speech "ended" event the
     // chain above never completes and L3 would never come — so stamp it after a generous limit
     // (the clue line plus the target sound), only if this is still the same round at stage 2.
@@ -854,9 +910,9 @@ const EarsSoundMatchGame = ({
     setRevealFrameByAnimal((prev) => ({ ...prev, [animalRound.id]: 0 }));
     // Report when the success line has finished, so Continue only replays it if it was cut off.
     if (!options.skipSuccess) {
-      speak(VO_TEXTS[animalRound.id], () => {
-        onSuccessDoneRef.current?.(ROUNDS.indexOf(animalRound) + 1);
-      });
+      speak(VO_TEXTS[animalRound.id], (lineResult) => {
+        markSuccessDoneIfFinished(lineResult, ROUNDS.indexOf(animalRound) + 1);
+      }, { label: `success:${animalRound.id}` });
     }
 
     let frame = 0;
@@ -906,7 +962,7 @@ const EarsSoundMatchGame = ({
       setRoundIndex(nextIndex);
       playSequence(ROUNDS[nextIndex]);
     }, (animalRound.revealFrames.length * REVEAL_FRAME_MS) + NEXT_ROUND_DELAY_MS);
-  }, [clearTimers, onAnimalPositionsChange, onGameComplete, playSequence, roundIndex, schedule, speak, stopAudio]);
+  }, [clearTimers, markSuccessDoneIfFinished, onAnimalPositionsChange, onGameComplete, playSequence, roundIndex, schedule, speak, stopAudio]);
 
   const handleZoneTap = useCallback((zoneId, e) => {
     e.stopPropagation();

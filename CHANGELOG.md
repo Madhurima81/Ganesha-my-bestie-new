@@ -1,5 +1,9 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-14] - Symbol Mountain Ears voice hardening
+**Touched:** src/lib/utils/speechStartWatch.js, src/lib/utils/speechStartWatch.test.js, src/zones/symbol-mountain/scenes/tusk/EarsSoundMatchGame.jsx, src/dev/stillToTestChecklists.js.
+**Changed:** Ears now uses a shared Web Speech start-watch helper: if a spoken line does not fire `onstart` within 1.4 s, the stuck utterance is dropped with handlers detached and spoken fresh once. The Ears game now has one speech owner, logs line request/start/end/cancel/drop events to the scene log, ignores stale/cancel callbacks, keeps hint lines from cutting active lines or sound chains, and only marks `earsSuccessDone` when the success line really finished while mounted (>= ~1.5 s).
+**Verified:** Ears esbuild syntax check; scoped fake-speechSynthesis helper test (5 cases); private Vite build to `../ganesha-my-bestie-s3-dist`; Madhurima tested all 7 Ears rows (fresh start, badge + Continue x3-4, success cut/finished, hint not cutting, tab switch).
 ## [2026-10-14] - About Me Hut sparkle cleanup, game 4 of 4: My Indian Story
 **Touched:** `indian-story/MyIndianStoryGame.jsx`, `indian-story/MyIndianStoryGame.css`, `src/dev/stillToTestChecklists.js`
 **Changed:** the four sparkles (answer overlay, per-spot sparkle, celebration hearts, "correct" screen) use `AboutMeSparkle` (burst / big / linger). The per-spot sparkle was cyan (not deliberate): now gold. The sparkle timers (`triggerSparkle` 1200/1500/2000 ms, `triggerPhase1SpotSparkle` 1200 ms, defaults 1500/1200) now match the presets (1700 / 2400 ms) so a sparkle is not cut short. Dead CSS removed: `.mis-correct-burst` and `@keyframes burstIn` (never rendered). Kept: `spotPop` (a reveal pop). The comparison card sparkle comes from the shared `AboutMeComparisonCard` (added with Food).
