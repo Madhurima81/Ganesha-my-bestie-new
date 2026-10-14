@@ -549,6 +549,12 @@ coding bug (logic, timing, state, voice) could recur in another scene. Not for C
 - **Fix:** whenever the ladder (re)starts, set the baseline to NOW (`lastIdleInteractionAtRef.current = Date.now()`, clear `l2VoiceEndedAtRef`). Any clock that is switched off and on again must restart from the moment it switches on.
 - **Seen in:** Symbol Mountain Eyes/Ears/Tusk scene (SymbolMountainSceneV3.jsx), 2026-10-14. Check any scene with a parent-level idle ladder plus mini-games.
 
+## 59. Reachable is not rendered (a component can be imported and bundled but never shown)
+- **Symptom:** a CSS or code audit (clash lists, dead-code lists, "which scenes use X") counts components that no child can ever see. In the 2026-10-14 CSS clash work most of the time went into them.
+- **Cause:** an `import` keeps the file in the build (and a module that imports its own CSS keeps that CSS) even when the component is never rendered: `UnifiedModal` and `UnifiedButtonV2` (Modak), `PowerUnlockOverlay` (Vakratunda), `SimpleDiscoveryOverlay` (Pond), `GameCoach`, `CulturalCelebrationModal` (its `show` state is never set to true in any live scene, and the only `TocaBocaNav` that could set it sits inside `{false && ...}`). Commented-out imports also fooled the first reachability scan.
+- **Fix:** decide what is LIVE by what is rendered, before analysing clashes or fixing anything: run `node scripts/css-clash-triage.cjs` (live = reachable AND the import binding is actually used outside comments and `{false && ...}`), and read `docs/DEAD_CODE_REPORT.md`. Do not rename or fix anything in a file that is not live.
+- **Seen in:** CSS clash work 2026-10-14 (closed; see DECISIONS).
+
 ## Quick debugging snippets (paste in the browser console)
 Log every speech call and cancel (find who cancels a line):
 ```js
