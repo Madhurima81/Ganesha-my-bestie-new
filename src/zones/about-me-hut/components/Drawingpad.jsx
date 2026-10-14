@@ -14,14 +14,12 @@ const DrawingPad = ({
   const [color, setColor] = useState('#FF6B6B');
   const [brushSize, setBrushSize] = useState(5);
   const [isEraser, setIsEraser] = useState(false);
+  const [tool, setTool] = useState('draw');
+  const [textInput, setTextInput] = useState(null);
   // Drawing is a free-form drag, not a tap — show a quick "move your finger
   // to draw" demo the first time this pad opens, same as other drag mechanics.
   const [showDrawIntro, setShowDrawIntro] = useState(true);
 
-  // Unused features commented out for cleanliness based on your snippet
-  // const [showTextInput, setShowTextInput] = useState(false);
-  // const [textToAdd, setTextToAdd] = useState('');
-  
   // Initialize canvas & Restore Data
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -66,6 +64,12 @@ const DrawingPad = ({
       }
     }
   }, [color, brushSize, isEraser]);
+
+  const activateText = () => {
+    setTool('text');
+    setIsEraser(false);
+    setShowDrawIntro(false);
+  };
   
   const getCoordinates = (e) => {
     const canvas = canvasRef.current;
@@ -93,15 +97,21 @@ const DrawingPad = ({
   const startDrawing = (e) => {
     e.preventDefault();
     setShowDrawIntro(false);
-    const context = canvasRef.current.getContext('2d');
     const { x, y } = getCoordinates(e);
+
+    if (tool === 'text') {
+      setTextInput({ x, y, value: '' });
+      return;
+    }
+
+    const context = canvasRef.current.getContext('2d');
     context.beginPath();
     context.moveTo(x, y);
     setIsDrawing(true);
   };
   
   const draw = (e) => {
-    if (!isDrawing) return;
+    if (tool !== 'draw' || !isDrawing) return;
     e.preventDefault();
     const context = canvasRef.current.getContext('2d');
     const { x, y } = getCoordinates(e);
@@ -122,6 +132,30 @@ const DrawingPad = ({
         onAutoSave(imageData);
       }
     }
+  };
+
+  const commitText = () => {
+    if (!textInput?.value.trim()) {
+      setTextInput(null);
+      return;
+    }
+
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+
+    context.save();
+    context.fillStyle = color;
+    context.font = '700 34px "Baloo 2", sans-serif';
+    context.textBaseline = 'top';
+    context.fillText(textInput.value.trim(), textInput.x, textInput.y);
+    context.restore();
+
+    if (onAutoSave) {
+      onAutoSave(canvas.toDataURL('image/png'));
+    }
+
+    setTextInput(null);
+    setTool('draw');
   };
   
   const handleSave = () => {
@@ -178,6 +212,8 @@ const DrawingPad = ({
               onClick={() => {
                 setColor(clr);
                 setIsEraser(false);
+                setTool('draw');
+                setTextInput(null);
               }}
             />
           ))}
@@ -185,10 +221,23 @@ const DrawingPad = ({
           {/* Eraser */}
           <button
             className={`simple-eraser ${isEraser ? 'active' : ''}`}
-            onClick={() => setIsEraser(!isEraser)}
+            onClick={() => {
+              setTool('draw');
+              setTextInput(null);
+              setIsEraser((prev) => !prev);
+            }}
             title="Eraser"
           >
             {'\u{1F9FD}'}
+          </button>
+
+          <button
+            className={`simple-text-tool ${tool === 'text' ? 'active' : ''}`}
+            onClick={activateText}
+            title="Add text"
+            aria-label="Add text"
+          >
+            Aa
           </button>
           
           {/* Brush Sizes */}
@@ -200,6 +249,8 @@ const DrawingPad = ({
                 onClick={() => {
                   setBrushSize(size);
                   setIsEraser(false);
+                  setTool('draw');
+                  setTextInput(null);
                 }}
                 title={['Small', 'Medium', 'Large'][idx]}
               >
@@ -231,6 +282,36 @@ const DrawingPad = ({
             onTouchMove={draw}
             onTouchEnd={stopDrawing}
           />
+          {textInput && canvasRef.current && (
+            <input
+              autoFocus
+              className="canvas-text-input"
+              value={textInput.value}
+              maxLength={24}
+              onChange={(e) =>
+                setTextInput((prev) => ({
+                  ...prev,
+                  value: e.target.value,
+                }))
+              }
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  commitText();
+                }
+
+                if (e.key === 'Escape') {
+                  setTextInput(null);
+                  setTool('draw');
+                }
+              }}
+              onBlur={commitText}
+              style={{
+                left: `${(textInput.x / canvasRef.current.width) * 100}%`,
+                top: `${(textInput.y / canvasRef.current.height) * 100}%`,
+              }}
+            />
+          )}
           <GestureDemo
             type="drag"
             from={{ x: 30, y: 60 }}

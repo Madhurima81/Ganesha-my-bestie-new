@@ -456,6 +456,23 @@ coding bug (logic, timing, state, voice) could recur in another scene. Not for C
 - **Cause:** a ref assignment (`xRef.current = x`) or effect dependency placed ABOVE the `const x = ...` it reads. eslint and esbuild did not flag it.
 - **Fix:** put the effect and ref assignments BELOW the handlers they read. After adding such code, open the scene in the browser; lint and a syntax check are not enough.
 
+## 49. A "first run" guard is only consumed by a run that gets past an earlier return
+- **Symptom:** after Continue on a question, the next success line never plays (Favourite Food). The log shows the
+  line was never requested.
+- **Cause:** an effect has `if (blockedByResumeGuard) return;` ABOVE `if (!hydratedOnce) { hydratedOnce = true; if (celebration) return; }`.
+  On mount the guard blocks the first run, so `hydratedOnce` stays false; the child's first real answer is then the
+  "first run" and is skipped as a stale reload into a celebration.
+- **Fix:** mark the first-run flag in the run that actually happens first, even when it returns early.
+- **Spot it:** a "first run / hydrated / mounted once" ref that is set below an early `return`.
+
+## 50. A success line cuts the word the child just tapped; hints cut speaking lines
+- **Symptom:** "Pizza" is cut by "Yummy!"; an idle hint starts over a question.
+- **Cause:** success lines start on a fixed timer, hints on their own clocks, and nothing knows what is speaking.
+- **Fix:** keep one voice gate per scene (`speakLine`) that remembers the line that is speaking. Success lines
+  `waitForCurrent` (up to ~3.5 s); hints `priority: 'hint'` are skipped (their follow-up still runs) while a line speaks.
+  Log every start/end/cancel/cut to the scene event log (`__sceneLog()`), so the next report comes with evidence.
+- **Seen in:** Favourite Food (2026-10-14). Same pattern likely in Dreams and Family Tree.
+
 ## Quick debugging snippets (paste in the browser console)
 Log every speech call and cancel (find who cancels a line):
 ```js

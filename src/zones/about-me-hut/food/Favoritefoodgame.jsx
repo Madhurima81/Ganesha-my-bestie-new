@@ -87,6 +87,7 @@ import VOReplayButton from '../../../lib/components/feedback/VOReplayButton';
 import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
 import { useGaneshaVoice } from '../../../lib/hooks/useGaneshaVoice';
+import { logSceneEvent } from '../../../lib/utils/sceneEventLog';
 import { useGameSounds } from '../../../lib/hooks/useGameSounds';
 import usePauseAwareTimeout from '../../../lib/hooks/usePauseAwareTimeout';
 import useResumeCountdown from '../../../lib/hooks/useResumeCountdown';
@@ -165,7 +166,7 @@ const FavoriteFoodGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
           friendNameDraft: '',
 
           // Modal Persistence State (NEW)
-          currentModal: null, // 'food-draw', 'food-type', 'activity-draw', 'activity-type'
+          currentModal: null, // 'food-draw', 'activity-draw'
           draftData: null,    // Stores incomplete drawing/text
 
           // "Success line finished" markers, saved when each line really ends. Continue replays a
@@ -491,8 +492,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const [showShake, setShowShake] = useState(null);
   const [showDrawingPad, setShowDrawingPad] = useState(false);
   const [drawingMode, setDrawingMode] = useState(null);
-  const [showTextInput, setShowTextInput] = useState(false);
-  const [textInputMode, setTextInputMode] = useState(null);
   const [selectedKidFoodId, setSelectedKidFoodId] = useState(null);
   const [selectedKidColorId, setSelectedKidColorId] = useState(null);
   const [selectedKidActivityId, setSelectedKidActivityId] = useState(null);
@@ -537,7 +536,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const expectedReloadPhaseRef = useRef(null);
   const lastChildCompletionResumeKeyRef = useRef(0);
   const resumePopupTimeoutRef = useRef(null);
-  const [openingButtonVisible] = useState(true);
   const phaseVoiceRef = useRef({});
   const discoveryFlyTimeoutRef = useRef(null);
   const childFoodToolsRef = useRef(null);
@@ -583,12 +581,42 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }, durationMs + 80);
   }, []);
 
+  // What is speaking right now ({ token, text, startedAt }) and a counter that names each requested line.
+  // Both feed the scene event log (read it in the console with __sceneLog().food after a cut / overlap /
+  // repeat) and let an idle HINT wait instead of cutting a line that is still speaking.
+  const lineTokenRef = useRef(0);
+  const speakingRef = useRef(null);
+  const SPEAKING_STALE_MS = 15000; // Web Speech sometimes never reports an end: don't block hints forever
   const speakLine = useCallback((text, options = {}) => {
     if (!text) {
       options.onEnd?.();
       return;
     }
-    const { onEnd, moment = 'encouragement', ignoreCancel = false } = options;
+    const { onEnd, moment = 'encouragement', ignoreCancel = false, priority = 'normal', waitForCurrent = false, waitedMs = 0 } = options;
+    const now = Date.now();
+    const speaking = speakingRef.current;
+    const stillSpeaking = speaking && (now - speaking.startedAt) < SPEAKING_STALE_MS;
+    if (priority === 'hint' && stillSpeaking) {
+      // A hint never cuts the line that is speaking. Its continuation (arming the answer glow) still runs.
+      logSceneEvent('food', 'speak:hint-skipped', { text, speaking: speaking.text });
+      onEnd?.();
+      return;
+    }
+    if (waitForCurrent && stillSpeaking && waitedMs < 3500) {
+      // A success line never cuts the word the child just tapped ("Pizza" ... "Yummy!"): it waits for
+      // the line that is speaking to end (up to 3.5 s), then speaks.
+      logSceneEvent('food', 'speak:waiting-for-current', { text, current: speaking.text });
+      safeSetTimeout(() => speakLineRef.current?.(text, { ...options, waitedMs: waitedMs + 150 }), 150);
+      return;
+    }
+    const token = ++lineTokenRef.current;
+    if (stillSpeaking) {
+      // useGaneshaVoice.speak() waits ~50 ms after cancel(); a newer line inside that window silently drops
+      // the pending one WITHOUT calling its onEnd. Logged so a "line never played" can be traced to this.
+      logSceneEvent('food', speaking.began ? 'speak:cuts' : 'speak:dropped-before-start', { text, cut: speaking.text });
+    }
+    speakingRef.current = { token, text, startedAt: now, began: false };
+    logSceneEvent('food', 'speak:start', { token, text, priority });
     // Stop both engines first: useVoiceGuidance's own idle timer can fire its
     // hook-driven playVoice() independently of this scene's speakLine calls —
     // without this, a still-playing idle-hint MP3 keeps going under this line
@@ -601,14 +629,20 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     let cancelled = false;
     speak(text, {
       age: 7, style: 'child', moment,
+      onStart: () => { if (speakingRef.current?.token === token) speakingRef.current.began = true; },
       onError: (e) => { if (e?.error === 'canceled' || e?.error === 'interrupted') cancelled = true; },
       onEnd: () => {
+        const stale = lineTokenRef.current !== token;
+        if (speakingRef.current?.token === token) speakingRef.current = null;
+        logSceneEvent('food', cancelled ? 'speak:cancelled' : 'speak:end', { token, text, stale });
         if (!aliveRef.current) return;
         if (ignoreCancel && cancelled) return;
         onEnd?.();
       },
     });
-  }, [isAudioOn, speak, stopVoice, stopSpokenVoice]);
+  }, [isAudioOn, speak, stopVoice, stopSpokenVoice, safeSetTimeout]);
+  const speakLineRef = useRef(null);
+  speakLineRef.current = speakLine;
 
   // A success line that saves its own "done" marker the moment it really finishes. Continue replays an
   // unfinished success line and skips a finished one (KNOWN_PITFALLS 7). The 300 ms floor only rejects
@@ -618,6 +652,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     speakLine(text, {
       moment,
       ignoreCancel: true,
+      waitForCurrent: true,
       onEnd: () => {
         if (Date.now() - startedAt < 300) return;
         sceneActions.checkpoint({ [doneKey]: true });
@@ -890,20 +925,14 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       }
 
       if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
-      // --- 1. RESTORE MODALS (Drawing/Typing) ---
+      // --- 1. RESTORE MODALS (Drawing) ---
       if (currentModal) {
-        if (currentModal === 'food-draw') {
+        if (currentModal === 'food-draw' || currentModal === 'food-type') {
           setDrawingMode('food');
           setShowDrawingPad(true);
-        } else if (currentModal === 'activity-draw') {
+        } else if (currentModal === 'activity-draw' || currentModal === 'activity-type') {
           setDrawingMode('activity');
           setShowDrawingPad(true);
-        } else if (currentModal === 'food-type') {
-          setTextInputMode('food');
-          setShowTextInput(true);
-        } else if (currentModal === 'activity-type') {
-          setTextInputMode('activity');
-          setShowTextInput(true);
         }
         return; // Stop here if we restored a modal
       }
@@ -914,10 +943,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       // The phase-entry effect stays silent (sentinel) until this branch releases it.
       const ganeshaSolvedPhase = (gamePhase === 'food-choice' && sceneState.selectedFood) ? 'food-correct' : gamePhase;
       const ganeshaSolved = {
-        'food-correct': { count: 1, doneKey: 'foodSuccessDone', voiceFlag: 'foodCorrect', line: VOICE_LINES.foodCorrect, next: 'color-choice' },
-        'color-correct': { count: 2, doneKey: 'colorSuccessDone', voiceFlag: 'colorCorrect', line: VOICE_LINES.colorCorrect, next: 'activity-choice' },
-        'activity-correct': { count: 3, doneKey: 'activitySuccessDone', voiceFlag: 'activityCorrect', line: VOICE_LINES.activityCorrect, next: 'friend-choice' },
-        'friend-correct': { count: 4, doneKey: 'friendSuccessDone', voiceFlag: 'friendCorrect', line: VOICE_LINES.friendCorrect, next: 'child-intro' },
+        'food-correct': { count: 1, doneKey: 'foodSuccessDone', voiceFlag: 'foodCorrect', line: VOICE_LINES.foodCorrect, next: 'color-choice', nextLine: VOICE_LINES.colorQuestion, nextFlag: 'colorQuestion', nextMoment: 'thinking' },
+        'color-correct': { count: 2, doneKey: 'colorSuccessDone', voiceFlag: 'colorCorrect', line: VOICE_LINES.colorCorrect, next: 'activity-choice', nextLine: VOICE_LINES.activityQuestion, nextFlag: 'activityQuestion', nextMoment: 'thinking' },
+        'activity-correct': { count: 3, doneKey: 'activitySuccessDone', voiceFlag: 'activityCorrect', line: VOICE_LINES.activityCorrect, next: 'friend-choice', nextLine: VOICE_LINES.friendQuestion, nextFlag: 'friendQuestion', nextMoment: 'thinking' },
+        'friend-correct': { count: 4, doneKey: 'friendSuccessDone', voiceFlag: 'friendCorrect', line: VOICE_LINES.friendCorrect, next: 'child-intro', nextLine: VOICE_LINES.childIntro, nextFlag: 'childIntro', nextMoment: 'encouragement' },
       }[ganeshaSolvedPhase];
       if (ganeshaSolved && !currentModal) {
         suppressPhaseVoUntilReloadSettlesRef.current = true;
@@ -935,11 +964,14 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         };
         const settled = { wrongChoices: [], correctChoiceId: null, storyDiscoveries: solvedDiscoveries };
         if (sceneState[ganeshaSolved.doneKey]) {
-          // Finished before the child left: straight on to the next question after the 500 ms wait.
-          sceneActions.updateState({ ...settled, gamePhase: ganeshaSolvedPhase });
+          // Finished before the child left: show the NEXT question straight away (showing the finished
+          // one for half a second looked like a glitch). Its line waits the 500 ms first-instant delay;
+          // the phase-entry effect stays silent until then.
+          sceneActions.updateState({ ...settled, gamePhase: ganeshaSolved.next });
           safeSetTimeout(() => {
             releaseGuard();
-            sceneActions.updateState({ gamePhase: ganeshaSolved.next });
+            phaseVoiceRef.current[ganeshaSolved.nextFlag] = true;
+            speakLine(ganeshaSolved.nextLine, { moment: ganeshaSolved.nextMoment, onEnd: () => setPhaseVoiceDone(true) });
           }, 500);
         } else {
           // Left during the success line: show the celebration state and replay the line. The
@@ -955,10 +987,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       }
 
       const childSolved = {
-        'child-food-choice': { solved: !!(sceneState.childFoodChoice || sceneState.childFoodDrawing || sceneState.childFoodText), doneKey: 'childFoodDone', voiceFlag: 'childFoodQuestion', line: VOICE_LINES.childFoodCorrect, next: 'child-color-choice' },
-        'child-color-choice': { solved: !!sceneState.childColor, doneKey: 'childColorDone', voiceFlag: 'childColorQuestion', line: VOICE_LINES.childColorCorrect, next: 'child-activity-choice' },
-        'child-activity-choice': { solved: !!(sceneState.childActivityChoice || sceneState.childActivityDrawing || sceneState.childActivityText), doneKey: 'childActivityDone', voiceFlag: 'childActivityQuestion', line: VOICE_LINES.childActivityCorrect, next: 'child-friend-intro' },
-        'child-friend-input': { solved: !!sceneState.childFriendName, doneKey: 'childFriendDone', voiceFlag: 'childFriendQuestion', line: VOICE_LINES.childFriendCorrect, next: 'comparison-card' },
+        'child-food-choice': { solved: !!(sceneState.childFoodChoice || sceneState.childFoodDrawing || sceneState.childFoodText), doneKey: 'childFoodDone', voiceFlag: 'childFoodQuestion', line: VOICE_LINES.childFoodCorrect, next: 'child-color-choice', nextLine: VOICE_LINES.childColorQuestion, nextFlag: 'childColorQuestion', nextDelay: 500 },
+        'child-color-choice': { solved: !!sceneState.childColor, doneKey: 'childColorDone', voiceFlag: 'childColorQuestion', line: VOICE_LINES.childColorCorrect, next: 'child-activity-choice', nextLine: VOICE_LINES.childActivityQuestion, nextFlag: 'childActivityQuestion', nextDelay: 500 },
+        'child-activity-choice': { solved: !!(sceneState.childActivityChoice || sceneState.childActivityDrawing || sceneState.childActivityText), doneKey: 'childActivityDone', voiceFlag: 'childActivityQuestion', line: VOICE_LINES.childActivityCorrect, next: 'child-friend-intro', nextLine: VOICE_LINES.childFriendQuestion, nextFlag: 'childFriendQuestion', nextDelay: 500 },
+        'child-friend-input': { solved: !!sceneState.childFriendName, doneKey: 'childFriendDone', voiceFlag: 'childFriendQuestion', line: VOICE_LINES.childFriendCorrect, next: 'comparison-card', nextLine: VOICE_LINES.friendCelebration, nextFlag: 'friendCelebration', nextDelay: 1000 },
       }[gamePhase];
       if (childSolved?.solved) {
         suppressPhaseVoUntilReloadSettlesRef.current = true;
@@ -975,7 +1007,15 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           advanceToChildPhase(childSolved.next);
         };
         if (sceneState[childSolved.doneKey]) {
-          safeSetTimeout(advance, 500);
+          // Finished before the child left: show the next question at once (no flash of the answered one).
+          // Its line waits for the first-instant delay; the phase-entry effect stays silent until then.
+          advanceToChildPhase(childSolved.next);
+          safeSetTimeout(() => {
+            suppressPhaseVoUntilReloadSettlesRef.current = false;
+            expectedReloadPhaseRef.current = null;
+            phaseVoiceRef.current[childSolved.nextFlag] = true;
+            speakLine(childSolved.nextLine, { moment: 'thinking', onEnd: () => setPhaseVoiceDone(true) });
+          }, childSolved.nextDelay);
         } else {
           safeSetTimeout(() => {
             const startedAt = Date.now();
@@ -1312,6 +1352,24 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     clearAllTimeouts
   ]);
 
+  // Safety net: the resume guard above silences every phase line until the resume code releases it with a
+  // timer. If that timer is ever lost (cleared by another clearAllTimeouts, a remount) the guard stays on
+  // and the next success / question line never plays. Release it if it has been on for ~2 s.
+  useEffect(() => {
+    let onTicks = 0;
+    const id = window.setInterval(() => {
+      if (!suppressPhaseVoUntilReloadSettlesRef.current) { onTicks = 0; return; }
+      onTicks += 1;
+      if (onTicks >= 4) {
+        logSceneEvent('food', 'resume-guard:force-released', { phase: latestSceneStateRef.current?.gamePhase, expected: expectedReloadPhaseRef.current });
+        suppressPhaseVoUntilReloadSettlesRef.current = false;
+        expectedReloadPhaseRef.current = null;
+        onTicks = 0;
+      }
+    }, 500);
+    return () => window.clearInterval(id);
+  }, []);
+
   useEffect(() => {
     const celebrationPhases = ['food-correct', 'color-correct', 'activity-correct', 'friend-correct'];
 
@@ -1319,7 +1377,14 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     // block stale VO from pre-restore phases until the expected reload phase is active.
     if (suppressPhaseVoUntilReloadSettlesRef.current) {
       const expectedPhase = expectedReloadPhaseRef.current;
-      if (!expectedPhase || sceneState.gamePhase !== expectedPhase) return;
+      if (!expectedPhase || sceneState.gamePhase !== expectedPhase) {
+        logSceneEvent('food', 'phase-vo:blocked-by-resume-guard', { phase: sceneState.gamePhase, expected: expectedPhase });
+        // This blocked run IS the first run after mount, so the "first run after a reload" check below
+        // must not fire on a later run: it treated the child's first real answer after a Continue as a
+        // reload landing in a celebration and skipped its success line (the line never played).
+        hasHydratedOnceRef.current = true;
+        return;
+      }
       suppressPhaseVoUntilReloadSettlesRef.current = false;
       expectedReloadPhaseRef.current = null;
     }
@@ -1337,6 +1402,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     if (!hasHydratedOnceRef.current) {
       hasHydratedOnceRef.current = true;
       if (celebrationPhases.includes(sceneState.gamePhase)) {
+        logSceneEvent('food', 'phase-vo:skipped-celebration-on-first-run', { phase: sceneState.gamePhase });
         return;
       }
     }
@@ -1511,7 +1577,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       };
       if (hintMap[currentPhase] && !idleHintVoiceRef.current) {
         idleHintVoiceRef.current = true;
-        speakLine(hintMap[currentPhase], { moment: 'encouragement', onEnd: armFinalHint });
+        speakLine(hintMap[currentPhase], { moment: 'encouragement', priority: 'hint', onEnd: armFinalHint });
       } else {
         armFinalHint();
       }
@@ -1542,6 +1608,16 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     // @ 10s: Repeat entry VO (once)
     childIdleTimerRef.current = setTimeout(() => {
       if (document.hidden) return;
+      // Not once the child has answered (the success line is playing or about to) and not while the
+      // drawing pad / typing box is open: it repeated "Choose your favorite food" after "Yummy!".
+      const st = latestSceneStateRef.current || sceneState;
+      const answered = {
+        'child-food-choice': st.childFoodChoice || st.childFoodDrawing || st.childFoodText,
+        'child-color-choice': st.childColor,
+        'child-activity-choice': st.childActivityChoice || st.childActivityDrawing || st.childActivityText,
+        'child-friend-input': st.childFriendName,
+      }[currentPhase];
+      if (answered || st.currentModal) return;
       if (!childEntryVoRepeatRef.current) {
         const voMap = {
           'child-food-choice': VOICE_LINES.childFoodQuestion,
@@ -1550,7 +1626,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           'child-friend-input': VOICE_LINES.childFriendQuestion
         };
         if (voMap[currentPhase]) {
-          speakLine(voMap[currentPhase], { moment: 'thinking' });
+          speakLine(voMap[currentPhase], { moment: 'thinking', priority: 'hint' });
           childEntryVoRepeatRef.current = true;
         }
       }
@@ -1840,10 +1916,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     setShowDrawingPad(false);
     setDrawingMode(null);
     const currentState = latestSceneStateRef.current || sceneState;
-    triggerDiscoveryFly({ image: data.image, name: 'Drawing' }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
+    triggerDiscoveryFly({ image: data.image, name: 'My Activity' }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
     sceneActions.checkpoint({
       childActivityDrawing: data.image,
-      childDiscoveries: appendUniqueDiscovery(currentState.childDiscoveries, { image: data.image, name: 'Drawing' }),
+      childDiscoveries: appendUniqueDiscovery(currentState.childDiscoveries, { image: data.image, name: 'My Activity' }),
       currentModal: null,
       draftData: null
     });
@@ -1945,7 +2021,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           sceneId="favorite-food"
           onStart={handleStartGame}
           characterImg={babyGaneshaImg}
-          showButton={openingButtonVisible}
         />
       )}
 
@@ -2156,7 +2231,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 <div className="kid-choice-name">{food.name}</div>
               </button>
             ))}
-            {/* 8th choice: anything not listed. Tap -> Draw | Type. */}
+            {/* 8th choice: anything not listed. Tap -> draw pad with text tool. */}
             <div className="kid-choice-card myown-wrap">
               <button
                 type="button"
@@ -2183,14 +2258,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                       setShowDrawingPad(true);
                       setDrawingMode('food');
                       sceneActions.updateState({ currentModal: 'food-draw' }); // Track modal
-                    }}>Draw</button>
-                    <button className="child-food-tool-btn type" onClick={() => {
-                      playUiTap();
-                      setShowChildFoodTools(false);
-                      setShowTextInput(true);
-                      setTextInputMode('food');
-                      sceneActions.updateState({ currentModal: 'food-type' }); // Track modal
-                    }}>Type</button>
+                    }}>Draw or type</button>
                   </div>
                 )}
               </div>
@@ -2284,7 +2352,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 <div className="kid-choice-name">{activity.name}</div>
               </button>
             ))}
-            {/* 8th choice: anything not listed. Tap -> Draw | Type. */}
+            {/* 8th choice: anything not listed. Tap -> draw pad with text tool. */}
             <div
               className="kid-choice-card myown-wrap"
               style={{
@@ -2318,14 +2386,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                       setShowDrawingPad(true);
                       setDrawingMode('activity');
                       sceneActions.updateState({ currentModal: 'activity-draw' }); // Track modal
-                    }}>Draw</button>
-                    <button className="child-food-tool-btn type" onClick={() => {
-                      playUiTap();
-                      setShowChildActivityTools(false);
-                      setShowTextInput(true);
-                      setTextInputMode('activity');
-                      sceneActions.updateState({ currentModal: 'activity-type' }); // Track modal
-                    }}>Type</button>
+                    }}>Draw or type</button>
                   </div>
                 )}
               </div>
@@ -2403,8 +2464,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             onSave={(name) => {
               interruptCurrentVoice();
               playChime();
-              setShowTextInput(false);
-              setTextInputMode(null);
               setShowDrawingPad(false);
               setDrawingMode(null);
               const currentState = latestSceneStateRef.current || sceneState;
@@ -2450,7 +2509,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         </div>
       )}
 
-      {/* Drawing & Text Modals */}
+      {/* Drawing Modal */}
       {showDrawingPad && (
         <div className="drawing-overlay">
           <DrawingPad
@@ -2464,90 +2523,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           />
         </div>
       )}
-
-      {showTextInput && textInputMode === 'food' && (
-        <TextInputModal
-          prompt="What do you love eating?"
-
-          initialValue={sceneState.draftData} // Restore text
-          onAutoSave={(text) => sceneActions.updateState({ draftData: text })} // Auto-save on type
-
-          onSave={(text) => {
-            interruptCurrentVoice();
-            playChime();
-            setShowTextInput(false);
-            setTextInputMode(null);
-            triggerDiscoveryFly({ image: pencilImg, name: text }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
-            sceneActions.checkpoint({
-              childFoodText: text,
-              childDiscoveries: [{ image: pencilImg, name: text }],
-              currentModal: null, // Clear modal
-              draftData: null
-            });
-            triggerMiniGesture('center', 1200);
-            triggerSparkleFx('single', 1500);
-
-            safeSetTimeout(() => {
-              speakSuccessLine(VOICE_LINES.childFoodCorrect, 'childFoodDone');
-            }, DISCOVERY_CENTER_REACH_MS);
-
-            safeSetTimeout(() => {
-              playSparkle();
-              advanceToChildPhase('child-color-choice');
-            }, CHILD_SELECTION_ADVANCE_DELAY_MS);
-          }}
-          onCancel={() => {
-            playUiTap();
-            setShowTextInput(false);
-            setTextInputMode(null);
-            sceneActions.updateState({ currentModal: null, draftData: null });
-          }}
-          maxLength={30}
-        />
-      )}
-
-      {showTextInput && textInputMode === 'activity' && (
-        <TextInputModal
-          prompt="What do you love doing?"
-
-          initialValue={sceneState.draftData} // Restore text
-          onAutoSave={(text) => sceneActions.updateState({ draftData: text })} // Auto-save on type
-
-          onSave={(text) => {
-            interruptCurrentVoice();
-            playChime();
-            setShowTextInput(false);
-            setTextInputMode(null);
-            const currentState = latestSceneStateRef.current || sceneState;
-            triggerDiscoveryFly({ image: pencilImg, name: text }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
-            sceneActions.checkpoint({
-              childActivityText: text,
-              childDiscoveries: appendUniqueDiscovery(currentState.childDiscoveries.slice(0, 2), { image: pencilImg, name: text }),
-              currentModal: null, // Clear modal
-              draftData: null
-            });
-            triggerMiniGesture('center', 1200);
-            triggerSparkleFx('single', 1500);
-
-            safeSetTimeout(() => {
-              speakSuccessLine(VOICE_LINES.childActivityCorrect, 'childActivityDone');
-            }, DISCOVERY_CENTER_REACH_MS);
-
-            safeSetTimeout(() => {
-              playSparkle();
-              advanceToChildPhase('child-friend-intro');
-            }, CHILD_SELECTION_ADVANCE_DELAY_MS);
-          }}
-          onCancel={() => {
-            playUiTap();
-            setShowTextInput(false);
-            setTextInputMode(null);
-            sceneActions.updateState({ currentModal: null, draftData: null });
-          }}
-          maxLength={30}
-        />
-      )}
-
 
       {/* COMPARISON CARD */}
       {sceneState.gamePhase === 'comparison-card' && !sceneState.showingCompletionScreen && (
@@ -2602,7 +2577,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                       )}
                     </div>
                     <div className="aboutme-comparison-item-text">
-                      {sceneState.childFoodText || (sceneState.childFoodDrawing ? 'Drawing' : kidFoods.find(f => f.id === sceneState.childFoodChoice)?.name)}
+                      {sceneState.childFoodText || (sceneState.childFoodDrawing ? 'My Food' : kidFoods.find(f => f.id === sceneState.childFoodChoice)?.name)}
                     </div>
                   </>
                 )
@@ -2638,7 +2613,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                       )}
                     </div>
                     <div className="aboutme-comparison-item-text">
-                      {sceneState.childActivityText || (sceneState.childActivityDrawing ? 'Drawing' : kidActivities.find(a => a.id === sceneState.childActivityChoice)?.name)}
+                      {sceneState.childActivityText || (sceneState.childActivityDrawing ? 'My Activity' : kidActivities.find(a => a.id === sceneState.childActivityChoice)?.name)}
                     </div>
                   </>
                 )
@@ -2761,8 +2736,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             });
             setShowDrawingPad(false);
             setDrawingMode(null);
-            setShowTextInput(false);
-            setTextInputMode(null);
           }}
           onBackToMap={() => {
             playUiTap();

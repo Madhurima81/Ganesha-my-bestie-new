@@ -135,6 +135,38 @@
   box-shadow: 0 0 8px rgba(199, 146, 74, 0.5);
 }
 
+.simple-text-tool {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 2px solid #E8D4B5;
+  background: #FFFDF7;
+  color: #6B3E1E;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.simple-text-tool:hover {
+  transform: scale(1.08);
+  background: #FFF6E8;
+}
+
+.simple-text-tool.active {
+  background: #C7924A;
+  border-color: #6B3E1E;
+  color: #FFF6E8;
+  transform: scale(1.12);
+  box-shadow: 0 0 8px rgba(199, 146, 74, 0.5);
+}
+
 /* Brush Sizes */
 .brush-size-icons {
   display: flex;
@@ -199,6 +231,24 @@
   max-width: 100%;
   max-height: 480px;
   object-fit: contain;
+}
+
+.canvas-text-input {
+  position: absolute;
+  z-index: 10;
+  transform: translateY(-4px);
+  min-width: 120px;
+  max-width: 220px;
+  padding: 4px 8px;
+  border: 2px solid #C7924A;
+  border-radius: 8px;
+  background: rgba(255, 253, 247, 0.96);
+  color: #6B3E1E;
+  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  outline: none;
+  box-shadow: 0 4px 12px rgba(107, 62, 30, 0.16);
 }
 
 /* Bottom Tools */
@@ -285,56 +335,6 @@
   color: #8a5b35;
 }
 
-/* Text Modal */
-.text-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
-}
-
-.text-input {
-  width: 300px;
-  padding: 15px;
-  font-size: 18px;
-  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  border: 3px solid #667eea;
-  border-radius: 12px;
-  margin-bottom: 15px;
-}
-
-.text-modal-btns {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
-
-.text-modal-btns button {
-  padding: 10px 25px;
-  border: none;
-  border-radius: 12px;
-  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.text-modal-btns button:first-child {
-  background: linear-gradient(180deg, #d99a65 0%, #c9824c 100%);
-  color: white;
-}
-
-.text-modal-btns button:last-child {
-  background: #f8f2ea;
-  border: 2px solid #e2c5a8;
-  color: #8a5b35;
-}
-
 /* Done Button */
 .done-btn {
   margin-top: 14px;
@@ -374,7 +374,6 @@
 .voice-btn:active,
 .play-audio-btn:active,
 .delete-audio-btn:active,
-.text-modal-btns button:active,
 .download-btn:active,
 .close-x-btn:active {
   transform: scale(0.97);
@@ -511,6 +510,7 @@
   /* visible circle/tile ~48px inside a 56px cell; ::after tops the hit area up */
   .simple-drawing-pad .simple-color,
   .simple-drawing-pad .simple-eraser,
+  .simple-drawing-pad .simple-text-tool,
   .simple-drawing-pad .brush-size-btn {
     position: relative;
     width: 48px;
@@ -520,6 +520,7 @@
 
   .simple-drawing-pad .simple-color::after,
   .simple-drawing-pad .simple-eraser::after,
+  .simple-drawing-pad .simple-text-tool::after,
   .simple-drawing-pad .brush-size-btn::after {
     content: '';
     position: absolute;
