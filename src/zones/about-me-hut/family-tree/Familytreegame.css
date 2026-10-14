@@ -3106,7 +3106,6 @@
   display: none !important;
 }
 
-.celebration-overlay,
 .final-comparison-scene {
   background:
     /* Subtle noise texture */
@@ -4272,12 +4271,6 @@
   50% {
     transform: scale(1.08);
   }
-}
-
-/* Final override: disable old star-based circle sparkles completely */
-.circle-celebration-sparkles,
-.circle-sparkle {
-  display: none !important;
 }
 
 /* Scene 19 freeze override: align wrong/success card feedback with Scene 22 */

@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useGameSounds } from '../../../lib/hooks/useGameSounds';
 import './Familytreegame.css';
 import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
-import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
+import AboutMeSparkle from '../components/AboutMeSparkle';
 import GaneshaGestureCue from '../../../lib/components/gesture/GaneshaGestureCue';
 import { useMiniGesture } from '../../../lib/hooks/useMiniGesture';
 
@@ -372,6 +372,8 @@ const FamilyTreeGameContent = ({
  const [transitionButtonVisible, setTransitionButtonVisible] = useState(false);
  const [childProgressCount, setChildProgressCount] = useState(0); // Track which progress VO to play
  const ganeshaTreeDoneClickedRef = useRef(false);
+ const [placeSparkleKey, setPlaceSparkleKey] = useState(0); // visual only: one gold burst per placed member
+ const [completeSparkleKey, setCompleteSparkleKey] = useState(0); // visual only: big shower on the Ganesha-tree Continue and the child Done! buttons
  const allPlacedSequenceStartedRef = useRef(false);
  const allPlacedSequenceTimerRef = useRef(null);
  const allPlacedSparkleTimerRef = useRef(null);
@@ -1204,7 +1206,7 @@ sceneState.isSequencePlaying,
  pendingMemberLine: circleId
  });
 
- playSparkle();
+ playSparkle(); setPlaceSparkleKey(k => k + 1);
  triggerMiniGesture('thumbsup', 'center', 1100);
 
  // isSequencePlaying gates the idle-hint ladder (GMB Hint Standard v1) â€”
@@ -1264,7 +1266,7 @@ sceneState.isSequencePlaying,
  pendingMemberLine: 'myself'
  });
 
- playSparkle();
+ playSparkle(); setPlaceSparkleKey(k => k + 1);
 
  let voDone = false; // muted lines finish on the hook's silent timer, not instantly
  let animDone = false;
@@ -1315,7 +1317,7 @@ sceneState.isSequencePlaying,
  ganeshaTreeDoneClickedRef.current = true;
  stopVoice();
  stopSpokenVoice();
- if (!resumed) playChime();
+ if (!resumed) { playChime(); setCompleteSparkleKey(k => k + 1); } // visual only: big gold shower on Continue
  sceneActions.checkpoint({ showTreeSparkles: false, showCelebration: null, ganeshaDoneTapped: true });
 
 // Muted: speakHint completes on the hook's silent timer, so the transition
@@ -1406,6 +1408,8 @@ sceneActions.updateState({ gamePhase: 'transition' });
  };
 
  const newChildFamily = [...sceneState.childFamily, newMember];
+ // Visual only: a gold pop for every member added (the big shower is on the Done! button).
+ setPlaceSparkleKey(k => k + 1);
  const memberCount = newChildFamily.length;
  const previousChildFamily = sceneState.childFamily;
 
@@ -1633,7 +1637,9 @@ sceneActions.updateState({ gamePhase: 'transition' });
  {/* SPARKLE LAYER */}
  <div className={`tree-sparkle-layer ${sceneState.showTreeSparkles? 'active': ''}`}>
  {sceneState.showTreeSparkles && (
- <SparkleAnimation type="glitter" count={30} color="#FFD700" size={10} duration={2000} fadeOut={false} area="full" />
+ {placeSparkleKey > 0 && <AboutMeSparkle key={`place-${placeSparkleKey}`} preset="burst" />}
+ {completeSparkleKey > 0 && <AboutMeSparkle key={`complete-${completeSparkleKey}`} preset="big" />}
+ <AboutMeSparkle preset="big" />
  )}
  </div>
 
@@ -1798,6 +1804,7 @@ sceneActions.updateState({ gamePhase: 'transition' });
  if (showResumePopup) {
  setShowResumePopup(false);
  cancelTimer(resumePopupTimeoutRef);
+ setCompleteSparkleKey(k => k + 1); // visual only: big gold shower on Done!
  }
  playGlow();
  sceneActions.updateState({ gamePhase: 'sideBySide' });
@@ -1894,7 +1901,7 @@ if (window.matchMedia(PHONE_LANDSCAPE_QUERY).matches) setFamilyTrayOpen(true);
  {/* SIDE BY SIDE (Magical Reveal) */}
  {sceneState.gamePhase === 'sideBySide' &&!sceneState.showingCompletionScreen && (
  <div className="side-by-side-screen">
- <SparkleAnimation type="star" count={20} color="#FFD700" size={7} duration={4000} fadeOut={false} area="full" />
+ <AboutMeSparkle persist />
 
  <h1 className="reveal-title">Our Families!</h1>
  <p className="reveal-subtitle">Every family has its own story.</p>
