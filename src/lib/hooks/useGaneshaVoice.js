@@ -149,6 +149,9 @@ export const useGaneshaVoice = () => {
   // Current line's callback + timing, so mute() can finish it silently on schedule.
   const activeLineRef = useRef(null)   // { onEnd, at, ms, utterance }
   const silentTimerRef = useRef(null)  // { id, onEnd }
+  // Counts speak() requests; stop()/mute() bump it too, so a pending start-watch retry never re-speaks a
+  // line that was stopped, muted or replaced.
+  const speakGenRef = useRef(0)
 
   // A superseded / stopped silent line ends right away, like a cancelled utterance
   // does (cancel() fires onerror -> onEnd), so sequences never stall.
@@ -216,6 +219,7 @@ export const useGaneshaVoice = () => {
       clearTimeout(speakTimerRef.current)
       speakTimerRef.current = null
     }
+    const gen = ++speakGenRef.current // names this request; stop()/mute()/a newer speak() invalidate it
     window.speechSynthesis.cancel()
     setIsSpeaking(false)
     activeLineRef.current = null
@@ -244,40 +248,70 @@ export const useGaneshaVoice = () => {
 
       const isRishi    = voiceRef.current?.name?.includes('Rishi')
       const processed  = phoneticize(addNaturalPauses(text), isRishi)
-      const u = new SpeechSynthesisUtterance(processed)
-      u.rate   = Math.max(0.5, Math.min(1.5, base.rate  + adj.rate + styleAdj.rate))
-      u.pitch  = Math.max(0.5, Math.min(1.5, base.pitch + adj.pitch + styleAdj.pitch))
-      u.volume = Math.max(0.5, Math.min(1.0, styleAdj.volume))
 
-      // FIX: only set lang when no explicit voice is found.
-      // Setting lang + an explicit voice can cause Chrome to ignore the voice.
-      if (voiceRef.current) {
-        u.voice = voiceRef.current
-        // inherit voice's own lang — don't override
-      } else {
-        u.lang = 'en-IN' // Indian English fallback — warm for NRI families
+      const buildUtterance = () => {
+        const u = new SpeechSynthesisUtterance(processed)
+        u.rate   = Math.max(0.5, Math.min(1.5, base.rate  + adj.rate + styleAdj.rate))
+        u.pitch  = Math.max(0.5, Math.min(1.5, base.pitch + adj.pitch + styleAdj.pitch))
+        u.volume = Math.max(0.5, Math.min(1.0, styleAdj.volume))
+
+        // FIX: only set lang when no explicit voice is found.
+        // Setting lang + an explicit voice can cause Chrome to ignore the voice.
+        if (voiceRef.current) {
+          u.voice = voiceRef.current
+          // inherit voice's own lang — don't override
+        } else {
+          u.lang = 'en-IN' // Indian English fallback — warm for NRI families
+        }
+
+        u.onstart = () => { setIsSpeaking(true); onStart?.() }
+        u.onend   = () => { setIsSpeaking(false); activeLineRef.current = null; onEnd?.() }
+        u.onerror = (e) => {
+          setIsSpeaking(false)
+          activeLineRef.current = null
+          onError?.(e)
+          onEnd?.()
+        }
+
+        attachSpeechCue(u, processed, cue)
+        return u
       }
 
-      u.onstart = () => { setIsSpeaking(true); onStart?.() }
-      u.onend   = () => { setIsSpeaking(false); activeLineRef.current = null; onEnd?.() }
-      u.onerror = (e) => {
-        setIsSpeaking(false)
-        activeLineRef.current = null
-        onError?.(e)
-        onEnd?.()
-      }
+      // Chrome's speech engine can wedge after repeated cancel(): the line is queued but never starts (no
+      // onstart, no error) and nothing speaks until something else un-sticks it, so a scene's next line is
+      // silent for a while. If a line has not started within START_WATCH_MS, drop the stuck utterance
+      // (detached first, so its cancel cannot run onEnd) and speak a fresh copy once.
+      const START_WATCH_MS = 1400
+      const speakWithStartWatch = (attempt) => {
+        const u = buildUtterance()
+        let started = false
+        const prevStart = u.onstart
+        u.onstart = (ev) => { started = true; prevStart?.(ev) }
+        if (activeLineRef.current) activeLineRef.current.utterance = u
+        utteranceRef.current = u
+        // Some browsers leave speech synthesis paused after tab/background changes.
+        try { window.speechSynthesis.resume() } catch {}
+        window.speechSynthesis.speak(u)
 
-      attachSpeechCue(u, processed, cue)
-      if (activeLineRef.current) activeLineRef.current.utterance = u
-      utteranceRef.current = u
-      // Some browsers leave speech synthesis paused after tab/background changes.
-      try { window.speechSynthesis.resume() } catch {}
-      window.speechSynthesis.speak(u)
+        setTimeout(() => {
+          if (started || document.hidden) return
+          if (speakGenRef.current !== gen || utteranceRef.current !== u) return // stopped, muted or replaced
+          if (attempt >= 1) return // one retry only
+          u.onstart = null; u.onend = null; u.onerror = null
+          try { window.speechSynthesis.cancel() } catch {}
+          setTimeout(() => {
+            if (speakGenRef.current !== gen) return
+            speakWithStartWatch(attempt + 1)
+          }, 150)
+        }, START_WATCH_MS)
+      }
+      speakWithStartWatch(0)
     }, 50)
   }, [flushSilent, runSilent])
 
   // ── Stop ─────────────────────────────────────────────────────────────────────
   const stop = useCallback(() => {
+    speakGenRef.current += 1
     if (speakTimerRef.current) {
       clearTimeout(speakTimerRef.current)
       speakTimerRef.current = null
@@ -293,6 +327,7 @@ export const useGaneshaVoice = () => {
   const mute = useCallback(() => {
     const a = activeLineRef.current
     if (!a) return
+    speakGenRef.current += 1
     activeLineRef.current = null
     if (speakTimerRef.current) {
       clearTimeout(speakTimerRef.current)

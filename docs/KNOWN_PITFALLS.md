@@ -512,6 +512,25 @@ coding bug (logic, timing, state, voice) could recur in another scene. Not for C
 - **Fix:** keep the primary button active from the moment its line starts. Guard double taps with a ref, not with `disabled` tied to a decoration.
 - **Seen in:** Family Tree (2026-10-14).
 
+## 57. The voice stays silent for a while (Chrome speech engine wedged); the first line after Play Again is missing
+- **Symptom:** after Play Again (Family Tree, Favourite Food, My Indian Story) the OPENING line plays but the game's first line does not;
+  the voice stays silent for a while, then a success or hint line plays, and one or two more Play Agains are needed before the intro plays.
+  The same in several games, so not a game bug.
+- **Likely cause:** Chrome's speech engine can wedge after repeated `cancel()`: the next line is queued but never fires `onstart` or an error.
+  Play Again, the opening modal's Start button and every scene stop call `cancel()` right before the next line.
+- **Fix in place (2026-10-14, fixed and tested by Madhurima):** `useGaneshaVoice.speak` has a start-watchdog. If a line has not started within
+  1.4 s it drops the stuck utterance (handlers detached first, so its cancel cannot run `onEnd`) and speaks a fresh copy ONCE; nothing is retried
+  after stop / mute / a newer line; the end callback still runs exactly once. Verified with a fake-speechSynthesis test (7 cases).
+- **If it shows again, do this (in order):**
+  1. Note the game, what you did (how many Play Agains / Continues) and which line was missing.
+  2. In the console run `__sceneLog().food` (Food has the voice log; other scenes: `__sceneLog()`) right after, and paste it. A line missing from the log
+     was never requested (a scene guard: look for pitfalls 49 and 51); a `speak:start` with no sound is the engine again.
+  3. Engine again: check `speechSynthesis.speaking`, `.pending` and `.paused` in the console, and try raising START_WATCH_MS or retrying twice in
+     `useGaneshaVoice.js`. The opening line is spoken by `OpeningModal.jsx` straight through `window.speechSynthesis`, NOT through this engine, so it has
+     no watchdog: if the OPENING line itself is the one that goes missing, add the same watch there.
+  4. A scene that speaks with its own `new SpeechSynthesisUtterance` (not `useGaneshaVoice`), for example Ears, has no watchdog either.
+- **Seen in:** Family Tree, Favourite Food, My Indian Story, 2026-10-14.
+
 ## Quick debugging snippets (paste in the browser console)
 Log every speech call and cancel (find who cancels a line):
 ```js
