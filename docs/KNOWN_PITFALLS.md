@@ -143,7 +143,8 @@ coding bug (logic, timing, state, voice) could recur in another scene. Not for C
 - **Cause:** two things speak: the scene's resume code (timer, ~500 ms) AND the phase-entry effect that fires for the restored phase. The second cancels the first.
 - **Fix:** keep the phase-entry effect silent until the resume line plays (a sentinel in the expected-phase ref, released inside the resume timer), and have the resume line arm the hint clock with its own `onEnd`. Do not gate the resume line on audio being on: muted speech completes on a silent timer.
 - **Same family:** an effect that acts on mount can also cut a resume line. Family Tree's auto-fill ("And that's me, Ganesha!", 0.9 s after load when 3 members are placed) cut the replayed third-member line. Gate such an effect on the saved "line still pending" marker (`pendingMemberLine`) so it runs only after the replay ends.
-- **Seen in:** Favourite Food, Family Tree (2026-10-13).
+- **Same family (saved flags):** a saved "already happened" flag can make the phase-VO effect speak at the first instant of a resume. Dreams: `dreamRevealed` is saved true, so on Continue at the comparison card the effect said "There it is - your dream!" and the resume line cut it ("The... Everyone can dream..."). In every resume branch, pre-seed `phaseVoiceRef` for each line the effect would speak from saved state, not only the branch's own line.
+- **Seen in:** Favourite Food, Family Tree, Dreams (2026-10-13).
 
 ## 11h. The opening line is spoken twice (shared OpeningModal + the scene)
 - **Symptom:** the opening line plays, is cut after a word or two, and plays again.
@@ -498,6 +499,18 @@ coding bug (logic, timing, state, voice) could recur in another scene. Not for C
 - **Fix:** before editing CHANGELOG / KNOWN_PITFALLS / DECISIONS, `git diff` the file; if it shows deletions you did
   not make, restore the committed version (`git checkout HEAD -- <file>`) and add your entry on top.
 - **Seen in:** CHANGELOG 2026-10-14 (the 2026-10-13 About Me entry was missing from the working copy).
+
+## 54. A handler with an optional parameter is wired straight to `onClick`
+- **Symptom:** a button works but behaves like its "resume" mode: no chime, the line delayed by half a second.
+- **Cause:** `const handleX = (resumed = false) => {...}` and `onClick={handleX}`: React passes the click event as the first argument, which is truthy. Family Tree's Continue (`handleGaneshaTreeDone`) ran as a resume after the parameter was added.
+- **Fix:** wire it as `onClick={() => handleX()}`. When you add a parameter to an existing handler, grep every place the handler is used as a bare reference.
+- **Seen in:** Family Tree (2026-10-13/14).
+
+## 55. The button the voice tells the child to press is disabled while the line plays
+- **Symptom:** "Tap Continue" is spoken, but the button only works after a second or so.
+- **Cause:** the button was disabled while an effect (the all-placed sparkle, about 2.5 s) was showing, and that overlapped the line.
+- **Fix:** keep the primary button active from the moment its line starts. Guard double taps with a ref, not with `disabled` tied to a decoration.
+- **Seen in:** Family Tree (2026-10-14).
 
 ## Quick debugging snippets (paste in the browser console)
 Log every speech call and cancel (find who cancels a line):

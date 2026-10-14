@@ -1619,8 +1619,9 @@ sceneActions.updateState({ gamePhase: 'transition' });
  {sceneState.placedGaneshaMembers.length === ganeshaFamily.length &&!sceneState.showFunFactModal &&!sceneState.isSequencePlaying && (
  <ProfilePillBtn
  label="Continue"
- onClick={handleGaneshaTreeDone}
- disabled={sceneState.showTreeSparkles}
+ onClick={() => handleGaneshaTreeDone()}
+ // Not disabled during the all-placed sparkle: the "Tap Continue" line plays then, and the tap itself clears
+ // the sparkle. handleGaneshaTreeDone ignores a second tap (ganeshaTreeDoneClickedRef).
  className="tree-done-btn done-btn-pulse"
  style={getProfilePillBtnStyle('about-me-hut')}
  fullWidth={false}
