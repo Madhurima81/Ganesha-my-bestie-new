@@ -207,10 +207,10 @@
 
 /* ===== BREATHING ANIMATION ===== */
 .breathing {
-  animation: breathe 3s ease-in-out infinite;
+  animation: eyeEarTuskBreathe 3s ease-in-out infinite;
 }
 
-@keyframes breathe {
+@keyframes eyeEarTuskBreathe {
   0%, 100% { 
     transform: scale(1);
     filter: brightness(1);
@@ -287,7 +287,7 @@
 }
 
 /* ===== CONFETTI ANIMATION ===== */
-@keyframes confettiFall {
+@keyframes eyeEarTuskConfettiFall {
   0% {
     transform: translateY(-10px) rotate(0deg);
     opacity: 1;
@@ -313,11 +313,11 @@
   position: absolute;
   width: 10px;
   height: 10px;
-  animation: confettiFall linear infinite;
+  animation: eyeEarTuskConfettiFall linear infinite;
 }
 
-/* ===== PULSE EFFECTS ===== */
-@keyframes pulse {
+/* ===== eyeEarTuskPulse EFFECTS ===== */
+@keyframes eyeEarTuskPulse {
   0% {
     transform: scale(1);
     opacity: 1;
@@ -333,7 +333,7 @@
 }
 
 .pulsing {
-  animation: pulse 2s ease-in-out infinite;
+  animation: eyeEarTuskPulse 2s ease-in-out infinite;
 }
 
 /* ===== GLOW EFFECTS ===== */
@@ -369,56 +369,56 @@
 
 /* ===== FADE ANIMATIONS ===== */
 .fade-in {
-  animation: fadeIn 1s ease-in-out;
+  animation: eyeEarTuskFadeIn 1s ease-in-out;
 }
 
 .fade-out {
-  animation: fadeOut 1s ease-in-out forwards;
+  animation: eyeEarTuskFadeOut 1s ease-in-out forwards;
 }
 
-@keyframes fadeIn {
+@keyframes eyeEarTuskFadeIn {
   from { opacity: 0; transform: scale(0.8); }
   to { opacity: 1; transform: scale(1); }
 }
 
-@keyframes fadeOut {
+@keyframes eyeEarTuskFadeOut {
   from { opacity: 1; transform: scale(1); }
   to { opacity: 0; transform: scale(0.8); }
 }
 
 /* ===== SLIDE ANIMATIONS ===== */
 .slide-in-up {
-  animation: slideInUp 0.8s ease-out;
+  animation: eyeEarTuskSlideInUp 0.8s ease-out;
 }
 
 .slide-in-down {
-  animation: slideInDown 0.8s ease-out;
+  animation: eyeEarTuskSlideInDown 0.8s ease-out;
 }
 
 .slide-in-left {
-  animation: slideInLeft 0.8s ease-out;
+  animation: eyeEarTuskSlideInLeft 0.8s ease-out;
 }
 
 .slide-in-right {
-  animation: slideInRight 0.8s ease-out;
+  animation: eyeEarTuskSlideInRight 0.8s ease-out;
 }
 
-@keyframes slideInUp {
+@keyframes eyeEarTuskSlideInUp {
   from { transform: translateY(100px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
 
-@keyframes slideInDown {
+@keyframes eyeEarTuskSlideInDown {
   from { transform: translateY(-100px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
 
-@keyframes slideInLeft {
+@keyframes eyeEarTuskSlideInLeft {
   from { transform: translateX(-100px); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
 
-@keyframes slideInRight {
+@keyframes eyeEarTuskSlideInRight {
   from { transform: translateX(100px); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
@@ -441,10 +441,10 @@
 
 /* ===== BOUNCE ANIMATIONS ===== */
 .bounce-in {
-  animation: bounceIn 1s ease-out;
+  animation: eyeEarTuskBounceIn 1s ease-out;
 }
 
-@keyframes bounceIn {
+@keyframes eyeEarTuskBounceIn {
   0% {
     transform: scale(0.3);
     opacity: 0;

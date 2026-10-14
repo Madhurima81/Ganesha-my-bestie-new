@@ -71,6 +71,17 @@ coding bug (logic, timing, state, voice) could recur in another scene. Not for C
 - **Check:** `npm run check:css` lists clashes with different content. (2026-10-12: 86 still listed, many in
   old files that may not load. Fix them in small batches.)
 
+## 9b. CSS triage can miss animation names used from JS/JSX
+- **Symptom:** a keyframe name looks unused in CSS triage, but a component still relies on it through inline
+  style, a template string, or an animation wrapper prop.
+- **Cause:** CSS-only scans see `animation:` declarations in stylesheets, not strings such as
+  `style={{ animation: 'fadeOut 1s' }}` or `<AnimationWrapper animation="pulse">`.
+- **Fix:** before renaming a keyframe, run the triage script and also search `src/` by hand for the exact name.
+  Keep shared canonical names when JS/JSX depends on them; rename only the local scene/component variant.
+- **Seen in:** CSS clash batch 1 (2026-10-14): `Animationwrapper.jsx` referenced shared names like `fadeIn`,
+  `pulse`, `bounce`, `float`, `popIn`, `slideInRight`; scene JSX also referenced names such as `fadeOut`,
+  `confettiFall`, and `breathe`.
+
 ## 10. Shared code changes ripple into other scenes
 - Touching `SceneManager`, `BeatPlayerGame`, `OpeningModal`, timers, voice hooks or global CSS affects every
   scene that uses them. Before changing one: list the scenes that use it and re-run their short "still works?"

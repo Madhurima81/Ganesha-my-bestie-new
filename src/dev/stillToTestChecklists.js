@@ -98,6 +98,21 @@ export const STILL_TO_TEST_CHECKLISTS = {
     ZONE_WELCOME_ROW,
   ]),
 
+  'todo-css-clash-batch-1': {
+    title: 'Still to test - CSS clash batch 1 (Symbol Mountain scene-only)',
+    items: [
+      { text: 'Pond: solve the reeds/lotus flow and watch the lotus hint glow plus the final confetti.', expect: 'The hint glow still follows the lotus/target shape; the confetti still falls normally; no rectangular glow or wrong-speed pulse.' },
+      { text: 'Pond: watch the water spray / falling droplet effect near the trunk interaction.', expect: 'Droplets still fall/fade as before; no map-style falling animation leaks in.' },
+      { text: 'Symbol Mountain Tusk scene: trigger the telescope/tusk reveal and the final warm aura.', expect: 'The aura expands softly from the tusk reveal; symbol materialize/glow still looks the same; no shared zone-completion aura shape appears.' },
+      { text: 'Symbol Mountain Tusk scene: watch hint glows and any musical-note/gentle-pulse moments.', expect: 'Hints still pulse in place; no About Me/Food gentle pulse leaks in.' },
+      { text: 'Eye/Ear/Tusk legacy scene screen: check breathing, fade, slide, bounce and confetti moments if reachable from the harness.', expect: 'Entrances/exits still use the same motion locally; no shared AnimationWrapper motion leaks into this scene.' },
+      { text: 'Sacred Assembly: tap a wrong marker, then complete enough symbols to see the association card and success/confetti effects.', expect: 'Wrong tap still shakes gently; association icon bounces; success/confetti floats as before.' },
+      { text: 'Modak legacy scene CSS path, if reachable from an old harness route: trigger any fade-out visual.', expect: 'Fade-out still looks local and does not affect AnimationWrapper fadeOut.' },
+      { text: 'Parent PIN screen (Parent Dashboard): enter a wrong PIN.', expect: 'The PIN dots shake side to side once (about half a second), the same as before; nothing else on the page moves.' },
+      { text: 'Dreams (Wish 1 bubbles): tap a wrong (unkind) bubble.', expect: 'That one bubble shakes and dims briefly, the same as before; the other bubbles stay still.' },
+    ],
+  },
+
   'todo-vakratunda': list('Vakratunda Grove + Mahakaya (Shloka River 1)', [
     { text: leave('Mahakaya: 1 log placed.'), expect: 'You hear "Keep adding logs to the raft" - NOT the intro.' },
     { text: leave('Mahakaya: 2 or 3 logs placed.'), expect: 'You hear "Drag the next log" - NOT the intro.' },
@@ -181,4 +196,4 @@ export const STILL_TO_TEST_CHECKLISTS = {
   ]),
 };
 
-export const STILL_TO_TEST_GROUP_LABEL = 'Still to test - About Me Hut (4 scenes), Shloka River';
+export const STILL_TO_TEST_GROUP_LABEL = 'Still to test - About Me Hut (4 scenes), CSS clash batch 1, Shloka River';

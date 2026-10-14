@@ -121,7 +121,7 @@
 }
 
 .ears-symbol-container.materialized {
-  animation: symbolMaterialize 2s ease-out;
+  animation: tuskV2SymbolMaterialize 2s ease-out;
 }
 
 /* === MUSICAL NOTES - FIXED CURSOR OFFSET VERSION === */
@@ -249,7 +249,7 @@
   }
 }
 
-@keyframes symbolMaterialize {
+@keyframes tuskV2SymbolMaterialize {
   0% { 
     opacity: 0; 
     transform: translate(50%, -50%) scale(0.5) rotate(-180deg); 
@@ -265,7 +265,7 @@
 }
 
 /* === CONFETTI ANIMATION === */
-@keyframes confettiFall {
+@keyframes tuskV2ConfettiFall {
   to {
     transform: translateY(var(--app-height, 100vh)) rotate(720deg);
   }
@@ -537,19 +537,19 @@
   white-space: nowrap;
 }
 
-@keyframes gentle-bounce {
+@keyframes tuskV2GentleBounce {
   0%, 100% { transform: translateX(-50%) translateY(0); }
   50% { transform: translateX(-50%) translateY(-5px); }
 }
 
 /* SIMPLE HINT GLOW - Just light pulse - FIXED VERSION */
 .hint-glow {
-  animation: simple-glow-pulse 1.5s ease-in-out infinite;
+  animation: tuskV2SimpleGlowPulse 1.5s ease-in-out infinite;
   /* ✅ Preserve existing transforms, only animate filter */
   animation-fill-mode: none;
 }
 
-@keyframes simple-glow-pulse {
+@keyframes tuskV2SimpleGlowPulse {
   0%, 100% { 
     filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
     /* ✅ Don't touch transform at all */
@@ -598,7 +598,7 @@
   /* ✅ Only transition filter, not all properties */
 }
 
-@keyframes fadeIn {
+@keyframes tuskV2FadeIn {
   0% { opacity: 0; }
   100% { opacity: 1; }
 }
@@ -636,7 +636,7 @@
   }
 }
 
-@keyframes powerPulse {
+@keyframes tuskV2PowerPulse {
   0%, 100% { 
     transform: scale(1);
   }

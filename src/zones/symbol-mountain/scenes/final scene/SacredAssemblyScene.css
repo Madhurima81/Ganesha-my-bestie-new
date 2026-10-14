@@ -1565,7 +1565,7 @@
 
 .association-icon-emoji {
   font-size: 70px;
-  animation: iconBounce 2s ease-in-out infinite;
+  animation: sacredIconBounce 2s ease-in-out infinite;
 }
 
 .association-text {
@@ -1637,7 +1637,7 @@
   font-family: 'Nunito', sans-serif;
   font-size: 14px;
   white-space: nowrap;
-  animation: fadeInUp 0.3s ease-out;
+  animation: sacredFadeInUp 0.3s ease-out;
   pointer-events: none;
 }
 
@@ -1654,7 +1654,7 @@
 
 .shake-animation {
   font-size: 80px;
-  animation: shake 0.3s ease-in-out forwards;
+  animation: sacredShake 0.3s ease-in-out forwards;
 }
 
 .try-again-text {
@@ -1706,7 +1706,7 @@
   }
 }
 
-@keyframes iconBounce {
+@keyframes sacredIconBounce {
   0%, 100% {
     transform: translateY(0);
   }
@@ -1756,7 +1756,7 @@
   }
 }
 
-@keyframes shake {
+@keyframes sacredShake {
   0% { transform: translateX(0); }
   25% { transform: translateX(-5px); }
   50% { transform: translateX(5px); }
@@ -1764,7 +1764,7 @@
   100% { transform: translateX(0); }
 }
 
-@keyframes fadeInUp {
+@keyframes sacredFadeInUp {
   from {
     opacity: 0;
     transform: translate(-50%, 10px);
@@ -1929,7 +1929,7 @@
   position: absolute;
   width: 10px;
   height: 10px;
-  animation: confettiFall 1.5s ease-out forwards;
+  animation: sacredConfettiFall 1.5s ease-out forwards;
 }
 
 .success-text-float {
@@ -1968,7 +1968,7 @@
   animation: plusOneRise 1s ease-out;
 }
 
-@keyframes confettiFall {
+@keyframes sacredConfettiFall {
   0% {
     transform: translate(0, 0) rotate(0deg);
     opacity: 1;
@@ -2142,10 +2142,10 @@
   width: 15px;
   height: 15px;
   border-radius: 3px;
-  animation: confettiFall 1.8s ease-out forwards;
+  animation: sacredConfettiFall 1.8s ease-out forwards;
 }
 
-@keyframes confettiFall {
+@keyframes sacredConfettiFall {
   0% {
     transform: translate(0, 0) rotate(0deg) scale(1);
     opacity: 1;

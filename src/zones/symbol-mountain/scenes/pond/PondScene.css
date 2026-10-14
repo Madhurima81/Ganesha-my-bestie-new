@@ -339,7 +339,7 @@
   100% { transform: rotate(-45deg) scale(1); }
 }
 
-@keyframes fall {
+@keyframes pondFall {
   0% {
     transform: translate(0, 0);
     opacity: 1;
@@ -405,10 +405,10 @@
 }
 
 .pond-scene-container .hint-glow img {
-  animation: simple-glow-pulse 1.5s ease-in-out infinite;
+  animation: pondSimpleGlowPulse 1.5s ease-in-out infinite;
 }
 
-@keyframes simple-glow-pulse {
+@keyframes pondSimpleGlowPulse {
   0%, 100% { filter: drop-shadow(0 0 0 rgba(255, 215, 0, 0)); }
   50% { filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.85)); }
 }
@@ -437,13 +437,13 @@
   white-space: nowrap;
 }
 
-@keyframes gentle-bounce {
+@keyframes pondGentleBounce {
   0%, 100% { transform: translateX(-50%) translateY(0); }
   50% { transform: translateX(-50%) translateY(-5px); }
 }
 
 /* ==================== ENHANCED HINT GLOW ==================== */
-/* More dramatic glow when hints appear - replaces simple-glow-pulse 
+/* More dramatic glow when hints appear - replaces pondSimpleGlowPulse
 .hint-glow {
   animation: hintGlowPulse 2s ease-in-out infinite !important;
   position: relative;
@@ -472,7 +472,7 @@
 
 /* ==================== SYMBOL CELEBRATION ANIMATIONS ==================== */
 /* 5-second centered symbol display */
-@keyframes fadeIn {
+@keyframes pondFadeIn {
   0% { opacity: 0; }
   100% { opacity: 1; }
 }
@@ -511,7 +511,7 @@
 }
 
 /* ==================== POWER MODAL ANIMATION ==================== */
-@keyframes powerPulse {
+@keyframes pondPowerPulse {
   0%, 100% { 
     transform: scale(1);
   }
@@ -626,7 +626,7 @@
 
 /* ==================== CELEBRATION CONFETTI ==================== */
 /* For the real confetti in symbol celebration */
-@keyframes confettiFall {
+@keyframes pondConfettiFall {
   to {
     transform: translateY(var(--app-height, 100vh)) rotate(720deg);
     opacity: 0;
@@ -637,7 +637,7 @@
   position: fixed;
   width: 10px;
   height: 10px;
-  animation: confettiFall 3s linear forwards;
+  animation: pondConfettiFall 3s linear forwards;
 }
 
 /* ==================== ACCESSIBILITY IMPROVEMENTS ==================== */
