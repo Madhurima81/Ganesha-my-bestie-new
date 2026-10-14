@@ -278,6 +278,10 @@ const SymbolMountainSceneContent = ({
   // real gap the child gets before L3 fires.
   const l2VoiceEndedAtRef = useRef(null);
   const IDLE_HINT_L1_MS = 10000;
+  // How long after the symbol card is ready (flipped, about 1.7 s in) "Say with me, ..." starts. It was 3200 ms,
+  // which put the line about 4.9 s after the card appeared and felt late (2026-10-14); no other line plays during the card
+  // (tuskSetup is empty), so a short wait is enough. Raise it if a success line is ever cut by the card.
+  const REVEAL_SAY_WITH_ME_DELAY_MS = 1000;
   const IDLE_HINT_L2_MS = 18000;
   const IDLE_HINT_L3_MS = 26000;
 
@@ -516,6 +520,13 @@ const SymbolMountainSceneContent = ({
       return;
     }
 
+    // The ladder was off (a mini-game, a card, a pause) until now, so its clock must start NOW. Without
+    // this, `idleFor` counted from the last interaction before the Eyes game, the very first tick reached L2,
+    // and "Listen again - where did it come from?" played before the Ears intro (the Ears game mounts
+    // 1.2 s after the phase changes).
+    lastIdleInteractionAtRef.current = Date.now();
+    l2VoiceEndedAtRef.current = null;
+
     const tick = setInterval(() => {
       const idleFor = Date.now() - lastIdleInteractionAtRef.current;
       let nextLevel = 0;
@@ -648,15 +659,15 @@ const SymbolMountainSceneContent = ({
     }
 
     if (sceneState.phase === PHASES.EYES_COMPLETE) {
-      safeSetTimeout(() => setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: 'I can focus on what matters.', sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: 3200 }), 500);
+      safeSetTimeout(() => setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: 'I can focus on what matters.', sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: REVEAL_SAY_WITH_ME_DELAY_MS }), 500);
       return;
     }
     if (sceneState.phase === PHASES.EARS_COMPLETE) {
-      safeSetTimeout(() => setRevealConfig({ symbolId: 'ear', symbolImage: symbolEarColored, symbolName: 'Ears', affirmation: 'I can listen for what helps me.', sidebarTarget: getSidebarTarget('ear'), sayWithMeDelayMs: 3200 }), 500);
+      safeSetTimeout(() => setRevealConfig({ symbolId: 'ear', symbolImage: symbolEarColored, symbolName: 'Ears', affirmation: 'I can listen for what helps me.', sidebarTarget: getSidebarTarget('ear'), sayWithMeDelayMs: REVEAL_SAY_WITH_ME_DELAY_MS }), 500);
       return;
     }
     if (sceneState.phase === PHASES.TUSK_COMPLETE) {
-      safeSetTimeout(() => setRevealConfig({ symbolId: 'tusk', symbolImage: symbolTuskColored, symbolName: 'Tusk', affirmation: 'I can use what I have for something important.', sidebarTarget: getSidebarTarget('tusk'), sayWithMeDelayMs: 3200 }), 500);
+      safeSetTimeout(() => setRevealConfig({ symbolId: 'tusk', symbolImage: symbolTuskColored, symbolName: 'Tusk', affirmation: 'I can use what I have for something important.', sidebarTarget: getSidebarTarget('tusk'), sayWithMeDelayMs: REVEAL_SAY_WITH_ME_DELAY_MS }), 500);
       return;
     }
 
@@ -758,7 +769,7 @@ const SymbolMountainSceneContent = ({
     triggerMiniGesture('victory', 'center', 2000);
     safeSetTimeout(() => {
       setShowSparkle(null);
-      setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: 'I can focus on what matters.', sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: 3200 });
+      setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: 'I can focus on what matters.', sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: REVEAL_SAY_WITH_ME_DELAY_MS });
     }, 1200);
   };
 
@@ -784,7 +795,7 @@ const SymbolMountainSceneContent = ({
       setTuskTransforming(false);
     }, 2500);
     safeSetTimeout(() => {
-      setRevealConfig({ symbolId: 'tusk', symbolImage: symbolTuskColored, symbolName: 'Tusk', affirmation: 'I can use what I have for something important.', sidebarTarget: getSidebarTarget('tusk'), sayWithMeDelayMs: 3200 });
+      setRevealConfig({ symbolId: 'tusk', symbolImage: symbolTuskColored, symbolName: 'Tusk', affirmation: 'I can use what I have for something important.', sidebarTarget: getSidebarTarget('tusk'), sayWithMeDelayMs: REVEAL_SAY_WITH_ME_DELAY_MS });
     }, 3200);
   };
 
@@ -973,7 +984,7 @@ const SymbolMountainSceneContent = ({
                           symbolName: 'Ears',
                           affirmation: 'I can listen for what helps me.',
                           sidebarTarget: getSidebarTarget('ear'),
-                          sayWithMeDelayMs: 3200
+                          sayWithMeDelayMs: REVEAL_SAY_WITH_ME_DELAY_MS
                         });
                       }, 2000);
                     }, 1800);

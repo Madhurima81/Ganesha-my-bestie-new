@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-14] - Symbol Mountain Eyes/Ears/Tusk: idle hint played before the Ears intro; "Say with me" came too late
+**Touched:** src/zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3.jsx, docs/KNOWN_PITFALLS.md (58).
+**Changed:** (1) Ears intro was preceded by "Listen again - where did it come from?". The scene-level idle ladder is off during the Eyes game; when it switched on for the Ears phase its clock still counted from the last interaction before the Eyes game, so the first tick reached L2 and spoke the idle line while the Ears game was still mounting (1.2 s). The ladder's baseline is now set to NOW whenever it (re)starts (also covers the Eyes and Tusk steps). (2) The Eyes/Ears/Tusk symbol cards passed `sayWithMeDelayMs: 3200`, so "Say with me, ..." came about 4.9 s after the card appeared; it is now one setting, `REVEAL_SAY_WITH_ME_DELAY_MS = 1000` (about 2.7 s after the card appears, ~0.5 s after the flip). No other line plays during the card (`tuskSetup` is empty). Raise it if a success line is ever cut by the card.
+**Verified:** esbuild syntax check; Madhurima tested (Ears intro and the card timing). Not run: vite build.
+**Open:** if "Listen again." (short form, the Ears game's own L1 hint) ever plays BEFORE the intro, look in EarsSoundMatchGame.jsx, not the scene.
+
 ## [2026-10-14] - CSS clash batch 1: Symbol Mountain scene-only keyframes
 **Touched:** scripts/css-clash-triage.cjs, scripts/check-css-clashes.cjs, src/zones/symbol-mountain/scenes/{eye-ear-tusk/EyeEarTuskScene.css, final scene/SacredAssemblyScene.css, modak/ModakScene.css, pond/PondScene.css, tusk/SymbolMountainScene.css, tusk/SymbolMountainSceneV2.css}, src/dev/stillToTestChecklists.js, DECISIONS.md, docs/KNOWN_PITFALLS.md.
 **Changed:** Renamed Symbol Mountain scene-local `@keyframes` variants so they no longer collide with shared/global names or other scene files. Shared canonical keyframes were left unchanged. `npm run check:css` now delegates to the loaded-and-used triage script, which also reports JS/JSX heuristic animation-name users.
