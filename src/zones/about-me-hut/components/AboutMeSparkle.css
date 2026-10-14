@@ -1,0 +1,15 @@
+/* AboutMeSparkle - display: contents keeps the shared .sparkle-container filling the same parent as before. */
+.am-sparkle {
+  display: contents;
+}
+
+.am-sparkle--fading .sparkle-container {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .am-sparkle {
+    display: none;
+  }
+}

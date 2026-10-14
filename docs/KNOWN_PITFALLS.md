@@ -542,13 +542,6 @@ coding bug (logic, timing, state, voice) could recur in another scene. Not for C
   4. A scene that speaks with its own `new SpeechSynthesisUtterance` (not `useGaneshaVoice`), for example Ears, has no watchdog either.
 - **Seen in:** Family Tree, Favourite Food, My Indian Story, 2026-10-14.
 
-## 58. A scene idle-hint clock that was switched off starts with an old "last interaction" time
-- **Symptom:** the first line of the next step is an idle hint, then the real intro (Eyes -> Ears: "Listen again - where did it come from?" played before the Ears intro).
-- **Cause:** the scene-level idle ladder is off while a mini-game or card is up, but `lastIdleInteractionAtRef` is only reset by interactions. When the ladder switches
-  back on (the next phase, before the next mini-game mounts, which can take ~1.2 s) `idleFor = now - lastInteraction` is huge, the first 250 ms tick jumps straight to L2 and speaks the idle line.
-- **Fix:** whenever the ladder (re)starts, set the baseline to NOW (`lastIdleInteractionAtRef.current = Date.now()`, clear `l2VoiceEndedAtRef`). Any clock that is switched off and on again must restart from the moment it switches on.
-- **Seen in:** Symbol Mountain Eyes/Ears/Tusk scene (SymbolMountainSceneV3.jsx), 2026-10-14. Check any scene with a parent-level idle ladder plus mini-games.
-
 ## Quick debugging snippets (paste in the browser console)
 Log every speech call and cancel (find who cancels a line):
 ```js
