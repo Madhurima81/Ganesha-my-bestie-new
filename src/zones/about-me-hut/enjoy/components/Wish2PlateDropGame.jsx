@@ -1,5 +1,5 @@
 import React from 'react';
-import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
+import AboutMeSparkle from '../../components/AboutMeSparkle';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import { KidsDraggable, KidsDropZone } from '../../../../lib/components/interactive/KidsDraggable';
 
@@ -288,16 +288,7 @@ const Wish2PlateDropGame = ({
 
             {wish2Sparkle.type === 'single' && wish2Sparkle.targetIndex === index && (
               <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 3 }}>
-                <SparkleAnimation
-                  key={`wish2-single-${wish2Sparkle.key}-${index}`}
-                  type="magic"
-                  count={14}
-                  color="rgba(255, 210, 92, 0.98)"
-                  size={10}
-                  duration={1700}
-                  fadeOut={true}
-                  area="full"
-                />
+                <AboutMeSparkle key={`wish2-single-${wish2Sparkle.key}-${index}`} preset="burst" />
               </div>
             )}
           </KidsDropZone>
@@ -328,16 +319,7 @@ const Wish2PlateDropGame = ({
 
         {wish2Sparkle.type === 'all' && (
           <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 30 }}>
-            <SparkleAnimation
-              key={`wish2-all-${wish2Sparkle.key}`}
-              type="magic"
-              count={42}
-              color="rgba(255, 214, 102, 0.92)"
-              size={12}
-              duration={2400}
-              fadeOut={true}
-              area="full"
-            />
+            <AboutMeSparkle key={`wish2-all-${wish2Sparkle.key}`} preset="big" />
           </div>
         )}
 

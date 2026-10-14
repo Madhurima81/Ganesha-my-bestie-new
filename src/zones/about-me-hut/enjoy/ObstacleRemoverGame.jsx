@@ -30,7 +30,8 @@ import { useGameSounds } from '../../../lib/hooks/useGameSounds';
 import usePauseAwareTimeout from '../../../lib/hooks/usePauseAwareTimeout';
 import useResumeCountdown from '../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
-import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
+import AboutMeSparkle from '../components/AboutMeSparkle';
+import DiscoveryFlight from '../components/DiscoveryFlight';
 import Wish2PlateDropGame from './components/Wish2PlateDropGame';
 
 // Import Unified Design System
@@ -1729,7 +1730,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     sceneActions.updateState({ trunkTaps: newTaps, gamePhase: 'dream-clearing' });
 
     if (newTaps >= 3) {
-      triggerWish3Sparkle('all', 2200);
+      triggerWish3Sparkle('all', 2400);
       playSparkle();
       playChime();
       // Explicitly speak reveal VO at reveal moment for reliability.
@@ -1737,7 +1738,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       speakLine(VOICE_LINES.dreamRevealed, { moment: 'celebration' });
       sceneActions.updateState({ dreamRevealed: true });
     } else {
-      triggerWish3Sparkle('single', 1500);
+      triggerWish3Sparkle('single', 1700);
       playSparkle();
     }
   };
@@ -1790,18 +1791,14 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
         )}
 
       {discoveryFly && (
-        <div
+        <DiscoveryFlight
           key={discoveryFly.key}
-          className="discovery-fly"
-          style={{ '--discovery-duration': `${discoveryFly.durationMs || DISCOVERY_FLY_TOTAL_MS}ms` }}
-          aria-hidden="true"
-        >
-          {discoveryFly.image ? (
-            <img src={discoveryFly.image} alt={discoveryFly.name} className="discovery-fly-image" />
-          ) : (
-            <span className="discovery-fly-emoji">{discoveryFly.emoji}</span>
-          )}
-        </div>
+          image={discoveryFly.image}
+          emoji={discoveryFly.emoji}
+          name={discoveryFly.name}
+          durationMs={discoveryFly.durationMs || DISCOVERY_FLY_TOTAL_MS}
+          size="sm"
+        />
       )}
 
       {sceneState.gamePhase === 'intro' && (
@@ -1832,30 +1829,12 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
               <img src={wishEarthHappy} alt="Happy" className={`earth-image happy ${sceneState.wish1Taps >= 3 ? 'complete-glow-pulse' : ''}`} style={{ opacity: !earthHappyReady || sceneState.wish1Taps === 0 ? 0 : sceneState.wish1Taps === 1 ? 0.4 : sceneState.wish1Taps === 2 ? 0.7 : 1 }} />
               {wish1Sparkle.type === 'single' && (
                 <div style={{ position: 'absolute', inset: 0, zIndex: 40, pointerEvents: 'none' }}>
-                  <SparkleAnimation
-                    key={`wish1-single-${wish1Sparkle.key}`}
-                    type="magic"
-                    count={14}
-                    color="rgba(255, 210, 92, 0.98)"
-                    size={10}
-                    duration={1700}
-                    fadeOut={true}
-                    area="full"
-                  />
+                  <AboutMeSparkle key={`wish1-single-${wish1Sparkle.key}`} preset="burst" />
                 </div>
               )}
               {wish1Sparkle.type === 'all' && (
                 <div style={{ position: 'absolute', inset: 0, zIndex: 40, pointerEvents: 'none' }}>
-                  <SparkleAnimation
-                    key={`wish1-all-${wish1Sparkle.key}`}
-                    type="magic"
-                    count={42}
-                    color="rgba(255, 214, 102, 0.92)"
-                    size={12}
-                    duration={2400}
-                    fadeOut={true}
-                    area="full"
-                  />
+                  <AboutMeSparkle key={`wish1-all-${wish1Sparkle.key}`} preset="big" />
                 </div>
               )}
             </div>
@@ -1929,7 +1908,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <div className="success-message-large">You made the world smile! 😊✨</div>
           <div className="soft-thank-you">Thank you for helping me 💛</div>
           <div className="wish-checkmark">🌱 1 of 3 wishes complete</div>
-          <div className="celebration-elements">{Array.from({ length: 15 }).map((_, i) => <div key={i} className="floating-element" style={{ left: `${Math.random() * 100}%`, animationDelay: `${Math.random() * 2}s` }}>😊</div>)}</div>
+          <div className="celebration-elements"><AboutMeSparkle preset="big" /></div>
         </div>
       )}
       */}
@@ -1993,7 +1972,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <div className="success-message-large">You filled hearts with sharing! ✨</div>
           <div className="soft-thank-you">Thank you for caring so much 💛</div>
           <div className="wish-checkmark">🌱 2 of 3 wishes complete</div>
-          <div className="celebration-elements">{Array.from({ length: 15 }).map((_, i) => <div key={i} className="floating-element" style={{ left: `${Math.random() * 100}%`, animationDelay: `${Math.random() * 2}s` }}>❤️</div>)}</div>
+          <div className="celebration-elements"><AboutMeSparkle preset="big" /></div>
         </div>
       )}
       */}
@@ -2147,28 +2126,10 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
               {/* Sparkle animations */}
               {wish3Sparkle.type === 'single' && (
-                <SparkleAnimation
-                  key={`wish3-single-${wish3Sparkle.key}`}
-                  type="magic"
-                  count={14}
-                  color="rgba(255, 210, 92, 0.98)"
-                  size={10}
-                  duration={1700}
-                  fadeOut={true}
-                  area="full"
-                />
+                <AboutMeSparkle key={`wish3-single-${wish3Sparkle.key}`} preset="burst" />
               )}
               {wish3Sparkle.type === 'all' && (
-                <SparkleAnimation
-                  key={`wish3-all-${wish3Sparkle.key}`}
-                  type="magic"
-                  count={42}
-                  color="rgba(255, 214, 102, 0.92)"
-                  size={12}
-                  duration={2400}
-                  fadeOut={true}
-                  area="full"
-                />
+                <AboutMeSparkle key={`wish3-all-${wish3Sparkle.key}`} preset="big" />
               )}
             </div>
           </div>
@@ -2183,7 +2144,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <div className="success-message-large">You made the world green and playful! ✨</div>
           <div className="soft-thank-you">Thank you for helping the Earth 💛</div>
           <div className="wish-checkmark">🌱 3 of 3 wishes complete</div>
-          <div className="celebration-elements">{Array.from({ length: 15 }).map((_, i) => <div key={i} className="floating-element" style={{ left: `${Math.random() * 100}%` }}>🌸</div>)}</div>
+          <div className="celebration-elements"><AboutMeSparkle preset="big" /></div>
         </div>
       )}
       */}
@@ -2256,26 +2217,13 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
         <div className="dream-screen">
           {wish3Sparkle.type && !sceneState.dreamRevealed && (
             <div className="dream-clearing-sparkles">
-              <SparkleAnimation
-                key={`dream-cloud-${wish3Sparkle.type}-${wish3Sparkle.key}`}
-                type="magic"
-                count={wish3Sparkle.type === 'all' ? 42 : 22}
-                color="rgba(255, 214, 102, 0.98)"
-                size={wish3Sparkle.type === 'all' ? 14 : 12}
-                duration={wish3Sparkle.type === 'all' ? 2200 : 1500}
-                fadeOut={true}
-                area="full"
-              />
+              <AboutMeSparkle key={`dream-cloud-${wish3Sparkle.type}-${wish3Sparkle.key}`} preset={wish3Sparkle.type === 'all' ? 'big' : 'burst'} />
             </div>
           )}
           {/* Sparkles when dream revealed */}
           {sceneState.dreamRevealed && (
             <div className="dream-clearing-sparkles">
-              <SparkleAnimation
-                type="magic"
-                duration={2000}
-                area="full"
-              />
+              <AboutMeSparkle preset="burst" />
             </div>
           )}
           <div className="dream-container">
@@ -2283,14 +2231,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
               {sceneState.dreamRevealed && <div className="canvas-glow" />}
               {sceneState.childDreamDrawing && <img src={sceneState.childDreamDrawing} alt="Dream" className={`dream-image ${sceneState.dreamRevealed ? 'dream-image-pulse' : ''}`} style={{ filter: sceneState.dreamRevealed ? 'none' : (sceneState.trunkTaps === 3 ? 'none' : 'blur(6px)'), opacity: sceneState.dreamRevealed ? 1 : (0.5 + (sceneState.trunkTaps * 0.15)), boxShadow: sceneState.dreamRevealed ? '0 0 40px rgba(242, 215, 167, 0.6), 0 0 80px rgba(242, 215, 167, 0.3)' : 'none', position: 'relative', zIndex: 2 }} />}
               {sceneState.dreamRevealed && (
-                <div className="sparkle-ring">
-                  <span className="sparkle s1" />
-                  <span className="sparkle s2" />
-                  <span className="sparkle s3" />
-                  <span className="sparkle s4" />
-                  <span className="sparkle s5" />
-                  <span className="sparkle s6" />
-                </div>
+                <div className="dreams-dream-sparkle-burst"><AboutMeSparkle preset="linger" /></div>
               )}
             </div>
             <div className="clouds-container">
@@ -2318,11 +2259,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {sceneState.gamePhase === 'comparison-card' && !sceneState.showingCompletionScreen && (
         <div className="friendship-overlay">
           {/* Subtle background sparkles */}
-          <SparkleAnimation
-            type="star"
-            duration={3000}
-            area="full"
-          />
+          <AboutMeSparkle preset="linger" />
           <h1 className="friendship-title">We Both Have Wishes</h1>
           <p className="friendship-subtitle">Everyone can dream about something different.</p>
           <div className="friendship-grid">
