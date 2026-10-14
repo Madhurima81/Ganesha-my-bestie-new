@@ -1,5 +1,10 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-14] - Favourite Food: drawing pad inline text, draggable text, undo
+**Touched:** src/zones/about-me-hut/components/Drawingpad.jsx, Drawingpad.css, src/zones/about-me-hut/food/Favoritefoodgame.jsx.
+**Changed:** (1) Favorite Food's "My own" food/activity path now opens one drawing pad flow instead of separate Draw and Type buttons. (2) DrawingPad has an `Aa` tool: tap canvas, type up to 80 characters, Enter makes another line, and saved text wraps to ~10 characters per line. (3) Text stays as a draggable layer above the canvas while the pad is open, so later brush strokes do not visually cover it. (4) Done/Save flatten drawing + text into one PNG. (5) Added Undo for the last stroke, text placement, or text drag move. (6) Old saved `food-type` / `activity-type` modal states reopen the drawing pad so in-progress sessions are not stranded.
+**Verified:** `git diff --check` passed for touched drawing pad files. Targeted eslint on Drawingpad.jsx passed with one pre-existing exhaustive-deps warning and no errors. Full build was attempted earlier but lingered during chunk rendering and was stopped.
+
 ## [2026-10-14] - About Me Hut: Dreams comparison fix, Family Tree Continue button, Food voice follow-ups
 **Touched:** zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx (commit 01c4eb87), family-tree/Familytreegame.jsx (button fix, uncommitted), food/Favoritefoodgame.jsx, docs/KNOWN_PITFALLS.md.
 **Tested (Madhurima):** Dreams: everything fine except the comparison card on Continue. Family Tree: third-member replay order and the "Tap Continue" line working.

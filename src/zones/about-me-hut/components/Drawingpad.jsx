@@ -16,9 +16,103 @@ const DrawingPad = ({
   const [isEraser, setIsEraser] = useState(false);
   const [tool, setTool] = useState('draw');
   const [textInput, setTextInput] = useState(null);
+  const [textItems, setTextItems] = useState([]);
+  const [draggingText, setDraggingText] = useState(null);
+  const [history, setHistory] = useState([]);
+  const textItemsRef = useRef([]);
   // Drawing is a free-form drag, not a tap — show a quick "move your finger
   // to draw" demo the first time this pad opens, same as other drag mechanics.
   const [showDrawIntro, setShowDrawIntro] = useState(true);
+  const TEXT_LINE_CHAR_LIMIT = 10;
+  const TEXT_LINE_HEIGHT = 40;
+
+  useEffect(() => {
+    textItemsRef.current = textItems;
+  }, [textItems]);
+
+  const wrapTextLines = (value) => {
+    const rawLines = value.trim().split(/\r?\n/);
+    return rawLines.flatMap((line) => {
+      const words = line.trim().split(/\s+/).filter(Boolean);
+      const lines = [];
+      let currentLine = '';
+
+      words.forEach((word) => {
+        const chunks = word.match(new RegExp(`.{1,${TEXT_LINE_CHAR_LIMIT}}`, 'g')) || [];
+        chunks.forEach((chunk) => {
+          if (!currentLine) {
+            currentLine = chunk;
+            return;
+          }
+
+          if (`${currentLine} ${chunk}`.length <= TEXT_LINE_CHAR_LIMIT) {
+            currentLine = `${currentLine} ${chunk}`;
+          } else {
+            lines.push(currentLine);
+            currentLine = chunk;
+          }
+        });
+      });
+
+      if (currentLine) lines.push(currentLine);
+      return lines.length ? lines : [''];
+    });
+  };
+
+  const drawTextItems = (context, items = textItemsRef.current) => {
+    context.save();
+    context.font = '700 34px "Baloo 2", sans-serif';
+    context.textBaseline = 'top';
+    items.forEach((item) => {
+      context.fillStyle = item.color;
+      item.lines.forEach((line, index) => {
+        context.fillText(line, item.x, item.y + index * TEXT_LINE_HEIGHT);
+      });
+    });
+    context.restore();
+  };
+
+  const exportImageData = (items = textItemsRef.current) => {
+    const canvas = canvasRef.current;
+    const exportCanvas = document.createElement('canvas');
+    exportCanvas.width = canvas.width;
+    exportCanvas.height = canvas.height;
+    const context = exportCanvas.getContext('2d');
+    context.drawImage(canvas, 0, 0);
+    drawTextItems(context, items);
+    return exportCanvas.toDataURL('image/png');
+  };
+
+  const autoSaveComposite = (items = textItemsRef.current) => {
+    if (onAutoSave) {
+      onAutoSave(exportImageData(items));
+    }
+  };
+
+  const pushHistory = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    setHistory((prev) => [
+      ...prev.slice(-19),
+      {
+        image: canvas.toDataURL('image/png'),
+        textItems: textItemsRef.current.map((item) => ({ ...item, lines: [...item.lines] }))
+      }
+    ]);
+  };
+
+  const restoreCanvasImage = (imageData) => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+    const img = new Image();
+    img.src = imageData;
+    img.onload = () => {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.fillStyle = '#ffffff';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(img, 0, 0, canvas.width, canvas.height);
+    };
+  };
 
   // Initialize canvas & Restore Data
   useEffect(() => {
@@ -46,7 +140,7 @@ const DrawingPad = ({
       img.src = initialData;
       img.onload = () => {
         // Draw the saved image onto the canvas
-        context.drawImage(img, 0, 0);
+        context.drawImage(img, 0, 0, canvas.width, canvas.height);
       };
     }
   }, []); // Run once on mount
@@ -104,6 +198,7 @@ const DrawingPad = ({
       return;
     }
 
+    pushHistory();
     const context = canvasRef.current.getContext('2d');
     context.beginPath();
     context.moveTo(x, y);
@@ -127,10 +222,7 @@ const DrawingPad = ({
 
       // --- AUTO SAVE LOGIC ---
       // Save every time a stroke is finished
-      if (onAutoSave) {
-        const imageData = canvas.toDataURL('image/png');
-        onAutoSave(imageData);
-      }
+      autoSaveComposite();
     }
   };
 
@@ -140,26 +232,27 @@ const DrawingPad = ({
       return;
     }
 
-    const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
-
-    context.save();
-    context.fillStyle = color;
-    context.font = '700 34px "Baloo 2", sans-serif';
-    context.textBaseline = 'top';
-    context.fillText(textInput.value.trim(), textInput.x, textInput.y);
-    context.restore();
-
-    if (onAutoSave) {
-      onAutoSave(canvas.toDataURL('image/png'));
-    }
+    pushHistory();
+    const nextItems = [
+      ...textItemsRef.current,
+      {
+        id: `${Date.now()}-${Math.random()}`,
+        x: textInput.x,
+        y: textInput.y,
+        value: textInput.value.trim(),
+        lines: wrapTextLines(textInput.value),
+        color
+      }
+    ];
 
     setTextInput(null);
     setTool('draw');
+    setTextItems(nextItems);
+    autoSaveComposite(nextItems);
   };
   
   const handleSave = () => {
-    const imageData = canvasRef.current.toDataURL('image/png');
+    const imageData = exportImageData();
     if (onSave) {
       // Pass image data back
       onSave({ image: imageData });
@@ -167,7 +260,7 @@ const DrawingPad = ({
   };
 
   const handleDownload = () => {
-    const imageData = canvasRef.current.toDataURL('image/png');
+    const imageData = exportImageData();
     const link = document.createElement('a');
     link.href = imageData;
     link.download = 'my-dream.png';
@@ -186,6 +279,51 @@ const DrawingPad = ({
   ];
   
   const brushSizes = [3, 8, 15]; // Small, Medium, Large
+
+  const handleTextDragStart = (e, item) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const point = getCoordinates(e);
+    pushHistory();
+    setDraggingText({
+      id: item.id,
+      offsetX: point.x - item.x,
+      offsetY: point.y - item.y,
+    });
+  };
+
+  const handleTextDragMove = (e) => {
+    if (!draggingText) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const point = getCoordinates(e);
+    const nextItems = textItemsRef.current.map((item) => (
+      item.id === draggingText.id
+        ? { ...item, x: point.x - draggingText.offsetX, y: point.y - draggingText.offsetY }
+        : item
+    ));
+    setTextItems(nextItems);
+  };
+
+  const handleTextDragEnd = () => {
+    if (!draggingText) return;
+    setDraggingText(null);
+    autoSaveComposite();
+  };
+
+  const handleUndo = () => {
+    setTextInput(null);
+    setDraggingText(null);
+    setHistory((prev) => {
+      if (!prev.length) return prev;
+      const last = prev[prev.length - 1];
+      restoreCanvasImage(last.image);
+      setTextItems(last.textItems);
+      textItemsRef.current = last.textItems;
+      setTimeout(() => autoSaveComposite(last.textItems), 0);
+      return prev.slice(0, -1);
+    });
+  };
 
   return (
     <div className="simple-drawing-pad">
@@ -268,7 +406,14 @@ const DrawingPad = ({
         </div>
         
         {/* Canvas */}
-        <div className="simple-canvas-wrap">
+        <div
+          className="simple-canvas-wrap"
+          onMouseMove={handleTextDragMove}
+          onMouseUp={handleTextDragEnd}
+          onMouseLeave={handleTextDragEnd}
+          onTouchMove={handleTextDragMove}
+          onTouchEnd={handleTextDragEnd}
+        >
           <canvas
             ref={canvasRef}
             width={900}
@@ -282,12 +427,37 @@ const DrawingPad = ({
             onTouchMove={draw}
             onTouchEnd={stopDrawing}
           />
+          {textItems.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              className="canvas-text-item"
+              onMouseDown={(e) => handleTextDragStart(e, item)}
+              onMouseMove={handleTextDragMove}
+              onMouseUp={handleTextDragEnd}
+              onMouseLeave={handleTextDragEnd}
+              onTouchStart={(e) => handleTextDragStart(e, item)}
+              onTouchMove={handleTextDragMove}
+              onTouchEnd={handleTextDragEnd}
+              style={{
+                left: `${(item.x / canvasRef.current.width) * 100}%`,
+                top: `${(item.y / canvasRef.current.height) * 100}%`,
+                color: item.color,
+              }}
+              aria-label="Move text"
+            >
+              {item.lines.map((line, index) => (
+                <span key={`${item.id}-${index}`}>{line}</span>
+              ))}
+            </button>
+          ))}
           {textInput && canvasRef.current && (
-            <input
+            <textarea
               autoFocus
               className="canvas-text-input"
               value={textInput.value}
-              maxLength={24}
+              maxLength={80}
+              rows={3}
               onChange={(e) =>
                 setTextInput((prev) => ({
                   ...prev,
@@ -296,8 +466,7 @@ const DrawingPad = ({
               }
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
-                  e.preventDefault();
-                  commitText();
+                  setShowDrawIntro(false);
                 }
 
                 if (e.key === 'Escape') {
@@ -325,6 +494,10 @@ const DrawingPad = ({
       
       {/* Done Button */}
       <div className="drawing-actions">
+          <button className="undo-btn" onClick={handleUndo} disabled={!history.length} title="Undo">
+            Undo
+          </button>
+
           <button className="done-btn" onClick={handleSave}>
             Done
           </button>
