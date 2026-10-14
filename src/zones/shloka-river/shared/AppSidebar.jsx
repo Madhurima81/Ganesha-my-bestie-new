@@ -216,7 +216,7 @@ const AppSidebar = ({
   // SIDE RAIL MODE (default)
   return (
     <>
-      <div className={`ganesha-sidebar ${className}`} style={zoneThemeVars}>
+      <div className={`ganesha-sidebar shloka-river-sidebar ${className}`} style={zoneThemeVars}>
         {appOrder.map((appId) => {
           const app = appInfo[appId];
           const isUnlocked = unlockedApps[appId];

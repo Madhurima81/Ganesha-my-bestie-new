@@ -207,7 +207,7 @@ const SymbolSidebar = ({
 
   return (
     <>
-      <div className={`ganesha-sidebar ${className}`} style={zoneThemeVars}>
+      <div className={`ganesha-sidebar symbol-mountain-sidebar ${className}`} style={zoneThemeVars}>
         {displaySymbols.map((symbolId) => {
           const symbol = symbolInfo[symbolId];
           const isDiscovered = discoveredSymbols[symbolId];

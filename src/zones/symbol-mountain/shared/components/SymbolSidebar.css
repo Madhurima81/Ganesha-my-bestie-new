@@ -103,11 +103,11 @@
     0 1px 4px rgba(90, 70, 35, 0.04);
 }
 
-.ganesha-icon.animating {
-  animation: symbolBloom 0.9s ease-out forwards;
+.symbol-mountain-sidebar .ganesha-icon.animating {
+  animation: symbolSidebarBloom 0.9s ease-out forwards;
 }
 
-@keyframes symbolBloom {
+@keyframes symbolSidebarBloom {
   0% {
     transform: scale(0.9);
     box-shadow:

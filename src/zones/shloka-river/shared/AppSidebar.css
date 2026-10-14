@@ -68,11 +68,11 @@
 }
 
 /* Animating (When Symbol Flies In) */
-.ganesha-icon.animating {
-  animation: symbolBloom 1.2s ease-out forwards;
+.shloka-river-sidebar .ganesha-icon.animating {
+  animation: appSidebarBloom 1.2s ease-out forwards;
 }
 
-@keyframes symbolBloom {
+@keyframes appSidebarBloom {
   0% {
     transform: scale(1);
     box-shadow: 0 0 0 rgba(255, 193, 7, 0);
