@@ -21,7 +21,6 @@ import '../../../../lib/styles/zone-themes.css';
 
 // Unified Components
 import UnifiedButtonV2 from '../../../../lib/components/ui/Button/UnifiedButtonV2';
-import UnifiedModal from '../../../../lib/components/ui/Modal/UnifiedModal';
 
 // Scene management
 import SceneManager from "../../../../lib/components/scenes/SceneManager";

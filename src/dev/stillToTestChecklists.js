@@ -139,6 +139,7 @@ export const STILL_TO_TEST_CHECKLISTS = {
       { text: 'Modak legacy scene CSS path, if reachable from an old harness route: trigger any fade-out visual.', expect: 'Fade-out still looks local and does not affect AnimationWrapper fadeOut.' },
       { text: 'Parent PIN screen (Parent Dashboard): enter a wrong PIN.', expect: 'The PIN dots shake side to side once (about half a second), the same as before; nothing else on the page moves.' },
       { text: 'Dreams (Wish 1 bubbles): tap a wrong (unkind) bubble.', expect: 'That one bubble shakes and dims briefly, the same as before; the other bubbles stay still.' },
+      { text: 'Modak: play the whole scene once, from the opening modal to the completion screen.', expect: 'Nothing looks or behaves differently (an unused modal import was removed from the scene; a modal that never rendered cannot disappear).' },
     ],
   },
 
