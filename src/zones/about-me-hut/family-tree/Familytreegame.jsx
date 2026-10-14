@@ -363,7 +363,6 @@ const FamilyTreeGameContent = ({
  // ========================================
  // VO-GATED BUTTON STATE
  // ========================================
- const [openingButtonVisible, setOpeningButtonVisible] = useState(true);
  const [showVoiceOffPill, setShowVoiceOffPill] = useState(false);
 
  // ========================================
@@ -1528,7 +1527,6 @@ sceneActions.updateState({ gamePhase: 'transition' });
  handleStartGame();
  }}
  characterImg={babyGaneshaImg}
- showButton={openingButtonVisible}
  />
  </>
  )}
