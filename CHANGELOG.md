@@ -1,5 +1,9 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-14] - Symbol Mountain Eyes voice hardening
+**Touched:** src/zones/symbol-mountain/scenes/tusk/EyesPopUpGame.jsx, src/dev/stillToTestChecklists.js.
+**Changed:** Eyes now uses the shared Web Speech start-watch helper and one local speech owner, with scene-log entries for request/start/end/cancel/drop, stale callback protection, hint-priority behavior, and `eyesSuccessDone` saved only after a real finished success line while mounted (>= ~1.5 s). Target-found checkpoints and animation beats are unchanged.
+**Verified:** Eyes esbuild syntax check; scoped fake-speechSynthesis helper test (5 cases); private Vite build to `../ganesha-my-bestie-s3-dist`; Madhurima tested Eyes Continue loops, feather/mango cut-vs-finished success lines, both-found leave, tab switch, and Play Again.
 ## [2026-10-14] - Symbol Mountain Ears voice hardening
 **Touched:** src/lib/utils/speechStartWatch.js, src/lib/utils/speechStartWatch.test.js, src/zones/symbol-mountain/scenes/tusk/EarsSoundMatchGame.jsx, src/dev/stillToTestChecklists.js.
 **Changed:** Ears now uses a shared Web Speech start-watch helper: if a spoken line does not fire `onstart` within 1.4 s, the stuck utterance is dropped with handlers detached and spoken fresh once. The Ears game now has one speech owner, logs line request/start/end/cancel/drop events to the scene log, ignores stale/cancel callbacks, keeps hint lines from cutting active lines or sound chains, and only marks `earsSuccessDone` when the success line really finished while mounted (>= ~1.5 s).

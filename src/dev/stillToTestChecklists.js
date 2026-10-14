@@ -144,9 +144,7 @@ export const STILL_TO_TEST_CHECKLISTS = {
 
   'todo-symbol-mountain-eyes-ears-nest-voice-watchdog': {
     title: 'Still to test - Symbol Mountain Eyes, Ears and nest voice/watchdog',
-    items: [
-      { text: 'Eyes: start the scene, leave with the zone badge, and Continue 3-4 times in a row.', expect: 'Never freezes; the current line is audible once, not doubled or cut.' },
-      { text: 'Finish Eyes/Ears/nest once, then tap Play Again from the completion modal or Replay from Zone Welcome.', expect: 'Fresh run starts normally; the first game line after the opening modal is audible.' },
+    items: [      { text: 'Finish Eyes/Ears/nest once, then tap Play Again from the completion modal or Replay from Zone Welcome.', expect: 'Fresh run starts normally; the first game line after the opening modal is audible.' },
     ],
   },
   'todo-vakratunda': list('Vakratunda Grove + Mahakaya (Shloka River 1)', [

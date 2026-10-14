@@ -6,6 +6,8 @@ import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
 import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
+import { createSpeechStartWatcher } from '../../../../lib/utils/speechStartWatch';
+import { logSceneEvent } from '../../../../lib/utils/sceneEventLog';
 import './EyesPopUpGame.css';
 
 import bgImg from './assets/images/eyes-game/symbol_mountain_3_bg.webp';
@@ -189,27 +191,8 @@ const IDLE_HINT_RESCUE_GAP_MS = 9000;
 // exploration attempts must not just restart the idle clock.
 const MISS_COUNT_FOR_CLUE = 3;
 const MISS_COUNT_FOR_RESCUE = 6;
-
-const speakFallback = (text, onEnd) => {
-  if (!text || typeof window === 'undefined' || !window.speechSynthesis) {
-    onEnd?.();
-    return;
-  }
-  try {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.92;
-    utterance.pitch = 1;
-    utterance.onend = () => onEnd?.(true);
-    // A line cut off by another line / cancel() is NOT finished: reporting it as finished made
-    // the game advance ("Now find the mango") and save the success line as heard.
-    utterance.onerror = (e) => onEnd?.(!(e?.error === 'canceled' || e?.error === 'interrupted'));
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
-  } catch {
-    // Speech synthesis is optional.
-    onEnd?.();
-  }
-};
+const SUCCESS_LINE_MIN_MS = 1500;
+const SCENE_LOG_KEY = 'symbol-mountain-eyes';
 
 const POSE_ASSETS = [bgImg, monkeyWorriedImg, peacockWorriedImg, monkeyHappyImg, peacockHappyImg, newFeatherBushImg, newMangoBushImg, featherFoundImg, mangoFoundImg, yellowFlowerClusterImg];
 
@@ -304,6 +287,14 @@ const EyesPopUpGame = ({
   const [l2EndTick, setL2EndTick] = useState(0);
   const wasPausedRef = useRef(false);
   const wasArmedRef = useRef(false);
+  const speechWatcherRef = useRef(null);
+  if (!speechWatcherRef.current) {
+    speechWatcherRef.current = createSpeechStartWatcher({
+      speechSynthesis: typeof window !== 'undefined' ? window.speechSynthesis : null,
+      onDropBeforeStart: ({ attempt }) => logSceneEvent(SCENE_LOG_KEY, 'speak:dropped-before-start', { attempt }),
+    });
+  }
+  const speechTokenRef = useRef(0);
 
   const foundIds = useMemo(() => new Set(foundTargets), [foundTargets]);
   const centeredIds = useMemo(() => new Set(centeredTargets), [centeredTargets]);
@@ -332,11 +323,30 @@ const EyesPopUpGame = ({
     return timer;
   }, [after]);
 
-  const speak = useCallback((text, onEnd) => {
+  const speak = useCallback((text, onEnd, options = {}) => {
     // Tell the scene which line is current so its Replay button repeats this game's line.
     if (text) lineSpokenRef.current?.(text);
+    const priority = options.priority || 'normal';
+    const label = options.label || text;
+
+    const runFollowUp = (result = {}) => {
+      onEnd?.(result);
+    };
+
+    if (priority === 'hint' && activeSpeechRef.current && !activeSpeechRef.current.dead) {
+      const active = activeSpeechRef.current;
+      const originalOnEnd = active.onEnd;
+      active.onEnd = (result) => {
+        originalOnEnd?.(result);
+        runFollowUp({ skipped: true, waitedForCurrent: true });
+      };
+      logSceneEvent(SCENE_LOG_KEY, 'speak:hint-waited-and-skipped', { label });
+      return;
+    }
+
     if (!isAudioOn) {
-      onEnd?.();
+      logSceneEvent(SCENE_LOG_KEY, 'speak:muted', { label });
+      runFollowUp({ finished: true, muted: true, elapsedMs: 0 });
       return;
     }
     const entry = { text, onEnd, dead: false };
@@ -346,12 +356,12 @@ const EyesPopUpGame = ({
       interruptedSpeechRef.current = entry;
       return;
     }
-    const done = (finished = true) => {
+    const done = (result = { finished: true }) => {
       if (entry.dead) return;
       // The child left the game: a line ending afterwards must not save progress or chain the next line.
       if (!aliveRef.current) { entry.dead = true; return; }
       // Cut off by something else (not paused): the line that cut it owns what comes next.
-      if (finished === false && !pausedRef.current) { entry.dead = true; return; }
+      if (result?.finished === false && !pausedRef.current) { entry.dead = true; return; }
       // A cancel-triggered end that arrives while paused is an interruption, not a
       // finish: remember the line instead of letting the game advance behind the sidebar.
       if (pausedRef.current) {
@@ -361,18 +371,84 @@ const EyesPopUpGame = ({
       }
       entry.dead = true;
       if (activeSpeechRef.current === entry) activeSpeechRef.current = null;
-      onEnd?.();
+      onEnd?.(result);
     };
     activeSpeechRef.current = entry;
     // Stop the parent scene's own voice engine first — its MP3 audio element
     // isn't touched by window.speechSynthesis.cancel() below, so without this
     // a still-playing scene VO keeps going under this mini-game's line.
     stopVoice?.();
-    speakFallback(text, done);
+    if (!text || typeof window === 'undefined' || !window.speechSynthesis || typeof SpeechSynthesisUtterance === 'undefined') {
+      done({ finished: true, unsupported: true, elapsedMs: 0 });
+      return;
+    }
+    const token = ++speechTokenRef.current;
+    let startedAt = 0;
+    logSceneEvent(SCENE_LOG_KEY, 'speak:request', { label, priority });
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = speechWatcherRef.current.speak({
+        isStillCurrent: () => speechTokenRef.current === token && aliveRef.current,
+        buildUtterance: (attempt) => {
+          const u = new SpeechSynthesisUtterance(text);
+          u.rate = 0.92;
+          u.pitch = 1;
+          u.onstart = () => {
+            startedAt = Date.now();
+            logSceneEvent(SCENE_LOG_KEY, 'speak:start', { label, attempt });
+          };
+          u.onend = () => {
+            if (speechTokenRef.current !== token || !aliveRef.current) {
+              logSceneEvent(SCENE_LOG_KEY, 'speak:stale-end', { label });
+              return;
+            }
+            const elapsedMs = startedAt ? Date.now() - startedAt : 0;
+            logSceneEvent(SCENE_LOG_KEY, 'speak:end', { label, elapsedMs });
+            done({ finished: true, elapsedMs });
+          };
+          u.onerror = (e) => {
+            const error = e?.error || 'unknown';
+            if (speechTokenRef.current !== token || !aliveRef.current) {
+              logSceneEvent(SCENE_LOG_KEY, 'speak:stale-error', { label, error });
+              return;
+            }
+            const elapsedMs = startedAt ? Date.now() - startedAt : 0;
+            if (error === 'canceled' || error === 'interrupted') {
+              logSceneEvent(SCENE_LOG_KEY, 'speak:cancel', { label, error, elapsedMs });
+              done({ finished: false, error, elapsedMs });
+              return;
+            }
+            logSceneEvent(SCENE_LOG_KEY, 'speak:error', { label, error, elapsedMs });
+            done({ finished: elapsedMs >= SUCCESS_LINE_MIN_MS, error, elapsedMs });
+          };
+          return u;
+        },
+      });
+      if (!utterance) done({ finished: true, unsupported: true, elapsedMs: 0 });
+    } catch (error) {
+      logSceneEvent(SCENE_LOG_KEY, 'speak:exception', { label, error: String(error) });
+      done({ finished: true, error: String(error), elapsedMs: 0 });
+    }
   }, [isAudioOn, stopVoice]);
 
   const speakRef = useRef(speak);
   speakRef.current = speak;
+
+  const markSuccessDoneIfFinished = useCallback((lineResult, targetId) => {
+    if (!aliveRef.current) return false;
+    if (!lineResult?.finished || (lineResult.elapsedMs || 0) < SUCCESS_LINE_MIN_MS) {
+      logSceneEvent(SCENE_LOG_KEY, 'success:not-marked-done', {
+        targetId,
+        elapsedMs: lineResult?.elapsedMs || 0,
+        finished: Boolean(lineResult?.finished),
+      });
+      return false;
+    }
+    successDoneRef.current = [...new Set([...successDoneRef.current, targetId])];
+    logSceneEvent(SCENE_LOG_KEY, 'success:marked-done', { targetId, elapsedMs: lineResult.elapsedMs });
+    onSuccessDoneRef.current?.(successDoneRef.current);
+    return true;
+  }, []);
 
   // False once the game unmounts (StrictMode's mount/cleanup/mount sets it true again).
   const aliveRef = useRef(true);
@@ -408,6 +484,7 @@ const EyesPopUpGame = ({
           }
           pendingReplayRef.current = null;
         }
+        speechWatcherRef.current?.cancelPending({ cancelSpeech: false });
         try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
       }
     } else if (wasPausedRef.current) {
@@ -426,7 +503,7 @@ const EyesPopUpGame = ({
         replayTimerRef.current = setTimeout(() => {
           replayTimerRef.current = null;
           pendingReplayRef.current = null;
-          speak(entry.text, () => { entry.onEnd?.(); rearm(); });
+          speak(entry.text, (result) => { entry.onEnd?.(result); rearm(); });
         }, 400);
       } else {
         rearm();
@@ -614,16 +691,15 @@ const EyesPopUpGame = ({
         speakRef.current(findLine, armClock);
       } else {
         // Cut off during the success line: replay it, then say what is left.
-        speakRef.current(VO_TEXTS[lastFound] || '', () => {
-          successDoneRef.current = [...new Set([...successDoneRef.current, lastFound])];
-          onSuccessDoneRef.current?.(successDoneRef.current);
+        speakRef.current(VO_TEXTS[lastFound] || '', (lineResult) => {
+          markSuccessDoneIfFinished(lineResult, lastFound);
           speakRef.current(findLine, armClock);
-        });
+        }, { label: `resume-success:${lastFound}` });
       }
       return;
     }
     speakRef.current(VO_TEXTS.intro, armClock);
-  }, [isActive, stopTimers]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isActive, markSuccessDoneIfFinished, stopTimers]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const nextHintTarget = useMemo(
     () => SEARCH_TARGETS.find((target) => !foundIds.has(target.id)) || null,
@@ -679,7 +755,7 @@ const EyesPopUpGame = ({
       l2VoiceEndedAtRef.current = Date.now();
       setL2EndTick((tick) => tick + 1);
     };
-    speak(VO_TEXTS.idleHintL2, stampEnded);
+    speak(VO_TEXTS.idleHintL2, stampEnded, { priority: 'hint', label: `hint:${nextHintTarget.id}` });
     after(Math.max(4000, VO_TEXTS.idleHintL2.length * 90 + 2500), stampEnded);
   }, [hintStage, nextHintTarget, isActive, flow, speak, after, l2EndTick]);
 
@@ -691,6 +767,7 @@ const EyesPopUpGame = ({
     stopTimers();
     if (replayTimerRef.current) clearTimeout(replayTimerRef.current);
     if (typeof window !== 'undefined' && window.speechSynthesis?.cancel) {
+      speechWatcherRef.current?.cancelPending({ cancelSpeech: false });
       window.speechSynthesis.cancel();
     }
   }, [stopTimers]);
@@ -802,9 +879,8 @@ const EyesPopUpGame = ({
     doneIdsRef.current = [...foundIdsRef.current];
     onProgressRef.current?.(doneIdsRef.current);
     setFoundTargets((prev) => [...prev, target.id]);
-    speak(VO_TEXTS[target.id] || target.label, () => {
-      successDoneRef.current = [...new Set([...successDoneRef.current, target.id])];
-      onSuccessDoneRef.current?.(successDoneRef.current);
+    speak(VO_TEXTS[target.id] || target.label, (lineResult) => {
+      markSuccessDoneIfFinished(lineResult, target.id);
       if (!isFinalFind) {
         // If the child already found the other object while this line was speaking (their tap cut
         // this line, and the cut line's end callback landed here), do NOT say "Now find the X" —
@@ -816,12 +892,12 @@ const EyesPopUpGame = ({
           if (foundIdsRef.current.has(remainingTarget.id)) return;
           idleClockArmedRef.current = true;
           lastTapTimeRef.current = Date.now();
-        });
+        }, { label: `find-next:${remainingTarget.id}` });
         return;
       }
       idleClockArmedRef.current = true;
       lastTapTimeRef.current = Date.now();
-    });
+    }, { label: `success:${target.id}` });
 
     // Slower, staged journey so kids can actually follow it: hold in place
     // to register the find -> glide to the center of the scene (900ms,
@@ -833,7 +909,7 @@ const EyesPopUpGame = ({
     schedule(() => setCarriedTargets((prev) => [...prev, target.id]), 2100); // 700 + 900 glide + 500 pause at center
     schedule(() => setDeliveredTargets((prev) => [...prev, target.id]), 3000); // 2100 + 900 glide to animal
     schedule(() => setGoneTargets((prev) => [...prev, target.id]), 3600); // 3000 + 600 hold after pose change
-  }, [debugMode, flow, foundIds, registerMiss, schedule, speak]);
+  }, [debugMode, flow, foundIds, markSuccessDoneIfFinished, registerMiss, schedule, speak]);
 
   if (hideElements || !isActive) return null;
 
