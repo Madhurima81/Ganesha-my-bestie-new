@@ -578,7 +578,6 @@ const SacredAssemblyContent = ({
   const [cardContent, setCardContent] = useState({});
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
   const [sceneCompleteVOFinished, setSceneCompleteVOFinished] = useState(false);
-  const [fireworksFinished, setFireworksFinished] = useState(false);
   const [showCulturalCelebration, setShowCulturalCelebration] = useState(false);
   const [showZoneCompletion, setShowZoneCompletion] = useState(false);
   // const [hintUsed, setHintUsed] = useState(false);
@@ -1199,7 +1198,6 @@ const SacredAssemblyContent = ({
     // The final-celebration effect shows the completion modal whenever these are true and the modal
     // is closed: left set, Play Again re-opened the completion modal at once.
     setSceneCompleteVOFinished(false);
-    setFireworksFinished(false);
     setShowSparkle(null);
     setCardContent({});
     setShowSceneCompletion(false);
@@ -1600,7 +1598,6 @@ const SacredAssemblyContent = ({
       setShowSparkle('final-fireworks');
       // Reloaded mid-celebration: the VO chain is not replayed, so open the gate.
       setSceneCompleteVOFinished(true);
-      setFireworksFinished(true);
       safeSetTimeout(() => {
         setShowZoneCompletion(true);
       }, 500);
@@ -1728,8 +1725,6 @@ const SacredAssemblyContent = ({
 
     // Reset gates for a fresh celebration pass.
     setSceneCompleteVOFinished(false);
-    setFireworksFinished(false);
-
     sceneActions.updateState({
       currentPopup: 'final_fireworks',
       // Keep completion modal hidden until fireworks/orbs fully finish.
@@ -2075,9 +2070,6 @@ const SacredAssemblyContent = ({
                   playerName={activeProfile?.name || 'Friend'}
                   showCentralGanesha={false}
                   showBuiltInFireworks={false}
-                  onComplete={() => {
-                    setFireworksFinished(true);
-                  }}
                 />
               </>
             )}
