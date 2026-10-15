@@ -313,15 +313,18 @@ export default function KurumedevaGame({
   const [seedRounds] = useState(() => (
     isActive ? Math.max(0, Math.min(TOTAL_ROUNDS - 1, Number(initialRounds) || 0)) : 0
   ));
+  // Continue after the LAST plank landed (roundsDone 3): resume at the crossing, i.e. the full word + success line, not the planks.
+  const [resumeAtCrossing, setResumeAtCrossing] = useState(() => isActive && Number(initialRounds) >= TOTAL_ROUNDS);
   const [friendStep, setFriendStep] = useState(seedRounds);
-  const [bridgeStep, setBridgeStep] = useState(seedRounds);
+  const [bridgeStep, setBridgeStep] = useState(resumeAtCrossing ? TOTAL_ROUNDS : seedRounds);
   const [phase, setPhase] = useState('play');
   const [beaverPos, setBeaverPos] = useState(BEAVER_PATH[0]);
-  const [litCount, setLitCount] = useState(seedRounds > 0 ? SYLLABLES_LIT_AFTER_STEP[seedRounds - 1] : 0);
+  const [litCount, setLitCount] = useState(resumeAtCrossing ? SYLLABLES.length : (seedRounds > 0 ? SYLLABLES_LIT_AFTER_STEP[seedRounds - 1] : 0));
   const [tappedId, setTappedId] = useState(null);
   // Finished rounds: Elephant stays in his helping pose at the helper spot; Monkey waits to be asked.
-  const [friendImgStates, setFriendImgStates] = useState(() => FRIENDS.map((_, i) => (i === 0 && seedRounds >= 1 ? 'helping' : 'carry')));
+  const [friendImgStates, setFriendImgStates] = useState(() => FRIENDS.map((_, i) => (resumeAtCrossing ? 'empty' : (i === 0 && seedRounds >= 1 ? 'helping' : 'carry'))));
   const [friendPositions, setFriendPositions] = useState(() => FRIENDS.map((friend, i) => {
+    if (resumeAtCrossing) return { l: WAIT_SPOTS[i].l, t: WAIT_SPOTS[i].t };
     if (i === 0 && seedRounds >= 1) return { l: HELPER_SPOTS[0].l, t: HELPER_SPOTS[0].t };
     if (i === 1 && seedRounds >= 2) return { l: WAIT_SPOTS[1].l, t: WAIT_SPOTS[1].t };
     return { l: friend.l, t: friend.t };
@@ -336,8 +339,8 @@ export default function KurumedevaGame({
   const [vineReady, setVineReady] = useState(seedRounds === 1);
 
   // Plank round — drag 3 planks onto the finished bridge.
-  const [placeActive, setPlaceActive] = useState(seedRounds >= 2);
-  const [placedCount, setPlacedCount] = useState(0);
+  const [placeActive, setPlaceActive] = useState(seedRounds >= 2 && !resumeAtCrossing);
+  const [placedCount, setPlacedCount] = useState(resumeAtCrossing ? PLANK_SLOTS.length : 0);
   const [pieceDragActive, setPieceDragActive] = useState(false);
   const [pieceDragPos, setPieceDragPos] = useState(null);
   const pieceDragRef = useRef(null);
@@ -361,6 +364,7 @@ export default function KurumedevaGame({
   const completionScheduledRef = useRef(false);
   const voFallbackRef = useRef(null);
   const phaseRef = useRef('play');
+  const resumeCrossingStartedRef = useRef(false);
   const onPhaseCompleteRef = useRef(onPhaseComplete);
   const onGameCompleteRef = useRef(onGameComplete);
   const isPausedRef = useRef(isPaused);
@@ -568,6 +572,8 @@ export default function KurumedevaGame({
       setPieceDragPos(null);
       pieceDragRef.current = null;
       placeDoneRef.current = false;
+      resumeCrossingStartedRef.current = false;
+      setResumeAtCrossing(false); // a later Play Again must start from the beginning, never at the crossing
       dragPointerRef.current = null;
       doneCalledRef.current = false;
       successVoDoneRef.current = false;
@@ -799,12 +805,28 @@ export default function KurumedevaGame({
     }
   }, [endPieceDrag, getStagePoint, hintBeat, markInteraction, markWrongAttempt, placeNextPiece, placedCount, playSceneLine]);
 
+  // Continue after the last plank: wait until the scene is live (speech at the very first instant after mount is
+  // dropped on Continue), then run the normal crossing: full word, success line, beaver walk. Plain timer + cleanup so
+  // StrictMode's second run still schedules it.
+  useEffect(() => {
+    if (!resumeAtCrossing || !isActive || !introComplete || phase !== 'play' || resumeCrossingStartedRef.current) return undefined;
+    const t = window.setTimeout(() => {
+      if (resumeCrossingStartedRef.current) return;
+      resumeCrossingStartedRef.current = true;
+      setIsRoundSettling(false);
+      phaseRef.current = 'crossing';
+      setPhase('crossing');
+    }, 500);
+    return () => window.clearTimeout(t);
+  }, [resumeAtCrossing, isActive, introComplete, phase]);
+
   // Plank round completes once all 3 land — light the last syllables, then
   // start the crossing.
   useEffect(() => {
     if (!placeActive || placedCount < PLANK_SLOTS.length || placeDoneRef.current) return;
     placeDoneRef.current = true;
 
+    onBeatComplete?.(TOTAL_ROUNDS); // checkpoint: Continue after this goes straight to the word + success line
     setLitCount(SYLLABLES_LIT_AFTER_STEP[2]);
     window.setTimeout(() => onMicroWin?.(), 0);
     setBridgeStep(TOTAL_ROUNDS);
@@ -821,7 +843,7 @@ export default function KurumedevaGame({
       phaseRef.current = 'crossing';
       setLitCount(SYLLABLES.length);
     });
-  }, [placeActive, placedCount, onMicroWin, safeAfter]);
+  }, [placeActive, placedCount, onMicroWin, onBeatComplete, safeAfter]);
 
   const handleHelpPointerDown = useCallback((event) => {
     if (isPaused || phaseRef.current !== 'play' || !currentFriend) return;
