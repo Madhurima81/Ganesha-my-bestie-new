@@ -199,6 +199,8 @@ export const STILL_TO_TEST_CHECKLISTS = {
   },
 
   'todo-suryakoti': list('Suryakoti + Samaprabha (Shloka River 2)', [
+    { text: 'Suryakoti: finish from a fresh start, then use Play Again and finish again.', expect: 'The word and success line play once per run, followed by one reveal card; no duplicate completion voice.' },
+    { text: 'Suryakoti: Continue after saved progress and finish the remaining rub.', expect: 'Continue resumes correctly, and the completion word and success line each play once before the reveal.' },
     { text: 'Samaprabha: tap the zone badge in the middle of a spoken line.', expect: 'Zone Welcome is silent - no line from Samaprabha carries on over it.' },
     { text: 'Suryakoti rub game: tap the zone badge in the middle of a spoken line.', expect: 'Zone Welcome is silent.' },
     { text: 'During Suryakoti rubbing, wait for the nudge.', expect: '"Keep rubbing to bring back more light." plays once; the rub flow remains interactive.' },
@@ -222,6 +224,8 @@ export const STILL_TO_TEST_CHECKLISTS = {
   ]),
 
   'todo-nirvighnam': list('Nirvighnam + Kurumedeva (Shloka River 3)', [
+    { text: 'Nirvighnam: finish from a fresh start, then use Play Again and finish again.', expect: 'The word and success line play once per run, followed by one reveal card; no duplicate completion voice.' },
+    { text: 'Nirvighnam: Continue after saved progress and finish the remaining obstacles.', expect: 'Continue resumes at the saved obstacle, and the completion word and success line each play once before the reveal.' },
     { text: 'Kurumedeva: stay idle until the Elephant / Monkey friend glow shows.', expect: 'A soft glow that follows the animal shape; the animal does NOT jump right/down while it glows (CSS clash fix).' },
     { text: 'Kurumedeva: stay idle on the plank round until the plank pile and the drop pad pulse.', expect: 'The plank pile pulses and the dashed drop pad pulses; nothing jumps.' },
     { text: leave('Nirvighnam card is showing.'), expect: 'Continue shows the Nirvighnam card once, about 1 second after load.' },

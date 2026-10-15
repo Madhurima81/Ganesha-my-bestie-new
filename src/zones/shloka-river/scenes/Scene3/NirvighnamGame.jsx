@@ -253,6 +253,8 @@ export default function NirvighnamGame({
   const completionScheduledRef = useRef(false);
   const lastSyllableDoneRef = useRef(false);
   const completionVoStartedRef = useRef(false);
+  const isActiveRef = useRef(isActive);
+  isActiveRef.current = isActive;
   const sylEndFallbackRef = useRef(null);
   const lastProgressHintResetRef = useRef(0);
   const lastHintVoRef = useRef('');
@@ -803,6 +805,7 @@ export default function NirvighnamGame({
   //   final syllable "nam"  ->  full word "nirvighnam"  ->  ending line
   // Fires only once both the last syllable has finished AND the swim has begun.
   const startCompletionVo = useCallback(() => {
+    if (!isActiveRef.current) return;
     if (completionVoStartedRef.current) return;
     if (!lastSyllableDoneRef.current || !doneAnnouncedRef.current) return;
     completionVoStartedRef.current = true;
@@ -837,7 +840,7 @@ export default function NirvighnamGame({
   }, [cancelPausable, completeAfterSuccess, pausableAfter, playSceneLine, playWord]);
 
   useEffect(() => {
-    if (phase !== 'swim' || doneAnnouncedRef.current) return;
+    if (!isActiveRef.current || phase !== 'swim' || doneAnnouncedRef.current) return;
     doneAnnouncedRef.current = true;
     const timers = [];
 

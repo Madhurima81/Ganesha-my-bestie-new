@@ -108,6 +108,8 @@ export default function SuryakotiGame({
   const completionScheduledRef = useRef(false);
   const lastSyllableDoneRef = useRef(false);
   const completionVoStartedRef = useRef(false);
+  const isActiveRef = useRef(isActive);
+  isActiveRef.current = isActive;
   const sylEndFallbackRef = useRef(null);
   const voFallbackRef = useRef(null);
   const fadeOverlayRef = useRef(null);
@@ -491,6 +493,7 @@ export default function SuryakotiGame({
   // (Mirrors NirvighnamGame — the earlier parallel playWord/playSceneLine here
   //  drowned out "ti".)
   const startCompletionVo = useCallback(() => {
+    if (!isActiveRef.current) return;
     if (completionVoStartedRef.current) return;
     if (!lastSyllableDoneRef.current || !doneAnnouncedRef.current) return;
     completionVoStartedRef.current = true;
@@ -538,7 +541,7 @@ export default function SuryakotiGame({
   const cancelPausableRef = useRef(cancelPausable);
   cancelPausableRef.current = cancelPausable;
   useEffect(() => {
-    if (phase !== 'hop' || doneAnnouncedRef.current) return undefined;
+    if (!isActiveRef.current || phase !== 'hop' || doneAnnouncedRef.current) return undefined;
     doneAnnouncedRef.current = true;
     const timers = [];
     let failSafeTimer = null;
