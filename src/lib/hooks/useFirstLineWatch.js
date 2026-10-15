@@ -103,6 +103,7 @@ export default function useFirstLineWatch({
     arm: firstLineController.arm,
     disarm: firstLineController.disarm,
     markStarted: firstLineController.markStarted,
+    reset: firstLineController.reset,
     stall,
     resolveStall,
   }), [firstLineController, resolveStall, stall]);

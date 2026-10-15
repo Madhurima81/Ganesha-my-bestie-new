@@ -12,6 +12,10 @@ import SceneManager from "../../../../lib/components/scenes/SceneManager";
 import useVoiceGuidance, { estimateSpeechMs } from '../../../../lib/hooks/useVoiceGuidance';
 import useSidebarPause from '../../../../lib/hooks/useSidebarPause';
 import { attachSpeechCue, startCueTimer } from '../../../../lib/utils/speechCue';
+import createSpeechStartWatcher from '../../../../lib/utils/speechStartWatch';
+import useGuardedReveal from '../../../../lib/hooks/useGuardedReveal';
+import useFirstLineWatch from '../../../../lib/hooks/useFirstLineWatch';
+import { logSceneEvent } from '../../../../lib/utils/sceneEventLog';
 import MessageManager from "../../../../lib/components/scenes/MessageManager";
 import InteractionManager from "../../../../lib/components/scenes/InteractionManager";
 import GameStateManager from "../../../../lib/services/GameStateManager";
@@ -34,6 +38,7 @@ import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButt
 import { getCollectionTarget } from '../../../../lib/utils/collectionTarget';
 import { SCENE_TO_OUTER_PETAL_ID } from '../../../../lib/components/navigation/ProgressPopup';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
+import SceneStallPrompt from '../../../../lib/components/feedback/SceneStallPrompt';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
 import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
@@ -237,6 +242,41 @@ const VakratundaGroveContent = ({
   // -- SymbolAutoReveal state ----------------------------------------------
   // null = not showing; object = reveal active
   const [revealConfig, setRevealConfig] = useState(null);
+  const revealConfigRef = useRef(null);
+  revealConfigRef.current = revealConfig;
+  const {
+    showRevealOnce,
+    markShown,
+    resetReveals,
+    expectReveal,
+    stall: revealStall,
+    resolveStall: resolveRevealStall,
+  } = useGuardedReveal({
+    sceneKey: 'vakratunda-grove',
+    getRevealConfig: () => revealConfigRef.current,
+    setRevealConfig,
+  });
+  const firstLineStartedRef = useRef(new Set());
+  const firstLineArmIdRef = useRef(null);
+  const {
+    arm: armFirstLineWatch,
+    markStarted: markFirstLineStarted,
+    reset: resetFirstLineWatch,
+    stall: firstLineStall,
+    resolveStall: resolveFirstLineStall,
+  } = useFirstLineWatch({
+    sceneKey: 'vakratunda-grove',
+    paused: false,
+  });
+  const stall = revealStall || firstLineStall;
+  const resolveStall = revealStall ? resolveRevealStall : resolveFirstLineStall;
+  const noteFirstLineStarted = useCallback(() => {
+    const id = firstLineArmIdRef.current;
+    if (!id) return;
+    firstLineStartedRef.current.add(id);
+    markFirstLineStarted(id);
+    firstLineArmIdRef.current = null;
+  }, [markFirstLineStarted]);
 
   const [currentWord, setCurrentWord] = useState(null);
   const { isAudioOn, toggleAudio } = useAudioPreference();
@@ -353,8 +393,23 @@ const VakratundaGroveContent = ({
   const sidebarPause = useSidebarPause();
   const speechSynthRef = useRef(typeof window !== 'undefined' ? window.speechSynthesis : null);
   const webSpeechRef = useRef(null); // in-flight scene-owned utterance, for mute-mid-line
+  const speechStartWatcherRef = useRef(null);
+  if (!speechStartWatcherRef.current && speechSynthRef.current) {
+    speechStartWatcherRef.current = createSpeechStartWatcher({
+      speechSynthesis: speechSynthRef.current,
+      onDropBeforeStart: ({ attempt }) => logSceneEvent('vakratunda-grove', 'speech:dropped-and-retried', { attempt, key: webSpeechRef.current?.key || null }),
+    });
+  }
+
+  useEffect(() => () => {
+    speechStartWatcherRef.current?.cancelPending();
+  }, []);
 
   const stopWebSpeech = useCallback(() => {
+    if (webSpeechRef.current) {
+      logSceneEvent('vakratunda-grove', 'speech:cancelled-by-stop', { key: webSpeechRef.current.key || null });
+    }
+    speechStartWatcherRef.current?.cancelPending();
     try {
       speechSynthRef.current?.cancel();
     } catch {
@@ -362,8 +417,10 @@ const VakratundaGroveContent = ({
     }
   }, []);
 
-  const speakWebSpeech = useCallback((text, onEnded, onStart, cue) => {
+  const speakWebSpeech = useCallback((text, onEnded, onStart, cue, key = null) => {
+    logSceneEvent('vakratunda-grove', 'speech:requested', { key });
     if (!text) {
+      logSceneEvent('vakratunda-grove', 'speech:skipped-by-guard', { key, reason: 'empty-text' });
       onEnded?.();
       return;
     }
@@ -377,29 +434,43 @@ const VakratundaGroveContent = ({
     }
     const synth = speechSynthRef.current;
     if (!synth || typeof SpeechSynthesisUtterance === 'undefined') {
+      logSceneEvent('vakratunda-grove', 'speech:skipped-by-guard', { key, reason: 'speech-unavailable' });
       onEnded?.();
       return;
     }
     try {
       synth.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-IN';
-      utterance.rate = 0.95;
-      utterance.pitch = 1;
-      utterance.volume = 0.95;
-      utterance.onstart = () => onStart?.();
-      attachSpeechCue(utterance, text, cue); // hand appears exactly when the action word is spoken
-      const clearTracked = () => {
-        if (webSpeechRef.current?.utterance === utterance) webSpeechRef.current = null;
+      let finished = false;
+      const finish = () => {
+        if (finished) return;
+        finished = true;
+        webSpeechRef.current = null;
+        logSceneEvent('vakratunda-grove', 'speech:finished', { key });
+        onEnded?.();
       };
-      utterance.onend = () => { clearTracked(); onEnded?.(); };
-      utterance.onerror = () => { clearTracked(); onEnded?.(); };
-      webSpeechRef.current = { utterance, onEnded, at: Date.now(), ms: estimateSpeechMs(text) };
-      synth.speak(utterance);
+      speechStartWatcherRef.current?.speak({
+        buildUtterance: () => {
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'en-IN';
+          utterance.rate = 0.95;
+          utterance.pitch = 1;
+          utterance.volume = 0.95;
+          utterance.onstart = () => {
+            logSceneEvent('vakratunda-grove', 'speech:started', { key });
+            noteFirstLineStarted();
+            onStart?.();
+          };
+          attachSpeechCue(utterance, text, cue);
+          utterance.onend = finish;
+          utterance.onerror = finish;
+          webSpeechRef.current = { utterance, onEnded: finish, key, at: Date.now(), ms: estimateSpeechMs(text) };
+          return utterance;
+        },
+      });
     } catch {
       onEnded?.();
     }
-  }, [playSilent]);
+  }, [noteFirstLineStarted, playSilent]);
 
   // Mute pressed mid-line: silence the utterance now but let its callback fire
   // once, when it would have finished, so mute never skips or stalls a step.
@@ -414,6 +485,7 @@ const VakratundaGroveContent = ({
   }, [playSilent]);
 
   const playGuidanceVoiceRaw = useCallback((key, onEnded, options = {}) => {
+    logSceneEvent('vakratunda-grove', 'speech:requested', { key });
     // Stop both channels before speaking: playHookVoice already cancels Web
     // Speech internally, but speakWebSpeech only cancels its own utterance —
     // without this, a still-playing MP3 line keeps going under a new
@@ -439,18 +511,26 @@ const VakratundaGroveContent = ({
       scene10_vak_crossed: 'Vakratunda! You found another way and helped Frog reach his family.',
       scene10_maha_intro: 'Everyone wants to cross the river. Drag the logs to build a raft.',
       scene10_maha_drag_water: 'Drag the log into the water.',
+      // Continue mid-raft: same text as voiceGuidance.js. It used the hook path (no start-watch, "started" logged at request) and went silent.
+      scene10_maha_resume: 'Keep placing the logs on the raft.',
       scene10_maha_place_here: 'Put the log here.',
       scene10_maha_success: 'Mahakaay! You made space so everyone could come along.',
     };
     if (webSpeechMap[key]) {
-      speakWebSpeech(stripLeadingSpeechText(webSpeechMap[key], options.stripLeadingText), onEnded, options.onStart, options.cue);
+      speakWebSpeech(stripLeadingSpeechText(webSpeechMap[key], options.stripLeadingText), onEnded, options.onStart, options.cue, key);
       return;
     }
     const script = getVoiceScript(zoneId, sceneId, key);
     if (script) {
-      playHookVoice(key, onEnded, options);
+      logSceneEvent('vakratunda-grove', 'speech:started', { key, source: 'voice-hook' });
+      noteFirstLineStarted();
+      playHookVoice(key, () => {
+        logSceneEvent('vakratunda-grove', 'speech:finished', { key, source: 'voice-hook' });
+        onEnded?.();
+      }, options);
       return;
     }
+    logSceneEvent('vakratunda-grove', 'speech:skipped-by-guard', { key, reason: 'missing-script' });
     if (onEnded) onEnded();
   }, [playHookVoice, sceneId, speakWebSpeech, stopVoice, stopWebSpeech, zoneId]);
 
@@ -461,7 +541,7 @@ const VakratundaGroveContent = ({
       (done, overrides) => playGuidanceVoiceRaw(key, done, { ...options, ...overrides }),
       onEnded,
     );
-  }, [playTracked, playGuidanceVoiceRaw]);
+  }, [noteFirstLineStarted, playTracked, playGuidanceVoiceRaw]);
 
   const replayCurrentVoice = useCallback(() => {
     if (!isAudioOn) return;
@@ -474,11 +554,15 @@ const VakratundaGroveContent = ({
         playGuidanceVoice('scene10_vak_current_too_strong');
         return;
       }
+      if (vakratundaStage === 'intro') {
+        playGuidanceVoice('scene10_vak_intro');
+        return;
+      }
       playGuidanceVoice(['kra', 'tun', 'da'].includes(vakratundaStage) ? 'scene10_vak_drag' : 'scene10_vak_choose');
       return;
     }
     if (sceneState.phase === PHASES.MAHAKAYA_GAME) {
-      playGuidanceVoice('scene10_maha_drag_water');
+      playGuidanceVoice('scene10_maha_resume');
       return;
     }
     if (showSceneCompletion) {
@@ -671,18 +755,25 @@ const VakratundaGroveContent = ({
     const cleanup = () => window.clearTimeout(restoreTimer);
 
     const restoreReveal = (word) => {
+      expectReveal(word, () => ({
+        symbolId: word,
+        symbolImage: powerConfig[word].image,
+        symbolName: getDiscoveryContent(zoneId, sceneId, word)?.title || powerConfig[word].name,
+        affirmation: getDiscoveryContent(zoneId, sceneId, word)?.affirmation || powerConfig[word].affirmation,
+        sidebarTarget: getSidebarTarget(word),
+      }), 'restore');
       restoreTimer = window.setTimeout(() => {
         hasRestoredRevealRef.current = true;
         const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
         playChime();
         setShowSparkle(null);
-        setRevealConfig({
+        showRevealOnce(word, {
           symbolId: word,
           symbolImage: powerConfig[word].image,
           symbolName: discoveryData?.title || powerConfig[word].name,
           affirmation: discoveryData?.affirmation || powerConfig[word].affirmation,
           sidebarTarget: getSidebarTarget(word)
-        });
+        }, 'restore');
       }, 1200);
     };
 
@@ -731,6 +822,42 @@ const VakratundaGroveContent = ({
       return () => clearTimeout(timer);
     }
   }, [sceneState.phase, sceneState.welcomeShown, isAudioOn, playGuidanceVoice]); // isAudioOn in deps so effect re-runs on toggle
+
+  useEffect(() => {
+    if (isReload && sceneState.phase === PHASES.INITIAL && !sceneState.welcomeShown) {
+      const id = 'opening';
+      const startWelcome = () => {
+        if (firstLineStartedRef.current.has(id)) return;
+        firstLineStartedRef.current.add(id);
+        markFirstLineStarted(id);
+        playGuidanceVoice('welcome');
+      };
+      firstLineArmIdRef.current = id;
+      armFirstLineWatch({ id, recover: startWelcome });
+      return undefined;
+    }
+    if ([PHASES.VAKRATUNDA_GAME, PHASES.MAHAKAYA_GAME].includes(sceneState.phase)) {
+      const id = `phase:${sceneState.phase}:${vakratundaStage}`;
+      if (!isReload || (sceneState.phase === PHASES.VAKRATUNDA_GAME && vakratundaStage === 'intro')) {
+        firstLineStartedRef.current.add(id);
+        markFirstLineStarted(id);
+        return undefined;
+      }
+      const startPhaseLine = () => {
+        if (firstLineStartedRef.current.has(id)) return;
+        firstLineStartedRef.current.add(id);
+        markFirstLineStarted(id);
+        const key = sceneState.phase === PHASES.MAHAKAYA_GAME
+          ? 'scene10_maha_resume'
+          : (['kra', 'tun', 'da'].includes(vakratundaStage) ? 'scene10_vak_drag' : 'scene10_vak_choose');
+        playGuidanceVoice(key);
+      };
+      firstLineArmIdRef.current = id;
+      armFirstLineWatch({ id, recover: startPhaseLine });
+      return undefined;
+    }
+    return undefined;
+  }, [armFirstLineWatch, isReload, markFirstLineStarted, playGuidanceVoice, sceneState.phase, sceneState.welcomeShown, vakratundaStage]);
 
   const playAudio = (audioPath, volume = 1.0) => {
     if (!isAudioOn) return Promise.resolve();
@@ -810,18 +937,26 @@ const VakratundaGroveContent = ({
       // Show SymbolAutoReveal flip card — content from discoveryContent.js
       const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
       playChime();
-      setRevealConfig({
+      showRevealOnce(word, {
         symbolId: word,
         symbolImage: powerConfig[word].image,
         symbolName: discoveryData?.title || powerConfig[word].name,
         affirmation: discoveryData?.affirmation || powerConfig[word].affirmation,
         sidebarTarget: getSidebarTarget(word)
-      });
+      }, 'live');
 
       sceneActions.updateState({
         phase: word === 'vakratunda' ? PHASES.VAKRATUNDA_POWER : PHASES.MAHAKAYA_POWER
       });
     };
+
+    expectReveal(word, () => ({
+      symbolId: word,
+      symbolImage: powerConfig[word].image,
+      symbolName: getDiscoveryContent(zoneId, sceneId, word)?.title || powerConfig[word].name,
+      affirmation: getDiscoveryContent(zoneId, sceneId, word)?.affirmation || powerConfig[word].affirmation,
+      sidebarTarget: getSidebarTarget(word),
+    }), 'live');
 
     // Word reveal VO -> then transition to SymbolAutoReveal
     if (isAudioOn) {
@@ -1089,6 +1224,7 @@ const VakratundaGroveContent = ({
 
             {/* -- SYMBOL AUTO-REVEAL (replaces PowerUnlockOverlay) ---------------
                  Flip card: symbol image ? affirmation ? user taps ? flies to sidebar */}
+            <SceneStallPrompt show={!!stall} onTap={resolveStall} />
             {revealConfig && (
               <SymbolAutoReveal
                 key={revealConfig.symbolId}
@@ -1107,7 +1243,10 @@ const VakratundaGroveContent = ({
                 sidebarTargetRect={revealConfig.sidebarTarget}
                 zoneId={zoneId}
                 sceneId={sceneId}
-                onComplete={() => handleRevealComplete(revealConfig.symbolId)}
+                onComplete={() => {
+                  markShown(revealConfig.symbolId);
+                  handleRevealComplete(revealConfig.symbolId);
+                }}
               />
             )}
 
@@ -1309,6 +1448,9 @@ const VakratundaGroveContent = ({
               onComplete={() => onNavigate?.('zone-welcome')}
               onReplay={() => {
                 stopAllVoice();
+                resetReveals();
+                firstLineStartedRef.current.clear();
+                resetFirstLineWatch();
                 // Reset all local UI state
                 setShowSceneCompletion(false);
                 setShowMandala(false);

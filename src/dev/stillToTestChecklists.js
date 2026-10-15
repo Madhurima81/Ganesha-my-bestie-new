@@ -172,8 +172,8 @@ export const STILL_TO_TEST_CHECKLISTS = {
   },
 
   'todo-vakratunda': list('Vakratunda Grove + Mahakaya (Shloka River 1)', [
-    { text: leave('Mahakaya: 1 log placed.'), expect: 'You hear "Keep adding logs to the raft" - NOT the intro.' },
-    { text: leave('Mahakaya: 2 or 3 logs placed.'), expect: 'You hear "Drag the next log" - NOT the intro.' },
+    { text: leave('Mahakaya: 1 log placed.'), expect: 'You hear "Keep placing the logs on the raft" - NOT the intro and NOT the first-log hint.' },
+    { text: leave('Mahakaya: 2 or 3 logs placed.'), expect: 'You hear "Keep placing the logs on the raft" - NOT the intro and NOT the first-log hint.' },
     { text: leave('Mahakaya: 0 logs placed.'), expect: 'The full intro plays, as before.' },
     { text: 'Vakratunda: stay idle until the hint glow shows on the frog/object.', expect: 'A soft glow that follows the shape of the object, with no rectangle and no jump.' },
     { text: leave('Vakratunda card is showing.'), expect: 'Continue shows the Vakratunda card once, about 1 second after the scene loads (it used to be missing in dev).' },
@@ -186,6 +186,17 @@ export const STILL_TO_TEST_CHECKLISTS = {
     ZONE_WELCOME_ROW,
     PLAY_AGAIN_ROW('some logs placed'),
   ]),
+
+  'todo-vakratunda-watchdog': {
+    title: 'Still to test - Vakratunda watchdog',
+    items: [
+      { text: 'Finish Vakratunda and watch both reveal cards.', expect: 'Each card appears once; no duplicate card and no freeze.' },
+      { text: 'Leave during each Vakratunda reveal, then tap Continue on Zone Welcome.', expect: 'The interrupted card appears once after Continue; no blank screen, duplicate card or freeze.' },
+      { text: 'Switch tabs during each Vakratunda reveal.', expect: 'The reveal continues once after returning; no duplicate card or stuck overlay.' },
+      PLAY_AGAIN_ROW('Vakratunda progress'),
+      { text: 'Cold Continue into Vakratunda.', expect: 'The first line plays or the scene becomes interactive; no silent freeze.' },
+    ],
+  },
 
   'todo-suryakoti': list('Suryakoti + Samaprabha (Shloka River 2)', [
     { text: 'Samaprabha: tap the zone badge in the middle of a spoken line.', expect: 'Zone Welcome is silent - no line from Samaprabha carries on over it.' },

@@ -102,6 +102,26 @@ describe('watchdog helper controllers', () => {
     expect(recoveries).toBe(1);
   });
 
+  test('a real line start cancels recovery, while a missing start replays once', () => {
+    const watchdog = makeWatchdog();
+    let recoveries = 0;
+    const controller = createFirstLineWatchController({
+      sceneKey: 'test-scene',
+      armWatchdog: watchdog.arm.bind(watchdog),
+      disarmWatchdog: watchdog.disarm.bind(watchdog),
+      log: () => {},
+    });
+
+    controller.arm({ id: 'started-line', recover: () => { recoveries += 1; } });
+    controller.markStarted('started-line');
+    watchdog.fire('first-line');
+    expect(recoveries).toBe(0);
+
+    controller.arm({ id: 'dropped-line', recover: () => { recoveries += 1; } });
+    watchdog.fire('first-line');
+    expect(recoveries).toBe(1);
+  });
+
   test('stop/unmount guard prevents recovery and new reveal work', () => {
     const watchdog = makeWatchdog();
     let stopped = false;
