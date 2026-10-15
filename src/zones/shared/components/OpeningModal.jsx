@@ -4,6 +4,7 @@ import { getOpeningModal } from '../../../lib/config/content';
 import { getZoneTheme, getProfilePillBtnStyle } from '../../../lib/config/ZoneThemes';
 import { GANESHA_POSE_ASSETS } from '../../../lib/config/ganeshaUsageSystem';
 import useAppVisibility from '../../../lib/hooks/useAppVisibility';
+import { createSpeechStartWatcher } from '../../../lib/utils/speechStartWatch';
 import ProfilePillBtn from '../../../lib/components/shared/ProfilePillBtn';
 import symbolMooshikaIcon from '../../symbol-mountain/shared/images/icons/symbol-mooshika-new.webp';
 import symbolModakIcon from '../../symbol-mountain/shared/images/icons/symbol-modak-new.webp';
@@ -87,19 +88,31 @@ const canUseTimedSpeechHint = () => {
   return !/iPad|iPhone|iPod/i.test(ua);
 };
 
-const speakOpeningVoiceover = (text) => {
+// Opening line goes through the start-watchdog: a wedged engine (common right after Play Again cancels the
+// previous line) drops the first utterance silently; the watcher retries once. KNOWN_PITFALLS 57.
+const openingSpeechWatcher =
+  typeof window !== 'undefined' && window.speechSynthesis
+    ? createSpeechStartWatcher({ speechSynthesis: window.speechSynthesis })
+    : null;
+
+const speakOpeningVoiceover = (text, isStillCurrent) => {
   if (typeof window === 'undefined') return false;
   if (!isGlobalAudioEnabled() || !canUseTimedSpeechHint()) return false;
   if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return false;
-  if (!text) return false;
+  if (!text || !openingSpeechWatcher) return false;
 
   try {
-    const utterance = new window.SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-IN';
-    utterance.rate = 0.95;
-    utterance.pitch = 1;
-    utterance.volume = 1;
-    window.speechSynthesis.speak(utterance);
+    openingSpeechWatcher.speak({
+      isStillCurrent,
+      buildUtterance: () => {
+        const utterance = new window.SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-IN';
+        utterance.rate = 0.95;
+        utterance.pitch = 1;
+        utterance.volume = 1;
+        return utterance;
+      },
+    });
     return true;
   } catch {
     return false;
@@ -306,11 +319,24 @@ const OpeningModal = ({
     const timer = setTimeout(() => {
       if (voiceoverPlayedRef.current) return;
       voiceoverPlayedRef.current = true;
-      if (!visibleRef.current || isOpeningVoActive()) return;
-      speakOpeningVoiceover(content.voiceover);
+      // Right after Play Again the engine still reports "speaking" for a moment (the cancelled line). Wait for it
+      // to go quiet instead of dropping the opening line for good; give up after ~1.5 s (another VO really is playing).
+      let waited = 0;
+      const trySpeak = () => {
+        if (!visibleRef.current) return;
+        if (isOpeningVoActive() && waited < 1500) {
+          waited += 150;
+          pollTimer = setTimeout(trySpeak, 150);
+          return;
+        }
+        if (isOpeningVoActive()) return;
+        speakOpeningVoiceover(content.voiceover, () => visibleRef.current);
+      };
+      trySpeak();
     }, 300);
+    let pollTimer = null;
 
-    return () => clearTimeout(timer);
+    return () => { clearTimeout(timer); clearTimeout(pollTimer); };
   }, [content.voiceover, hasContent, visible]);
 
   if (!hasContent || !visible) return null;
