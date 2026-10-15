@@ -228,6 +228,8 @@ export default function MahakayaRescueGame({
 
   const stageRef = useRef(null);
   const timers = useRef([]);
+  // Identifies the current resume line; a cancelled/superseded one must not release the hint ladder (KNOWN_PITFALLS 11c, 62).
+  const resumeLineTokenRef = useRef(0);
   const isPausedRef = useRef(isPaused);
   // Freezes with the sidebar and resumes with the remaining time (see hook).
   const { after, cancel: cancelPausable, clear: clearPausable } = usePausableTimers(isPaused);
@@ -404,14 +406,21 @@ export default function MahakayaRescueGame({
       // Continue mid-raft: never repeat the full intro. One generic resume line (not log-specific); the hint
       // ladder is held until it ends, then starts fresh.
       setResumeVoPlaying(true);
-      playSceneLine?.('scene10_maha_resume', () => setResumeVoPlaying(false), { replayOnReturn: false });
+      const resumeToken = ++resumeLineTokenRef.current;
+      playSceneLine?.('scene10_maha_resume', () => {
+        // A cancelled line fires its end callback too (StrictMode double run, a newer line): only the current one counts.
+        if (resumeLineTokenRef.current === resumeToken) setResumeVoPlaying(false);
+      }, { replayOnReturn: false });
       after(6000, () => setResumeVoPlaying(false)); // safety net: muted / no speech engine
     } else {
       playSceneLine?.('scene10_maha_intro', undefined, { cue: getLineCue('scene10_maha_intro', () => setIntroVoStarted(true)) });
     }
     // Safety net only (e.g. no speech engine at all).
     after(6000, () => setIntroVoStarted(true));
-    return clearTimers;
+    return () => {
+      resumeLineTokenRef.current += 1;
+      clearTimers();
+    };
     // Voice and timer helpers are stable enough for this scene lifecycle.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isActive]);
