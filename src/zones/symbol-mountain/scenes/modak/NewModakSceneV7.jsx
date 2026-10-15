@@ -74,6 +74,9 @@ import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButt
 import { getCollectionTarget } from '../../../../lib/utils/collectionTarget';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import { useGaneshaVoice } from '../../../../lib/hooks/useGaneshaVoice';
+import useGuardedReveal from '../../../../lib/hooks/useGuardedReveal';
+import useFirstLineWatch from '../../../../lib/hooks/useFirstLineWatch';
+import SceneStallPrompt from '../../../../lib/components/feedback/SceneStallPrompt';
 
 // Images ---------------------------------------------------------------
 import forestBackground from './assets/images/modak-fj-bg.webp';
@@ -498,8 +501,47 @@ const NewModakSceneMVPContent = ({
   const { speak, stop: stopSpokenVoice, mute: muteSpokenVoice } = useGaneshaVoice();
   const lastVoRef = useRef(null);
   const wasAudioOnRef = useRef(isAudioOn);
+  const firstLineStartedRef = useRef(new Set());
 
   const [revealConfig, setRevealConfig] = useState(null);
+  const scenePaused = sidebarPause.isSidebarPaused;
+  const {
+    showRevealOnce,
+    markShown,
+    resetReveals,
+    expectReveal,
+    stall: revealStall,
+    resolveStall: resolveRevealStall,
+  } = useGuardedReveal({
+    sceneKey: 'modak',
+    getRevealConfig: () => revealConfig,
+    setRevealConfig,
+    paused: scenePaused,
+    getSnapshot: () => ({
+      phase: sceneStateRef.current?.phase,
+      revealConfig: revealConfigRef.current?.symbolId || null,
+    }),
+  });
+  const {
+    arm: armFirstLineWatch,
+    markStarted: markFirstLineStarted,
+    stall: firstLineStall,
+    resolveStall: resolveFirstLineStall,
+  } = useFirstLineWatch({
+    sceneKey: 'modak',
+    paused: scenePaused,
+    getSnapshot: () => ({ phase: sceneStateRef.current?.phase }),
+  });
+
+  const revealConfigRef = useRef(null);
+  revealConfigRef.current = revealConfig;
+
+  useEffect(() => {
+    if (revealConfig?.symbolId) markShown(revealConfig.symbolId);
+  }, [markShown, revealConfig?.symbolId]);
+
+  const stall = revealStall || firstLineStall;
+  const resolveStall = revealStall ? resolveRevealStall : resolveFirstLineStall;
 
   const replaySpeak = useCallback((line, options = {}) => {
     if (!line) return;
@@ -761,20 +803,28 @@ const NewModakSceneMVPContent = ({
     calmRevealFiredRef.current = false;
     const showMooshikaReveal = () => {
       if (calmRevealFiredRef.current) return;
-      calmRevealFiredRef.current = true;
-      playRevealBloom();
-      setShowSparkle(null);
-      setRevealConfig({
+      const shown = showRevealOnce('mooshika', {
         symbolId: 'mooshika',
         symbolImage: symbolMooshikaColored,
         symbolName: 'Mooshika',
         affirmation: MODAK_VO.guidePower,
         sidebarTarget: getSidebarTarget('mooshika')
-      });
+      }, 'live');
+      if (!shown) return;
+      calmRevealFiredRef.current = true;
+      playRevealBloom();
+      setShowSparkle(null);
     };
+    expectReveal('mooshika', () => ({
+      symbolId: 'mooshika',
+      symbolImage: symbolMooshikaColored,
+      symbolName: 'Mooshika',
+      affirmation: MODAK_VO.guidePower,
+      sidebarTarget: getSidebarTarget('mooshika')
+    }), 'live');
     playVoice('mooshikaCalmed', () => safeSetTimeout(showMooshikaReveal, CALM_REVEAL_GAP_MS));
     safeSetTimeout(showMooshikaReveal, CALM_REVEAL_FALLBACK_MS);
-  }, [clearMushikaDartTimer, clearMushikaHoldLoop, idleHintsEnabled, playDiscovery, playRevealBloom, playVoice, safeSetTimeout, sceneActions, stopIdleTimer, stopVoice, triggerMiniGesture]);
+  }, [clearMushikaDartTimer, clearMushikaHoldLoop, expectReveal, idleHintsEnabled, playDiscovery, playRevealBloom, playVoice, safeSetTimeout, sceneActions, showRevealOnce, stopIdleTimer, stopVoice, triggerMiniGesture]);
 
   const tickMushikaHold = useCallback(() => {
     if (!mushikaHoldStartRef.current) return;
@@ -887,6 +937,13 @@ const NewModakSceneMVPContent = ({
   }, [sceneActions]);
 
   const handleGame2Complete = useCallback(() => {
+    expectReveal('belly', () => ({
+      symbolId: 'belly',
+      symbolImage: symbolBellyColored,
+      symbolName: 'Big Belly',
+      affirmation: MODAK_VO.bellyPower,
+      sidebarTarget: getSidebarTarget('belly')
+    }), 'live');
     playRevealBloom();
     sceneActions.updateState({
       flowers: 6,
@@ -894,16 +951,23 @@ const NewModakSceneMVPContent = ({
       phase: PHASES.CARRY_REVEAL,
       progress: { percentage: 55 }
     });
-    setRevealConfig({
+    showRevealOnce('belly', {
       symbolId: 'belly',
       symbolImage: symbolBellyColored,
       symbolName: 'Big Belly',
       affirmation: MODAK_VO.bellyPower,
       sidebarTarget: getSidebarTarget('belly')
-    });
-  }, [playRevealBloom, sceneActions, sceneState.discoveredSymbols]);
+    }, 'live');
+  }, [expectReveal, playRevealBloom, sceneActions, sceneState.discoveredSymbols, showRevealOnce]);
 
   const handleGame3Complete = useCallback(() => {
+    expectReveal('modak', () => ({
+      symbolId: 'modak',
+      symbolImage: symbolModakColored,
+      symbolName: 'Modak',
+      affirmation: MODAK_VO.modakPower,
+      sidebarTarget: getSidebarTarget('modak')
+    }), 'live');
     sceneActions.updateState({
       discoveredSymbols: { ...sceneState.discoveredSymbols, modak: true },
       phase: PHASES.MODAK_REVEAL,
@@ -911,15 +975,15 @@ const NewModakSceneMVPContent = ({
     });
     playRevealBloom();
     setShowSparkle('modak-appear');
-    setRevealConfig({
+    showRevealOnce('modak', {
       symbolId: 'modak',
       symbolImage: symbolModakColored,
       symbolName: 'Modak',
       affirmation: MODAK_VO.modakPower,
       sidebarTarget: getSidebarTarget('modak')
-    });
+    }, 'live');
     safeSetTimeout(() => setShowSparkle(null), 1600);
-  }, [playRevealBloom, safeSetTimeout, sceneActions, sceneState.discoveredSymbols]);
+  }, [expectReveal, playRevealBloom, safeSetTimeout, sceneActions, sceneState.discoveredSymbols, showRevealOnce]);
 
   // ------------------------------------------------------------------
   // SymbolAutoReveal owns the reveal-card VO ("Say with me, <affirmation>")
@@ -1134,44 +1198,56 @@ const NewModakSceneMVPContent = ({
     const phase = sceneState.phase;
 
     if (phase === PHASES.CALM_REVEAL) {
+      expectReveal('mooshika', {
+        symbolId: 'mooshika', symbolImage: symbolMooshikaColored, symbolName: 'Mooshika',
+        affirmation: MODAK_VO.guidePower, sidebarTarget: getSidebarTarget('mooshika')
+      }, 'restore');
       safeSetTimeout(() => {
         playRevealBloom();
-        setRevealConfig({
+        showRevealOnce('mooshika', {
           symbolId: 'mooshika',
           symbolImage: symbolMooshikaColored,
           symbolName: 'Mooshika',
           affirmation: MODAK_VO.guidePower,
           sidebarTarget: getSidebarTarget('mooshika')
-        });
+        }, 'restore');
       }, 1200);
       return;
     }
 
     if (phase === PHASES.CARRY_REVEAL) {
+      expectReveal('belly', {
+        symbolId: 'belly', symbolImage: symbolBellyColored, symbolName: 'Big Belly',
+        affirmation: MODAK_VO.bellyPower, sidebarTarget: getSidebarTarget('belly')
+      }, 'restore');
       safeSetTimeout(() => {
         playRevealBloom();
-        setRevealConfig({
+        showRevealOnce('belly', {
           symbolId: 'belly',
           symbolImage: symbolBellyColored,
           symbolName: 'Big Belly',
           affirmation: MODAK_VO.bellyPower,
           sidebarTarget: getSidebarTarget('belly')
-        });
+        }, 'restore');
       }, 1200);
       return;
     }
 
     if (phase === PHASES.MODAK_PAUSE || phase === PHASES.MODAK_REVEAL) {
+      expectReveal('modak', {
+        symbolId: 'modak', symbolImage: symbolModakColored, symbolName: 'Modak',
+        affirmation: MODAK_VO.modakPower, sidebarTarget: getSidebarTarget('modak')
+      }, 'restore');
       safeSetTimeout(() => {
         playRevealBloom();
         sceneActions.updateState({ phase: PHASES.MODAK_REVEAL });
-        setRevealConfig({
+        showRevealOnce('modak', {
           symbolId: 'modak',
           symbolImage: symbolModakColored,
           symbolName: 'Modak',
           affirmation: MODAK_VO.modakPower,
           sidebarTarget: getSidebarTarget('modak')
-        });
+        }, 'restore');
       }, 1200);
       return;
     }
@@ -1192,13 +1268,21 @@ const NewModakSceneMVPContent = ({
     }
 
     if (WORKING_PHASES.includes(phase) && sceneState.welcomeShown) {
-      safeSetTimeout(() => {
+      const firstLineId = `phase:${phase}`;
+      const startPhaseLine = () => {
+        if (firstLineStartedRef.current.has(firstLineId)) return;
+        firstLineStartedRef.current.add(firstLineId);
+        markFirstLineStarted(firstLineId);
         const meta = PHASE_META[phase];
         playVoice(meta.start, () => {
           resetIdleBaseline();
           if (idleHintsEnabled) startIdleTimer();
         });
         setCurrentPhase(meta.game);
+      };
+      armFirstLineWatch({ id: firstLineId, recover: startPhaseLine });
+      safeSetTimeout(() => {
+        startPhaseLine();
       }, 500);
     }
   }, []); // once on mount
@@ -1208,18 +1292,25 @@ const NewModakSceneMVPContent = ({
   // ------------------------------------------------------------------
   useEffect(() => {
     if (sceneState.welcomeShown && sceneState.phase === PHASES.CALM_SEARCH) {
-      startMusic();
-      const timer = safeSetTimeout(() => {
+      const startOpeningLine = () => {
+        if (firstLineStartedRef.current.has('opening')) return;
+        firstLineStartedRef.current.add('opening');
+        markFirstLineStarted('opening');
         idleVoPlayedRef.current = {};
         playVoice('calmMooshika', () => {
           resetIdleBaseline();
           if (idleHintsEnabled) startIdleTimer();
         });
         setCurrentPhase('calm');
+      };
+      armFirstLineWatch({ id: 'opening', recover: startOpeningLine });
+      startMusic();
+      const timer = safeSetTimeout(() => {
+        startOpeningLine();
       }, 500);
       return timer;
     }
-  }, [sceneState.welcomeShown, sceneState.phase, idleHintsEnabled, playVoice, resetIdleBaseline, safeSetTimeout, setCurrentPhase, startIdleTimer, startMusic]);
+  }, [armFirstLineWatch, idleHintsEnabled, markFirstLineStarted, playVoice, resetIdleBaseline, safeSetTimeout, sceneState.phase, sceneState.welcomeShown, setCurrentPhase, startIdleTimer, startMusic]);
 
   // Update phase context + restart idle timer on phase change
   useEffect(() => {
@@ -1371,6 +1462,8 @@ const NewModakSceneMVPContent = ({
     setShowMandala(false);
     setFireworksFinished(false);
     setRevealConfig(null);
+    resetReveals();
+    firstLineStartedRef.current.clear();
   };
 
   const jumpToDebugPhase = useCallback((n) => {
@@ -1887,6 +1980,7 @@ const NewModakSceneMVPContent = ({
             )}
 
             {/* SYMBOL AUTO-REVEAL */}
+            <SceneStallPrompt show={!!stall} onTap={resolveStall} />
             {!isCompletionView && !isFinalTransitionView && revealConfig && (
               <SymbolAutoReveal
                 key={revealConfig.symbolId}
