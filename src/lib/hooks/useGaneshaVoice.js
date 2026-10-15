@@ -367,6 +367,8 @@ export const useGaneshaVoice = () => {
 
   // ── Cleanup ──────────────────────────────────────────────────────────────────
   useEffect(() => () => {
+    // Invalidate any pending start-watch retry so a line cannot start after this scene/card is gone.
+    speakGenRef.current += 1
     if (speakTimerRef.current) {
       clearTimeout(speakTimerRef.current)
       speakTimerRef.current = null
