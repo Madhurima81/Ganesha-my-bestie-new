@@ -32,7 +32,7 @@ export const ROLES = {
   select:      { src: `${SFX_DIR}sfx-tap.mp3`,            vol: 0.34, priority: 0, fallback: synthTap },      // TODO own sound
   place:       { src: `${SFX_DIR}sfx-place.wav`,          vol: 0.33, priority: 0, fallback: synthTap },
   // Wooden tap (0.23s, approved). File peaks at -13 dBFS, ~7 dB under the chime's level at this setting: audible, gentler than `correct`.
-  softWrong:   { src: `${SFX_DIR}sfx-soft-wrong.wav`,     vol: 0.55, priority: 0, fallback: synthWrong },
+  softWrong:   { src: `${SFX_DIR}sfx-soft-wrong-2.wav`,     vol: 0.55, priority: 0, fallback: synthWrong },
   idleHint:    { src: `${SFX_DIR}sfx-idle-hint.wav`,      vol: 0.22, priority: 0, fallback: synthChime },
   transition:  { src: `${SFX_DIR}sfx-transition.wav`,     vol: 0.29, priority: 0, fallback: synthBloom },
   correct:     { src: `${SFX_DIR}sfx-chime.mp3`,          vol: 0.42, priority: 1, fallback: synthChime },

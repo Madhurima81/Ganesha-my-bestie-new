@@ -101,7 +101,10 @@ export default defineConfig(({ command }) => ({
             urlPattern: /\/images\/.+\.(png|jpg|jpeg|svg|webp)$/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'ganesha-images',
+              // Cache name is versioned on purpose: CacheFirst never revalidates, so same-name images changed in /public
+              // stay stale on installed devices. Bump the suffix whenever public images change (old cache is purged in
+              // updateGuard.js). KNOWN_PITFALLS: PWA update.
+              cacheName: 'ganesha-images-v2',
               expiration: { maxEntries: 150, maxAgeSeconds: 30 * 24 * 60 * 60 },
               cacheableResponse: { statuses: [0, 200] }
             }

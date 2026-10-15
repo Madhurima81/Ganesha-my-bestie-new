@@ -242,6 +242,20 @@ export const STILL_TO_TEST_CHECKLISTS = {
     ZONE_WELCOME_ROW,
     PLAY_AGAIN_ROW('some words placed'),
   ]),
+  // Netlify preview only (needs two deploys; the service worker is off on localhost).
+  'todo-pwa-update': {
+    title: 'Still to test - PWA update (Netlify preview, two deploys)',
+    items: [
+      { text: 'Open the preview URL once, close it, open it again (so the service worker is active). Play to the map.', expect: 'App loads normally; no "Refresh" banner on a fresh install.' },
+      { text: 'Deploy a new staging build. On the installed/second-visit tab, reload ONCE while on the map.', expect: 'Either the new version is running, or the page reloads itself once by itself, or a purple "Refresh" banner appears. Never a blank screen, never a red lazy-chunk error.' },
+      { text: 'Deploy again. Open any scene and play for a minute while the deploy finishes (leave the tab open).', expect: 'NO banner and NO reload while you are in the scene.' },
+      { text: 'Leave the scene with the zone badge and wait on Zone Welcome or the map.', expect: 'The "A new version is ready" banner now appears (big Refresh button). Tapping it loads the new version.' },
+      { text: 'On the map with the banner showing, tap Refresh, then open Modak and Shloka River.', expect: 'The new build works everywhere; progress is kept.' },
+      { text: 'After a deploy that changes an image in /public (for example a symbol icon), open the app on a device that had the old one.', expect: 'The new image shows after the update (the images cache is renamed ganesha-images-v2; bump it again when public images change).' },
+      { text: 'Check the Soft-wrong sound (Pond wrong drop, Vakratunda bump).', expect: 'Plays the new wooden tap (file sfx-soft-wrong-2.wav), not the old two-note sound.' },
+      { text: 'If you ever see "Tap to refresh" (big card) in the middle of a scene, tap it.', expect: 'The app reloads and you can continue from the map or Zone Welcome Continue.' },
+    ],
+  },
 };
 
-export const STILL_TO_TEST_GROUP_LABEL = 'Still to test - About Me Hut (4 scenes), CSS clash batch 1, Shloka River';
+export const STILL_TO_TEST_GROUP_LABEL = 'Still to test - About Me Hut (4 scenes), CSS clash batch 1, Shloka River, PWA update';

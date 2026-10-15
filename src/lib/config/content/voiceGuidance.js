@@ -677,7 +677,7 @@ export const VOICE_SCRIPTS = {
   shared: {
     // New unified role taxonomy (preferred)
     tap: { file: 'sfx-tap.mp3' },
-    softWrong: { file: 'sfx-soft-wrong.wav' },
+    softWrong: { file: 'sfx-soft-wrong-2.wav' },
     discovery: { file: 'sfx-discovery.wav' },
     revealBloom: { file: 'sfx-reveal-bloom.wav' },
     place: { file: 'sfx-place.wav' },
@@ -687,7 +687,7 @@ export const VOICE_SCRIPTS = {
     idleHint: { file: 'sfx-idle-hint.wav' },
     frogHop: { file: 'sfx-frog-hop.mp3' },
     frogReunion: { file: 'sfx-frog-reunion.mp3' },
-    currentPush: { file: 'sfx-soft-wrong.wav' },
+    currentPush: { file: 'sfx-soft-wrong-2.wav' },
 
     // Legacy keys (kept for backward compatibility during migration)
     success: { file: 'sfx-success.wav' },

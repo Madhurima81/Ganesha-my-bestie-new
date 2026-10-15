@@ -573,6 +573,12 @@ Object.keys(localStorage).filter(k => k.includes('final-scene')).map(k => [k, JS
 - **Seen in:** About Me Hut Dreams, Food, Family Tree (2026-10-14).
 
 
+## 60. After a deploy an installed app asks for a lazy chunk that no longer exists (and same-name public files stay stale)
+- **Symptom:** an installed PWA works only on the SECOND reload after a deploy; the first shows a blank screen or the red error "Failed to fetch dynamically imported module"; changed images/sounds in /public look old.
+- **Cause:** the service worker precaches only the shell (index.html + index-*.js). After a deploy the old shell is served from cache and lazy-imports hashed chunks that the new deploy deleted. Nothing handled the failed import, and the React tree (and the update banner) unmounted. Separately, /images/** and /audio/** are CacheFirst by file name, so a changed file with the SAME name is never refetched.
+- **Fix (2026-10-15):** `updateGuard.js` (a `vite:preloadError` + unhandled-rejection handler: reload ONCE on a safe view, never mid-scene; a 30 s sessionStorage guard stops loops), `ChunkErrorBoundary` + a big "Tap to refresh" card, and `UpdateManager`, which records "update pending" and shows its banner only on the map / Home / Zone Welcome (App publishes the view as `window.__gmbView`).
+- **Rules:** never auto-reload during gameplay; a new view that holds a game must NOT be added to SAFE_VIEWS in updateGuard.js. When public images change under the same name, bump the images runtime cache name in vite.config.js (`ganesha-images-v2` -> v3). When a sound changes, give it a NEW file name (`sfx-soft-wrong-2.wav`). Apps installed BEFORE this fix still get one broken first load on their first update.
+
 ## Before you call a scene "done"
 1. `npm run check:css` — no new clashes. 2. `vite build` passes. 3. The scene's checklist
 (`http://localhost:5173/?unlockall=1`) passes, including Replay and "Continue from the completion modal".

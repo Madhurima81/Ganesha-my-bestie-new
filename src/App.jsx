@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import './App.css';
 import './Enhanced.css'
 import ErrorBoundary from './lib/components/error/ErrorBoundary';
+import { publishAppView } from './lib/components/offline/updateGuard';
 // TEMPORARY beta-testing landscape lock — covers onboarding + every zone +
 // gameplay, no exemptions. Pure CSS visibility (portrait media query), mounted
 // once at App root above all routes. Portrait onboarding support may be
@@ -421,6 +422,8 @@ function App() {
 
 
   const [currentView, setCurrentView] = useState('loading');
+  // Publish the current view so the PWA update guard (UpdateManager / chunk-error handler) knows when a reload is safe.
+  useEffect(() => { publishAppView(currentView); }, [currentView]);
   const [currentZone, setCurrentZone] = useState(null);
   const [currentScene, setCurrentScene] = useState(null);
   const [currentProfile, setCurrentProfile] = useState(null);

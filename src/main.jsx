@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import { UpdateManager } from './lib/components/offline/UpdateManager.jsx'
+import { installChunkErrorHandlers } from './lib/components/offline/updateGuard.js'
 
 // AppV1/V2/V3 removed — dead code whose static imports pulled old scene
 // versions (and NewModakSceneV7) into the main bundle.
@@ -43,6 +44,9 @@ if (typeof window !== 'undefined' && 'serviceWorker' in navigator && (
     .then((keys) => Promise.all((keys || []).map((k) => caches.delete(k))))
     .catch(() => {});
 }
+
+// Failed lazy chunk after a deploy: reload once on a safe view, otherwise show the Tap-to-refresh card.
+installChunkErrorHandlers();
 
 const isExpressionPreview = new URLSearchParams(window.location.search).get('preview') === 'ganesha';
 
