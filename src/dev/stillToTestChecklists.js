@@ -224,6 +224,9 @@ export const STILL_TO_TEST_CHECKLISTS = {
   ]),
 
   'todo-nirvighnam': list('Nirvighnam + Kurumedeva (Shloka River 3)', [
+    { text: 'Nirvighnam + Kurumedeva: fresh play through both games.', expect: 'Each spoken line plays once, each reveal card appears once, and no completion or resume voice overlaps.' },
+    { text: 'Nirvighnam: Continue with 1 and 2 obstacles saved; Kurumedeva: Continue with 1 round saved.', expect: 'The exact next line plays once: branch, reeds, or monkey-help respectively; no generic replay or overlap.' },
+    { text: 'Leave during each Nirvighnam/Kurumedeva line, then Continue from Zone Welcome.', expect: 'Zone Welcome is silent; the scene resumes with one explicit line and no stale speech.' },
     { text: 'Nirvighnam: finish from a fresh start, then use Play Again and finish again.', expect: 'The word and success line play once per run, followed by one reveal card; no duplicate completion voice.' },
     { text: 'Nirvighnam: Continue after saved progress and finish the remaining obstacles.', expect: 'Continue resumes at the saved obstacle, and the completion word and success line each play once before the reveal.' },
     { text: 'Kurumedeva: stay idle until the Elephant / Monkey friend glow shows.', expect: 'A soft glow that follows the animal shape; the animal does NOT jump right/down while it glows (CSS clash fix).' },

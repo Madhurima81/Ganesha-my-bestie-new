@@ -34,6 +34,8 @@ import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
 import useSceneWatchdog from '../../../../lib/hooks/useSceneWatchdog';
+import useFirstLineWatch from '../../../../lib/hooks/useFirstLineWatch';
+import createSpeechStartWatcher from '../../../../lib/utils/speechStartWatch';
 import { logSceneEvent } from '../../../../lib/utils/sceneEventLog';
 import SceneStallPrompt from '../../../../lib/components/feedback/SceneStallPrompt';
 import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
@@ -278,6 +280,9 @@ const NirvighnamChantContent = ({
   const { playUiTap, playChime } = useGameSounds();
   const speechSynthRef = useRef(typeof window !== 'undefined' ? window.speechSynthesis : null);
   const webSpeechRef = useRef(null); // in-flight scene-owned utterance, for mute-mid-line
+  const speechStartWatcherRef = useRef(null);
+  const firstLineArmIdRef = useRef(null);
+  const firstLineStartedRef = useRef(new Set());
   const nirvIntroPlayedRef = useRef(false);
   const kuruIntroPlayedRef = useRef(false);
   const [kuruIntroComplete, setKuruIntroComplete] = useState(false);
@@ -287,11 +292,44 @@ const NirvighnamChantContent = ({
   const revealTimeoutsRef = useRef([]);
 
   const stopWebSpeech = useCallback(() => {
+    if (webSpeechRef.current) {
+      logSceneEvent('nirvighnam', 'speech:cancelled-by-stop', { key: webSpeechRef.current.key || null });
+    }
+    speechStartWatcherRef.current?.cancelPending();
     try { speechSynthRef.current?.cancel(); } catch {}
   }, []);
 
-  const speakWebSpeech = useCallback((text, onEnded, onStart, cue) => {
+  if (!speechStartWatcherRef.current && speechSynthRef.current) {
+    speechStartWatcherRef.current = createSpeechStartWatcher({
+      speechSynthesis: speechSynthRef.current,
+      onDropBeforeStart: ({ attempt }) => logSceneEvent('nirvighnam', 'speech:dropped-and-retried', { attempt, key: webSpeechRef.current?.key || null }),
+    });
+  }
+
+  const {
+    arm: armFirstLineWatch,
+    markStarted: markFirstLineStarted,
+    reset: resetFirstLineWatch,
+    stall: firstLineStall,
+    resolveStall: resolveFirstLineStall,
+  } = useFirstLineWatch({ sceneKey: 'nirvighnam' });
+
+  const noteFirstLineStarted = useCallback(() => {
+    const id = firstLineArmIdRef.current;
+    if (!id) return;
+    firstLineStartedRef.current.add(id);
+    markFirstLineStarted(id);
+    firstLineArmIdRef.current = null;
+  }, [markFirstLineStarted]);
+
+  useEffect(() => () => {
+    speechStartWatcherRef.current?.cancelPending();
+  }, []);
+
+  const speakWebSpeech = useCallback((text, onEnded, onStart, cue, key = null) => {
+    logSceneEvent('nirvighnam', 'speech:requested', { key });
     if (!text) {
+      logSceneEvent('nirvighnam', 'speech:skipped-by-guard', { key, reason: 'empty-text' });
       onEnded?.();
       return;
     }
@@ -305,29 +343,52 @@ const NirvighnamChantContent = ({
     }
     const synth = speechSynthRef.current;
     if (!synth || typeof SpeechSynthesisUtterance === 'undefined') {
-      onEnded?.();
+      logSceneEvent('nirvighnam', 'speech:skipped-by-guard', { key, reason: 'speech-unavailable' });
       return;
     }
     try {
       synth.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-IN';
-      utterance.rate = 0.95;
-      utterance.pitch = 1;
-      utterance.volume = 0.95;
-      utterance.onstart = () => onStart?.();
-      attachSpeechCue(utterance, text, cue); // hand appears exactly when the action word is spoken
-      const clearTracked = () => {
-        if (webSpeechRef.current?.utterance === utterance) webSpeechRef.current = null;
+      let finished = false;
+      const finish = () => {
+        if (finished) return;
+        finished = true;
+        webSpeechRef.current = null;
+        logSceneEvent('nirvighnam', 'speech:finished', { key });
+        onEnded?.();
       };
-      utterance.onend = () => { clearTracked(); onEnded?.(); };
-      utterance.onerror = () => { clearTracked(); onEnded?.(); };
-      webSpeechRef.current = { utterance, onEnded, at: Date.now(), ms: estimateSpeechMs(text) };
-      synth.speak(utterance);
+      speechStartWatcherRef.current?.speak({
+        buildUtterance: () => {
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'en-IN';
+          utterance.rate = 0.95;
+          utterance.pitch = 1;
+          utterance.volume = 0.95;
+          utterance.onstart = () => {
+            logSceneEvent('nirvighnam', 'speech:started', { key });
+            noteFirstLineStarted();
+            onStart?.();
+          };
+          attachSpeechCue(utterance, text, cue);
+          utterance.onend = finish;
+          utterance.onerror = (event) => {
+            if (event && (event.error === 'canceled' || event.error === 'interrupted')) {
+              if (!finished) {
+                finished = true;
+                webSpeechRef.current = null;
+                logSceneEvent('nirvighnam', event.error === 'canceled' ? 'speech:cancelled-by-stop' : 'speech:skipped-by-guard', { key, reason: event.error });
+              }
+              return;
+            }
+            finish();
+          };
+          webSpeechRef.current = { utterance, onEnded: finish, key, at: Date.now(), ms: estimateSpeechMs(text) };
+          return utterance;
+        },
+      });
     } catch {
-      onEnded?.();
+      logSceneEvent('nirvighnam', 'speech:skipped-by-guard', { key, reason: 'speech-exception' });
     }
-  }, [playSilent]);
+  }, [noteFirstLineStarted, playSilent]);
 
   // Mute pressed mid-line: silence the utterance now but let its callback fire
   // once, when it would have finished, so mute never skips or stalls a step.
@@ -367,14 +428,24 @@ const NirvighnamChantContent = ({
       kuru_rope_after:     "Monkey helped tie the rope.",
       kuru_plank_instruction: "Now drag the planks into place.",
       kuru_plank_continue: "Good. Continue dragging the planks.",
+      kuru_ask_elephant:   "The logs are too heavy. Drag the help bubble to someone who can help.",
+      kuru_ask_monkey:     "The rope needs tying. Drag the help bubble to someone who can help.",
+      kuru_hint_ask:       "Drag the help bubble to someone who can help.",
+      kuru_hint_elephant:  "Drag the help bubble to Elephant.",
+      kuru_hint_monkey:    "Drag the help bubble to Monkey.",
+      kuru_hint_monkey_clue: "Who can help tie the rope?",
+      kuru_hint_plank_soft: "Drag a plank toward the bridge.",
+      kuru_hint_plank_direct: "Drag the plank onto the glowing place.",
+      scene12KuruDone:      "Kuru Me Deva! You asked for help and built the bridge.",
       sceneComplete:       "You cleared the path and asked for help when things got hard.",
     };
-    if (map[key]) { speakWebSpeech(stripLeadingSpeechText(map[key], options.stripLeadingText), onEnded, options.onStart, options.cue); return; }
+    if (map[key]) { speakWebSpeech(stripLeadingSpeechText(map[key], options.stripLeadingText), onEnded, options.onStart, options.cue, key); return; }
     const script = getVoiceScript(zoneId, sceneId, key);
     if (script) {
       playHookVoice(key, onEnded, options);
       return;
     }
+    logSceneEvent('nirvighnam', 'speech:skipped-by-guard', { key, reason: 'missing-script' });
     onEnded?.();
   }, [playHookVoice, sceneId, speakWebSpeech, stopVoice, stopWebSpeech, zoneId]);
 
@@ -589,6 +660,31 @@ const NirvighnamChantContent = ({
     }
   }, [isAudioOn, playGuidanceVoice, sceneState.phase, setCurrentPhase, startIdleTimer, safeSetTimeout]);
 
+  // Continue recovery only for saved states whose next line is owned by the child game.
+  // Fresh intros and the saved plank state remain child-owned and are intentionally unarmed here.
+  useEffect(() => {
+    if (!isReload) return undefined;
+    let id = null;
+    let key = null;
+    if (sceneState.phase === PHASES.NIRVIGHNAM_GAME) {
+      const cleared = Number(sceneState.obstaclesCleared || 0);
+      if (cleared === 1) { id = 'nirvighnam:resume:branch'; key = 'nirv_branch_intro'; }
+      if (cleared === 2) { id = 'nirvighnam:resume:reed'; key = 'nirv_reed_intro'; }
+    } else if (sceneState.phase === PHASES.KURUMEDEVA_GAME && Number(sceneState.roundsDone || 0) === 1) {
+      id = 'kurumedeva:resume:monkey';
+      key = 'kuru_ask_monkey';
+    }
+    if (!id || !key) return undefined;
+    const recover = () => {
+      if (firstLineStartedRef.current.has(id)) return;
+      firstLineArmIdRef.current = id;
+      playGuidanceVoice(key);
+    };
+    firstLineArmIdRef.current = id;
+    armFirstLineWatch({ id, recover });
+    return undefined;
+  }, [armFirstLineWatch, isReload, playGuidanceVoice, sceneState.obstaclesCleared, sceneState.phase, sceneState.roundsDone]);
+
   // ── Reload: clear mini-game states ────────────────────────────────────────
   useEffect(() => {
     if (
@@ -612,7 +708,7 @@ const NirvighnamChantContent = ({
   const sceneStateRef = useRef(sceneState);
   sceneStateRef.current = sceneState;
   const revealShownRef = useRef(new Set());
-  const { arm: armWatchdog, disarm: disarmWatchdog, stall, resolveStall } = useSceneWatchdog({
+  const { arm: armWatchdog, disarm: disarmWatchdog, stall: revealStall, resolveStall: resolveRevealStall } = useSceneWatchdog({
     sceneKey: 'nirvighnam',
     paused: isRecorderOpen || sidebarPause.isSidebarPaused,
     getSnapshot: () => ({
@@ -623,6 +719,8 @@ const NirvighnamChantContent = ({
       finalCardCollected: !!sceneStateRef.current?.finalCardCollected,
     }),
   });
+  const stall = revealStall || firstLineStall;
+  const resolveStall = revealStall ? resolveRevealStall : resolveFirstLineStall;
 
   useEffect(() => {
     const word = revealConfig?.symbolId;
@@ -967,7 +1065,7 @@ const NirvighnamChantContent = ({
                     // The Mandala holds the next symbol until this line ends (done). The
                     // scene-complete line plays on the completion screen, not here.
                     if (lines[symbol]) {
-                      speakWebSpeech(lines[symbol], done);
+                      speakWebSpeech(lines[symbol], done, undefined, undefined, `mandala_${symbol}`);
                     } else {
                       done?.();
                     }
@@ -1025,6 +1123,9 @@ const NirvighnamChantContent = ({
                 setRevealConfig(null);
                 revealStartedRef.current.clear();
                 revealShownRef.current.clear();
+                resetFirstLineWatch();
+                firstLineArmIdRef.current = null;
+                firstLineStartedRef.current.clear();
                 setShowSparkle(null);
                 setShowPowerOverlay(false);
                 resetScene();
