@@ -60,7 +60,9 @@ export function createGuardedRevealController({
 
   const expectReveal = (id, configOrFactory, source = 'expected', timeoutMs = DEFAULT_REVEAL_TIMEOUT_MS) => {
     if (!id || isStopped()) return false;
-    if (shown.has(id) || hasActiveReveal()) {
+    // A reveal that already started (even if not yet marked shown) is never "expected" again: re-arming it after the card
+    // is gone made the watchdog report a false stall (Samaprabha, KNOWN_PITFALLS 63).
+    if (shown.has(id) || started.has(id) || hasActiveReveal()) {
       disarmWatchdog?.(WATCH_NAME);
       return false;
     }
