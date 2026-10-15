@@ -58,6 +58,9 @@ import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButt
 import { getCollectionTarget } from '../../../../lib/utils/collectionTarget';
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
+import useGuardedReveal from '../../../../lib/hooks/useGuardedReveal';
+import useFirstLineWatch from '../../../../lib/hooks/useFirstLineWatch';
+import SceneStallPrompt from '../../../../lib/components/feedback/SceneStallPrompt';
 
 // Images
 import pondBgFixed from './assets/images/pond-bg-fixed.webp';
@@ -459,6 +462,56 @@ const PondSceneContent = ({
   const playChime = playCorrect;
   const playGlow = playPowerUnlock;
   const playTwinkle = playCelebration;
+  const revealConfigRef = useRef(null);
+  revealConfigRef.current = revealConfig;
+  const firstLineStartedRef = useRef(new Set());
+  const {
+    showRevealOnce,
+    markShown,
+    resetReveals,
+    expectReveal,
+    stall: revealStall,
+    resolveStall: resolveRevealStall,
+  } = useGuardedReveal({
+    sceneKey: 'pond',
+    getRevealConfig: () => revealConfig,
+    setRevealConfig,
+    paused: pondPaused,
+    getSnapshot: () => ({
+      phase: sceneStateRef.current?.phase,
+      revealConfig: revealConfigRef.current?.symbolId || null,
+    }),
+  });
+  const {
+    arm: armFirstLineWatch,
+    markStarted: markFirstLineStarted,
+    stall: firstLineStall,
+    resolveStall: resolveFirstLineStall,
+  } = useFirstLineWatch({
+    sceneKey: 'pond',
+    paused: pondPaused,
+    getSnapshot: () => ({ phase: sceneStateRef.current?.phase }),
+  });
+  const stall = revealStall || firstLineStall;
+  const resolveStall = revealStall ? resolveRevealStall : resolveFirstLineStall;
+
+  const getRevealDetails = useCallback((symbolId) => {
+    if (symbolId === 'trunk') return {
+      symbolId: 'trunk', symbolName: 'Trunk',
+      affirmation: 'I can be strong and gentle.', symbolImage: symbolTrunkColored
+    };
+    return {
+      symbolId: 'lotus', symbolName: 'Lotus',
+      affirmation: 'I can keep growing when things are hard.', symbolImage: symbolLotusColored
+    };
+  }, []);
+  const showPondReveal = useCallback((symbolId, source) => {
+    return showRevealOnce(symbolId, getRevealDetails(symbolId), source);
+  }, [getRevealDetails, showRevealOnce]);
+
+  useEffect(() => {
+    if (revealConfig?.symbolId) markShown(revealConfig.symbolId);
+  }, [markShown, revealConfig?.symbolId]);
   useEffect(() => {
     setVoiceVolume(isAudioOn ? 1 : 0);
     if (!isAudioOn) muteSpokenVoice(); // finish any in-flight line silently, on schedule
@@ -581,6 +634,8 @@ const PondSceneContent = ({
     setReedsProgress(0);
     setWaterStage(0);
     setRevealConfig(null);
+    resetReveals();
+    firstLineStartedRef.current.clear();
     setShowMandala(false);
     setShowSparkle(null);
     setShowSceneCompletion(false);
@@ -784,10 +839,18 @@ const PondSceneContent = ({
       : promptKey === 'reedsRound'
         ? WATER_TO_REEDS_MS
         : 500;
-
-    const timer = setTimeout(() => {
+    const firstLineId = `${sceneState.phase}:${promptKey}`;
+    const startPrompt = () => {
+      if (firstLineStartedRef.current.has(firstLineId)) return;
+      firstLineStartedRef.current.add(firstLineId);
+      markFirstLineStarted(firstLineId);
       speakPondPrompt(promptKey, resetIdleBaseline);
       lastAnnouncedPromptRef.current = promptKey;
+    };
+    armFirstLineWatch({ id: firstLineId, recover: startPrompt });
+
+    const timer = setTimeout(() => {
+      startPrompt();
     }, promptDelay);
     return () => clearTimeout(timer);
   }, [
@@ -797,7 +860,9 @@ const PondSceneContent = ({
     sceneState?.completed,
     pondPaused,
     revealConfig,
-    showSceneCompletion
+    showSceneCompletion,
+    armFirstLineWatch,
+    markFirstLineStarted
   ]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
 
@@ -885,6 +950,7 @@ const PondSceneContent = ({
       setRockHoldProgress(1);
       setReedsProgress(1);
       setWaterStage(2);
+      expectReveal('trunk', () => getRevealDetails('trunk'), 'restore');
       // Left during the "The water reached the lotus" success line: play it again, then the
       // card — same order as the normal flow in completeReeds, not a silent jump to the card.
       safeSetTimeout(() => {
@@ -892,12 +958,7 @@ const PondSceneContent = ({
           safeSetTimeout(() => {
             sceneActions.updateState({ phase: PHASES.TRUNK_REVEAL });
             playChime();
-            setRevealConfig({
-              symbolId: 'trunk',
-              symbolName: 'Trunk',
-              affirmation: 'I can be strong and gentle.',
-              symbolImage: symbolTrunkColored
-            });
+            showPondReveal('trunk', 'restore');
           }, 1200);
         });
       }, 600);
@@ -909,14 +970,10 @@ const PondSceneContent = ({
       setRockHoldProgress(1);
       setReedsProgress(1);
       setWaterStage(2);
+      expectReveal('trunk', () => getRevealDetails('trunk'), 'restore');
       safeSetTimeout(() => {
         playChime();
-        setRevealConfig({
-          symbolId: 'trunk',
-          symbolName: 'Trunk',
-          affirmation: 'I can be strong and gentle.',
-          symbolImage: symbolTrunkColored
-        });
+        showPondReveal('trunk', 'restore');
       }, 1200);
       return;
     }
@@ -935,17 +992,13 @@ const PondSceneContent = ({
       setRockHoldProgress(1);
       setReedsProgress(1);
       setWaterStage(2);
+      expectReveal('lotus', () => getRevealDetails('lotus'), 'restore');
       // Left during "The lotus bloomed..." success line: replay it, then the card. If that line had
       // already finished, go straight to the card.
       safeSetTimeout(() => {
         const showLotusCard = () => safeSetTimeout(() => {
           playChime();
-          setRevealConfig({
-            symbolId: 'lotus',
-            symbolName: 'Lotus',
-            affirmation: 'I can keep growing when things are hard.',
-            symbolImage: symbolLotusColored
-          });
+          showPondReveal('lotus', 'restore');
         }, 1200);
         if (sceneState.lotusSuccessDone) showLotusCard();
         else speakPondPrompt('lotusBloomed', showLotusCard);
@@ -960,14 +1013,10 @@ const PondSceneContent = ({
         showingCompletionScreen: false,
         phase: PHASES.BLOOMED
       });
+      expectReveal('lotus', () => getRevealDetails('lotus'), 'restore');
       safeSetTimeout(() => {
         playChime();
-        setRevealConfig({
-          symbolId: 'lotus',
-          symbolName: 'Lotus',
-          affirmation: 'I can keep growing when things are hard.',
-          symbolImage: symbolLotusColored
-        });
+        showPondReveal('lotus', 'restore');
       }, 300);
       return;
     }
@@ -1262,15 +1311,11 @@ const PondSceneContent = ({
       // (~2.4s) to actually finish — the old fixed LOTUS_GLOW_MS (900ms)
       // timer was opening the card mid-sentence.
       safeSetTimeout(() => setShowSparkle(null), LOTUS_GLOW_MS);
+      expectReveal('trunk', () => getRevealDetails('trunk'), 'live');
       speakPondPrompt('trunkSuccess', () => {
         safeSetTimeout(() => {
           sceneActions.updateState({ phase: PHASES.TRUNK_REVEAL });
-          setRevealConfig({
-            symbolId: 'trunk',
-            symbolName: 'Trunk',
-            affirmation: 'I can be strong and gentle.',
-            symbolImage: symbolTrunkColored
-          });
+          showPondReveal('trunk', 'live');
         }, 1200);
       });
     }, WATER_TO_POND_MS);
@@ -1280,7 +1325,10 @@ const PondSceneContent = ({
     safeSetTimeout,
     sceneActions,
     speakPondPrompt,
-    triggerMiniGesture
+    triggerMiniGesture,
+    expectReveal,
+    getRevealDetails,
+    showPondReveal
   ]);
 
   const handleReedsPointerDown = useCallback((e) => {
@@ -1356,6 +1404,7 @@ const PondSceneContent = ({
     // (~3.5-4s) before the reveal card covers the scene — a fixed 2400ms
     // timer was opening the card mid-sentence.
     const lineStartedAt = Date.now();
+    expectReveal('lotus', () => getRevealDetails('lotus'), 'live');
     speakPondPrompt('lotusBloomed', () => {
       // Leaving mid-line cancels the speech, which still fires this callback: only a line that
       // really played out counts as done (else Continue skips the line and shows only the card).
@@ -1363,15 +1412,10 @@ const PondSceneContent = ({
       // The success line finished: a Continue from here goes straight to the card.
       sceneActions.checkpoint({ lotusSuccessDone: true });
       safeSetTimeout(() => {
-        setRevealConfig({
-          symbolId: 'lotus',
-          symbolName: 'Lotus',
-          affirmation: 'I can keep growing when things are hard.',
-          symbolImage: symbolLotusColored
-        });
+        showPondReveal('lotus', 'live');
       }, 1200);
     });
-  }, [sceneActions, playBloom, playChime, speakPondPrompt, triggerMiniGesture, safeSetTimeout]);
+  }, [sceneActions, playBloom, playChime, speakPondPrompt, triggerMiniGesture, safeSetTimeout, expectReveal, getRevealDetails, showPondReveal]);
 
   const handleLotusHoldStart = () => {
     if (progressiveHintRef.current?.hideHint) progressiveHintRef.current.hideHint();
@@ -2218,6 +2262,7 @@ const PondSceneContent = ({
             )}
 
             {/* SYMBOL AUTO REVEAL */}
+            <SceneStallPrompt show={!!stall} onTap={resolveStall} />
             {!isCompletionView && !isFinalFireworksView && revealConfig && (
               <SymbolAutoReveal
                 key={revealConfig.symbolId}

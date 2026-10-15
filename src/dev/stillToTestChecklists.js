@@ -161,6 +161,16 @@ export const STILL_TO_TEST_CHECKLISTS = {
     ],
   },
 
+  'todo-symbol-mountain-pond-watchdog': {
+    title: 'Still to test - Symbol Mountain Pond watchdog',
+    items: [
+      { text: 'Finish Pond and watch the Trunk and Lotus reveal cards.', expect: 'Each card appears once; no duplicate card and no freeze.' },
+      { text: 'Leave during each Pond reveal, then tap Continue on Zone Welcome.', expect: 'The interrupted card appears once after Continue; no blank screen, duplicate card or freeze.' },
+      { text: 'Switch tabs during each Pond reveal, wait about 10 seconds, then return.', expect: 'The reveal continues once after the countdown; no duplicate card or stuck overlay.' },
+      PLAY_AGAIN_ROW('Pond progress'),
+    ],
+  },
+
   'todo-vakratunda': list('Vakratunda Grove + Mahakaya (Shloka River 1)', [
     { text: leave('Mahakaya: 1 log placed.'), expect: 'You hear "Keep adding logs to the raft" - NOT the intro.' },
     { text: leave('Mahakaya: 2 or 3 logs placed.'), expect: 'You hear "Drag the next log" - NOT the intro.' },
