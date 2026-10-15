@@ -67,7 +67,10 @@ export default function MapEditorFull({
   const panelDrag = useRef(null);
 
   const items = propItems;
-  const overlayList = Object.values(overlayItems);
+  // Show the five map Ganesha positions; omit unused Mushika placeholders.
+  const overlayList = Object.values(overlayItems).filter(
+    (item) => !item.id.startsWith('mushika') && item.id !== 'ganeshaCave' && item.id !== 'ganeshaAllDone'
+  );
   const zoneArtList = Object.values(zoneArtItems);
   const isZoneArtMode = mode === 'zone-art';
   const isOverlayMode = mode === 'overlay';
@@ -328,7 +331,10 @@ export default function MapEditorFull({
         />
       ))}
 
-      {isOverlayMode && overlayList.map((item) => (
+      {isOverlayMode && overlayList.filter((item) => {
+        const isCharacter = item.id.startsWith('ganesha') || item.id.startsWith('mushika');
+        return !isCharacter || item.id === sel;
+      }).map((item) => (
         <div
           key={item.id}
           onPointerDown={sel === item.id ? (e) => onItemDown(e, item) : undefined}
@@ -558,7 +564,7 @@ export default function MapEditorFull({
               <button onClick={flip} style={actBtn}>Flip</button>
             </div>
 
-            {isZoneArtMode && (sel === 'bridge1' || sel === 'bridge2') && (
+            {isZoneArtMode && selItem && (
               <div style={{ display: 'flex', gap: 5, marginBottom: 6 }}>
                 <button
                   onClick={() => updateZoneArtItem(sel, { rotate: +((selItem.rotate || 0) - 2).toFixed(1) })}

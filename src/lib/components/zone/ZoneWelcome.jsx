@@ -822,10 +822,26 @@ const getPermanentCompletedCount = () => {
     return null;
   };
 
+// Only actual scene launches write progression; browsing the welcome screen does not.
+const launchScene = (scene, mode) => {
+  if (!zoneData?.id || !scene?.id || !onSceneSelect) return;
+
+  try {
+    const profileId = localStorage.getItem('activeProfileId');
+    if (profileId) {
+      localStorage.setItem(`gmb_zone_started_${profileId}_${zoneData.id}`, 'true');
+    }
+  } catch { /* Scene entry must still work when storage is unavailable. */ }
+
+  setActiveScene(zoneData.id, scene.id, mode);
+  dlog('🎯 Opening active scene:', scene.id, mode);
+  onSceneSelect(scene.id, { mode });
+};
+
 const handleSceneClick = (scene, action = 'default') => {
   const status = sceneStatuses[scene.id];
 
-  if (status.status === 'locked') {
+  if (!status || status.status === 'locked') {
     dlog('🔒 Scene locked:', scene.name);
     return;
   }
@@ -844,13 +860,7 @@ const handleSceneClick = (scene, action = 'default') => {
     mode = status.hasReplaySession ? 'continue' : 'replay';
   }
 
-  // The scene becomes ACTIVE only when the child actually enters it.
-  // Tapping a journey icon never calls this, so browsing can't change it.
-  setActiveScene(zoneData.id, scene.id, mode);
-
-  dlog('🎯 Opening active scene:', scene.id, mode);
-
-  onSceneSelect?.(scene.id, { mode });
+  launchScene(scene, mode);
 };
 
 const handleReplayIntroStory = () => {

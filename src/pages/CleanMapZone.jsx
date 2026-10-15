@@ -1,6 +1,7 @@
 // CleanMapZone.jsx - Clean map with zone states (locked/active/in-progress/completed)
 import React, { useState, useEffect, useRef } from 'react';
 import './CleanMapZone.css';
+import IdleHint from '../lib/components/idle/IdleHint';
 import GameStateManager from '../lib/services/GameStateManager';
 import { GANESHA_POSE_ASSETS } from '../lib/config/ganeshaUsageSystem';
 import { isSfxOn } from '../lib/utils/soundPrefs';
@@ -105,6 +106,16 @@ const ZONE_IDS = {
 
 // Child journey order for map hierarchy (current / next / distant). Cave, Festival, Treehouse are future content.
 const PRIMARY_MAP_JOURNEY = [ZONE_IDS.SYMBOL, ZONE_IDS.RIVER, ZONE_IDS.HUT];
+const UNLOCKABLE_JOURNEY_ZONE_IDS = [ZONE_IDS.RIVER, ZONE_IDS.HUT];
+
+const readMapFlag = (key) => {
+  try { return localStorage.getItem(key) === 'true'; } catch { return false; }
+};
+const writeMapFlag = (key) => {
+  try { localStorage.setItem(key, 'true'); } catch { /* Persistence is best effort. */ }
+};
+const getZoneStartedKey = (profileId, zoneId) => `gmb_zone_started_${profileId}_${zoneId}`;
+const getMapUnlockSeenKey = (profileId, zoneId) => `gmb_map_unlock_seen_${profileId}_${zoneId}`;
 
 const ZONE_ART_TO_ZONE_ID = {
   symbol: ZONE_IDS.SYMBOL,
@@ -301,7 +312,7 @@ const PHONE_LANDSCAPE_QUERY =
 
 const PHONE_MAP_ZONE_ART = {
   symbol:    { left: 18, top: 18, w: 24, h: 32 },
-  river:     { left: 66, top: 59, w: 70, h: 96, centered: true },
+
   hut:       { left: 27, top: 56, w: 21, h: 26 },
   festival:  { left: 79, top: 48, w: 15, h: 19 },
   treehouse: { left: 72, top: 69, w: 13, h: 17 },
@@ -386,10 +397,6 @@ const MAP_PROPS = [
   { id: 'flower1-35', type: 'flower1', src: '/images/map/flower1.webp', left: 76.6, top: 72.7, w: 3, flip: false },
   { id: 'flower1-36', type: 'flower1', src: '/images/map/flower1.webp', left: 72.3, top: 43.3, w: 4, flip: false },
   { id: 'grass-39', type: 'grass', src: '/images/map/grass.webp', left: 55, top: 40, w: 3, flip: true },
-  { id: 'grass-46', type: 'grass', src: '/images/map/grass.webp', left: 93.8, top: 39.2, w: 3, flip: false },
-  { id: 'grass-48', type: 'grass', src: '/images/map/grass.webp', left: 92.6, top: 40.8, w: 3, flip: false },
-  { id: 'grass-51', type: 'grass', src: '/images/map/grass.webp', left: 93, top: 78.8, w: 3, flip: false },
-  { id: 'grass-52', type: 'grass', src: '/images/map/grass.webp', left: 81.8, top: 81.1, w: 3, flip: false },
   { id: 'tree1-55', type: 'tree1', src: '/images/map/tree1.webp', left: 49.4, top: 39.9, w: 4, flip: false },
   { id: 'flower1-66', type: 'flower1', src: '/images/map/flower1.webp', left: 45, top: 48, w: 5, flip: false },
   { id: 'flower2-67', type: 'flower2', src: '/images/map/flower2.webp', left: 48.2, top: 52.6, w: 5, flip: false },
@@ -455,10 +462,10 @@ const MAP_OVERLAY_DEFAULTS = {
     label: 'Hut Title',
     kind: 'label',
     text: "Lambodara Lodge",
-    left: 9,
-    top: 59,
-    w: 22,
-    h: 5,
+    left: 10.2,
+    top: 47.6,
+    w: 12,
+    h: 4.5,
   },
   treehouseLabel: {
     id: 'treehouseLabel',
@@ -727,46 +734,23 @@ const MAP_ZONE_ART_DEFAULTS = {
     rotate: 0,
     opacity: 1
   },
-  river: {
-    id: 'river',
-    label: 'River',
-    src: '/images/map/shlokariver-new.png',
-    left: 59.4,
-    top: 58.4,
-    w: 74,
-    h: 104,
-    centered: true,
-    flip: false,
-    rotate: 0,
-    opacity: 1
+  shlokaStream: {
+    id: 'shlokaStream', label: 'Shloka River — River',
+    src: '/images/map/shloka-stream.png',
+    left: 52.2, top: 64.6, w: 25, h: 79,
+    centered: true, flip: false, rotate: 10, opacity: 1
   },
-  bridge1: {
-    id: 'bridge1',
-    label: 'Bridge 1',
-    src: '/images/map/bridge-new.webp',
-    left: 58.8,
-    top: 48.9,
-    w: 18,
-    h: 18,
-    centered: true,
-    flip: false,
-    rotate: 8,
-    rotateY: 0,
-    opacity: 1
+  shlokaWaterfall: {
+    id: 'shlokaWaterfall', label: 'Shloka River — Waterfall',
+    src: '/images/map/shloka-waterfall.png',
+    left: 63.6, top: 23.4, w: 19, h: 24,
+    centered: true, flip: false, rotate: 0, opacity: 1
   },
-  bridge2: {
-    id: 'bridge2',
-    label: 'Bridge 2',
-    src: '/images/map/bridge-new.webp',
-    left: 52.5,
-    top: 76.5,
-    w: 19,
-    h: 19,
-    centered: true,
-    flip: false,
-    rotate: -4,
-    rotateY: 180,
-    opacity: 1
+  shlokaBridge: {
+    id: 'shlokaBridge', label: 'Shloka River — Bridge',
+    src: '/images/map/shloka-bridge.png',
+    left: 59.7, top: 51.1, w: 13, h: 15,
+    centered: true, flip: false, rotate: 2, opacity: 1
   },
   cave: {
     id: 'cave',
@@ -829,8 +813,8 @@ const loadSavedZoneArt = () => {
     const parsed = JSON.parse(raw);
     const merged = {};
     Object.entries(MAP_ZONE_ART_DEFAULTS).forEach(([key, value]) => {
-      // River art was replaced (2026-10-09): ignore any saved river layout so the new asset shows
-      merged[key] = key === 'river' ? value : { ...value, ...(parsed[key] || {}) };
+      // Merge only current pieces so retired combined river art is not restored.
+      merged[key] = { ...value, ...(parsed[key] || {}) };
     });
     return merged;
   } catch {
@@ -868,9 +852,9 @@ const getZoneState = (zoneId, allProgress) => {
   const p = allProgress[zoneId];
   if (!p) return 'active'; // no progress data yet → treat as active (unlocked but not started)
 
-  const { completedScenes, totalScenes } = p;
+  const { completedScenes, totalScenes, hasStarted } = p;
   if (completedScenes >= totalScenes && totalScenes > 0) return 'completed';
-  if (completedScenes > 0) return 'in-progress';
+  if (hasStarted || completedScenes > 0) return 'in-progress';
   return 'active';
 };
 
@@ -909,7 +893,7 @@ const getMapGaneshaState = (allProgress, unlockingZones, overlayItems = {}) => {
     };
   }
 
-  const allZonesCompleted = zoneIds.every((zoneId) => isZoneDone(allProgress, zoneId));
+  const allZonesCompleted = PRIMARY_MAP_JOURNEY.every((zoneId) => isZoneDone(allProgress, zoneId));
   if (allZonesCompleted) {
     return {
       pose: 'celebration',
@@ -933,7 +917,7 @@ const getMapGaneshaState = (allProgress, unlockingZones, overlayItems = {}) => {
     };
   }
 
-  const unlockedPendingZones = MAP_ZONE_ORDER.filter((zoneId) => {
+  const unlockedPendingZones = PRIMARY_MAP_JOURNEY.filter((zoneId) => {
     if (!allProgress[zoneId]) return false;
     if (!isZoneUnlocked(zoneId, allProgress)) return false;
     return !isZoneDone(allProgress, zoneId);
@@ -988,6 +972,15 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   // const [showZoneModal, setShowZoneModal] = useState(false); // removed — no preview modal
   const [activeProfile, setActiveProfile] = useState(null);
   const [unlockingZones, setUnlockingZones] = useState({});
+  const firstMapTargetRef = useRef(null);
+  const [firstMapTapDone, setFirstMapTapDone] = useState(() => {
+    try {
+      const profileId = localStorage.getItem('activeProfileId');
+      return localStorage.getItem(`gmb_map_first_tap_${profileId}`) === 'done';
+    } catch {
+      return false;
+    }
+  });
   const [mushikaPop, setMushikaPop] = useState(null); // { zone, state } | null
   const [isGaneshaWalking, setIsGaneshaWalking] = useState(false);
   const [pulsingLabelZoneId, setPulsingLabelZoneId] = useState(null);
@@ -1280,67 +1273,32 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       nextStates[zone.id] = getZoneState(zone.id, zoneProgress);
     });
 
-    // First map load: just remember current states.
-    // Do not run an "unlock" animation.
-    if (!prevZoneStatesRef.current) {
-      prevZoneStatesRef.current = nextStates;
-
-      // One simple opening invitation for a brand-new journey
-      const symbolProgress = zoneProgress[ZONE_IDS.SYMBOL]?.completedScenes || 0;
-
-      if (symbolProgress === 0) {
-        speakMapVoEvents([
-          {
-            text: "Come — let's start at Modak Mountain.",
-            delay: 300
-          }
-        ]);
-      }
-
-      return;
-    }
-
-    ZONES_DATA.forEach(zone => {
-      const zoneId = zone.id;
-      const prevState = prevZoneStatesRef.current[zoneId];
-      const nextState = nextStates[zoneId];
-
-      // Only celebrate a genuinely newly available zone
-      if (prevState === 'locked' && nextState === 'active') {
-        setUnlockingZones(prev => ({
-          ...prev,
-          [zoneId]: 'normal'
-        }));
-
-        playUnlockChime('normal', !isSfxOn());
-
-        const line = MAP_ZONE_UNLOCK_VO[zoneId];
-
-        if (line) {
-          speakMapVoEvents([
-            {
-              text: line,
-              delay: 500
-            }
-          ]);
-        }
-
-        if (unlockTimersRef.current[zoneId]) {
-          clearTimeout(unlockTimersRef.current[zoneId]);
-        }
-
-        unlockTimersRef.current[zoneId] = setTimeout(() => {
-          setUnlockingZones(prev => {
-            const updated = { ...prev };
-            delete updated[zoneId];
-            return updated;
-          });
-
-          delete unlockTimersRef.current[zoneId];
-        }, 1400);
-      }
+    const profileId = localStorage.getItem('activeProfileId');
+    const firstLoad = !prevZoneStatesRef.current;
+    const unseenUnlock = UNLOCKABLE_JOURNEY_ZONE_IDS.find((zoneId) => {
+      const newlyAvailable = firstLoad || prevZoneStatesRef.current[zoneId] === 'locked';
+      return newlyAvailable && nextStates[zoneId] === 'active' &&
+        (!profileId || !readMapFlag(getMapUnlockSeenKey(profileId, zoneId)));
     });
 
+    if (unseenUnlock && !DEBUG_UNLOCK_ALL_ZONES) {
+      // Persist before scheduling the feedback so later map visits cannot repeat it.
+      if (profileId) writeMapFlag(getMapUnlockSeenKey(profileId, unseenUnlock));
+      setUnlockingZones(prev => ({ ...prev, [unseenUnlock]: 'normal' }));
+      playUnlockChime('normal', !isSfxOn());
+      speakMapVoEvents([{ text: MAP_ZONE_UNLOCK_VO[unseenUnlock], delay: 500 }]);
+      if (unlockTimersRef.current[unseenUnlock]) clearTimeout(unlockTimersRef.current[unseenUnlock]);
+      unlockTimersRef.current[unseenUnlock] = setTimeout(() => {
+        setUnlockingZones(prev => {
+          const updated = { ...prev };
+          delete updated[unseenUnlock];
+          return updated;
+        });
+        delete unlockTimersRef.current[unseenUnlock];
+      }, 1400);
+    } else if (firstLoad && !zoneProgress[ZONE_IDS.SYMBOL]?.hasStarted) {
+      speakMapVoEvents([{ text: "Come — let's start at Modak Mountain.", delay: 300 }]);
+    }
     prevZoneStatesRef.current = nextStates;
   }, [zoneProgress, isMuted, progressLoaded]);
 
@@ -1352,9 +1310,14 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         const sceneIds = getZoneSceneIds(zone.id);
         let completedScenes = 0;
         let totalStars = 0;
+        let hasStarted = !!profileId && (
+          readMapFlag(getZoneStartedKey(profileId, zone.id)) ||
+          !!localStorage.getItem(`gmb_active_scene_${profileId}_${zone.id}`)
+        );
         sceneIds.forEach(sceneId => {
           const progress = GameStateManager.getSceneProgress(zone.id, sceneId);
           if (progress?.completed) {
+            hasStarted = true;
             completedScenes++;
             totalStars += progress.stars || 0;
             return;
@@ -1362,8 +1325,11 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
           // Also check temp session — catches scenes completed before permanent save
           if (profileId) {
             const tempKey = `temp_session_${profileId}_${zone.id}_${sceneId}`;
+            const tempRaw = localStorage.getItem(tempKey);
+            const replayRaw = localStorage.getItem(`replay_session_${profileId}_${zone.id}_${sceneId}`);
+            if (tempRaw || replayRaw) hasStarted = true;
             try {
-              const tempState = JSON.parse(localStorage.getItem(tempKey) || 'null');
+              const tempState = JSON.parse(tempRaw || 'null');
               if (tempState) {
                 const isCompleteInTemp = (
                   tempState.completed === true ||
@@ -1379,6 +1345,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
           }
         });
         progressData[zone.id] = {
+          hasStarted,
           completedScenes,
           totalScenes: sceneIds.length,
           stars: totalStars,
@@ -1430,6 +1397,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       const firstScene = ZONE_FIRST_SCENES[zone.id];
       const profileId = localStorage.getItem('activeProfileId');
       if (profileId && firstScene) {
+        writeMapFlag(getZoneStartedKey(profileId, zone.id));
         localStorage.removeItem(`temp_session_${profileId}_${zone.id}_${firstScene}`);
         localStorage.removeItem(`replay_session_${profileId}_${zone.id}_${firstScene}`);
       }
@@ -1441,6 +1409,13 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   };
 
   const handleZoneClick = (zone, state) => {
+    if (zone.id === ZONE_IDS.SYMBOL) {
+      setFirstMapTapDone(true);
+      try {
+        const profileId = localStorage.getItem('activeProfileId');
+        localStorage.setItem(`gmb_map_first_tap_${profileId}`, 'done');
+      } catch { /* Keep the cue dismissed for this visit if storage is unavailable. */ }
+    }
     setPulsingLabelZoneId(zone.id);
     if (labelPulseTimerRef.current) clearTimeout(labelPulseTimerRef.current);
     labelPulseTimerRef.current = setTimeout(() => setPulsingLabelZoneId(null), 220);
@@ -1488,31 +1463,16 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         }}
         style={getZoneArtStyle('symbol', { pointerEvents: 'none' })}
       />
-      <img
-        src={zoneArtItems.river?.src || '/images/map/shlokariver-new.png'}
-        alt=""
-        className="map-zone-art map-zone-art-river"
-        aria-hidden="true"
-        style={getZoneArtStyle('river')}
-      />
-      {/* Bridges are hidden — the new shlokariver-falls.png art has bridges baked in.
-          Restore these if the river art is swapped back to a bridge-less asset. */}
-      {/*
-      <img
-        src="/images/map/bridge-new.webp"
-        alt=""
-        className="map-zone-art map-zone-art-bridge map-zone-art-bridge-1"
-        aria-hidden="true"
-        style={getZoneArtStyle('bridge1')}
-      />
-      <img
-        src="/images/map/bridge-new.webp"
-        alt=""
-        className="map-zone-art map-zone-art-bridge map-zone-art-bridge-2"
-        aria-hidden="true"
-        style={getZoneArtStyle('bridge2')}
-      />
-      */}
+      {['shlokaStream', 'shlokaWaterfall', 'shlokaBridge'].map((id) => (
+        <img
+          key={id}
+          src={zoneArtItems[id].src}
+          alt=""
+          className="map-zone-art"
+          aria-hidden="true"
+          style={getZoneArtStyle(id)}
+        />
+      ))}
       {/* Wonder Caves is temporarily hidden from the map. Keep this block for quick restore later.
       <img
         src="/images/map/cavelight.webp"
@@ -1670,6 +1630,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
           <div key={zone.id} className={`zone-group ${state === 'completed' ? 'zone-complete' : ''}`}>
             {/* Tap area */}
             <div
+              ref={isSymbolMountainZone ? firstMapTargetRef : undefined}
               className={`${layout.zoneClass} zone-state-${state} ${unlockClass} ${isSymbolMountainZone ? 'symbol-mountain-door' : ''}`.trim()}
               onClick={() => handleZoneClick(zone, state)}
               aria-disabled={isDisabled}
@@ -1717,6 +1678,12 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       })}
 
 
+      <IdleHint
+        isIdle={progressLoaded && !mapDebugMode && !firstMapTapDone &&
+          !zoneProgress[ZONE_IDS.SYMBOL]?.hasStarted}
+        targetRef={firstMapTargetRef}
+        gesturePosition="above"
+      />
       {/* Zone creatures — butterfly / bird for active zones */}
       {Object.entries(ZONE_CREATURES).map(([zoneId, creature]) => {
         const zState = getZoneState(zoneId, zoneProgress);

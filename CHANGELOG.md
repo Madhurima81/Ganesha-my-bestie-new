@@ -1,5 +1,17 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-15] - Map progression and editor fixes
+**Touched:** src/pages/CleanMapZone.jsx, src/pages/MapEditorFull.jsx, src/lib/components/zone/ZoneWelcome.jsx, public/images/map/shloka-*.png.
+**Bugs → solutions:**
+- Zones stayed available until a scene was completed → record actual scene entry and show in-progress immediately; browsing Zone Welcome does not start a zone. One launch helper handles Start, Continue and Play Again, preserving active-scene state.
+- Unlock feedback was skipped after returning to the map → persist River/Lodge unlock acknowledgement per profile and celebrate once, including after map remount.
+- Opening invitation repeated after starting Modak → check whether the zone has started, rather than zero completed scenes.
+- Future zones blocked Ganesha's final celebration → guidance and completion use only Modak → River → Lodge.
+- Map editor showed too many characters → retain five destination Ganesha positions, preview only the selected character, and hide unused Mooshika placeholders.
+- First-time users lacked a tap cue → show the pointing hand on Modak until the first tap, saved per profile; suppress it after the zone starts.
+**Layout:** split River, Waterfall and Bridge into independent editable pieces; applied supplied sizes, positions, rotations, title layout and 12 decoration defaults.
+**Verified:** JSX syntax and focused checks for progression, final celebration, launch modes, locked-scene guards and storage-failure handling. Full visual flow still needs browser testing.
+
 ## [2026-10-14] - Symbol Mountain Eyes voice hardening
 **Touched:** src/zones/symbol-mountain/scenes/tusk/EyesPopUpGame.jsx, src/dev/stillToTestChecklists.js.
 **Changed:** Eyes now uses the shared Web Speech start-watch helper and one local speech owner, with scene-log entries for request/start/end/cancel/drop, stale callback protection, hint-priority behavior, and `eyesSuccessDone` saved only after a real finished success line while mounted (>= ~1.5 s). Target-found checkpoints and animation beats are unchanged.
