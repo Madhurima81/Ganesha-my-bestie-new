@@ -13,6 +13,7 @@ import {
 
 import { sfx } from '../audio/sfx';
 import { ambience } from '../audio/ambience';
+import { createSpeechStartWatcher } from '../utils/speechStartWatch';
 
 // The audio toggle is a VOICE mute (see DECISIONS.md 2026-09-29, T55): when the
 // shared preference is off, ALL voice — guidance VO, hints, Sanskrit words and
@@ -89,6 +90,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
   // null for TTS, so hide/stop paths need this to cancel speech and detach its
   // onend/onerror before cancel() fires them (which would advance the phase).
   const ttsUtteranceRef = useRef(null);
+  const ttsStartWatcherRef = useRef(null);
   // The 2s tab-return replay timer. Must be cleared on stop/unmount so an old
   // scene's VO can't start over Zone Welcome after a quick Home tap.
   const replayTimeoutRef = useRef(null);
@@ -96,6 +98,15 @@ const useVoiceGuidance = (zoneId, sceneId, {
   // timer instead of audio, so its onEnded still fires once, on schedule.
   const silentTimersRef = useRef(new Set());
   const ttsTimingRef = useRef(null); // { at, ms } for the in-flight TTS utterance
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return undefined;
+    ttsStartWatcherRef.current = createSpeechStartWatcher({ speechSynthesis: window.speechSynthesis });
+    return () => {
+      ttsStartWatcherRef.current?.cancelPending();
+      ttsStartWatcherRef.current = null;
+    };
+  }, []);
 
   const clearSilentTimers = useCallback(() => {
     silentTimersRef.current.forEach((id) => clearTimeout(id));
@@ -194,42 +205,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
           voiceRef.current = null;
         }
 
-        const utterance = new SpeechSynthesisUtterance(ttsText);
-        utterance.lang = 'en-IN';
-        utterance.rate = 0.95;
-        utterance.pitch = 1;
-        utterance.volume = voiceVolumeRef.current;
-        attachSpeechCue(utterance, ttsText, cue);
-
-        let callbackFired = false;
-        const fireCallback = () => {
-          if (callbackFired) return;
-          callbackFired = true;
-          if (onEnded) onEnded();
-        };
-
-        const cleanupAndClear = () => {
-          if (ttsUtteranceRef.current === utterance) ttsUtteranceRef.current = null;
-          voiceRef.current = null;
-          activeVoiceKeyRef.current = null;
-          activeVoiceCallbackRef.current = null;
-          activeVoiceReplayRef.current = true;
-          activeVoiceTextOverrideRef.current = null;
-          activeVoiceStripLeadingTextRef.current = null;
-          setIsPlaying(false);
-          clearVoDuck();
-        };
-
-        utterance.onend = () => { cleanupAndClear(); fireCallback(); };
-        utterance.onerror = () => { cleanupAndClear(); fireCallback(); };
-
-        // Detach the previous utterance's handlers before cancel() so its
-        // onend/onerror can't fire the old callback on top of this one.
-        if (ttsUtteranceRef.current) {
-          ttsUtteranceRef.current.onend = null;
-          ttsUtteranceRef.current.onerror = null;
-        }
-        ttsUtteranceRef.current = utterance;
+        ttsStartWatcherRef.current?.cancelPending();
         voiceRef.current = null;
         activeVoiceKeyRef.current = key;
         activeVoiceCallbackRef.current = onEnded ?? null;
@@ -238,9 +214,39 @@ const useVoiceGuidance = (zoneId, sceneId, {
         activeVoiceStripLeadingTextRef.current = stripLeadingText;
         setIsPlaying(true);
 
-        ttsTimingRef.current = { at: Date.now(), ms: estimateSpeechMs(utterance.text) };
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(utterance);
+        const utterance = ttsStartWatcherRef.current?.speak({
+          buildUtterance: () => {
+            const nextUtterance = new SpeechSynthesisUtterance(ttsText);
+            nextUtterance.lang = 'en-IN';
+            nextUtterance.rate = 0.95;
+            nextUtterance.pitch = 1;
+            nextUtterance.volume = voiceVolumeRef.current;
+            attachSpeechCue(nextUtterance, ttsText, cue);
+            let callbackFired = false;
+            const fireCallback = () => {
+              if (callbackFired) return;
+              callbackFired = true;
+              if (onEnded) onEnded();
+            };
+            const cleanupAndClear = () => {
+              if (ttsUtteranceRef.current === nextUtterance) ttsUtteranceRef.current = null;
+              voiceRef.current = null;
+              activeVoiceKeyRef.current = null;
+              activeVoiceCallbackRef.current = null;
+              activeVoiceReplayRef.current = true;
+              activeVoiceTextOverrideRef.current = null;
+              activeVoiceStripLeadingTextRef.current = null;
+              setIsPlaying(false);
+              clearVoDuck();
+            };
+            nextUtterance.onend = () => { cleanupAndClear(); fireCallback(); };
+            nextUtterance.onerror = () => { cleanupAndClear(); fireCallback(); };
+            return nextUtterance;
+          },
+          isStillCurrent: () => activeVoiceKeyRef.current === key,
+        });
+        ttsUtteranceRef.current = utterance;
+        ttsTimingRef.current = { at: Date.now(), ms: estimateSpeechMs(ttsText) };
         lastInteractionRef.current = Date.now();
         return;
       }
@@ -331,6 +337,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
   // Stop voice
   const stopVoice = useCallback(() => {
     clearSilentTimers();
+    ttsStartWatcherRef.current?.cancelPending();
     if (replayTimeoutRef.current) {
       clearTimeout(replayTimeoutRef.current);
       replayTimeoutRef.current = null;

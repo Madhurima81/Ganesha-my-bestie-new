@@ -108,6 +108,25 @@ describe('createSpeechStartWatcher', () => {
     expect(synth.spoken).toHaveLength(1);
   });
 
+  test('unmount mid-line invalidates the line and its pending retry', () => {
+    const synth = makeSpeechSynthesis();
+    const watcher = createSpeechStartWatcher({ speechSynthesis: synth, watchMs: 1400, retryDelayMs: 150 });
+    let endCount = 0;
+
+    watcher.speak({
+      buildUtterance: () => {
+        const u = new FakeUtterance('leaving');
+        u.onend = () => { endCount += 1; };
+        return u;
+      },
+    });
+    watcher.cancelPending();
+    jest.advanceTimersByTime(2000);
+
+    expect(synth.spoken).toHaveLength(1);
+    expect(endCount).toBe(0);
+  });
+
   test('replace prevents an older pending retry', () => {
     const synth = makeSpeechSynthesis();
     const watcher = createSpeechStartWatcher({ speechSynthesis: synth, watchMs: 1400, retryDelayMs: 150 });

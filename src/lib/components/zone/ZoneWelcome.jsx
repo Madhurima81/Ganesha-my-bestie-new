@@ -1,7 +1,7 @@
 // ZoneWelcome.jsx - Updated with Disney/PBS Unlock Detection System
 // Path: lib/components/zone/ZoneWelcome.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { isDevUnlockAll } from '../../utils/devUnlock';
 import './ZoneWelcome.css';
 import '../../styles/zone-themes.css';
@@ -14,6 +14,7 @@ import ProfileChip from '../navigation/ProfileChip';
 import ProfilePillBtn from '../shared/ProfilePillBtn';
 import { GANESHA_POSE_ASSETS } from '../../config/ganeshaUsageSystem';
 import { playUiTap } from '../../services/AudioService';
+import { createSpeechStartWatcher } from '../../utils/speechStartWatch';
 import {
   setActiveScene,
   getActiveScene,
@@ -245,6 +246,35 @@ const markZoneVoHeard = (kind) => {
   try { localStorage.setItem(_voKey(kind), '1'); } catch {}
 };
 
+const stopZoneEntryVoAudio = () => {
+  if (typeof document !== 'undefined') {
+    document.querySelectorAll('audio').forEach((audioEl) => {
+      if (audioEl.loop) return;
+      try {
+        audioEl.pause();
+        audioEl.currentTime = 0;
+      } catch {}
+    });
+  }
+  if (typeof window !== 'undefined') window.speechSynthesis?.cancel?.();
+};
+
+// Zone Welcome can mount immediately after a scene unmounts; stop the scene's
+// reveal narration before this screen's once-per-profile line is considered.
+useEffect(() => {
+  stopZoneEntryVoAudio();
+}, []);
+
+const zoneSpeechWatcherRef = useRef(null);
+useEffect(() => {
+  if (typeof window === 'undefined' || !window.speechSynthesis) return undefined;
+  zoneSpeechWatcherRef.current = createSpeechStartWatcher({ speechSynthesis: window.speechSynthesis });
+  return () => {
+    zoneSpeechWatcherRef.current?.cancelPending();
+    zoneSpeechWatcherRef.current = null;
+  };
+}, []);
+
 const speakZoneLine = (text) => {
   if (!text) return;
   if (typeof window === 'undefined') return;
@@ -252,15 +282,19 @@ const speakZoneLine = (text) => {
   const audioPreference = localStorage.getItem('ganesha_audio_enabled');
   const isAudioEnabled = audioPreference === null ? true : audioPreference === 'true';
   if (!isAudioEnabled) return;
-  window.speechSynthesis.cancel();
-  const u = new window.SpeechSynthesisUtterance(text);
-  u.rate = 1.02;
-  u.pitch = 1;
-  u.volume = 0.9;
-  const voices = window.speechSynthesis.getVoices?.() || [];
-  const indianVoice = voices.find(v => v.lang === 'en-IN');
-  if (indianVoice) u.voice = indianVoice;
-  window.speechSynthesis.speak(u);
+  zoneSpeechWatcherRef.current?.cancelPending();
+  zoneSpeechWatcherRef.current?.speak({
+    buildUtterance: () => {
+      const u = new window.SpeechSynthesisUtterance(text);
+      u.rate = 1.02;
+      u.pitch = 1;
+      u.volume = 0.9;
+      const voices = window.speechSynthesis.getVoices?.() || [];
+      const indianVoice = voices.find(v => v.lang === 'en-IN');
+      if (indianVoice) u.voice = indianVoice;
+      return u;
+    },
+  });
 };
 
 // 🎉 Zone completion confetti effect
