@@ -1,3 +1,57 @@
+# Re-check 2 (2026-10-15, HEAD d2451d8f)
+
+Read-only. Nothing pushed, committed or deployed by this check. Short on purpose: repeat the items marked **REPEAT** after the next commits.
+
+## Verdict
+- **Push local staging to origin/staging for a Netlify preview: GO.** No blockers found.
+- **Merge to prod: still NO-GO.** It needs the preview tests below, its own approval and a backup branch of prod first.
+
+## Blockers / cautions, ranked
+1. None that stop the push.
+2. **Uncommitted work is NOT in the push** (only commits are pushed): Pond conversion (`PondSceneSimplifiedV4.jsx`, +127/-41), `CleanMapZone.jsx`, `Namebirthdaygame.jsx`, `stillToTestChecklists.js`, screenshots. More than the three files you expected: Pond and the checklist are the rollout session's work in progress. The preview will not contain them. **REPEAT** after the rollout commits.
+3. Watchdog hooks (`useGuardedReveal`, `useFirstLineWatch`) are adopted only in Symbol scene 3 (70053dbf) and Modak (6e271982), and are untested by a human. Test them on the preview (steps 9-10).
+4. `public/sfx-bulk-tester.html:196` still says `out: "sfx-soft-wrong.wav"`. It is a recording helper page, not loaded by the app; harmless.
+5. Installed apps from before the PWA fix still get one broken first load on their first update (known, documented in KNOWN_PITFALLS 60).
+
+## What changed since the first run (f39f74c9..HEAD, 3 commits)
+| Commit | What |
+|---|---|
+| edebabc4 | map artwork and journey progression (`CleanMapZone.jsx`, images) |
+| 6e271982 | watchdog rollout step 2: `useGuardedReveal.js`, `useFirstLineWatch.js`, test, adopted in `NewModakSceneV7.jsx` |
+| d2451d8f | PWA update fix (13 files; `App.jsx` +3 lines) |
+`origin/staging..HEAD` = **236 commits**; `prod..HEAD` = **560**. 70053dbf (scene 3 watchdog) was already before f39f74c9.
+
+## Verified against the committed code (HEAD), not the report
+| Check | Result |
+|---|---|
+| `updateGuard.js` SAFE_VIEWS | PASS: `loading, landing, main-welcome, profile-welcome, profile-selector, map, zone-welcome`. No view that holds a game (scene, twg, forms, parent screens are busy). |
+| Images cache | PASS: `ganesha-images-v2` in `vite.config.js:107` and in the built `sw.js`. |
+| Old `sfx-soft-wrong.wav` | PASS: gone from `public/audio/sfx` and `sfx-role-mapping-2` (only `-2` exists, also in the build). Grep of `src/`, `public/`, `vite.config.js`, `netlify.toml`, `index.html`: only reference is the bulk-tester page above. |
+| Modak Play Again | PASS: `resetScene()` (NewModakSceneV7.jsx ~1427-1466) calls `resetReveals()` and `firstLineStartedRef.current.clear()`, plus the state reset. Human test still needed (preview step 9). |
+| Working tree needed for the build | PASS: build ran from a `git archive` of HEAD only. |
+| `npm run check:css` | PASS: exit 0; 23 differing-name clashes, 20 used (the accepted ~20 baseline); 3 dead keyframes. |
+| Jest: `useGuardedReveal.test.js`, `speechStartWatch.test.js` | PASS: 2 suites, 10 tests (jest-haste-map prints duplicate `fileMock` warnings from `.claude/worktrees`; noise only). |
+| Private build of HEAD (`--outDir ../rc-final`, alone) | PASS: `built in 5m 46s`, 2874+ modules, precache 16 entries (638.7 KiB), 1872 JS/CSS chunks (4.03 MB), main chunk 384 KB. Warnings: only the known set (5 duplicate keys in coReg/GuidedExperienceScene, `ganesha-small.png` / `mooshika-small.png`, Browserslist). No new warnings. |
+
+Reused unchanged from the first run: branch/backup table, asset case audit (0 mismatches), 1 MB+ file list, scene-by-scene test table (sections 2c-9 below), console sweep. **REPEAT** after Pond and later scenes: build, check:css, tests, and the changed-scene rows.
+
+## Preview steps (replaces section 10 below; "2nd deploy" = needs a second deploy)
+1. Push staging, open the preview URL in a clean Chrome profile (laptop, then iPad). Cold load to the welcome screen under 20 s.
+2. Open once, close, open again so the service worker is active. Play to the map. Expect no "Refresh" banner. (PWA list 1)
+3. **2nd deploy:** reload ONCE on the map. Expect the new version, or one automatic reload, or the purple Refresh banner. Never blank, never a red chunk error. (PWA list 2)
+4. **2nd deploy (or a 3rd):** be inside a scene while it deploys. Expect NO banner and NO reload during the scene. (PWA list 3)
+5. **2nd deploy:** leave to Zone Welcome or the map. Expect the banner; tap Refresh; the new build works in Modak and Shloka River with progress kept. (PWA list 4-5)
+6. **2nd deploy that changes a /public image:** the new image shows after the update. (PWA list 6)
+7. Pond wrong drop and Vakratunda bump: the new wooden tap (`sfx-soft-wrong-2.wav`). (PWA list 7)
+8. If "Tap to refresh" ever appears mid-scene, tap it; the app reloads and Continue works. (PWA list 8)
+9. Per scene: play through, then Play Again from the completion modal. Modak and Symbol scene 3: each reveal card appears once, no duplicate (watchdog).
+10. Per scene: tab switch ~10 s, F5, voice off then Continue, slow first load (the four never-run rows); then Nirvighnam "Next adventure" card (stall watchdog).
+Steps 3, 4, 5, 6 need a second deploy (do 3-5 with one extra push of any code change; 6 with a changed /public image). Steps 1, 2, 7-10 need only the first deploy. The service worker is off on localhost, so none of 2-8 can be tested locally.
+
+---
+
+# First run (2026-10-14, HEAD 07ee96fc). Sections below are kept as written; section 10 is superseded above.
+
 # Release readiness: staging -> prod (2026-10-14)
 
 Read-only pass. No source, config, CHANGELOG, DECISIONS or pitfalls were edited; nothing committed, merged, pushed or deployed.
