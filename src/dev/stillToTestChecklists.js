@@ -201,6 +201,7 @@ export const STILL_TO_TEST_CHECKLISTS = {
   'todo-suryakoti': list('Suryakoti + Samaprabha (Shloka River 2)', [
     { text: 'Samaprabha: tap the zone badge in the middle of a spoken line.', expect: 'Zone Welcome is silent - no line from Samaprabha carries on over it.' },
     { text: 'Suryakoti rub game: tap the zone badge in the middle of a spoken line.', expect: 'Zone Welcome is silent.' },
+    { text: 'During Suryakoti rubbing, wait for the nudge.', expect: '"Keep rubbing to bring back more light." plays once; the rub flow remains interactive.' },
     { text: 'Play Samaprabha normally without leaving (several clues).', expect: 'Hints and the next lines still arrive; nothing stalls (the voice fix must not break normal play).' },
     { text: 'Finish the Suryakoti rub in normal play and watch the bunny.', expect: 'The bunny hops, then the Suryakoti card appears (the old freeze is gone).' },
     { text: leave('Suryakoti card is showing.'), expect: 'Continue shows the Suryakoti card once, about 1 second after load. (If the card does not appear, note whether the checklist window had focus.)' },
@@ -214,6 +215,10 @@ export const STILL_TO_TEST_CHECKLISTS = {
     OPENING_VO_ROW,
     ZONE_WELCOME_ROW,
     PLAY_AGAIN_ROW('Suryakoti progress'),
+    { text: 'Finish Suryakoti and Samaprabha normally.', expect: 'Both reveal cards appear exactly once; no duplicate card or freeze.' },
+    { text: 'Leave during each reveal and tap Continue.', expect: 'The correct reveal card appears once after Continue; no overlapping or missing line.' },
+    { text: 'Switch tabs during each reveal.', expect: 'The card and line recover once; no duplicate card or freeze.' },
+    { text: 'Cold Continue into Samaprabha with 1, 2, 3, and 4 saved clues; repeat with each clue line unfinished where applicable.', expect: 'Only the exact saved-state line plays: branch/reeds/stump reveal where pending, then scene11_sama_resume only for states that own it; no intro or generic fallback.' },
   ]),
 
   'todo-nirvighnam': list('Nirvighnam + Kurumedeva (Shloka River 3)', [
@@ -223,9 +228,6 @@ export const STILL_TO_TEST_CHECKLISTS = {
     { text: leave('Nirvighnam: stone cleared.'), expect: 'The branch line is spoken (after about half a second), not silent and not the stone line.' },
     { text: 'Open Kurumedeva (after the Nirvighnam card) fresh, and again after a Continue.', expect: 'The Kurumedeva intro is spoken after a short pause; the game then works.' },
     { text: 'Open the scene and look at the syllable row (e.g. ma ha ka ya) in the top-left, under the zone badge.', expect: 'The row sits fully below the badge, not covered by it. Check an iPad size and a phone landscape size.' },
-    { text: 'Nirvighnam: clear the stone, branch and reeds, then leave during the swim / "nam" / the word / the success line, and tap Continue.', expect: 'The reeds show open and the turtle swims to the nest; you hear "nirvighnam" and the success line, then the Nirvighnam card, then Kurumedeva. The reeds are NOT replayed.' },
-    { text: 'Nirvighnam: after the reeds, wait until the success line has finished and the card shows, then leave and tap Continue.', expect: 'The card comes back once, then Kurumedeva (never the reeds).' },
-    { text: 'Nirvighnam: play stone, branch and reeds normally without leaving.', expect: 'Plays as before: swim, word, success line, card. Also re-check leaving after the stone and after the branch still resumes at the next obstacle.' },
     OPENING_VO_ROW,
     ZONE_WELCOME_ROW,
     PLAY_AGAIN_ROW('Nirvighnam / Kurumedeva progress'),

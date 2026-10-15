@@ -513,6 +513,8 @@ const VakratundaGroveContent = ({
       scene10_maha_drag_water: 'Drag the log into the water.',
       // Continue mid-raft: same text as voiceGuidance.js. It used the hook path (no start-watch, "started" logged at request) and went silent.
       scene10_maha_resume: 'Keep placing the logs on the raft.',
+      scene10_maha_next_log: 'Drag the next log.',
+      scene10_maha_keep_adding: 'Keep adding logs to the raft.',
       scene10_maha_place_here: 'Put the log here.',
       scene10_maha_success: 'Mahakaay! You made space so everyone could come along.',
     };
