@@ -20,6 +20,7 @@ const SceneCompletionCelebration = ({
   badgeImage = null,
   symbolData = {}, // { symbolId: { title, description } }
   nextSceneName = "Next Adventure",
+  primaryLabel = null,
   primaryAction = null, // NEW: { text, icon, onClick, subtext }
   onContinue,
   onReplay,
@@ -357,7 +358,7 @@ const SceneCompletionCelebration = ({
                     <ProfilePillBtn
                       onClick={() => {
                         if (isFinalScene) {
-                          handleContinueWithAnimation(() => handleAction(onHome || onContinue || handleExplore, false, true));
+                          handleContinueWithAnimation(() => handleAction((primaryLabel && onContinue) || onHome || onContinue || handleExplore, false, true));
                           return;
                         }
                         const currentZone = resolvedZoneId || GameStateManager.currentZone || 'symbol-mountain';
@@ -367,7 +368,7 @@ const SceneCompletionCelebration = ({
                         }
                         handleContinueWithAnimation(() => handleAction(onContinue, false, true));
                       }}
-                      label={isFinalScene ? 'Home' : 'Next Adventure'}
+                      label={primaryLabel || (isFinalScene ? 'Home' : 'Next Adventure')}
                       size="md"
                       fullWidth={true}
                       style={getProfilePillBtnStyle(resolvedZoneId)}

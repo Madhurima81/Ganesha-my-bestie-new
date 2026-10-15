@@ -832,7 +832,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     festivals_confirmed: `These are the festivals you chose.`,
     origin_card:      `Your places, languages, and celebrations can all be part of that connection.`,
     phase1_complete:  `You found some places connected to my story.`,
-    completion_screen: ``,
+    completion_screen: `I loved learning about you!`,
   };
 
   const activeProfile = GameStateManager.getCurrentProfile?.() || null;
@@ -2066,13 +2066,13 @@ const handleComplete = () => {
           childName={childName || 'Friend'}
           sceneId="my-indian-story"
           isFinalScene={true}
+          primaryLabel="See My Journey"
           discoveredSymbols={completionIcons}
           symbolImages={{
             'story-home': storyHouseIcon,
             'story-language': storyLanguageIcon,
             'story-festival': storyFestivalIcon
           }}
-          nextSceneName="Let's Be Friends"
           completionData={{
             completed: true,
             stars: 3,
@@ -2084,7 +2084,7 @@ const handleComplete = () => {
             stopVoice();
             SimpleSceneManager.clearCurrentScene();
             if (onComplete) onComplete(sceneId, { stars: 3, completed: true });
-            if (onNavigate) onNavigate('zone-welcome');
+            if (onNavigate) onNavigate('zones');
           }}
           onReplay={() => {
             SimpleSceneManager.setCurrentScene('about-me-hut', 'my-indian-story', false, false);
