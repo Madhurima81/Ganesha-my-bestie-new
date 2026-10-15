@@ -8,6 +8,11 @@ import useVoiceGuidance, { estimateSpeechMs } from '../../../../lib/hooks/useVoi
 import useSidebarPause from '../../../../lib/hooks/useSidebarPause';
 import { getLineCue } from '../../../../lib/config/content/voiceCues';
 import { attachSpeechCue, startCueTimer } from '../../../../lib/utils/speechCue';
+import createSpeechStartWatcher from '../../../../lib/utils/speechStartWatch';
+import useGuardedReveal from '../../../../lib/hooks/useGuardedReveal';
+import useFirstLineWatch from '../../../../lib/hooks/useFirstLineWatch';
+import SceneStallPrompt from '../../../../lib/components/feedback/SceneStallPrompt';
+import { logSceneEvent } from '../../../../lib/utils/sceneEventLog';
 import MessageManager from '../../../../lib/components/scenes/MessageManager';
 import InteractionManager from '../../../../lib/components/scenes/InteractionManager';
 import GameStateManager from '../../../../lib/services/GameStateManager';
@@ -185,11 +190,37 @@ const SuryakotiBankContent = ({
 
   const [showSparkle, setShowSparkle] = useState(null);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
+  const completionSavedRef = useRef(false);
   const [showMandala, setShowMandala] = useState(false);
   const [revealConfig, setRevealConfig] = useState(null);
   // Words whose reveal card has already been started. The live completion timer, the pending-phase effect and
   // the reload restore can all fire for the same word; only the first may show the card (and its chime/voice).
   const revealStartedRef = useRef(new Set());
+  const revealConfigRef = useRef(null);
+  revealConfigRef.current = revealConfig;
+  const firstLineStartedRef = useRef(new Set());
+  const firstLineArmIdRef = useRef(null);
+  const {
+    showRevealOnce,
+    markShown,
+    resetReveals,
+    expectReveal,
+    stall: revealStall,
+    resolveStall: resolveRevealStall,
+  } = useGuardedReveal({
+    sceneKey: 'suryakoti-bank',
+    getRevealConfig: () => revealConfigRef.current,
+    setRevealConfig,
+  });
+  const {
+    arm: armFirstLineWatch,
+    markStarted: markFirstLineStarted,
+    reset: resetFirstLineWatch,
+    stall: firstLineStall,
+    resolveStall: resolveFirstLineStall,
+  } = useFirstLineWatch({ sceneKey: 'suryakoti-bank' });
+  const stall = revealStall || firstLineStall;
+  const resolveStall = revealStall ? resolveRevealStall : resolveFirstLineStall;
   const [showTapSparkles, setShowTapSparkles] = useState(false);
   const [showWordStar, setShowWordStar] = useState(false);
   const fxBgRef = useRef(null);
@@ -268,8 +299,25 @@ const SuryakotiBankContent = ({
   });
 
   const { playUiTap, playChime } = useGameSounds();
+  const speechStartWatcherRef = useRef(null);
+  if (!speechStartWatcherRef.current && speechSynthRef.current) {
+    speechStartWatcherRef.current = createSpeechStartWatcher({
+      speechSynthesis: speechSynthRef.current,
+      onDropBeforeStart: ({ attempt }) => logSceneEvent('suryakoti-bank', 'speech:dropped-and-retried', { attempt, key: webSpeechRef.current?.key || null }),
+    });
+  }
+  const noteFirstLineStarted = useCallback(() => {
+    const id = firstLineArmIdRef.current;
+    if (!id) return;
+    firstLineStartedRef.current.add(id);
+    markFirstLineStarted(id);
+    firstLineArmIdRef.current = null;
+  }, [markFirstLineStarted]);
+  useEffect(() => () => speechStartWatcherRef.current?.cancelPending(), []);
 
   const stopWebSpeech = useCallback(() => {
+    if (webSpeechRef.current) logSceneEvent('suryakoti-bank', 'speech:cancelled-by-stop', { key: webSpeechRef.current.key || null });
+    speechStartWatcherRef.current?.cancelPending();
     try {
       speechSynthRef.current?.cancel();
     } catch {
@@ -295,8 +343,10 @@ const SuryakotiBankContent = ({
     }
   }, []);
 
-  const speakWebSpeech = useCallback((text, onEnded, onStart, cue) => {
+  const speakWebSpeech = useCallback((text, onEnded, onStart, cue, key = null) => {
+    logSceneEvent('suryakoti-bank', 'speech:requested', { key });
     if (!text) {
+      logSceneEvent('suryakoti-bank', 'speech:skipped-by-guard', { key, reason: 'empty-text' });
       onEnded?.();
       return;
     }
@@ -310,29 +360,39 @@ const SuryakotiBankContent = ({
     }
     const synth = speechSynthRef.current;
     if (!synth || typeof SpeechSynthesisUtterance === 'undefined') {
+      logSceneEvent('suryakoti-bank', 'speech:skipped-by-guard', { key, reason: 'speech-unavailable' });
       onEnded?.();
       return;
     }
     try {
       synth.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-IN';
-      utterance.rate = 0.95;
-      utterance.pitch = 1;
-      utterance.volume = 0.95;
-      utterance.onstart = () => onStart?.();
-      attachSpeechCue(utterance, text, cue); // hand appears exactly when the action word is spoken
-      const clearTracked = () => {
-        if (webSpeechRef.current?.utterance === utterance) webSpeechRef.current = null;
+      let finished = false;
+      const finish = () => {
+        if (finished) return;
+        finished = true;
+        webSpeechRef.current = null;
+        logSceneEvent('suryakoti-bank', 'speech:finished', { key });
+        onEnded?.();
       };
-      utterance.onend = () => { clearTracked(); onEnded?.(); };
-      utterance.onerror = () => { clearTracked(); onEnded?.(); };
-      webSpeechRef.current = { utterance, onEnded, at: Date.now(), ms: estimateSpeechMs(text) };
-      synth.speak(utterance);
+      speechStartWatcherRef.current?.speak({
+        buildUtterance: () => {
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'en-IN';
+          utterance.rate = 0.95;
+          utterance.pitch = 1;
+          utterance.volume = 0.95;
+          utterance.onstart = () => { logSceneEvent('suryakoti-bank', 'speech:started', { key }); noteFirstLineStarted(); onStart?.(); };
+          attachSpeechCue(utterance, text, cue);
+          utterance.onend = finish;
+          utterance.onerror = finish;
+          webSpeechRef.current = { utterance, onEnded: finish, key, at: Date.now(), ms: estimateSpeechMs(text) };
+          return utterance;
+        },
+      });
     } catch {
       onEnded?.();
     }
-  }, [playSilent]);
+  }, [noteFirstLineStarted, playSilent]);
 
   // Mute pressed mid-line: silence the utterance now but let its callback fire
   // once, when it would have finished, so mute never skips or stalls a step.
@@ -357,6 +417,7 @@ const SuryakotiBankContent = ({
       welcome: "The river is dark. Let’s bring back some light.",
       scene11_surya_intro: "Bunny can’t find home. Rub the glow to bring back the light.",
       scene11_surya_hint: "Keep rubbing.",
+      scene11_surya_keep_rubbing: "Keep rubbing to bring back more light.",
       surya_hint_rub: "Rub the glowing spot.",
       surya_hint_keep: "Keep rubbing.",
       surya_hint_almost: "Almost there!",
@@ -375,7 +436,7 @@ const SuryakotiBankContent = ({
       sceneComplete: 'You brought back the light and saw what was really there.',
     };
     if (webSpeechMap[key]) {
-      speakWebSpeech(stripLeadingSpeechText(webSpeechMap[key], options.stripLeadingText), onEnded, options.onStart, options.cue);
+      speakWebSpeech(stripLeadingSpeechText(webSpeechMap[key], options.stripLeadingText), onEnded, options.onStart, options.cue, key);
       return;
     }
     const script = getVoiceScript(zoneId, sceneId, key);
@@ -464,6 +525,8 @@ const SuryakotiBankContent = ({
   }, []);
 
   const persistCompletion = useCallback(() => {
+    if (completionSavedRef.current) return;
+    completionSavedRef.current = true;
     const profileId = localStorage.getItem('activeProfileId');
     if (!profileId) return;
 
@@ -526,6 +589,13 @@ const SuryakotiBankContent = ({
     const cleanup = () => window.clearTimeout(restoreTimer);
 
     const restoreReveal = (word) => {
+      expectReveal(word, () => ({
+        symbolId: word,
+        symbolImage: powerConfig[word].image,
+        symbolName: getDiscoveryContent(zoneId, sceneId, word)?.title || powerConfig[word].name,
+        affirmation: getDiscoveryContent(zoneId, sceneId, word)?.affirmation || powerConfig[word].affirmation,
+        sidebarTarget: getSidebarTarget(word),
+      }), 'restore');
       restoreTimer = window.setTimeout(() => {
         hasRestoredRevealRef.current = true;
         if (revealStartedRef.current.has(word)) return;
@@ -533,13 +603,13 @@ const SuryakotiBankContent = ({
         const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
         playChime();
         setShowSparkle(null);
-        setRevealConfig({
+        showRevealOnce(word, {
           symbolId: word,
           symbolImage: powerConfig[word].image,
           symbolName: discoveryData?.title || powerConfig[word].name,
           affirmation: discoveryData?.affirmation || powerConfig[word].affirmation,
           sidebarTarget: getSidebarTarget(word)
-        });
+        }, 'restore');
       }, 1200);
     };
 
@@ -691,6 +761,22 @@ const SuryakotiBankContent = ({
   }, [isAudioOn, playGuidanceVoice, safeSetTimeout, sceneState?.phase, setCurrentPhase, startIdleTimer]);
 
   useEffect(() => {
+    if (!isReload || sceneState?.phase !== PHASES.SAMAPRABHA_GAME) return undefined;
+    const clues = Number(sceneState.cluesRevealed) || 0;
+    if (clues < 1 || clues >= 4 || sceneState.cluesVoDone === false) return undefined;
+    const id = `samaprabha:resume:${clues}`;
+    const startResume = () => {
+      if (firstLineStartedRef.current.has(id)) return;
+      firstLineStartedRef.current.add(id);
+      markFirstLineStarted(id);
+      playGuidanceVoice('scene11_sama_resume');
+    };
+    firstLineArmIdRef.current = id;
+    armFirstLineWatch({ id, recover: startResume });
+    return undefined;
+  }, [armFirstLineWatch, isReload, markFirstLineStarted, playGuidanceVoice, sceneState?.cluesRevealed, sceneState?.cluesVoDone, sceneState?.phase]);
+
+  useEffect(() => {
     if (sceneState?.phase !== PHASES.SAMAPRABHA_GAME) {
       samaIntroPlayedRef.current = false;
       samaInteractionStartedRef.current = false;
@@ -722,18 +808,26 @@ const SuryakotiBankContent = ({
         setShowSparkle(null);
         const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
         playChime();
-        setRevealConfig({
+        showRevealOnce(word, {
           symbolId: word,
           symbolImage: powerConfig[word].image,
           symbolName: discoveryData?.title || powerConfig[word].name,
           affirmation: discoveryData?.affirmation || powerConfig[word].affirmation,
           sidebarTarget: getSidebarTarget(word),
-        });
+        }, 'live');
 
         sceneActions.updateState({
           phase: word === 'suryakoti' ? PHASES.SURYAKOTI_POWER : PHASES.SAMAPRABHA_POWER,
         });
       };
+
+      expectReveal(word, () => ({
+        symbolId: word,
+        symbolImage: powerConfig[word].image,
+        symbolName: getDiscoveryContent(zoneId, sceneId, word)?.title || powerConfig[word].name,
+        affirmation: getDiscoveryContent(zoneId, sceneId, word)?.affirmation || powerConfig[word].affirmation,
+        sidebarTarget: getSidebarTarget(word),
+      }), 'live');
 
       safeSetTimeout(() => {
         triggerReveal();
@@ -766,19 +860,27 @@ const SuryakotiBankContent = ({
 
     if (!word) return undefined;
 
+    expectReveal(word, () => ({
+      symbolId: word,
+      symbolImage: powerConfig[word].image,
+      symbolName: getDiscoveryContent(zoneId, sceneId, word)?.title || powerConfig[word].name,
+      affirmation: getDiscoveryContent(zoneId, sceneId, word)?.affirmation || powerConfig[word].affirmation,
+      sidebarTarget: getSidebarTarget(word),
+    }), 'restore');
+
     const timer = window.setTimeout(() => {
       if (revealStartedRef.current.has(word)) return;
       revealStartedRef.current.add(word);
       const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
       playChime();
       setShowSparkle(null);
-      setRevealConfig({
+      showRevealOnce(word, {
         symbolId: word,
         symbolImage: powerConfig[word].image,
         symbolName: discoveryData?.title || powerConfig[word].name,
         affirmation: discoveryData?.affirmation || powerConfig[word].affirmation,
         sidebarTarget: getSidebarTarget(word),
-      });
+      }, 'restore');
 
       if (sceneState.phase === PHASES.SURYAKOTI_COMPLETE) {
         sceneActions.updateState({ phase: PHASES.SURYAKOTI_POWER });
@@ -912,8 +1014,9 @@ const SuryakotiBankContent = ({
                   </div>
                 )}
 
+                <SceneStallPrompt show={!!stall} onTap={resolveStall} />
                 {revealConfig && (
-                  <SymbolAutoReveal
+                    <SymbolAutoReveal
                     key={revealConfig.symbolId}
                     symbolId={revealConfig.symbolId}
                     symbolImage={revealConfig.symbolImage}
@@ -930,7 +1033,7 @@ const SuryakotiBankContent = ({
                     sidebarTargetRect={revealConfig.sidebarTarget}
                     zoneId={zoneId}
                     sceneId={sceneId}
-                    onComplete={() => handleRevealComplete(revealConfig.symbolId)}
+                    onComplete={() => { markShown(revealConfig.symbolId); handleRevealComplete(revealConfig.symbolId); }}
                   />
                 )}
 
@@ -1090,6 +1193,10 @@ const SuryakotiBankContent = ({
                 setShowMandala(false);
                 setRevealConfig(null);
                 revealStartedRef.current.clear();
+                resetReveals();
+                firstLineStartedRef.current.clear();
+                resetFirstLineWatch();
+                completionSavedRef.current = false;
                 setShowSparkle(null);
                 resetScene();
               }}

@@ -293,6 +293,10 @@ export default function SamaprabhaGame({
   const lastSyllableDoneRef = useRef(false);
   const completionVoStartedRef = useRef(false);
   const completionFinishedRef = useRef(false);
+  // The completion VO (word + success line) must never start once the game is inactive: finishing flips isActive off,
+  // the reset effect clears the flags, and a still-'done' render would announce completion a second time (KNOWN_PITFALLS 63).
+  const isActiveRef = useRef(isActive);
+  isActiveRef.current = isActive;
   const sylEndFallbackRef = useRef(null);
   const voFallbackRef = useRef(null);
   const pendingRevealIndexRef = useRef(null);
@@ -733,6 +737,7 @@ export default function SamaprabhaGame({
 
   const startCompletionVo = useCallback(() => {
     if (
+      !isActiveRef.current ||
       completionVoStartedRef.current ||
       !lastSyllableDoneRef.current ||
       !doneAnnouncedRef.current
@@ -778,7 +783,7 @@ export default function SamaprabhaGame({
   }, [cancelPausable, pausableAfter, playSceneLine, playWord]);
 
   useEffect(() => {
-    if (phase !== 'done' || doneAnnouncedRef.current) return;
+    if (!isActiveRef.current || phase !== 'done' || doneAnnouncedRef.current) return;
 
     doneAnnouncedRef.current = true;
     sylEndFallbackRef.current = pausableAfter(1700, () => {
