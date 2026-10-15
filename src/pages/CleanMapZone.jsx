@@ -1,7 +1,7 @@
 // CleanMapZone.jsx - Clean map with zone states (locked/active/in-progress/completed)
 import React, { useState, useEffect, useRef } from 'react';
 import './CleanMapZone.css';
-import IdleHint from '../lib/components/idle/IdleHint';
+import GestureDemo from '../lib/components/feedback/GestureDemo';
 import GameStateManager from '../lib/services/GameStateManager';
 import { GANESHA_POSE_ASSETS } from '../lib/config/ganeshaUsageSystem';
 import { isSfxOn } from '../lib/utils/soundPrefs';
@@ -972,7 +972,6 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   // const [showZoneModal, setShowZoneModal] = useState(false); // removed — no preview modal
   const [activeProfile, setActiveProfile] = useState(null);
   const [unlockingZones, setUnlockingZones] = useState({});
-  const firstMapTargetRef = useRef(null);
   const [firstMapTapDone, setFirstMapTapDone] = useState(() => {
     try {
       const profileId = localStorage.getItem('activeProfileId');
@@ -1363,6 +1362,16 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   };
 
   const mapGaneshaState = getMapGaneshaState(zoneProgress, unlockingZones, responsiveOverlayItems);
+  const showFirstMapGuide = progressLoaded && !mapDebugMode && !firstMapTapDone &&
+    !zoneProgress[ZONE_IDS.SYMBOL]?.hasStarted &&
+    (zoneProgress[ZONE_IDS.SYMBOL]?.completedScenes || 0) === 0 &&
+    getZoneState(ZONE_IDS.SYMBOL, zoneProgress) === 'active';
+  const firstMapArtStyle = getZoneArtStyle('symbol');
+  const guideArt = { ...zoneArtItems.symbol, ...(isPhoneLandscape ? PHONE_MAP_ZONE_ART.symbol : {}) };
+  const firstMapGuidePoint = {
+    x: guideArt.centered ? guideArt.left : guideArt.left + guideArt.w / 2,
+    y: guideArt.centered ? guideArt.top : guideArt.top + guideArt.h / 2,
+  };
 
   useEffect(() => {
     const newPos = JSON.stringify(mapGaneshaState.position);
@@ -1447,6 +1456,16 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         alt="Map"
         className="map-bg-img"
       />
+      {showFirstMapGuide && (
+        <img
+          src="/images/map/modakmtn-shell.webp"
+          alt=""
+          aria-hidden="true"
+          className="map-zone-art"
+          style={{ ...firstMapArtStyle, zIndex: 8, opacity: 1,
+            filter: 'drop-shadow(0 0 14px #fff6a0) drop-shadow(0 0 28px #ffe66b)' }}
+        />
+      )}
       <img
         src="/images/map/modakmtn-shell.webp"
         alt=""
@@ -1630,7 +1649,6 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
           <div key={zone.id} className={`zone-group ${state === 'completed' ? 'zone-complete' : ''}`}>
             {/* Tap area */}
             <div
-              ref={isSymbolMountainZone ? firstMapTargetRef : undefined}
               className={`${layout.zoneClass} zone-state-${state} ${unlockClass} ${isSymbolMountainZone ? 'symbol-mountain-door' : ''}`.trim()}
               onClick={() => handleZoneClick(zone, state)}
               aria-disabled={isDisabled}
@@ -1678,11 +1696,13 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       })}
 
 
-      <IdleHint
-        isIdle={progressLoaded && !mapDebugMode && !firstMapTapDone &&
-          !zoneProgress[ZONE_IDS.SYMBOL]?.hasStarted}
-        targetRef={firstMapTargetRef}
-        gesturePosition="above"
+      <GestureDemo
+        type="tap"
+        active={showFirstMapGuide}
+        from={firstMapGuidePoint}
+        to={firstMapGuidePoint}
+        idleDelay={500}
+        anchor="fingertip"
       />
       {/* Zone creatures — butterfly / bird for active zones */}
       {Object.entries(ZONE_CREATURES).map(([zoneId, creature]) => {
