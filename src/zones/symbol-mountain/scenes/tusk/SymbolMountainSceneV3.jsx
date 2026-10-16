@@ -71,7 +71,7 @@ import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal
 import { logSceneEvent } from '../../../../lib/utils/sceneEventLog';
 
 // Images
-import mountainBackground from '../tusk/assets/images/eyes-game/symbol_mountain_3_bg.webp';
+import mountainBackground from './assets/images-opt/margin35/eyes-game/symbol_mountain_3_bg.webp';
 import ganeshaCharacter from './assets/images/ganesha-character.webp';
 
 // Symbol Icons
@@ -201,7 +201,6 @@ const SymbolMountainSceneV3 = ({
 
 const SCENE_IMAGES = [
   mountainBackground,
-  ganeshaCharacter,
   symbolEyesColored,
   symbolEarColored,
   symbolTuskColored,

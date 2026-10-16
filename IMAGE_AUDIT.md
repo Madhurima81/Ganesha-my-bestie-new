@@ -526,3 +526,127 @@ Always start with Scene 01 (NewModakSceneV7) as benchmark.
 | Shloka River | |
 | Festival Square | |
 | About Me Hut | |
+
+---
+
+## Scene 3 — Phase 2 candidates, 2026-10-15
+
+**Status: awaiting Madhurima's comparison-page approval. Imports/preloads have not changed.**
+
+22 new scene-local files in src/zones/symbol-mountain/scenes/tusk/assets/images-opt/, preserving relative subfolders. Original PNG cow_happy_chewing_new.png becomes a .webp candidate. Sharp q85, alphaQuality 100, backgrounds unchanged at 1448×1086. Resize only when source width >2× the DPR2 display target (source >4× CSS width at the audited 1024×768 stage); retain DPR2 plus 20% pulse margin. Originals verified by SHA-256.
+
+| Budget | Before MB | Candidate MB |
+|---|---:|---:|
+| 22 converted scene-local images | 14.092 | 0.622 |
+| All 48 directly referenced scene image paths | 18.107 | 4.637 if every candidate is approved and wired |
+| Current application's actual source budget | 18.107 | 18.107 (no imports switched) |
+
+| Scene-local heavy image | Original KB / pixels | Candidate KB / pixels | Worst SSIM / PSNR | Gate |
+|---|---:|---:|---|---|
+| eyes-game/symbol_mountain_3_bg.webp | 1124.6 / 1448×1086 | 67.9 / 1448×1086 | 0.9710 / 39.96 dB | REVIEW |
+| eyes-game-v2/monkey_hungry_worried.webp | 644.8 / 1254×1254 | 13.2 / 260×260 | 0.9866 / 34.40 dB | REVIEW |
+| eyes-game-v2/peacock_worried_missing_feather.webp | 718.0 / 1254×1254 | 31.0 / 406×406 | 0.9662 / 32.11 dB | REVIEW |
+| eyes-game/peacock_04_feather_highlight.webp | 861.0 / 1254×1254 | 32.4 / 406×406 | 0.9562 / 30.87 dB | REVIEW |
+| eyes-game-v2/new_feather_bush.webp | 764.2 / 1448×1086 | 33.9 / 504×378 | 0.9383 / 34.84 dB | REVIEW |
+| eyes-game-v2/new_mango_bush.webp | 801.6 / 1448×1086 | 33.4 / 504×378 | 0.9424 / 33.40 dB | REVIEW |
+| eyes-game-v2/peacock_feather_single.webp | 352.1 / 1254×1254 | 9.0 / 242×242 | 0.9846 / 34.02 dB | REVIEW |
+| eyes-game/mango.webp | 496.6 / 1303×1207 | 4.7 / 148×137 | 0.9652 / 34.32 dB | REVIEW |
+| eyes-game-v2/yellow_flower_cluster.webp | 598.9 / 1254×1254 | 12.7 / 234×234 | 0.9481 / 33.23 dB | REVIEW |
+| ears-game-v2/leafy_bush.webp | 717.6 / 1254×1254 | 38.7 / 590×590 | 0.9669 / 37.87 dB | REVIEW |
+| ears-game-v2/hidden_spring.webp | 1012.1 / 1536×1024 | 43.3 / 590×393 | 0.9489 / 33.24 dB | REVIEW |
+| ears-game-v2/revealed_spring.webp | 606.6 / 1254×1254 | 36.5 / 590×590 | 0.9785 / 37.09 dB | REVIEW |
+| ears-game-v2/hidden_grass_bush.webp | 489.9 / 1254×1254 | 30.7 / 590×590 | 0.9828 / 41.42 dB | pass |
+| ears-game-v2/revealed_grass_bush.webp | 699.6 / 1254×1254 | 42.0 / 590×590 | 0.9713 / 37.53 dB | REVIEW |
+| ears-game-v2/elephant_thirsty.webp | 509.7 / 1254×1254 | 26.0 / 518×518 | 0.9927 / 40.34 dB | pass |
+| ears-game-v2/elephant_drinking.webp | 525.2 / 1254×1254 | 24.0 / 518×518 | 0.9918 / 40.25 dB | pass |
+| ears-game-v2/elephant_happy_water.webp | 417.5 / 1254×1254 | 24.8 / 518×518 | 0.9935 / 40.71 dB | pass |
+| ears-game-v2/cow_tired.webp | 529.8 / 1254×1254 | 24.5 / 462×462 | 0.9906 / 38.82 dB | pass |
+| ears-game-v2/cow_hungry.webp | 519.1 / 1254×1254 | 25.2 / 462×462 | 0.9913 / 38.56 dB | pass |
+| ears-game-v2/cow_happy_chewing_new.png | 1432.9 / 1536×1024 | 25.5 / 462×308 | 0.9888 / 36.55 dB | REVIEW |
+
+Metric gate: SSIM ≥0.98, PSNR ≥38 dB; measured on white/black RGB composites at both CSS and DPR2 display sizes, worst score shown. SSIM uses 8×8 uniform windows per color channel (not MS-SSIM); RGB PSNR. Partial-alpha edge RGB MAE limit 5/255; alpha-plane MAE limit 1/255. **15/22 require review**, sorted first in the comparison page. No candidate is automatically approved. Visual contact sheets covered every image at display size on light and dark backgrounds; no obvious new halos or strong background banding there. Peacock/feather detail softens at 3× zoom and remains flagged. Small text is not present in these converted images.
+
+[One Scene 3 comparison page — real-size, 3× zoom, background toggles](C:\Users\Madhurima Agarwal\.codex\visualizations\2026\10\15\01a13fc9-5ab2-7bd3-a288-d8dc8bd64318/Scene-3-Comparison.html)
+
+**Measured production baseline from Phase 1:** Slow 4G, cache disabled, 1024×768 DPR2: opening 20.844–21.532 s and 3.627–4.059 MB completed response bytes. A reliable fully drawn Eyes time was NOT obtained (strict retry timed out at 180 s); do not use the rejected 46.632 s Eyes sample as a baseline. No new production build or after-load result before visual approval/import switch. Before/after remeasurement must use the same corrected endpoint; neither speedup nor transferred-byte saving is claimed yet.
+
+**Left alone:** shared symbol WebPs, public/images PNGs/poses, sidebar/card art and tutorial hand need separate approval; already-small lossy Tusk images untouched. No hidden games mounted. No game logic, voice, timers, resume or Play Again changes. The unused 197 KB ganesha-character preload is a measured removal candidate, still unchanged. The old private sibling build was removed after checking running processes; its log moved out of the repo. No commit/push.
+
+**Rollout gate:** approve this page → image-import/preload-only changes after a fresh diff → one private production build at a time → remeasure → Madhurima tests/approves Scene 3 → short Phase 1 reports for Shloka Scene2 then Scene3 → review. Thereafter resume the remaining requested scene order (Scene1, Modak, four About Me Hut scenes, Pond, Sacred Assembly, Sarvakaryeshu, Finale). All 13 live scenes remain in scope; no other scene has been converted.
+
+
+---
+
+## Scene 3 — 35% DPR2-margin revision, 2026-10-15
+
+**Approval order: Background → Ears → Eyes. All groups pending; no import/preload changes.**
+
+New sprite candidates live under `src/zones/symbol-mountain/scenes/tusk/assets/images-opt/margin35/`. All originals, all 22 previous candidates, and the earlier comparison page are retained. Resized width = min(source width, even-round-up(1024-stage CSS width × DPR2 × 1.35)); no upscaling, q85, alphaQuality 100. Only previously eligible oversized sprites are resized; the 700×700 cow-eating image remains at that size. The 1448×1086 background candidate is copied byte-for-byte from the earlier candidate.
+
+| Approval group | Original MB | Previous candidate MB | New candidate MB | Review flags |
+|---|---:|---:|---:|---:|
+| Background | 1.125 | 0.068 | 0.068 | 1/1 |
+| Ears | 7.578 | 0.372 | 0.430 | 5/12 |
+| Eyes | 5.389 | 0.182 | 0.214 | 9/9 |
+| Total | 14.092 | 0.622 | 0.712 | 15/22 |
+
+Same gate: SSIM ≥0.98, PSNR ≥38 dB; white and black composites at CSS and DPR2 resolutions. This revision checks **both 1024- and 1366-pixel stages**, so its worst scores are stricter in scope than the prior 1024-only gate and are not directly comparable. Edge MAE threshold 5/255, alpha-plane MAE threshold 1/255. Flagged images appear first within each approval group. The page includes a 1024/1366 preview selector, 3× zoom, old/new sizes, and background toggles.
+
+[Revised grouped comparison page](C:\Users\Madhurima Agarwal\.codex\visualizations\2026\10\15\01a13fc9-5ab2-7bd3-a288-d8dc8bd64318\margin35/Scene-3-Comparison.html)
+
+| Sprite/background | Previous KB / pixels | Revised KB / pixels | Worst SSIM / PSNR | Gate |
+|---|---:|---:|---|---|
+| eyes-game/symbol_mountain_3_bg.webp | 67.9 / 1448×1086 | 67.9 / 1448×1086 | 0.9710 / 39.96 dB | REVIEW |
+| ears-game-v2/leafy_bush.webp | 38.7 / 590×590 | 44.9 / 664×664 | 0.9649 / 37.59 dB | REVIEW |
+| ears-game-v2/hidden_spring.webp | 43.3 / 590×393 | 51.4 / 664×443 | 0.9439 / 33.10 dB | REVIEW |
+| ears-game-v2/revealed_spring.webp | 36.5 / 590×590 | 42.6 / 664×664 | 0.9759 / 37.02 dB | REVIEW |
+| ears-game-v2/hidden_grass_bush.webp | 30.7 / 590×590 | 36.5 / 664×664 | 0.9824 / 41.55 dB | pass |
+| ears-game-v2/revealed_grass_bush.webp | 42.0 / 590×590 | 49.0 / 664×664 | 0.9693 / 37.12 dB | REVIEW |
+| ears-game-v2/elephant_thirsty.webp | 26.0 / 518×518 | 30.3 / 582×582 | 0.9911 / 39.45 dB | pass |
+| ears-game-v2/elephant_drinking.webp | 24.0 / 518×518 | 28.1 / 582×582 | 0.9909 / 39.72 dB | pass |
+| ears-game-v2/elephant_happy_water.webp | 24.8 / 518×518 | 29.3 / 582×582 | 0.9925 / 39.85 dB | pass |
+| ears-game-v2/cow_tired.webp | 24.5 / 462×462 | 28.6 / 520×520 | 0.9907 / 38.45 dB | pass |
+| ears-game-v2/cow_hungry.webp | 25.2 / 462×462 | 29.8 / 520×520 | 0.9906 / 38.24 dB | pass |
+| ears-game-v2/cow_eating_grass.webp | 30.4 / 700×700 | 30.4 / 700×700 | 0.9973 / 48.04 dB | pass |
+| ears-game-v2/cow_happy_chewing_new.png | 25.5 / 462×308 | 29.3 / 520×347 | 0.9851 / 34.34 dB | REVIEW |
+| eyes-game-v2/monkey_hungry_worried.webp | 13.2 / 260×260 | 15.4 / 292×292 | 0.9825 / 33.22 dB | REVIEW |
+| eyes-game-v2/peacock_worried_missing_feather.webp | 31.0 / 406×406 | 36.4 / 458×458 | 0.9615 / 31.88 dB | REVIEW |
+| eyes-game/monkey_04_smiles_holds_close.webp | 11.9 / 260×260 | 13.9 / 292×292 | 0.9870 / 35.81 dB | REVIEW |
+| eyes-game/peacock_04_feather_highlight.webp | 32.4 / 406×406 | 38.5 / 458×458 | 0.9502 / 30.74 dB | REVIEW |
+| eyes-game-v2/new_feather_bush.webp | 33.9 / 504×378 | 40.0 / 568×426 | 0.9381 / 34.50 dB | REVIEW |
+| eyes-game-v2/new_mango_bush.webp | 33.4 / 504×378 | 39.4 / 568×426 | 0.9392 / 33.22 dB | REVIEW |
+| eyes-game-v2/peacock_feather_single.webp | 9.0 / 242×242 | 10.6 / 274×274 | 0.9798 / 33.52 dB | REVIEW |
+| eyes-game/mango.webp | 4.7 / 148×137 | 5.3 / 166×154 | 0.9671 / 33.33 dB | REVIEW |
+| eyes-game-v2/yellow_flower_cluster.webp | 12.7 / 234×234 | 14.7 / 264×264 | 0.9428 / 32.79 dB | REVIEW |
+
+**Verification:** original and previous-candidate SHA-256 checks; alpha presence; display-size composites on light/dark at 1366; grouped page and stage/zoom/filter controls tested. Quality flags remain for visual review; no metric failure is treated as automatic approval. No application logic or shared artwork changed. No production rebuild or new load-time claim before the approved image imports are switched. Prior opening timing remains 20.844–21.532 s / 3.627–4.059 MB, with reliable fully drawn Eyes timing still pending.
+
+
+---
+
+## Scene 3 — approved margin35 images switched, 2026-10-16
+
+Madhurima approved all three groups: background, 12 Ears sprites and 9 Eyes sprites. **24 import lines across SymbolMountainSceneV3.jsx, EyesPopUpGame.jsx and EarsSoundMatchGame.jsx now use assets/images-opt/margin35/** (the same background is imported in all three). The Ears cow PNG import is now its approved WebP candidate. Removed ganeshaCharacter only from SCENE_IMAGES; retained its original import/ignored modal prop to keep the requested scope. No other preload changes.
+
+| Measure | Before | After |
+|---|---:|---:|
+| Approved 22-image subset (source bytes) | 14.092 MB | 0.712 MB |
+| 48 unique direct image references, including unused modal character | 18.107 MB | 4.728 MB |
+| Intentional scene artwork excluding removed unused preload | 18.107 MB before removal | 4.531 MB |
+| Opening endpoint, Slow 4G completed response bytes | 3.627–4.059 MB | 0.825–0.825 MB |
+| Opening endpoint time | 20.844–21.532 s | 6.771–7.300 s |
+
+Measurement repeats the Phase 1 production setup: 1024×768 DPR2; CDP cache disabled; service workers blocked; 1.6 Mbps down, 750 Kbps up, 562.5 ms latency. Profile welcome is loaded before the timed Continue Adventure click. Endpoint: opening modal DOM images complete, background decodes, two animation frames; response bytes are snapshotted after screenshot, exactly as in the Phase 1 script. Counts include completed-response headers/bytes and app background activity, not partial in-flight bodies. Local static server, uncompressed responses; synthetic profile, narration preference off. Whole working-tree build includes unrelated work from other sessions. This is a scene-entry comparison, not physical iPad Safari or a cold app boot.
+
+- run1: opening 6.771 s / 0.825 MB. A trustworthy fully drawn Eyes endpoint was not confirmed; see saved diagnostics.
+- run2: opening 7.300 s / 0.825 MB. A trustworthy fully drawn Eyes endpoint was not confirmed; see saved diagnostics.
+
+**Visual correction:** the legacy scripted opening checkpoint above is not a trustworthy fully drawn endpoint. Both new checkpoint screenshots still show incomplete art, despite the old readiness test returning. Therefore **do not interpret 6.771–7.300 s / 0.825–0.825 MB as fully drawn or compute a full-draw speedup from it**. The Phase 1 opening screenshots looked complete, but its identical scripted readiness criterion is now known to be weak.
+
+A separate strict pass on this same build required all four opening DOM images to be loaded, the actual overlay background URL to be present, and that state to hold for 2 s. It used CDP screenshot capture with DOM checks before and after (no auxiliary Image decodes or Playwright screenshot before timing). Result: **15.078 s / 2.805 MB**, and the screenshot confirms the complete opening screen. This endpoint was not recorded before the change, so a reliable fully drawn before/after comparison remains unavailable. Phase 1 also had no reliable fully drawn Eyes baseline, so no Eyes speedup is claimed. Neither opening run requested ganesha-character; removal of that unused preload is verified.
+
+Production render smoke checks (not spoken-intro or gameplay acceptance): eyes 9 images, all complete, 0 page errors; ears 6 images, all complete, 0 page errors.
+
+**Validation and limits:** scene diffs checked before editing; approved candidate/original hashes verified; exact scope comparison confirms non-import/non-preload source is unchanged. Live Tusk art/code and shared artwork untouched. One private Vite production build, no competing build found, 10-minute timeout, logs outside the repo; exit 0. Its sibling output is deleted after measurement. Original assets, previous candidates and comparison pages retained. No voice, timer, resume, Play Again, CSS or game-logic changes. No commit/push.
+
+**Pending Madhurima:** test Scene 3 on the existing dev server, Eyes and Ears intros first, then approve/commit. Only after she approves that test: short Phase 1 reports for Shloka Scene2 (Suryakoti/Samaprabha) and Scene3 (Nirvighnam/Kurumedeva), then stop for review.
