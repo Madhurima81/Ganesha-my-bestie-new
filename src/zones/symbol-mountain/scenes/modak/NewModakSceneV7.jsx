@@ -88,10 +88,10 @@ const mooshikaCalm = mooshikaTurned;
 import journeyFeather from './assets/images/journey-feather.webp';
 import journeyBerry from './assets/images/journey-berry.webp';
 import journeyAcorn from './assets/images/journey-acorn.webp';
-import emotionWorried from './assets/images/emotion-worried-game3.png';
-import emotionSad from './assets/images/emotion-sad-game3.png';
-import emotionAngry from './assets/images/emotion-angry-game3.png';
-import emotionHappy from './assets/images/emotion-happy-game3.png';
+import emotionWorried from './assets/images/emotion-worried-game3-opt.webp';
+import emotionSad from './assets/images/emotion-sad-game3-opt.webp';
+import emotionAngry from './assets/images/emotion-angry-game3-opt.webp';
+import emotionHappy from './assets/images/emotion-happy-game3-opt.webp';
 import ganeshaFeeding from './assets/images/ganesha-game3-new.webp';
 
 import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.webp';

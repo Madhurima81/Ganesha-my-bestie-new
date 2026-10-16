@@ -28,12 +28,12 @@ import marshArt from './assets/images/fj-mud-plain.webp';
 import marshClumpArt from './assets/images/fj-marsh-clump.webp';
 import flowerPink from './assets/images/fj-flower-coral.webp';
 import flowerCream from './assets/images/fj-flower-cream.webp';
-import emotionAngry from './assets/images/emotion-angry-game3.png';
-import emotionSad from './assets/images/emotion-sad-game3.png';
-import emotionWorried from './assets/images/emotion-worried-game3.png';
-import emotionPleased from './assets/images/emotion-pleased-game3.png';
-import emotionExcited from './assets/images/emotion-excited-game3.png';
-import emotionRelieved from './assets/images/emotion-relieved-game3.png';
+import emotionAngry from './assets/images/emotion-angry-game3-opt.webp';
+import emotionSad from './assets/images/emotion-sad-game3-opt.webp';
+import emotionWorried from './assets/images/emotion-worried-game3-opt.webp';
+import emotionPleased from './assets/images/emotion-pleased-game3-opt.webp';
+import emotionExcited from './assets/images/emotion-excited-game3-opt.webp';
+import emotionRelieved from './assets/images/emotion-relieved-game3-opt.webp';
 import ganeshaArt from './assets/images/ganesha-game3-new.webp';
 
 const PHASES = {
