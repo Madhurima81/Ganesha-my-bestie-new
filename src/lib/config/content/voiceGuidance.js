@@ -346,11 +346,20 @@ export const VOICE_SCRIPTS = {
       scene14_morning: {
         text: "Morning can be busy. What can help him listen?"
       },
+      scene14_morning_after: {
+        text: "The Ears helped him listen."
+      },
       scene14_afternoon: {
         text: "Things didn’t go his way. What can help him keep going?"
       },
+      scene14_afternoon_after: {
+        text: "The Big Belly helped him keep going."
+      },
       scene14_night: {
         text: "He kept trying and finished the puzzle. What can remind him of that happy feeling?"
+      },
+      scene14_night_after: {
+        text: "The Modak reminded him of joy."
       },
       scene14_find_symbol: {
         text: "Can you find the hidden symbol?"

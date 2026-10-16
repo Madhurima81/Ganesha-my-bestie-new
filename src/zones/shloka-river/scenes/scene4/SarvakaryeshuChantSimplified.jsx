@@ -26,6 +26,11 @@ import { getCollectionTarget } from '../../../../lib/utils/collectionTarget';
 import { SCENE_TO_OUTER_PETAL_ID } from '../../../../lib/components/navigation/ProgressPopup';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
+import useGuardedReveal from '../../../../lib/hooks/useGuardedReveal';
+import useFirstLineWatch from '../../../../lib/hooks/useFirstLineWatch';
+import createSpeechStartWatcher from '../../../../lib/utils/speechStartWatch';
+import { logSceneEvent } from '../../../../lib/utils/sceneEventLog';
+import SceneStallPrompt from '../../../../lib/components/feedback/SceneStallPrompt';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
 import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
 import ResumeCountdown from '../../../../lib/components/feedback/ResumeCountdown';
@@ -142,8 +147,10 @@ const SarvakaryeshuChantSimplified = ({
         welcomeShown: false,
         finalCardCollected: false,
         cardsDone: 0,
+        cardsVoDone: true,
         cardOrder: null,
         timesDone: 0,
+        timesVoDone: true,
         currentPopup: null,
         showingCompletionScreen: false,
         stars: 0,
@@ -185,6 +192,21 @@ const SarvakaryeshuChantContent = ({
   const [showMandala, setShowMandala] = useState(false);
   const [showPowerOverlay, setShowPowerOverlay] = useState(false);
   const [revealConfig, setRevealConfig] = useState(null);
+  const revealConfigRef = useRef(null);
+  revealConfigRef.current = revealConfig;
+  const firstLineArmIdRef = useRef(null);
+  const firstLineStartedRef = useRef(new Set());
+  const firstLineArmedRef = useRef(null);
+  const {
+    showRevealOnce, markShown, resetReveals, expectReveal,
+    stall: revealStall, resolveStall: resolveRevealStall,
+  } = useGuardedReveal({ sceneKey: 'sarvakaryeshu', getRevealConfig: () => revealConfigRef.current, setRevealConfig });
+  const {
+    arm: armFirstLineWatch, markStarted: markFirstLineStarted, reset: resetFirstLineWatch,
+    stall: firstLineStall, resolveStall: resolveFirstLineStall,
+  } = useFirstLineWatch({ sceneKey: 'sarvakaryeshu' });
+  const stall = revealStall || firstLineStall;
+  const resolveStall = revealStall ? resolveRevealStall : resolveFirstLineStall;
   const [showTapSparkles, setShowTapSparkles] = useState(false);
   const fxBgRef = useRef(null);
   const lastPointRef = useRef(null);
@@ -269,16 +291,37 @@ const SarvakaryeshuChantContent = ({
   const { playUiTap, playChime } = useGameSounds();
   const speechSynthRef = useRef(typeof window !== 'undefined' ? window.speechSynthesis : null);
   const webSpeechRef = useRef(null); // in-flight scene-owned utterance, for mute-mid-line
+  const speechStartWatcherRef = useRef(null);
   const guidanceVoiceActiveRef = useRef(false);
   const guidanceVoiceTimerRef = useRef(null);
   const lastGuidanceVoiceEndedAtRef = useRef(0);
   const sarvadaReplayKeyRef = useRef('scene14_intro');
 
   const stopWebSpeech = useCallback(() => {
+    if (webSpeechRef.current) logSceneEvent('sarvakaryeshu', 'speech:cancelled-by-stop', { key: webSpeechRef.current.key || null });
+    speechStartWatcherRef.current?.cancelPending();
     try {
       speechSynthRef.current?.cancel();
     } catch {}
   }, []);
+
+  const ensureSpeechStartWatcher = useCallback(() => {
+    if (!speechStartWatcherRef.current && speechSynthRef.current) {
+      speechStartWatcherRef.current = createSpeechStartWatcher({
+        speechSynthesis: speechSynthRef.current,
+        onDropBeforeStart: ({ attempt, utterance }) => logSceneEvent('sarvakaryeshu', 'speech:dropped-and-retried', { attempt, key: utterance?.__sceneKey || webSpeechRef.current?.key || null }),
+      });
+    }
+    return speechStartWatcherRef.current;
+  }, []);
+  const noteFirstLineStarted = useCallback(() => {
+    const id = firstLineArmIdRef.current;
+    if (!id) return;
+    firstLineStartedRef.current.add(id);
+    markFirstLineStarted(id);
+    firstLineArmIdRef.current = null;
+  }, [markFirstLineStarted]);
+  useEffect(() => () => speechStartWatcherRef.current?.cancelPending(), []);
 
   // LEAVING the scene (zone badge / back / unmount): stop the line AND detach its callbacks first.
   // A cancelled utterance fires onerror, whose handler runs onEnded and carries the voice chain on to the
@@ -305,8 +348,10 @@ const SarvakaryeshuChantContent = ({
     }
   }, []);
 
-  const speakWebSpeech = useCallback((text, onEnded) => {
+  const speakWebSpeech = useCallback((text, onEnded, key = null) => {
+    logSceneEvent('sarvakaryeshu', 'speech:requested', { key });
     if (!text) {
+      logSceneEvent('sarvakaryeshu', 'speech:skipped-by-guard', { key, reason: 'empty-text' });
       onEnded?.();
       return;
     }
@@ -318,27 +363,32 @@ const SarvakaryeshuChantContent = ({
     }
     const synth = speechSynthRef.current;
     if (!synth || typeof SpeechSynthesisUtterance === 'undefined') {
-      onEnded?.();
+      logSceneEvent('sarvakaryeshu', 'speech:skipped-by-guard', { key, reason: 'speech-unavailable' });
       return;
     }
     try {
+      const speechWatcher = ensureSpeechStartWatcher();
+      speechWatcher?.cancelPending();
       synth.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-IN';
-      utterance.rate = 0.95;
-      utterance.pitch = 1;
-      utterance.volume = 0.95;
-      const clearTracked = () => {
-        if (webSpeechRef.current?.utterance === utterance) webSpeechRef.current = null;
-      };
-      utterance.onend = () => { clearTracked(); onEnded?.(); };
-      utterance.onerror = () => { clearTracked(); onEnded?.(); };
-      webSpeechRef.current = { utterance, onEnded, at: Date.now(), ms: estimateSpeechMs(text) };
-      synth.speak(utterance);
+      let finished = false;
+      const finish = () => { if (finished) return; finished = true; webSpeechRef.current = null; logSceneEvent('sarvakaryeshu', 'speech:finished', { key }); onEnded?.(); };
+      speechWatcher?.speak({ buildUtterance: () => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.__sceneKey = key;
+        utterance.lang = 'en-IN'; utterance.rate = 0.95; utterance.pitch = 1; utterance.volume = 0.95;
+        utterance.onstart = () => { logSceneEvent('sarvakaryeshu', 'speech:started', { key }); noteFirstLineStarted(); };
+        utterance.onend = finish;
+        utterance.onerror = (event) => {
+          if (event && (event.error === 'canceled' || event.error === 'interrupted')) { finished = true; webSpeechRef.current = null; logSceneEvent('sarvakaryeshu', event.error === 'canceled' ? 'speech:cancelled-by-stop' : 'speech:skipped-by-guard', { key, reason: event.error }); return; }
+          finish();
+        };
+        webSpeechRef.current = { utterance, onEnded: finish, key, at: Date.now(), ms: estimateSpeechMs(text) };
+        return utterance;
+      }});
     } catch {
-      onEnded?.();
+      logSceneEvent('sarvakaryeshu', 'speech:skipped-by-guard', { key, reason: 'speech-exception' });
     }
-  }, [playSilent]);
+  }, [ensureSpeechStartWatcher, noteFirstLineStarted, playSilent]);
 
   // Mute pressed mid-line: silence the utterance now but let its callback fire
   // once, when it would have finished, so mute never skips or stalls a step.
@@ -374,13 +424,31 @@ const SarvakaryeshuChantContent = ({
       scene13_bike_after: "The Trunk helped him use strength, then gentleness.",
       scene13_grandma: "The crayon is broken. Which symbol can help?",
       scene13_grandma_after: "The Tusk reminded her that something broken can still help.",
+      scene13_hint_mooshika_1: "Which symbol can help him start small?",
+      scene13_hint_mooshika_2: "Think of a symbol that reminds us to begin with one small step.",
+      scene13_hint_mooshika_3: "Remember? Mooshika helps us start small.",
+      scene13_hint_trunk_1: "Which symbol helps us be strong and gentle?",
+      scene13_hint_trunk_2: "Think of a symbol that can be strong and gentle.",
+      scene13_hint_trunk_3: "Remember? The Trunk can be strong and gentle.",
+      scene13_hint_eyes_1: "Which symbol can help him focus?",
+      scene13_hint_eyes_2: "Think of the symbol that helps us notice what matters.",
+      scene13_hint_eyes_3: "Remember? The Eyes help us focus on what matters.",
+      scene13_hint_tusk_1: "Which symbol reminds us broken things can still help?",
+      scene13_hint_tusk_2: "Think of a symbol that shows something broken can still be useful.",
+      scene13_hint_tusk_3: "Remember? The Tusk can still help, even when it's broken.",
       welcome: "Let’s see where Ganesha is with you today.",
       scene13_success: "Sarvakaryeshu! You chose a Ganesha symbol for each task.",
       scene14_intro: "Morning, afternoon and night — let’s find Ganesha through your day.",
       scene14_morning: "Morning can be busy. What can help him listen?",
+      scene14_morning_after: "The Ears helped him listen.",
       scene14_afternoon: "Things didn’t go his way. What can help him keep going?",
+      scene14_afternoon_after: "The Big Belly helped him keep going.",
       scene14_night: "He kept trying and finished the puzzle. What can remind him of that happy feeling?",
+      scene14_night_after: "The Modak reminded him of joy.",
       scene14_find_symbol: "Can you find the hidden symbol?",
+      scene14_hint_morning_clue: "Think of the symbol that helps us listen.",
+      scene14_hint_afternoon_clue: "Think of the symbol that can hold lots of feelings.",
+      scene14_hint_night_clue: "Think of the sweet that reminds us of joy.",
       scene14_success: "You found Ganesha through the whole day.",
       sceneComplete: "From morning to night, Ganesha was with you.",
     };
@@ -392,7 +460,7 @@ const SarvakaryeshuChantContent = ({
     const startPlayback = () => {
       guidanceVoiceActiveRef.current = true;
       if (map[key]) {
-        speakWebSpeech(stripLeadingSpeechText(map[key], stripLeadingText), finishPlayback);
+        speakWebSpeech(stripLeadingSpeechText(map[key], stripLeadingText), finishPlayback, key);
         return;
       }
       playConfiguredVoice?.(key, finishPlayback, { replayOnReturn, stripLeadingText });
@@ -539,6 +607,7 @@ const SarvakaryeshuChantContent = ({
           unlockedApps: { ...appsNow, sarvakaryeshu: true },
           phase: PHASES.SARVADA_GAME,
           timesDone: 0,
+          timesVoDone: true,
         });
       }, 950);
     } else {
@@ -590,6 +659,35 @@ const SarvakaryeshuChantContent = ({
   }, [sceneState.phase, setCurrentPhase, startIdleTimer]);
 
   useEffect(() => {
+    if (!isReload) return undefined;
+    let id = null;
+    let key = null;
+    if (sceneState.phase === PHASES.SARVAKARYESHU_GAME) {
+      const cards = Number(sceneState.cardsDone || 0);
+      const afterPending = sceneState.cardsVoDone === false;
+      if (cards === 1) { id = 'sarvakaryeshu:resume:1'; key = afterPending ? 'scene13_puzzle_after' : 'scene13_sports'; }
+      if (cards === 2) { id = 'sarvakaryeshu:resume:2'; key = afterPending ? 'scene13_sports_after' : 'scene13_bike'; }
+      if (cards === 3) { id = 'sarvakaryeshu:resume:3'; key = afterPending ? 'scene13_bike_after' : 'scene13_grandma'; }
+    } else if (sceneState.phase === PHASES.SARVADA_GAME) {
+      const times = Number(sceneState.timesDone || 0);
+      const afterPending = sceneState.timesVoDone === false;
+      if (times === 1) { id = 'sarvada:resume:1'; key = afterPending ? 'scene14_morning_after' : 'scene14_afternoon'; }
+      if (times === 2) { id = 'sarvada:resume:2'; key = afterPending ? 'scene14_afternoon_after' : 'scene14_night'; }
+    }
+    if (!id || !key) return undefined;
+    if (firstLineArmedRef.current === id) return undefined;
+    firstLineArmedRef.current = id;
+    const recover = () => {
+      if (firstLineStartedRef.current.has(id)) return;
+      firstLineArmIdRef.current = id;
+      playGuidanceVoice(key);
+    };
+    firstLineArmIdRef.current = id;
+    armFirstLineWatch({ id, recover });
+    return undefined;
+  }, [armFirstLineWatch, isReload, playGuidanceVoice, sceneState.cardsDone, sceneState.cardsVoDone, sceneState.phase, sceneState.timesDone, sceneState.timesVoDone]);
+
+  useEffect(() => {
     if (
       sceneState.phase === PHASES.COMPLETE &&
       !showSparkle &&
@@ -614,18 +712,14 @@ const SarvakaryeshuChantContent = ({
     const cleanup = () => window.clearTimeout(restoreTimer);
 
     const restoreReveal = (word) => {
+      const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
+      const config = { symbolId: word, symbolImage: powerConfig[word].image, symbolName: discoveryData?.title || powerConfig[word].name, affirmation: discoveryData?.affirmation || powerConfig[word].affirmation, sidebarTarget: getSidebarTarget(word) };
+      expectReveal(word, config, 'restore');
       restoreTimer = window.setTimeout(() => {
         hasRestoredRevealRef.current = true;
-        const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
         playChime();
         setShowSparkle(null);
-        setRevealConfig({
-          symbolId: word,
-          symbolImage: powerConfig[word].image,
-          symbolName: discoveryData?.title || powerConfig[word].name,
-          affirmation: discoveryData?.affirmation || powerConfig[word].affirmation,
-          sidebarTarget: getSidebarTarget(word)
-        });
+        showRevealOnce(word, config, 'restore-timer');
       }, 1200);
     };
 
@@ -664,14 +758,9 @@ const SarvakaryeshuChantContent = ({
       if (revealTriggered) return;
       revealTriggered = true;
       const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
+      const config = { symbolId: word, symbolImage: powerConfig[word].image, symbolName: discoveryData?.title || powerConfig[word].name, affirmation: discoveryData?.affirmation || powerConfig[word].affirmation, sidebarTarget: getSidebarTarget(word) };
       playChime();
-      setRevealConfig({
-        symbolId: word,
-        symbolImage: powerConfig[word].image,
-        symbolName: discoveryData?.title || powerConfig[word].name,
-        affirmation: discoveryData?.affirmation || powerConfig[word].affirmation,
-        sidebarTarget: getSidebarTarget(word),
-      });
+      showRevealOnce(word, config, 'live-timer');
       sceneActions.updateState({
         phase: word === 'sarvakaryeshu' ? PHASES.SARVAKARYESHU_POWER : PHASES.SARVADA_POWER,
       });
@@ -680,6 +769,8 @@ const SarvakaryeshuChantContent = ({
     // The child mini-games already play the full word MP3 followed by their
     // success VO before calling onPhaseComplete. Do not replay that success
     // line here; just give the reveal a small breath after the game hands off.
+    const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
+    expectReveal(word, { symbolId: word, symbolImage: powerConfig[word].image, symbolName: discoveryData?.title || powerConfig[word].name, affirmation: discoveryData?.affirmation || powerConfig[word].affirmation, sidebarTarget: getSidebarTarget(word) }, 'live');
     window.setTimeout(() => triggerReveal(), isAudioOn ? 350 : 250);
   }, [
     sceneState,
@@ -691,6 +782,8 @@ const SarvakaryeshuChantContent = ({
     stopIdleTimer,
     setCurrentPhase,
     triggerMiniGesture,
+    expectReveal,
+    showRevealOnce,
   ]);
 
   const handleMicroWin = useCallback(() => {
@@ -739,9 +832,11 @@ const SarvakaryeshuChantContent = ({
                   hideElements={!!revealConfig || showPowerOverlay}
                   onMicroWin={handleMicroWin}
                   initialCards={sceneState.cardsDone || 0}
+                  initialCardsVoDone={sceneState.cardsVoDone !== false}
                   initialOrder={sceneState.cardOrder}
                   onOrderChosen={(o) => sceneActions.checkpoint({ cardOrder: o })}
-                  onBeatComplete={(n) => sceneActions.checkpoint({ cardsDone: n })}
+                  onBeatComplete={(n) => sceneActions.checkpoint({ cardsDone: n, cardsVoDone: false })}
+                  onCardsVoDone={() => sceneActions.checkpoint({ cardsVoDone: true })}
                   onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('sarvakaryeshu'), 0)}
                   onGameComplete={() => {}}
                   isPaused={isRecorderOpen || sidebarPause.isSidebarPaused}
@@ -760,7 +855,9 @@ const SarvakaryeshuChantContent = ({
                   hideElements={!!revealConfig || showPowerOverlay}
                   onMicroWin={handleMicroWin}
                   initialTimes={sceneState.timesDone || 0}
-                  onBeatComplete={(n) => sceneActions.checkpoint({ timesDone: n })}
+                  initialTimesVoDone={sceneState.timesVoDone !== false}
+                  onBeatComplete={(n) => sceneActions.checkpoint({ timesDone: n, timesVoDone: false })}
+                  onTimesVoDone={() => sceneActions.checkpoint({ timesVoDone: true })}
                   onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('sarvada'), 0)}
                   onGameComplete={() => {}}
                   onReplayKeyChange={handleSarvadaReplayKeyChange}
@@ -808,7 +905,7 @@ const SarvakaryeshuChantContent = ({
                     sidebarTargetRect={revealConfig.sidebarTarget}
                     zoneId={zoneId}
                     sceneId={sceneId}
-                    onComplete={() => handleRevealComplete(revealConfig.symbolId)}
+                    onComplete={() => { markShown(revealConfig.symbolId); handleRevealComplete(revealConfig.symbolId); }}
                   />
                 )}
 
@@ -912,6 +1009,7 @@ const SarvakaryeshuChantContent = ({
                     welcomeShown: true,
                     phase: PHASES.SARVAKARYESHU_GAME,
                     cardsDone: 0,
+                    cardsVoDone: true,
                     cardOrder: null,
                   });
                 }}
@@ -958,10 +1056,17 @@ const SarvakaryeshuChantContent = ({
                 setShowMandala(false);
                 setRevealConfig(null);
                 setShowSparkle(null);
+                resetFirstLineWatch();
+                resetReveals();
+                firstLineArmIdRef.current = null;
+                firstLineStartedRef.current.clear();
+                firstLineArmedRef.current = null;
                 resetScene();
               }}
               onContinue={() => { abortAllVoice(); onNavigate?.('scene-complete-continue'); }}
             />
+
+            <SceneStallPrompt show={!!stall} onTap={resolveStall} />
 
             {/* ProgressiveHintSystem disabled per request */}
           </div>

@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
 import useWarmSanskritAudio from '../../../../lib/hooks/useWarmSanskritAudio';
+import { logSceneEvent } from '../../../../lib/utils/sceneEventLog';
 import './SarvadaGame.css';
 
 import morningBg from './assets/images/sarvada/morning.webp';
@@ -22,6 +23,7 @@ import nightSceneImg from './assets/images/sarvada/night-scene.webp';
 const SYLLABLES = ['Sar', 'va', 'da'];
 const AUDIO = ['sar', 'va', 'da'];
 const PHASE_VO_KEYS = ['scene14_morning', 'scene14_afternoon', 'scene14_night'];
+const PHASE_AFTER_VO_KEYS = ['scene14_morning_after', 'scene14_afternoon_after', 'scene14_night_after'];
 const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
 
 const PHASES_CONFIG = [
@@ -91,8 +93,10 @@ export default function SarvadaGame({
   voiceGuidance = {},
   // Resume: times of day already found (0-2). Applied only when the game mounts active (Continue).
   initialTimes = 0,
+  initialTimesVoDone = true,
   // Fired with the finished count when the game moves on to the next time of day (checkpoint).
   onBeatComplete = () => {},
+  onTimesVoDone = () => {},
 }) {
   usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, stopVoice: stopSceneVoice, playWord, playSyllable, setBeat } = voiceGuidance;
@@ -101,7 +105,11 @@ export default function SarvadaGame({
     // PHASES_CONFIG.length = left after the last time of day: resume into the boat + word + success line.
     isActive ? Math.max(0, Math.min(PHASES_CONFIG.length, Number(initialTimes) || 0)) : 0
   ));
-  const [phaseIndex, setPhaseIndex] = useState(Math.min(seedTimes, PHASES_CONFIG.length - 1));
+  const [phaseIndex, setPhaseIndex] = useState(
+    seedTimes > 0 && seedTimes < PHASES_CONFIG.length && initialTimesVoDone === false
+      ? seedTimes - 1
+      : Math.min(seedTimes, PHASES_CONFIG.length - 1)
+  );
   const [showMemory, setShowMemory] = useState(false);
   const [litCount, setLitCount] = useState(seedTimes);
   const [gamePhase, setGamePhase] = useState('intro');
@@ -110,6 +118,7 @@ export default function SarvadaGame({
   // GMB Hint Standard v1: gates the ladder below until the "find the symbol"
   // VO (scene14_find_symbol) has actually finished, not just findMode flipping.
   const [findVoComplete, setFindVoComplete] = useState(true);
+  const [afterVoPlaying, setAfterVoPlaying] = useState(false);
   const [symbolFound, setSymbolFound] = useState(false);
   const [popOut, setPopOut] = useState(false);
   const [boatGaneshaVisible, setBoatGaneshaVisible] = useState(false);
@@ -133,6 +142,14 @@ export default function SarvadaGame({
   const timersRef = useRef([]);
   const doneCalledRef = useRef(false);
   const completeCalledRef = useRef(false);
+  const initialTimesVoDoneRef = useRef(initialTimesVoDone);
+  initialTimesVoDoneRef.current = initialTimesVoDone;
+  const onTimesVoDoneRef = useRef(onTimesVoDone);
+  onTimesVoDoneRef.current = onTimesVoDone;
+  const onBeatCompleteRef = useRef(onBeatComplete);
+  onBeatCompleteRef.current = onBeatComplete;
+  const isActiveRef = useRef(isActive);
+  isActiveRef.current = isActive;
   const lastSyllableDoneRef = useRef(true);
   const introPlayedRef = useRef(false);
   const runStartedRef = useRef(false);
@@ -144,7 +161,7 @@ export default function SarvadaGame({
   //   L2 (~25s) = broad glow off, exact ring on (no VO) and it stays until found
   // The hook may reach L3 at 40s; L2 and L3 render identically.
   const { hintLevel, markInteraction } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && findMode && findVoComplete && !symbolFound && !showDebugPanel,
+    enabled: isActive && !isPaused && findMode && findVoComplete && !symbolFound && !afterVoPlaying && !showDebugPanel,
     stageKey: isActive && findMode ? `find-${phaseIndex}` : null,
     initialDelay: 12000,
     pulseCountBeforeEscalation: 1,
@@ -165,7 +182,7 @@ export default function SarvadaGame({
       playSceneLine?.(hintVoiceKey, undefined, { replayOnReturn: false });
     }, 120);
     return () => window.clearTimeout(timerId);
-  }, [findMode, symbolFound, hintLevel, isActive, phaseIndex, playSceneLine]);
+  }, [findMode, symbolFound, hintLevel, isActive, phaseIndex, playSceneLine, afterVoPlaying]);
 
   // Pausable timers: while the sidebar is open (isPaused) every pending timer
   // is frozen with its remaining time, and resumes from there — so a reveal or
@@ -278,6 +295,7 @@ export default function SarvadaGame({
       setFlash(false);
       setFindMode(false);
       setSymbolFound(false);
+      setAfterVoPlaying(false);
       setPopOut(false);
       setFlySymbol(null);
       setBoatGaneshaVisible(false);
@@ -302,7 +320,45 @@ export default function SarvadaGame({
       introPlayedRef.current = true;
       setGamePhase('playing');
       runStartedRef.current = true;
-      if (seedTimes >= PHASES_CONFIG.length) runApiRef.current.runFinal();
+      // Includes the LAST time of day (seedTimes === PHASES_CONFIG.length): if its success line was cut off, show it
+      // finished, replay that line, and only then run the final sequence.
+      if (!initialTimesVoDoneRef.current && seedTimes <= PHASES_CONFIG.length) {
+        const afterKey = PHASE_AFTER_VO_KEYS[seedTimes - 1];
+        let finished = false;
+        const finishAfter = (voiceFinished = false) => {
+          if (finished) return;
+          finished = true;
+          if (voiceFinished) onTimesVoDoneRef.current?.();
+          // Same moves as the live advance: show the NEXT time of day's picture, then start its question.
+          setAfterVoPlaying(false);
+          if (seedTimes >= PHASES_CONFIG.length) {
+            runApiRef.current.runFinal();
+            return;
+          }
+          setPhaseIndex(seedTimes);
+          setGamePhase('playing');
+          runApiRef.current.startPhase(seedTimes);
+        };
+        setPhaseIndex(seedTimes - 1);
+        setShowMemory(true);
+        setLitCount(seedTimes);
+        setFindMode(false);
+        setSymbolFound(true);
+        setAfterVoPlaying(true);
+        // ~500 ms after mount: speech requested in the very first instant after a Continue mount is dropped
+        // (silent), which left this beat with no voice until the child tapped. Plain timer callback reads the
+        // latest playSceneLine from the ref.
+        safeAfter(500, () => {
+          runApiRef.current.playSceneLine?.(afterKey, () => {
+            setAfterVoPlaying(false);
+            safeAfter(2500, () => finishAfter(true));
+          });
+        });
+        safeAfter(8000, () => {
+          setAfterVoPlaying(false);
+          finishAfter();
+        });
+      } else if (seedTimes >= PHASES_CONFIG.length) runApiRef.current.runFinal();
       else runApiRef.current.startPhase(seedTimes);
       return () => { clearTimers(); runStartedRef.current = false; };
     }
@@ -346,6 +402,7 @@ export default function SarvadaGame({
   // Final beat (also when Continue resumes after the last time of day): Ganesha joins the boat, then the full
   // word "sarvada" -> closing line -> hand off.
   const runFinal = useCallback(() => {
+    if (!isActiveRef.current) return;
     setShowMemory(false);
     // Final beat: reveal Ganesha on the boat, then hand off to the shared
     // Sarvada completion reveal. The mini-game does not show its own word
@@ -363,10 +420,12 @@ export default function SarvadaGame({
       });
       safeAfter(3200, () => setBoatGaneshaCelebrating(false));
       safeAfter(3100, () => {
+        if (!isActiveRef.current) return;
         if (doneCalledRef.current) return;
         doneCalledRef.current = true;
 
         const finish = () => {
+          if (!isActiveRef.current) return;
           if (completeCalledRef.current) return;
           completeCalledRef.current = true;
           onGameComplete?.();
@@ -428,7 +487,7 @@ export default function SarvadaGame({
     window.setTimeout(() => onMicroWin?.(), 0);
     // Checkpoint at the find (not after the long reveal), so leaving mid-reveal resumes at the NEXT time of day;
     // after the last one it resumes into the ending.
-    onBeatComplete?.(phaseIndex + 1);
+    onBeatCompleteRef.current?.(phaseIndex + 1);
 
     // The syllable lights (and its audio fires via SyllableHighlight's
     // onSyllableLit) the moment the flying symbol reaches the tile — see
@@ -438,20 +497,38 @@ export default function SarvadaGame({
       setPopOut(false);
       setFlash(true);
       safeAfter(650, () => setFlash(false));
+      const nextIndex = phaseIndex + 1;
       setFindMode(false);
       setSymbolFound(false);
       lastHintVoiceKeyRef.current = null;
-
-      const nextIndex = phaseIndex + 1;
-
-      if (nextIndex >= PHASES_CONFIG.length) {
-        runFinal();
-      } else {
-        safeAfter(600, () => {
-          setPhaseIndex(nextIndex);
-          setGamePhase('playing');
-          startPhase(nextIndex);
+      let afterFinished = false;
+      const finishAfter = (voiceFinished = false) => {
+        if (afterFinished) return;
+        afterFinished = true;
+        if (voiceFinished) onTimesVoDoneRef.current?.();
+        setAfterVoPlaying(false);
+        safeAfter(2500, () => {
+          if (nextIndex >= PHASES_CONFIG.length) {
+            runFinal();
+          } else {
+            setPhaseIndex(nextIndex);
+            setGamePhase('playing');
+            startPhase(nextIndex);
+          }
         });
+      };
+      const startAfterLine = () => {
+        setAfterVoPlaying(true);
+        playSceneLine?.(PHASE_AFTER_VO_KEYS[phaseIndex], () => finishAfter(true));
+        safeAfter(7000, finishAfter);
+      };
+      if (lastSyllableDoneRef.current) startAfterLine();
+      else {
+        const waitForSyllable = () => {
+          if (lastSyllableDoneRef.current) startAfterLine();
+          else safeAfter(120, waitForSyllable);
+        };
+        waitForSyllable();
       }
     });
   }, [
@@ -468,7 +545,6 @@ export default function SarvadaGame({
     safeAfter,
     setBeat,
     startPhase,
-    onBeatComplete,
     runFinal,
   ]);
 
@@ -561,11 +637,14 @@ export default function SarvadaGame({
           onSyllableLit={(syllable) => {
             stopSceneVoice?.();
             lastSyllableDoneRef.current = false;
+            logSceneEvent('sarvada', 'syllable:started', { key: syllable });
             playSyllable?.(syllable, () => {
               lastSyllableDoneRef.current = true;
+              logSceneEvent('sarvada', 'syllable:finished', { key: syllable });
             });
-            safeAfter(1600, () => {
+            safeAfter(4500, () => {
               lastSyllableDoneRef.current = true;
+              logSceneEvent('sarvada', 'syllable:finished', { key: syllable, fallback: true });
             });
           }}
         />

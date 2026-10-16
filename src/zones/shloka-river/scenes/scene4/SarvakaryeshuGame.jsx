@@ -4,6 +4,7 @@ import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
 import useWarmSanskritAudio from '../../../../lib/hooks/useWarmSanskritAudio';
 import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
+import { logSceneEvent } from '../../../../lib/utils/sceneEventLog';
 import './SarvakaryeshuGame.css';
 
 import bgImg from './assets/images/sarvakaryeshu-bg.webp';
@@ -174,6 +175,8 @@ export default function SarvakaryeshuGame({
   onOrderChosen = () => {},
   // Fired with the finished-card count each time the game moves on to the next card (checkpoint).
   onBeatComplete = () => {},
+  initialCardsVoDone = true,
+  onCardsVoDone = () => {},
 }) {
   usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, playSyllable, playWord, stopVoice: stopSceneVoice } = voiceGuidance;
@@ -182,16 +185,23 @@ export default function SarvakaryeshuGame({
     // SITUATIONS.length = left after the last card: resume straight into the word + success line.
     isActive ? Math.max(0, Math.min(SITUATIONS.length, Number(initialCards) || 0)) : 0
   ));
+  // Fixed at mount: Continue after a correct answer whose success line did not finish. (Not recomputed from the prop,
+  // which flips when that line ends.)
+  const [resumeAfterPending] = useState(() => seedCards > 0 && seedCards <= SITUATIONS.length && initialCardsVoDone === false);
   const [order, setOrder] = useState(() => (isActive && isValidOrder(initialOrder) ? initialOrder : shuffleIds()));
   const [optionOrders, setOptionOrders] = useState(shuffleOptions);
   const cards = useMemo(() => order.map((id) => SITUATIONS.find((x) => x.id === id)), [order]);
-  const [cardIndex, setCardIndex] = useState(Math.min(seedCards, SITUATIONS.length - 1));
+  const [cardIndex, setCardIndex] = useState(
+    resumeAfterPending
+      ? seedCards - 1
+      : Math.min(seedCards, SITUATIONS.length - 1)
+  );
   const [picked, setPicked] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
-  const [showAfter, setShowAfter] = useState(seedCards >= SITUATIONS.length);
+  const [showAfter, setShowAfter] = useState(resumeAfterPending || seedCards >= SITUATIONS.length);
   const [canPick, setCanPick] = useState(false);
   const [litCount, setLitCount] = useState(seedCards);
-  const [phase, setPhase] = useState(seedCards >= SITUATIONS.length ? 'done' : 'play');
+  const [phase, setPhase] = useState(resumeAfterPending ? 'play' : (seedCards >= SITUATIONS.length ? 'done' : 'play'));
   const [guidanceMessage, setGuidanceMessage] = useState('');
   const [guidedPowerId, setGuidedPowerId] = useState(null);
   const [flyingPower, setFlyingPower] = useState(null);
@@ -202,6 +212,14 @@ export default function SarvakaryeshuGame({
   // Freezes with the sidebar and resumes with the remaining time (see hook).
   const { after: pausableAfter, cancel: cancelPausable, clear: clearPausable } = usePausableTimers(isPaused);
   const doneCalledRef = useRef(false);
+  const isActiveRef = useRef(isActive);
+  isActiveRef.current = isActive;
+  // Read through refs inside the card-start effect: an inline callback / a value that flips when a card is answered
+  // must NOT be effect dependencies, or every checkpoint re-runs the effect and the card restarts (KNOWN_PITFALLS: unstable deps).
+  const onCardsVoDoneRef = useRef(onCardsVoDone);
+  onCardsVoDoneRef.current = onCardsVoDone;
+  const initialCardsVoDoneRef = useRef(initialCardsVoDone);
+  initialCardsVoDoneRef.current = initialCardsVoDone;
   const phaseRef = useRef('play');
   const resolvingRef = useRef(false);
   const optionRefs = useRef({});
@@ -210,6 +228,8 @@ export default function SarvakaryeshuGame({
   const syllableWrapRef = useRef(null);
   const lastHintVoiceKeyRef = useRef(null);
   const lastSyllableDoneRef = useRef(true);
+  const resumeAfterStartedRef = useRef(false);
+  const runEndingRef = useRef(null);
   phaseRef.current = phase;
 
   const getRectCenter = (rect) => ({
@@ -292,6 +312,7 @@ export default function SarvakaryeshuGame({
       setActiveSyllableHit(null);
       lastHintVoiceKeyRef.current = null;
       doneCalledRef.current = false;
+      resumeAfterStartedRef.current = false;
       resolvingRef.current = false;
       phaseRef.current = 'play';
       return;
@@ -302,10 +323,43 @@ export default function SarvakaryeshuGame({
   useEffect(() => {
     if (!isActive || phase !== 'play') return undefined;
     const s = cards[cardIndex];
-    setShowAfter(false);
-    setCanPick(false);
-    setPicked(null);
-    setIsCorrect(null);
+    const previous = cards[seedCards - 1];
+    const replayPending = seedCards > 0 && seedCards <= SITUATIONS.length && !initialCardsVoDoneRef.current && previous && cardIndex === seedCards - 1;
+    // Declared here (not inside the if-block) because the timer callbacks below, outside the block, call it.
+    let finishReplay = null;
+    if (replayPending) {
+      setShowAfter(true);
+      setCanPick(false);
+      setPicked(previous.correct);
+      setIsCorrect(true);
+      setLitCount(seedCards);
+      setFlyingPower(null);
+      setImageHit(false);
+      setActiveSyllableHit(null);
+      finishReplay = () => {
+        if (seedCards >= SITUATIONS.length) {
+          window.setTimeout(() => runEndingRef.current?.(), 2500);
+          return;
+        }
+        setCardIndex(seedCards);
+        setShowAfter(false);
+        setCanPick(false);
+        setPicked(null);
+        setIsCorrect(null);
+        setGuidanceMessage('');
+        setGuidedPowerId(null);
+        setFlyingPower(null);
+        setImageHit(false);
+        setActiveSyllableHit(null);
+        lastHintVoiceKeyRef.current = null;
+        resolvingRef.current = false;
+      };
+    } else {
+      setShowAfter(false);
+      setCanPick(false);
+      setPicked(null);
+      setIsCorrect(null);
+    }
     setGuidanceMessage('');
     setGuidedPowerId(null);
     setFlyingPower(null);
@@ -322,12 +376,26 @@ export default function SarvakaryeshuGame({
 
     const t1 = pausableAfter(500, () => {
       if (cancelled) return;
-      // Choices are live while the setup VO speaks. A pick stops the VO in
-      // handlePick, matching the Symbol Mountain interaction rhythm.
-      setCanPick(true);
-      playSceneLine?.(s.voKeyBefore, () => {
-        if (!cancelled) setCanPick(true);
-      });
+      const startTaskLine = () => {
+        if (cancelled) return;
+        // Choices are live while the setup VO speaks. A pick stops the VO in
+        // handlePick, matching the Symbol Mountain interaction rhythm.
+        setCanPick(true);
+        playSceneLine?.(s.voKeyBefore, () => {
+          if (!cancelled) setCanPick(true);
+        });
+      };
+      if (!resumeAfterStartedRef.current && replayPending) {
+        resumeAfterStartedRef.current = true;
+        playSceneLine?.(previous.voKeyAfter, () => {
+          if (cancelled) return;
+          onCardsVoDoneRef.current?.();
+          addFallback(2500, finishReplay);
+        });
+        addFallback(7000, finishReplay);
+        return;
+      }
+      startTaskLine();
     });
 
     return () => {
@@ -335,12 +403,14 @@ export default function SarvakaryeshuGame({
       cancelPausable(t1);
       fallbacks.forEach(cancelPausable);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isActive, cardIndex, phase, playSceneLine, pausableAfter, cancelPausable]);
 
   useEffect(() => () => clearTimers(), [clearTimers]);
 
   // Ending: full word "sarvakaryeshu" -> the completion line -> hand off. Also used when Continue resumes after the last card.
   const runEnding = useCallback(() => {
+    if (!isActiveRef.current) return;
     if (doneCalledRef.current) return;
     doneCalledRef.current = true;
     setPhase('done');
@@ -375,10 +445,13 @@ export default function SarvakaryeshuGame({
       });
     });
   }, [cancelPausable, onGameComplete, onPhaseComplete, pausableAfter, playSceneLine, playWord, safeAfter, stopSceneVoice]);
+  runEndingRef.current = runEnding;
 
   // Continue after the last card: say the word + success line, then complete.
   useEffect(() => {
-    if (!isActive || seedCards < SITUATIONS.length) return undefined;
+    // When the last card's success line was cut off (resumeAfterPending), the replay effect above shows the finished
+    // card, plays that line and THEN runs the ending; starting the ending here as well ran it over the card after 500 ms.
+    if (!isActiveRef.current || seedCards < SITUATIONS.length || resumeAfterPending) return undefined;
     const t = window.setTimeout(runEnding, 500);
     return () => window.clearTimeout(t);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -447,11 +520,14 @@ export default function SarvakaryeshuGame({
       setLitCount(syllableIndex);
       stopSceneVoice?.();
       lastSyllableDoneRef.current = false;
+      logSceneEvent('sarvakaryeshu', 'syllable:started', { key: AUDIO[syllableIndex - 1] });
       playSyllable?.(AUDIO[syllableIndex - 1], () => {
         lastSyllableDoneRef.current = true;
+        logSceneEvent('sarvakaryeshu', 'syllable:finished', { key: AUDIO[syllableIndex - 1] });
       });
-      safeAfter(1600, () => {
+      safeAfter(4500, () => {
         lastSyllableDoneRef.current = true;
+        logSceneEvent('sarvakaryeshu', 'syllable:finished', { key: AUDIO[syllableIndex - 1], fallback: true });
       });
     });
 
@@ -505,6 +581,7 @@ export default function SarvakaryeshuGame({
     safeAfter(2700, () => {
       const playAfterLine = () => {
         playSceneLine?.(situation.voKeyAfter, () => {
+          onCardsVoDoneRef.current?.();
           safeAfter(2500, advance);
         });
       };
