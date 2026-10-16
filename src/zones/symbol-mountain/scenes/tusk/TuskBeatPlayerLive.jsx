@@ -5,26 +5,26 @@ import { getTuskNestFlow } from './tuskNestFlowSelect';
 import './TuskPathGame.css'; // reuse the existing stage/background sizing rules
 
 // Shared animal idle art (same source used by Eyes/Ears games)
-import monkeyIdle from './assets/images/monkey-new.webp';
-import cowIdle from './assets/images/cow-new.webp';
-import elephantIdle from './assets/images/elephant-new1.webp';
-import peacockIdle from './assets/images/peacock-new.webp';
-import bunnyHelping from './assets/images/tusk-nest/bunny-helping.webp';
+import monkeyIdle from './assets/images-opt/tusk-margin35/monkey-new.webp';
+import cowIdle from './assets/images-opt/tusk-margin35/cow-new.webp';
+import elephantIdle from './assets/images-opt/tusk-margin35/elephant-new1.webp';
+import peacockIdle from './assets/images-opt/tusk-margin35/peacock-new.webp';
+import bunnyHelping from './assets/images-opt/tusk-margin35/tusk-nest/bunny-helping.webp';
 import bgImg from './assets/images/tusk-giving/symbol_mountain_3_bg.webp';
 
 // Nest-rebuild items — the four imperfect-but-useful things each animal
 // keeps beside it, dragged into the nest one at a time.
-import brokenTwig from './assets/images/tusk-nest/broken-twig.webp';
-import grassBundle from './assets/images/tusk-nest/grass-bundle.webp';
-import tornLeaf from './assets/images/tusk-nest/leaf.webp';
-import bentFeather from './assets/images/tusk-nest/feather.webp';
-import nest0 from './assets/images/tusk-nest/nest-0.webp';
-import nest1 from './assets/images/tusk-nest/nest-1.webp';
-import nest2 from './assets/images/tusk-nest/nest-2.webp';
-import nest3 from './assets/images/tusk-nest/nest-3.webp';
-import nest4 from './assets/images/tusk-nest/nest-4.webp';
-import babyBirdSad from './assets/images/tusk-nest/baby-bird-sad.webp';
-import babyBirdHappy from './assets/images/tusk-nest/baby-bird-happy.webp';
+import brokenTwig from './assets/images-opt/tusk-margin35/tusk-nest/broken-twig.webp';
+import grassBundle from './assets/images-opt/tusk-margin35/tusk-nest/grass-bundle.webp';
+import tornLeaf from './assets/images-opt/tusk-margin35/tusk-nest/leaf.webp';
+import bentFeather from './assets/images-opt/tusk-margin35/tusk-nest/feather.webp';
+import nest0 from './assets/images-opt/tusk-margin35/tusk-nest/nest-0.webp';
+import nest1 from './assets/images-opt/tusk-margin35/tusk-nest/nest-1.webp';
+import nest2 from './assets/images-opt/tusk-margin35/tusk-nest/nest-2.webp';
+import nest3 from './assets/images-opt/tusk-margin35/tusk-nest/nest-3.webp';
+import nest4 from './assets/images-opt/tusk-margin35/tusk-nest/nest-4.webp';
+import babyBirdSad from './assets/images-opt/tusk-margin35/tusk-nest/baby-bird-sad.webp';
+import babyBirdHappy from './assets/images-opt/tusk-margin35/tusk-nest/baby-bird-happy.webp';
 
 const ASSET_MAP = {
   'monkey-idle': monkeyIdle,

@@ -650,3 +650,89 @@ Production render smoke checks (not spoken-intro or gameplay acceptance): eyes 9
 **Validation and limits:** scene diffs checked before editing; approved candidate/original hashes verified; exact scope comparison confirms non-import/non-preload source is unchanged. Live Tusk art/code and shared artwork untouched. One private Vite production build, no competing build found, 10-minute timeout, logs outside the repo; exit 0. Its sibling output is deleted after measurement. Original assets, previous candidates and comparison pages retained. No voice, timer, resume, Play Again, CSS or game-logic changes. No commit/push.
 
 **Pending Madhurima:** test Scene 3 on the existing dev server, Eyes and Ears intros first, then approve/commit. Only after she approves that test: short Phase 1 reports for Shloka Scene2 (Suryakoti/Samaprabha) and Scene3 (Nirvighnam/Kurumedeva), then stop for review.
+
+
+---
+
+## Tusk Phase 2b — comparison candidates, 2026-10-16
+
+**Status: STOPPED for Madhurima's comparison-page approval.** The approved Eyes/Ears image rollout is committed at f2f55be5; Madhurima reports Eyes works, art looks the same, loading is faster. No changes to those committed image files or scene code were made in this candidate step.
+
+| Live Tusk artwork | Before MB | Candidate MB | Current runtime MB |
+|---|---:|---:|---:|
+| 16 ASSET_MAP sprites | 2.190 | 0.313 | 2.190 |
+| Separate background (unchanged) | 0.060 | 0.060 | 0.060 |
+| Total | 2.251 | 0.373 if approved/wired | 2.251 |
+
+**Files added:** 16 WebPs under src/zones/symbol-mountain/scenes/tusk/assets/images-opt/tusk-margin35/ (preserving filenames/subfolders). Original ASSET_MAP entries were traced directly from TuskBeatPlayerLive.jsx, and maximum displayed widths were computed across all states in tuskNestFlow.json and tuskNestFlowPhone.json using BeatPlayerGame's item.w × item.scale/100 percent. Stage width is 1024 for iPad/desktop and up to 1023 for phone layout. Every source exceeds twice its DPR2 target, so all 16 qualify for resizing. Width = even-round-up(max CSS display width × 2 × 1.35), capped at original width; q85 lossy WebP, alphaQuality 100. Original and candidate WebP RIFF chunks verified lossy.
+
+**Background left alone:** assets/images/tusk-giving/symbol_mountain_3_bg.webp stays 60.1 KB, 1448×1086, same SHA-256. The child BeatPlayerGame still owns its existing 16-URL mount preload; no shared-engine changes.
+
+**Quality:** SSIM ≥0.98, RGB PSNR ≥38 dB; 8×8 uniform-window per-channel SSIM (not MS-SSIM), Lanczos3 display resampling. White/black composites at CSS and DPR2 resolutions on both 1024- and 1366-pixel stages; worst result shown. Partial-alpha edge RGB MAE ≤5/255, alpha MAE ≤1/255. **14/16 flagged**, first on the page. Cow and elephant pass; other candidates need visual review. Checked every sprite at real 1366-stage CSS size on white/black and zoomed peacock, feather, nest-4 and baby-bird faces. No obvious new solid halos at display size; feather barbs, bird outlines and nest texture soften at 3× and remain flagged. No text is present; no strong new gradient banding observed in the sprite shading. These observations do not replace Madhurima's approval.
+
+[One Tusk comparison page — real display sizes, 1024/1366 selector, 3× zoom, edge backgrounds](C:\Users\Madhurima Agarwal\.codex\visualizations\2026\10\15\01a13fc9-5ab2-7bd3-a288-d8dc8bd64318\tusk-phase2b/Tusk-Comparison.html)
+
+| Map key | Original KB / pixels | CSS width at base stage | Candidate KB / pixels | Worst SSIM / PSNR | Gate |
+|---|---:|---:|---:|---|---|
+| monkey-idle | 97.3 / 1000×1000 | 135.2 | 17.0 / 366×366 | 0.9876 / 36.54 dB | REVIEW |
+| cow-idle | 105.9 / 1000×1000 | 172.0 | 28.7 / 466×466 | 0.9908 / 39.15 dB | pass |
+| elephant-idle | 104.4 / 1000×1000 | 208.9 | 37.5 / 566×566 | 0.9915 / 41.35 dB | pass |
+| peacock-idle | 153.1 / 1000×1000 | 172.0 | 44.8 / 466×466 | 0.9607 / 34.32 dB | REVIEW |
+| bunny-helping | 130.9 / 1230×1278 | 123.9 | 18.0 / 336×349 | 0.9872 / 33.82 dB | REVIEW |
+| broken-twig | 62.4 / 1536×1024 | 57.3 | 2.5 / 156×104 | 0.9931 / 34.36 dB | REVIEW |
+| grass-bundle | 136.3 / 1254×1254 | 90.1 | 9.5 / 244×244 | 0.9842 / 33.54 dB | REVIEW |
+| leaf | 90.7 / 1254×1254 | 80.3 | 5.9 / 218×218 | 0.9758 / 35.68 dB | REVIEW |
+| feather | 193.7 / 1254×1254 | 45.9 | 5.0 / 124×124 | 0.9692 / 28.78 dB | REVIEW |
+| nest-0 | 157.4 / 1536×1024 | 159.7 | 20.0 / 432×288 | 0.9878 / 34.10 dB | REVIEW |
+| nest-1 | 156.7 / 1254×1254 | 159.7 | 24.6 / 432×432 | 0.9889 / 35.86 dB | REVIEW |
+| nest-2 | 169.4 / 1254×1254 | 159.7 | 27.1 / 432×432 | 0.9868 / 34.50 dB | REVIEW |
+| nest-3 | 186.0 / 1254×1254 | 159.7 | 30.6 / 432×432 | 0.9826 / 33.21 dB | REVIEW |
+| nest-4 | 206.2 / 1254×1254 | 159.7 | 33.4 / 432×432 | 0.9801 / 32.19 dB | REVIEW |
+| baby-bird-sad | 113.4 / 1254×1254 | 49.2 | 4.1 / 134×134 | 0.9755 / 31.11 dB | REVIEW |
+| baby-bird-happy | 126.8 / 1254×1254 | 44.2 | 4.1 / 120×120 | 0.9748 / 30.08 dB | REVIEW |
+
+**Verification:** 16 original hashes, 16 candidate hashes and the unchanged background verified. 6 watched source/layout files match their start-of-step snapshots, including TuskBeatPlayerLive, SymbolMountainSceneV3, EyesPopUpGame, both flow JSONs and shared BeatPlayerGame. EarsSoundMatchGame acquired unrelated concurrent audio warm-up edits in another session; its diff was inspected and left alone, never overwritten. Page tested in headless Chrome: 16 cards/images, flags first, stage/filter/zoom/background controls work, no page errors.
+
+**Measurements:** no production build or Tusk-entry timing in this candidate-only step. No load-time improvement claimed. Record a fully drawn Tusk-entry baseline before switching imports, then repeat after approved import/preload changes with cache disabled, Slow 4G, 1024×768 DPR2. Prior scene-opening measurements are not a Tusk baseline. One private build at a time, 10-minute timeout, logs outside repo, remove sibling build when done.
+
+**Next, only after page approval:** switch scene-local Tusk imports; share its scene-local URL map/list with parent preload code; prepare URLs through the existing helper only once the Ears game has actually started (ears_game + mounted Ears condition), never at scene mount or during Eyes. Do not mount hidden games; retain child preload hooks for direct Continue. No changes to voice, timers, resume, Play Again or shared BeatPlayerGame. Warm-up is not implemented yet.
+
+After the approved Tusk rollout/measurement, short read-only Shloka reports in the latest requested order: Scene2, Scene1, Scene3. Rank by measured first-load MB, not the supplied 71/80/54 MB upper bounds; stop after those reports. No Shloka conversion in this step. No commit or push.
+
+
+---
+
+## Tusk Phase 2b — approved imports and scene-local warm-up, 2026-10-16
+
+**Madhurima approved all 16 comparison images. Implemented; waiting for her Scene 3 gameplay test and commit instruction. No commit/push.**
+
+**Files changed this step:** TuskBeatPlayerLive.jsx (16 image-import lines only), SymbolMountainSceneV3.jsx (preload helper import, scene-local URL list and warm-up effect only), plus these append-only audit/changelog entries. Existing candidate files reused without modification. Original 16 sprites, unchanged 60,092-byte tusk-giving/symbol_mountain_3_bg.webp, previous candidates, and shared images remain in place. Shared BeatPlayerGame, PoseImage/CSS, Eyes and Ears source hashes are unchanged from the start of this step; concurrent unrelated work was left alone.
+
+| Tusk source image budget (decimal MB) | Before | After |
+|---|---:|---:|
+| 16 sprites | 2.190438 | 0.312726 |
+| Unchanged background | 0.060092 | 0.060092 |
+| Total | 2.250530 | 0.372818 |
+
+**Warm-up:** Vite eager URL imports only (15 external images, one inlined sprite); no hidden game mount. Gate requires ears_game + mounted Ears + no Eyes + Ears incomplete + scene unpaused. A 2.5 s timer checks all visible Ears DOM images loaded; while waiting, a cancellable 250 ms retry is used. Existing preparePose handles URL preparation/download/decode and deduplication. Cleanup cancels pending work; no early started flag. Child mount preload hooks remain intact for direct Continue. Production test: all 15 external requests follow Ears visible-image readiness; none occur during Eyes; no hidden BeatPlayer stage. Lifecycle checks cover other phases, pause, pending images, cleanup/restart and all 16 prepare calls. This does not change voice or gameplay timers.
+
+**Production measurement:** one private build ../ganesha-tusk-approved-20261016, alone after process check, exit 0 in 382.193 s, within 10-minute timeout. Logs outside repo. 1024×768 DPR2, cache disabled for measurement only, service workers blocked, Slow 4G 1.6 Mbps / 562.5 ms, audio preference off equally. App shell is loaded before timing; start is Continue click directly into Tusk. End is all mounted Tusk DOM images (11 artwork images, optional hint hand) and actual background loaded, stable 2 s. CDP screenshots taken after timing and visually checked. No synthetic preload or screenshot before the endpoint. Bytes include completed-request encodedDataLength plus received body bytes of still-pending transfers at the endpoint (pending response headers excluded); these are entry transfer figures, not the full application's total eventual downloads.
+
+| Matched production entry | Transferred MB at endpoint | Fully drawn time |
+|---|---:|---:|
+| before-1 | 5.416 | 31.241 s |
+| before-2 | 5.275 | 30.604 s |
+| after-1 | 3.891 | 23.549 s |
+| after-2 | 4.046 | 24.322 s |
+
+**Baseline limitation:** before is a reconstructed original-image payload baseline served from the SAME production build, NOT a separate checkout/build of the old source. The local baseline server substitutes the 16 original files for optimized image responses and the one inlined image URL; browser dimensions verify the expected original/optimized sources. Direct Continue into Tusk bypasses Ears warm-up equally in both arms. The matched entry timings above therefore assess image payloads; they do not establish a measured upstream warm-up speedup or an old-build deployment benchmark. Earlier scene-opening numbers are not used as a Tusk baseline. Pilot completed-only byte counts were retained separately and superseded by the transfer-inclusive results above. Full-draw screenshots, request traces, asset map, raw ESLint output, verification and a standalone report are in the external tusk-approved artifact folder.
+
+**Checks:** approved original/candidate SHA-256 hashes pass; Tusk source normalizes exactly to its pre-edit snapshot when the 16 import paths are restored; protected engine/PoseImage/Eyes/Ears hashes pass. Focused esbuild JSX transforms and both scene bundles pass. Default-format ESLint was actually run after a Windows sandbox retry; filtering no-undef produces **no output**. Full ESLint exits 1 with exactly the pre-existing 2 no-unused-vars errors (setTuskTestRunKey, toggleAudio) and 5 hook warnings; before/after rule IDs and messages match. No new lint findings. git diff --check passes. No shared voice, timer, resume, Play Again, flow JSON, game logic, Cave of Secrets or Festival Square edits.
+
+**Pending:** Madhurima tests dev Scene 3 with DevTools Disable cache UNTICKED: nest sequence first, Eyes/Ears intros, Continue into Tusk, Play Again. Then she approves and says commit. No Shloka work before that approval. Next read-only Phase 1 order: Shloka Scene2 (Suryakoti/Samaprabha), Scene1 (Vakratunda/Mahakaya), Scene3 (Nirvighnam/Kurumedeva); stop after the three reports. Private sibling build is deleted after measurements; external logs/results are retained.
+
+
+## Image session B - Group 1 shared images (Phase 1, read-only, 2026-10-16)
+Detailed tables: docs/IMAGE_AUDIT_B.md. Top items: map shloka PNGs 3.92 MB, welcome-back-bg.png 1.39 MB, Symbol Mountain icon WebPs 1.5 MB lossless; loader awaits 547 KB of never-shown welcome images; preloads fetch PNG instead of the WebP actually drawn. No files changed.
+
+Image session B Group 1: 15 lossy WebP switched in (map, welcome-back, symbol icons); see docs/IMAGE_AUDIT_B.md.

@@ -2930,3 +2930,45 @@ MooshikaRideTransition rider img switched to .webp with .png onError fallback.
 **Changed:** After Madhurima approved background/Ears/Eyes, switched 24 image import lines to assets/images-opt/margin35 (22 unique images; cow PNG to WebP), removed unused ganeshaCharacter from parent preload only. Approved subset 14.092 → 0.712 MB; unique direct references 18.107 → 4.728 MB. Originals/older candidates preserved. Tusk/shared images and all other logic unchanged.
 **Verified:** hashes and import/preload-only scope; one private production build exit 0; same Phase 1 Slow 4G/cache-disabled 1024×768 DPR2 scripted checkpoint: before 20.844–21.532 s / 3.627–4.059 MB, after 6.771–7.300 s / 0.825–0.825 MB. Screenshot review invalidates the new checkpoint as fully drawn; do NOT claim a full-draw speedup. Stricter visual pass (4 loaded DOM images + real background stable 2 s, CDP screenshot confirmed) after: 15.078 s / 2.805 MB; no corresponding strict baseline exists. No reliable fully drawn Eyes comparison. Production Eyes (9 images) and Ears (6 images) render smoke checks pass, no page errors; spoken intros need Madhurima's test. No ganesha-character fetch in opening runs. Logs/screenshots outside repo; private build removed after measurement.
 **Open:** Madhurima tests Eyes/Ears intros and scene flow on dev, approves and commits; no commit/push here. Shloka Scene2/Scene3 Phase 1 audits wait for her scene test approval.
+
+
+## [2026-10-16] - Tusk Phase 2b image candidates (approval pending)
+**Touched:** 16 new files under tusk/assets/images-opt/tusk-margin35/; append-only IMAGE_AUDIT.md and CHANGELOG.md. No scene/engine source edits.
+**Changed:** Prepared q85 lossy, alpha-preserving candidates for the live TuskBeatPlayerLive ASSET_MAP, using DPR2 +35% margin for oversized sprites. Sprite source budget 2.190 → 0.313 MB; including unchanged 60.1 KB Tusk background 2.251 → 0.373 MB if approved. Runtime imports/preloading unchanged. Prior Eyes/Ears rollout committed at f2f55be5; Madhurima reports Eyes passes, visuals unchanged and loading faster.
+**Verified:** original/candidate/background hashes, WebP encoding, all-layout display widths, SSIM/PSNR + alpha-edge gate at CSS/DPR2 for 1024/1366 stages (14/16 flagged); every sprite visually checked on white/black, zoomed fine-detail examples. Comparison page: all 16 images, flagged first, controls work, no page errors. Tusk/engine/layout/parent source hashes unchanged. Concurrent Ears audio warm-up edits belong to another session and were left alone.
+**Open:** STOP for Madhurima's Tusk page approval before imports or Ears-triggered scene-local Tusk warm-up. Tusk-entry production baseline/after measurements still pending; no speedup claimed. Next Shloka Phase 1 order is Scene2 → Scene1 → Scene3 after Tusk rollout; no commit/push.
+
+
+## [2026-10-16] - Approved Tusk image rollout and Ears-triggered warm-up
+**Changed:** Madhurima approved all 16 Tusk candidates. Switched only their imports in TuskBeatPlayerLive; added preload-only code in SymbolMountainSceneV3, gated until Ears is active/unpaused and visible art loaded after 2.5 s, with cleanup/retry and existing preparePose. Sprite+unchanged-background budget 2.250530 → 0.372818 MB. No originals, shared engine/voice/PoseImage, child preload hooks or gameplay logic changed.
+**Verified:** one private production build exit 0 (382.193 s); matched reconstructed original-image vs optimized direct-Tusk entry on that same build, Slow 4G/cache-disabled 1024×768 DPR2, screenshots confirm fully drawn endpoints. before-1: 5.416 MB / 31.241 s; before-2: 5.275 MB / 30.604 s; after-1: 3.891 MB / 23.549 s; after-2: 4.046 MB / 24.322 s. Baseline is image-payload reconstruction, not an old-source build; no measured warm-up speedup claimed. Warm-up request gating/no hidden games, original/candidate/protected hashes, StrictMode cleanup/restart, focused esbuild and diff check pass. Default ESLint no-undef filter: no output; existing 2 unused-variable errors/5 hook warnings unchanged. See IMAGE_AUDIT.md and external tusk-approved report for endpoint/byte accounting details.
+**Pending:** Madhurima tests dev Scene 3 with Disable cache UNTICKED (nest first, Eyes/Ears intros, Continue into Tusk, Play Again), approves, then says commit. Shloka Scene2 → Scene1 → Scene3 read-only audits wait for her approval. No commit/push. Private build removed after measurements; logs outside repo.
+
+
+## [2026-10-16] - Image session B: Group 1 shared-image Phase 1 report
+**Touched:** docs/IMAGE_AUDIT_B.md (new); append-only IMAGE_AUDIT.md and CHANGELOG.md. No code, image or build touched.
+**Changed:** Read-only audit of shared public/ images (map, welcome, opening modal, symbol icons). Estimated first-load saving about 5 MB from new art plus about 1 MB from reference-only preload fixes.
+**Open:** Madhurima to approve the reference-only fixes (A-C) and the Phase 2 candidate plan; no commit/push.
+
+
+## [2026-10-16] - Image session B: Group 1 candidates + reference fixes (approval pending)
+**Touched:** App.jsx, preloadImages.js (preload/loader lines only); 15 new WebP files; docs/Group1-Comparison.html; docs/IMAGE_AUDIT_B.md.
+**Open:** Madhurima approves comparison page before any import switch; no commit/push.
+
+
+## [2026-10-16] - Image session B: Group 1 import switch
+**Touched:** CleanMapZone.jsx, CleanGameWelcomeScreen.css, OpeningModal.jsx, SymbolSidebar.jsx, symbolCardContent.js, SarvadaGame, SarvakaryeshuGame, ShlokaRiverFinale, NewModakSceneV7, PondSceneSimplifiedV4, SacredAssemblySceneV8 (reference/import lines only), App.jsx, preloadImages.js. Tables in docs/IMAGE_AUDIT_B.md.
+**Verified:** private build exit 0 (deleted); map requests about 4.3 -> 0.56 MB images (cache off). Scene1 and Tusk V3 still use the old icons (session A files).
+**Open:** Madhurima tests map, Zone Welcome, sidebar, welcome-back overlay, one scene per zone; no commit/push.
+
+**Also (Group 1):** SymbolMountainSceneV3.jsx lines 79, 83-85 switched to the -opt icons at Madhurima's request (import lines only).
+
+
+## [2026-10-16] - Image session B: Group 2 Modak Phase 1 report
+**Touched:** docs/IMAGE_AUDIT_B.md only (read-only audit). Scene-own art 2.42 MB; 7 emotion PNGs (0.99 MB) have unused lossy WebP twins; estimated saving 0.58-1.8 MB.
+**Open:** Madhurima chooses twins-only vs new candidates; no commit/push.
+
+
+## [2026-10-16] - Image session B: Modak emotion candidates (approval pending)
+**Touched:** 7 new emotion-*-game3-opt.webp in modak/assets/images; docs/Modak-Emotions-Comparison.html; IMAGE_AUDIT_B.md.
+**Open:** Madhurima approves before any import switch; no commit/push.

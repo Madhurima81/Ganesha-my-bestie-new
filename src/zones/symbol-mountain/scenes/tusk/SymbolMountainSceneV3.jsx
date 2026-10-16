@@ -1,4 +1,4 @@
-import { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
+import { preparePose, usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 // zones/symbol-mountain/scenes/symbol/SymbolMountainSceneV3.jsx
 // ?? Complete Musical Mountain Scene - Final Migration V5
 
@@ -88,6 +88,12 @@ import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.webp'
 // Shared countdown duration â€” must match across useResumeCountdown + usePauseAwareTimeout
 const RESUME_DELAY_MS = 3000;
 const SCENE_LOG_KEY = 'symbol-scene3';
+
+// Scene-local URLs only; importing URLs never mounts the Tusk game.
+const TUSK_PRELOAD_IMAGES = Object.values(import.meta.glob(
+  './assets/images-opt/tusk-margin35/**/*.webp',
+  { eager: true, query: '?url', import: 'default' }
+));
 
 const VOICE_LINES = {
   opening: "The forest friends need your help. Let’s see what they need.",
@@ -303,6 +309,25 @@ const SymbolMountainSceneContent = ({
     endPause: endSidebarPause,
   } = sidebarPause;
   const scenePaused = isSymbolPopupOpen || sidebarPause.isSidebarPaused;
+
+  // Warm the next game's art only after Ears is running and visibly loaded.
+  useEffect(() => {
+    if (sceneState?.phase !== PHASES.EARS_GAME || !sceneState?.showEarsRhythmGame
+      || sceneState?.showEyesTelescopeGame || sceneState?.discoveredSymbols?.ears || scenePaused) return undefined;
+    let timer;
+    const warmTusk = () => {
+      const images = [...document.querySelectorAll('.ears-sound-game img')];
+      if (!images.length || images.some((image) => !image.complete || !image.naturalWidth)) {
+        timer = setTimeout(warmTusk, 250);
+        return;
+      }
+      TUSK_PRELOAD_IMAGES.forEach((src) => { preparePose(src).catch(() => {}); });
+    };
+    timer = setTimeout(warmTusk, 2500);
+    return () => clearTimeout(timer);
+  }, [sceneState?.phase, sceneState?.showEarsRhythmGame, sceneState?.showEyesTelescopeGame,
+    sceneState?.discoveredSymbols?.ears, scenePaused]);
+
   // Beat = current phase. Set during render so a clip started this render is tagged with it.
   sidebarPause.setBeat(String(sceneState?.phase));
   const {
