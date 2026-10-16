@@ -579,10 +579,18 @@ const ShlokaRiverFinaleContent = ({
       onWordStart?.(index);
       const audio = new Audio(FULL_SHLOKA_WORD_AUDIO[index]);
       audio.volume = 0.95;
-      audio.onended = () => playWordAtIndex(index + 1);
-      audio.onerror = () => playWordAtIndex(index + 1);
+      let advanced = false;
+      const advanceOnce = () => {
+        if (advanced || fullShlokaPlaybackTokenRef.current !== playbackToken) return;
+        advanced = true;
+        audio.onended = null;
+        audio.onerror = null;
+        playWordAtIndex(index + 1);
+      };
+      audio.onended = advanceOnce;
+      audio.onerror = advanceOnce;
       fullShlokaAudioRef.current = audio;
-      audio.play().catch(() => playWordAtIndex(index + 1));
+      audio.play().catch(advanceOnce);
     };
 
     playWordAtIndex(0);
