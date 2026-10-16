@@ -205,12 +205,18 @@ export default function FlowerJourneyGame2({
   // floor(flowers / 2) = beats already finished. A half-finished beat (odd
   // count) restarts that beat fresh. Only read at mount.
   const [startBeat] = useState(() => Math.max(0, Math.min(3, Math.floor((Number(initialFlowers) || 0) / 2))));
+  // Continue after a beat whose success line did NOT finish (2/4/6 flowers): start on THAT beat in its finished state
+  // (the saved state below already shows it solved), replay its success line, then move on to the next beat the way the
+  // live game does. 0 = no replay. (Starting on the next beat played the old line over the new picture.)
+  const [resumeReplayBeat] = useState(() => (
+    startBeat >= 1 && (Number(initialSuccessDone) || 0) < startBeat * 2 ? startBeat : 0
+  ));
   const [phase, setPhase] = useState(
-    [PHASES.FLOWER_BUSH, PHASES.FLOWER_BRANCH, PHASES.FLOWER_MARSH, PHASES.BELLY_RECOGNITION][startBeat]
+    [PHASES.FLOWER_BUSH, PHASES.FLOWER_BRANCH, PHASES.FLOWER_MARSH, PHASES.BELLY_RECOGNITION][
+      resumeReplayBeat > 0 ? resumeReplayBeat - 1 : startBeat
+    ]
   );
   const [flowerCount, setFlowerCount] = useState(startBeat * 2);
-  // Flowers whose beat success line had FINISHED before the child left (2/4/6): not replayed on Continue.
-  const [successDoneAtMount] = useState(() => Number(initialSuccessDone) || 0);
   const [emotion, setEmotion] = useState(null);
   // Small persistent "emotion trace" left near each challenge once it's
   // solved — a quiet visual recap (bush→pleased, branch→excited,
@@ -749,6 +755,29 @@ export default function FlowerJourneyGame2({
   const [bellyBeat, setBellyBeat] = useState(0);
   // On Continue the previous beat's success line is replayed once before the resumed beat.
   const resumeLineDoneRef = useRef(false);
+  // Replay of the finished beat's success line on Continue (see resumeReplayBeat). speakAsync / wait are read through
+  // refs and the flag is set when the timer FIRES, so a re-render or StrictMode's second mount cannot strand it.
+  const speakAsyncRef = useRef(speakAsync);
+  speakAsyncRef.current = speakAsync;
+  const waitRef = useRef(wait);
+  waitRef.current = wait;
+  const resumeReplayStartedRef = useRef(false);
+  useEffect(() => {
+    if (!resumeReplayBeat || !isActive) return undefined;
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      if (resumeReplayStartedRef.current) return;
+      resumeReplayStartedRef.current = true;
+      const line = [VO.bushSuccess, VO.branchSuccess, VO.marshDone][resumeReplayBeat - 1];
+      const ok = await speakAsyncRef.current(line);
+      if (cancelled) return;
+      if (ok !== false) onSuccessDoneRef.current?.(resumeReplayBeat * 2);
+      await waitRef.current(resumeReplayBeat === 3 ? 700 : 2200);
+      if (cancelled) return;
+      setPhase([PHASES.FLOWER_BRANCH, PHASES.FLOWER_MARSH, PHASES.BELLY_RECOGNITION][resumeReplayBeat - 1]);
+    }, INTRO_START_DELAY_MS);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [resumeReplayBeat, isActive]);
 
   // Notify the parent scene of the flower count without re-firing this
   // effect just because the parent re-rendered and handed us a new
@@ -768,7 +797,7 @@ export default function FlowerJourneyGame2({
   }, [onSuccessDone]);
   useEffect(() => { onFlowersUpdateRef.current?.(flowerCount); }, [flowerCount]);
 
-  const bushIntroStartedRef = useRef(false);
+  const bushIntroStartedRef = useRef(resumeReplayBeat === 1); // a finished beat replays its success line, not its intro
 
   useEffect(() => {
     if (phase !== PHASES.FLOWER_BUSH || !isActive || bushIntroStartedRef.current) return undefined;
@@ -926,7 +955,7 @@ export default function FlowerJourneyGame2({
   const branchFlowerOneRef = useRef(null);
   const branchFlowerTwoRef = useRef(null);
   const branchRef = useRef(null);
-  const branchIntroStartedRef = useRef(false);
+  const branchIntroStartedRef = useRef(resumeReplayBeat === 2);
   const branchPullSvgPoints = branchPullPolygon
     .map((point) => `${point.x * 100},${point.y * 100}`)
     .join(' ');
@@ -968,12 +997,6 @@ export default function FlowerJourneyGame2({
       // begins, so the teaching hand is synced there. The reaction emoji
       // has no word to sync to, so it just follows the wordless stretch
       // beat immediately.
-      // Continue after the bush was solved: replay its success line first.
-      if (startBeat === 1 && successDoneAtMount < 2) {
-        const ok = await speakAsync(VO.bushSuccess);
-        if (ok !== false) onSuccessDoneRef.current?.(2);
-        if (cancelled) return;
-      }
       const emotionTimer = pTimeout(() => {
         if (cancelled) return;
         setEmotion('sad');
@@ -1105,7 +1128,7 @@ export default function FlowerJourneyGame2({
     [marshStep]
   );
 
-  const marshIntroStartedRef = useRef(false);
+  const marshIntroStartedRef = useRef(resumeReplayBeat === 3);
 
   useEffect(() => {
     if (
@@ -1129,12 +1152,6 @@ export default function FlowerJourneyGame2({
       // Unlike Bush/Branch, no nervous emoji here at the start — Marsh
       // already has its own wobble/wrong-attempt moment mid-crossing where
       // that emotion actually reads as caused by something.
-      // Continue after the branch was solved: replay its success line first.
-      if (startBeat === 2 && successDoneAtMount < 4) {
-        const ok = await speakAsync(VO.branchSuccess);
-        if (ok !== false) onSuccessDoneRef.current?.(4);
-        if (cancelled) return;
-      }
       // The teaching hand lands exactly when the action word ("Guide") is spoken.
       await speakAsync(VO.marshStart, getLineCue('fjg:marshStart', () => {
         if (cancelled) return;
@@ -1300,14 +1317,6 @@ export default function FlowerJourneyGame2({
     (async () => {
       await wait(600);
       if (cancelled) return;
-
-      // Continue after the marsh was solved: replay its success line once before the belly beat.
-      if (startBeat === 3 && successDoneAtMount < 6 && !resumeLineDoneRef.current) {
-        resumeLineDoneRef.current = true;
-        const ok = await speakAsync(VO.marshDone);
-        if (ok !== false) onSuccessDoneRef.current?.(6);
-        if (cancelled) return;
-      }
 
       // All 6 emojis pop in one by one while VO.bellyReflection names them,
       // ~320ms apart so all six are up by ~2s into the line.
