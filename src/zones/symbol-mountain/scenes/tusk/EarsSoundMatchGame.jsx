@@ -163,6 +163,9 @@ const ROUNDS = [
   }
 ];
 
+// Every question sound of both rounds (decoys included), de-duplicated, for the mount-time warm-up.
+const ROUND_SOUNDS = [...new Set(ROUNDS.flatMap((round) => Object.values(round.sounds)))];
+
 const VO_TEXTS = {
   // A wrong choice isn't "good listening" — minimal, non-punitive.
   neutral: 'Listen again.',
@@ -215,6 +218,24 @@ const EarsSoundMatchGame = ({
   const onSuccessDoneRef = useRef(onSuccessDone);
   onSuccessDoneRef.current = onSuccessDone;
   usePreloadPoses(POSE_ASSETS);
+  // The game's own sounds are the question: warm them when the game mounts so the first play of each one is not
+  // delayed by the download + decode of a freshly created Audio element (the three sounds played late).
+  const warmAudioRef = useRef(new Map());
+  useEffect(() => {
+    const warm = warmAudioRef.current;
+    ROUND_SOUNDS.forEach((src) => {
+      if (!src || warm.has(src)) return;
+      try {
+        const a = new Audio();
+        a.preload = 'auto';
+        a.src = src;
+        a.load();
+        warm.set(src, a);
+      } catch {
+        // Warm-up is best-effort; playSound falls back to a fresh Audio.
+      }
+    });
+  }, []);
   const [roundIndex, setRoundIndex] = useState(Math.min(startRoundRef.current, ROUNDS.length - 1));
   const [phase, setPhase] = useState(PHASE.LISTENING);
   const [activeZoneId, setActiveZoneId] = useState(null);
@@ -533,7 +554,8 @@ const EarsSoundMatchGame = ({
       }
 
       try {
-        const audio = new Audio(src);
+        const audio = warmAudioRef.current.get(src) || new Audio(src);
+        try { audio.currentTime = 0; } catch { /* not seekable yet: plays from the start anyway */ }
         audio.volume = volume;
         audio.onended = finish;
         audio.onerror = finish;
