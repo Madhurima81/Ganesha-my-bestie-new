@@ -390,7 +390,17 @@ const FamilyTreeGameContent = ({
  }, []);
  const resumePopupTimeoutRef = useRef(null);
  const [showResumePopup, setShowResumePopup] = useState(false);
- const [resumeMessage, setResumeMessage] = useState('');
+ const [showResumePill, setShowResumePill] = useState(false);
+
+ // Resume is seamless: the voice line says what to do. With the voice OFF only, a small pill shows for ~2 s
+ // (the old big progress banner repeated the voice and added a counter). showResumePopup is still set by the reload
+ // handler for 5 s because other guards read it; it just no longer draws a banner.
+ useEffect(() => {
+ if (!showResumePopup || isAudioOn) return undefined;
+ setShowResumePill(true);
+ const pillTimer = setTimeout(() => setShowResumePill(false), 2000);
+ return () => clearTimeout(pillTimer);
+ }, [showResumePopup, isAudioOn]);
  // Remove flow: tap avatar -> "Remove" pill -> removed with a 5s Undo chip.
  const [undoRemoval, setUndoRemoval] = useState(null); // { member, index }
  const [familyTrayOpen, setFamilyTrayOpen] = useState(false);
@@ -426,6 +436,7 @@ const FamilyTreeGameContent = ({
  const tapCircleTimerRef = useRef(null);
  const flipCloseHintTimerRef = useRef(null);
  const transitionContinueInFlightRef = useRef(false);
+ const resumeSpeechTokenRef = useRef(0);
 
  const cancelTimer = useCallback((ref) => {
  if (!ref?.current) return;
@@ -599,6 +610,7 @@ const FamilyTreeGameContent = ({
  };
  // Continue in the Ganesha tree: replay the interrupted member's line (if any), then the short next-step line.
  const speakResumeLines = (afterLine) => {
+ const resumeToken = ++resumeSpeechTokenRef.current;
  const pending = sceneState.pendingMemberLine;
  const pendingLine = pending === 'myself' ? MYSELF_LINE : ganeshaFamily.find(m => m.id === pending)?.voiceLine;
  const say = (text, onDone) => {
@@ -608,7 +620,10 @@ const FamilyTreeGameContent = ({
  style: 'child',
  moment: 'encouragement',
  onError: (e) => { if (e?.error === 'canceled' || e?.error === 'interrupted') cancelled = true; },
- onEnd: () => { if (!aliveRef.current || cancelled) return; onDone?.(); },
+ onEnd: () => {
+ if (!aliveRef.current || cancelled || resumeSpeechTokenRef.current !== resumeToken) return;
+ onDone?.();
+ },
  });
  };
  if (pendingLine) {
@@ -653,7 +668,6 @@ showTreeSparkles: false,
 
  // 2. GANESHA TREE - Some placed (Note:.length for arrays)
  if (gamePhase === 'ganeshaTree' && placedGaneshaMembers && placedGaneshaMembers.length > 0 && placedGaneshaMembers.length < 4) {
- setResumeMessage(`Great progress! You've placed ${placedGaneshaMembers.length}/4 family members. Keep going!`);
  setShowResumePopup(true);
  resumePopupTimeoutRef.current = scheduleTimeout(() => setShowResumePopup(false), 5000);
  // Continue: replay the interrupted member's line (if any), then "Continue tapping." after the 500 ms
@@ -674,7 +688,6 @@ showTreeSparkles: false,
 
  // 3. GANESHA TREE - All placed
  if (gamePhase === 'ganeshaTree' && placedGaneshaMembers && placedGaneshaMembers.length === 4) {
- setResumeMessage(`Amazing! You completed Ganesha's family tree! Tap "Continue" to continue.`);
  setShowResumePopup(true);
  resumePopupTimeoutRef.current = scheduleTimeout(() => setShowResumePopup(false), 5000);
  // Continue with all 4 met but Done not tapped: say what to do next.
@@ -684,7 +697,6 @@ showTreeSparkles: false,
 
  // 4. CHILD INPUT - Some added
  if (gamePhase === 'childInput' && childFamily && childFamily.length > 0) {
- setResumeMessage(`You've added ${childFamily.length} family member${childFamily.length > 1? 's': ''} to your tree!`);
  setShowResumePopup(true);
  resumePopupTimeoutRef.current = scheduleTimeout(() => setShowResumePopup(false), 5000);
  // Continue while adding family: remind the child they can keep adding (existing 'childStart' line).
@@ -700,6 +712,7 @@ showTreeSparkles: false,
  // Cleanup ref on unmount
  useEffect(() => {
  return () => {
+ resumeSpeechTokenRef.current += 1;
  reloadHandledRef.current = false;
  // So StrictMode's remount can run the resumed Done line again (its timers were just cleared).
  ganeshaTreeDoneClickedRef.current = false;
@@ -1993,28 +2006,27 @@ if (window.matchMedia(PHONE_LANDSCAPE_QUERY).matches) setFamilyTrayOpen(true);
  </div>
  )}
 
- {/* Resume Popup */}
- {/* Resume popup shows on reload with auto-dismiss after 5s */}
- {showResumePopup && (
+ {/* Resume pill: only when the voice is off, ~2 s, no counters (the voice line + the tree show progress) */}
+ {showResumePill && (
  <div style={{
  position: 'fixed',
- top: '20%',
+ top: '14px',
  left: '50%',
  transform: 'translateX(-50%)',
- background: '#FFF8E7',
+ background: 'rgba(255, 248, 231, 0.96)',
  color: '#795548',
- padding: '20px 40px',
- borderRadius: '20px',
- boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
+ padding: '8px 18px',
+ borderRadius: '999px',
+ boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
  zIndex: 9999,
- fontSize: '18px',
+ fontSize: '14px',
  fontWeight: 'bold',
  fontFamily: "'Nunito', sans-serif",
  textAlign: 'center',
  maxWidth: '80%',
- animation: 'slideDown 0.5s ease-out'
+ pointerEvents: 'none'
  }}>
- {resumeMessage}
+ Welcome back — keep building your tree.
  </div>
  )}
 
@@ -2050,6 +2062,7 @@ if (window.matchMedia(PHONE_LANDSCAPE_QUERY).matches) setFamilyTrayOpen(true);
  else if (onComplete) onComplete();
  }}
  onReplay={() => {
+ resumeSpeechTokenRef.current += 1;
  if (playTap) playTap();
  SimpleSceneManager.setCurrentScene('about-me-hut', 'family-tree', false, false);
  stopVoice();
