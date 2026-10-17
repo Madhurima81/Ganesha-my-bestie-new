@@ -736,3 +736,6 @@ After the approved Tusk rollout/measurement, short read-only Shloka reports in t
 Detailed tables: docs/IMAGE_AUDIT_B.md. Top items: map shloka PNGs 3.92 MB, welcome-back-bg.png 1.39 MB, Symbol Mountain icon WebPs 1.5 MB lossless; loader awaits 547 KB of never-shown welcome images; preloads fetch PNG instead of the WebP actually drawn. No files changed.
 
 Image session B Group 1: 15 lossy WebP switched in (map, welcome-back, symbol icons); see docs/IMAGE_AUDIT_B.md.
+
+
+**Image session A — Shloka Phase 1:** read-only reports for Scene2, Scene1, Scene3 and scene4 are in [docs/IMAGE_AUDIT_A.md](docs/IMAGE_AUDIT_A.md). One locked private production build, verified visual endpoints and measured requests; no candidates/import/preload changes. Awaiting Madhurima’s report approvals.

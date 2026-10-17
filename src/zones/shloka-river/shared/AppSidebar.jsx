@@ -8,7 +8,7 @@ import PhoneCollectionDrawer from '../../../lib/components/collection/PhoneColle
 import { playUiTap } from '../../../lib/services/AudioService';
 
 // Mantra icons — same images as Meaning Cave (colored only, no gray set)
-import vakratundaIcon    from '../../symbol-mountain/shared/images/icons/symbol-trunk-new.png';
+import vakratundaIcon    from '../../symbol-mountain/shared/images/icons/symbol-trunk-new-opt.webp';
 import mahakayaIcon      from '../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
 import suryakotiIcon     from '../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
 import samaprabhaIcon    from '../../meaning cave/assets/images/symbols/samaprabha-symbol.png';

@@ -221,7 +221,6 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const resumePopupTimeoutRef = useRef(null);
   const [showResumePopup, setShowResumePopup] = useState(false);
   const [resumeMessage, setResumeMessage] = useState('');
-  const [openingButtonVisible] = useState(true);
   const phaseVoiceRef = useRef({});
   const [showReturnHint, setShowReturnHint] = useState(false);
   const returnHintTimerRef = useRef(null);
@@ -1002,7 +1001,6 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
           sceneId="name-birthday"
           onStart={handleStartGame}
           characterImg={babyGaneshaImg}
-          showButton={openingButtonVisible}
         />
       )}
 

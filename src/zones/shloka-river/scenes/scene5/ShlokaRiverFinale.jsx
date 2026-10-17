@@ -32,7 +32,7 @@ import { getCompletionModal } from '../../../../lib/config/content';
 
 import riverBg from './assets/images/river-finale-bg.webp';
 import neutralBoat from './assets/images/choice-boat.png';
-import revealVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new.webp';
+import revealVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new-opt.webp';
 import revealMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.webp';
 import revealSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.webp';
 import revealSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.webp';

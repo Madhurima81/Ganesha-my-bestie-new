@@ -9,13 +9,13 @@ import {
 import SymbolCardModal from './SymbolCardModal';
 import PhoneCollectionDrawer from '../../../../lib/components/collection/PhoneCollectionDrawer';
 
-import symbolBellyColored from '../images/icons/symbol-belly-new.webp';
-import symbolEarColored from '../images/icons/symbol-ears-new.webp';
+import symbolBellyColored from '../images/icons/symbol-belly-new-opt.webp';
+import symbolEarColored from '../images/icons/symbol-ears-new-opt.webp';
 import symbolEyesColored from '../images/icons/symbol-eyes-new.webp';
-import symbolLotusColored from '../images/icons/symbol-lotus-new.webp';
+import symbolLotusColored from '../images/icons/symbol-lotus-new-opt.webp';
 import symbolModakColored from '../images/icons/symbol-modak-new.webp';
 import symbolMooshikaColored from '../images/icons/symbol-mooshika-new.webp';
-import symbolTrunkColored from '../images/icons/symbol-trunk-new.webp';
+import symbolTrunkColored from '../images/icons/symbol-trunk-new-opt.webp';
 import symbolTuskColored from '../images/icons/broken-tusk-symbol.webp';
 
 const symbolInfo = {

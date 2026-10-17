@@ -26,10 +26,12 @@ import VOReplayButton from '../../../lib/components/feedback/VOReplayButton';
 import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
 import { useGaneshaVoice } from '../../../lib/hooks/useGaneshaVoice';
+import useGuardedReveal from '../../../lib/hooks/useGuardedReveal';
 import { useGameSounds } from '../../../lib/hooks/useGameSounds';
 import usePauseAwareTimeout from '../../../lib/hooks/usePauseAwareTimeout';
 import useResumeCountdown from '../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
+import SceneStallPrompt from '../../../lib/components/feedback/SceneStallPrompt';
 import AboutMeSparkle from '../components/AboutMeSparkle';
 import DiscoveryFlight from '../components/DiscoveryFlight';
 import Wish2PlateDropGame from './components/Wish2PlateDropGame';
@@ -502,6 +504,21 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const wish3SparkleCancelRef = useRef(null);
   const [wish3Sparkle, setWish3Sparkle] = useState({ type: null, key: 0 });
   const [discoveryFly, setDiscoveryFly] = useState(null);
+  const [revealConfig, setRevealConfig] = useState(null);
+  const revealConfigRef = useRef(null);
+  revealConfigRef.current = revealConfig;
+  const {
+    showRevealOnce,
+    markShown,
+    resetReveals,
+    expectReveal,
+    stall: revealStall,
+    resolveStall: resolveRevealStall,
+  } = useGuardedReveal({
+    sceneKey: 'dreams-wishes',
+    getRevealConfig: () => revealConfigRef.current,
+    setRevealConfig,
+  });
   const discoveryFlyTimeoutRef = useRef(null);
   const lastCheerIndexRef = useRef(-1);
   const DISCOVERY_FLY_TOTAL_MS = 2200;
@@ -903,6 +920,10 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   }, []); // Runs once on mount only
 
   // --- AUTO-TRANSITION HANDLER ---
+  const showDreamComparisonOnce = useCallback(() => (
+    showRevealOnce('dreams-comparison', { id: 'dreams-comparison', phase: 'comparison-card' }, 'live')
+  ), [showRevealOnce]);
+
   useEffect(() => {
     let cancel;
     const { gamePhase } = sceneState;
@@ -924,12 +945,26 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       // Magical moment: sparkles + glow up; Ganesha bounces at 900ms; VO fires from its own effect;
       // auto-advance to comparison card after the VO + pause.
       const bounceTimer = safeSetTimeout(() => { setGaneshaReactKey(k => k + 1); }, 900);
-      cancel = safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'comparison-card' }); }, 5000);
+      expectReveal('dreams-comparison', { id: 'dreams-comparison', phase: 'comparison-card' }, 'live');
+      cancel = safeSetTimeout(showDreamComparisonOnce, 5000);
       return () => { bounceTimer?.(); cancel?.(); };
     }
 
     return () => cancel?.();
-  }, [sceneState.gamePhase, sceneState.dreamRevealed, safeSetTimeout]);
+  }, [sceneState.gamePhase, sceneState.dreamRevealed, safeSetTimeout, expectReveal, showDreamComparisonOnce]);
+
+  useEffect(() => {
+    if (revealConfig && sceneState.gamePhase !== 'comparison-card') {
+      sceneActions.updateState({ gamePhase: 'comparison-card' });
+    }
+  }, [revealConfig, sceneActions, sceneState.gamePhase]);
+
+  useEffect(() => {
+    if (sceneState.gamePhase !== 'comparison-card') return undefined;
+    markShown('dreams-comparison');
+    setRevealConfig(null);
+    return undefined;
+  }, [markShown, sceneState.gamePhase]);
 
   useEffect(() => {
     // Idle-hint gate: if this phase's entry VO already played earlier
@@ -2377,6 +2412,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       {/* Resume Countdown */}
       <ResumeCountdown value={countdownValue} />
+      <SceneStallPrompt show={!!revealStall} onTap={resolveRevealStall} />
 
       {/* Mini Gesture (Thumbs Up) on Success */}
       {miniGesture.show && (
@@ -2438,6 +2474,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
               if (onNavigate) onNavigate('zones');
             }}
             onReplay={() => {
+              resetReveals();
+              setRevealConfig(null);
               playUiTap();
               hardStopSceneAudio();
               SimpleSceneManager.setCurrentScene('about-me-hut', 'dreams-wishes', false, false);

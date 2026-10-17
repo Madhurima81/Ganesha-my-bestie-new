@@ -8,11 +8,11 @@ import { createSpeechStartWatcher } from '../../../lib/utils/speechStartWatch';
 import ProfilePillBtn from '../../../lib/components/shared/ProfilePillBtn';
 import symbolMooshikaIcon from '../../symbol-mountain/shared/images/icons/symbol-mooshika-new.webp';
 import symbolModakIcon from '../../symbol-mountain/shared/images/icons/symbol-modak-new.webp';
-import symbolBellyIcon from '../../symbol-mountain/shared/images/icons/symbol-belly-new.webp';
-import symbolLotusIcon from '../../symbol-mountain/shared/images/icons/symbol-lotus-new.webp';
-import symbolTrunkIcon from '../../symbol-mountain/shared/images/icons/symbol-trunk-new.webp';
+import symbolBellyIcon from '../../symbol-mountain/shared/images/icons/symbol-belly-new-opt.webp';
+import symbolLotusIcon from '../../symbol-mountain/shared/images/icons/symbol-lotus-new-opt.webp';
+import symbolTrunkIcon from '../../symbol-mountain/shared/images/icons/symbol-trunk-new-opt.webp';
 import symbolEyesIcon from '../../symbol-mountain/shared/images/icons/symbol-eyes-new.webp';
-import symbolEarsIcon from '../../symbol-mountain/shared/images/icons/symbol-ears-new.webp';
+import symbolEarsIcon from '../../symbol-mountain/shared/images/icons/symbol-ears-new-opt.webp';
 import symbolTuskIcon from '../../symbol-mountain/shared/images/icons/broken-tusk-symbol.webp';
 
 const CTA_POST_VO_GAP_MS = 5000;

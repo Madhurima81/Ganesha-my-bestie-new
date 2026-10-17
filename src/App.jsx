@@ -656,10 +656,10 @@ useEffect(() => {
         '/intro-story/story1-img4.webp',
         '/intro-story/map-new-2.webp',
         '/images/ganesha-poses/stand-namaste.webp',
-        '/images/map/butterflyyellow.png',
-        '/images/map/butterflyblue.png',
-        '/images/map/birdnew.png',
-        '/images/map/lock.png',
+        '/images/map/butterflyyellow.webp',
+        '/images/map/butterflyblue.webp',
+        '/images/map/birdnew.webp',
+        '/images/map/lock.webp',
         '/images/critters/bird-flying-orange.svg',
         '/images/critters/butterfly-pink.svg',
       ]);
@@ -821,9 +821,8 @@ const initializeApp = async () => {
     // Step 2.5: Preload critical images (50%)
     const criticalImages = [
       '/images/welcome-background.svg',
-      '/images/welcome-board.webp',
-      '/images/welcome-ganesha.webp',
-      '/images/welcome-mooshika.webp'
+      '/images/welcome-opening-bg.webp',
+      '/images/ganesha-welcome-poster.webp'
     ];
 
     const imagePromises = criticalImages.map(src => {

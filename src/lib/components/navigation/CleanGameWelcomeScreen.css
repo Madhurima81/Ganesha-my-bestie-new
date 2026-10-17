@@ -1950,7 +1950,7 @@
      ======================================================== */
 
   .clean-welcome-overlay--fullscreen {
-    background-image: url('/images/welcome-back-bg.png');
+    background-image: url('/images/welcome-back-bg.webp');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

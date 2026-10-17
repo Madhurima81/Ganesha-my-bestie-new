@@ -76,13 +76,13 @@ import ganeshaCharacter from './assets/images/ganesha-character.webp';
 
 // Symbol Icons
 import symbolEyesColored from '../../shared/images/icons/symbol-eyes-new.webp';
-import symbolEarColored from '../../shared/images/icons/symbol-ears-new.webp';
+import symbolEarColored from '../../shared/images/icons/symbol-ears-new-opt.webp';
 import symbolTuskColored from '../../shared/images/icons/broken-tusk-symbol.webp';
 import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.webp';
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.webp';
-import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new.webp';
-import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.webp';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-new-opt.webp';
+import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new-opt.webp';
+import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new-opt.webp';
 
 
 // Shared countdown duration â€” must match across useResumeCountdown + usePauseAwareTimeout

@@ -12,8 +12,8 @@ import nightBg from './assets/images/sarvada/night-phase.webp';
 
 import boatImg from './assets/images/sarvada/boat.webp';
 import ganeshaPopImg from '/images/ganesha-hi-stand.webp';
-import earsSymbolImg from '../../../../zones/symbol-mountain/shared/images/icons/symbol-ears-new.webp';
-import bellySymbolImg from '../../../../zones/symbol-mountain/shared/images/icons/symbol-belly-new.webp';
+import earsSymbolImg from '../../../../zones/symbol-mountain/shared/images/icons/symbol-ears-new-opt.webp';
+import bellySymbolImg from '../../../../zones/symbol-mountain/shared/images/icons/symbol-belly-new-opt.webp';
 import modakSymbolImg from '../../../../zones/symbol-mountain/shared/images/icons/symbol-modak-new.webp';
 
 import morningSceneImg from './assets/images/sarvada/morning-scene.webp';

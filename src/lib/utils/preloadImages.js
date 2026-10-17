@@ -13,6 +13,5 @@ export function preloadImages(paths = []) {
 export function avatarImagePaths(ids = []) {
   return ids.flatMap((id) => [
     `/images/new-explorer-${id}.webp`,
-    `/images/new-explorer-${id}.png`,
   ]);
 }

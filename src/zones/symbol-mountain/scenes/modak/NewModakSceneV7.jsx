@@ -96,7 +96,7 @@ import ganeshaFeeding from './assets/images/ganesha-game3-new.webp';
 
 import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.webp';
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.webp';
+import symbolBellyColored from '../../shared/images/icons/symbol-belly-new-opt.webp';
 
 // Flower Journey assets - the flower tray (beat-1 only) still needs the two
 // flower colours; the rest (mud/leaves/branch/garland art) now live inside

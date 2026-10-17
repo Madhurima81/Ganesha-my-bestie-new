@@ -105,7 +105,8 @@ const ZONE_IDS = {
 };
 
 // Child journey order for map hierarchy (current / next / distant). Cave, Festival, Treehouse are future content.
-const PRIMARY_MAP_JOURNEY = [ZONE_IDS.SYMBOL, ZONE_IDS.RIVER, ZONE_IDS.HUT];
+const PLAYABLE_JOURNEY_ZONE_IDS = [ZONE_IDS.SYMBOL, ZONE_IDS.RIVER, ZONE_IDS.HUT];
+const PRIMARY_MAP_JOURNEY = PLAYABLE_JOURNEY_ZONE_IDS;
 const UNLOCKABLE_JOURNEY_ZONE_IDS = [ZONE_IDS.RIVER, ZONE_IDS.HUT];
 
 const readMapFlag = (key) => {
@@ -736,19 +737,19 @@ const MAP_ZONE_ART_DEFAULTS = {
   },
   shlokaStream: {
     id: 'shlokaStream', label: 'Shloka River — River',
-    src: '/images/map/shloka-stream.png',
+    src: '/images/map/shloka-stream-opt.webp',
     left: 52.2, top: 64.6, w: 25, h: 79,
     centered: true, flip: false, rotate: 10, opacity: 1
   },
   shlokaWaterfall: {
     id: 'shlokaWaterfall', label: 'Shloka River — Waterfall',
-    src: '/images/map/shloka-waterfall.png',
+    src: '/images/map/shloka-waterfall-opt.webp',
     left: 63.6, top: 23.4, w: 19, h: 24,
     centered: true, flip: false, rotate: 0, opacity: 1
   },
   shlokaBridge: {
     id: 'shlokaBridge', label: 'Shloka River — Bridge',
-    src: '/images/map/shloka-bridge.png',
+    src: '/images/map/shloka-bridge-opt.webp',
     left: 59.7, top: 51.1, w: 13, h: 15,
     centered: true, flip: false, rotate: 2, opacity: 1
   },
@@ -863,7 +864,7 @@ const isZoneDone = (allProgress, zoneId) => {
   return !!zone && zone.totalScenes > 0 && zone.completedScenes >= zone.totalScenes;
 };
 
-const getMapGaneshaState = (allProgress, unlockingZones, overlayItems = {}) => {
+const getMapGaneshaState = (allProgress, unlockingZones, overlayItems = {}, showJourneyCelebration = false) => {
   const getGaneshaPosition = (zoneId) => {
     const overlayId = ZONE_GANESHA_OVERLAY_IDS[zoneId];
     const overlay = overlayId ? overlayItems[overlayId] : null;
@@ -893,8 +894,7 @@ const getMapGaneshaState = (allProgress, unlockingZones, overlayItems = {}) => {
     };
   }
 
-  const allZonesCompleted = PRIMARY_MAP_JOURNEY.every((zoneId) => isZoneDone(allProgress, zoneId));
-  if (allZonesCompleted) {
+  if (showJourneyCelebration) {
     return {
       pose: 'celebration',
       size: 112,
@@ -964,6 +964,8 @@ const ZONE_FIRST_SCENES = {
 const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen, onParentCorner }) => {
   const [zoneProgress, setZoneProgress] = useState({});
   const [progressLoaded, setProgressLoaded] = useState(false);
+  const [showJourneyCelebration, setShowJourneyCelebration] = useState(false);
+  const journeyCelebrationStartedRef = useRef(false);
   const [mapDebugMode, setMapDebugMode] = useState(false);
   const [propItems, setPropItems] = useState(loadSavedProps);
   const [overlayItems, setOverlayItems] = useState(loadSavedOverlays);
@@ -1361,7 +1363,31 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     }
   };
 
-  const mapGaneshaState = getMapGaneshaState(zoneProgress, unlockingZones, responsiveOverlayItems);
+  const journeyComplete = progressLoaded && PLAYABLE_JOURNEY_ZONE_IDS.every((zoneId) => isZoneDone(zoneProgress, zoneId));
+
+  useEffect(() => {
+    if (!journeyComplete || journeyCelebrationStartedRef.current) return;
+    const profileId = localStorage.getItem('activeProfileId');
+    if (!profileId) return;
+    const seenKey = `gmb_map_journey_celebration_seen_${profileId}`;
+    if (readMapFlag(seenKey)) return;
+    journeyCelebrationStartedRef.current = true;
+    writeMapFlag(seenKey);
+    setShowJourneyCelebration(true);
+    playUnlockChime('master', !isSfxOn());
+    speakMapVoEvents([{
+      text: 'What a wonderful journey! You explored Modak Mountain, chanted at Shloka River, and shared your story at Lambodara Lodge. I loved exploring with you!',
+      delay: 500,
+    }]);
+  }, [journeyComplete]);
+
+  useEffect(() => {
+    if (!showJourneyCelebration) return;
+    const timer = setTimeout(() => setShowJourneyCelebration(false), 12000);
+    return () => clearTimeout(timer);
+  }, [showJourneyCelebration]);
+
+  const mapGaneshaState = getMapGaneshaState(zoneProgress, unlockingZones, responsiveOverlayItems, showJourneyCelebration);
   const showFirstMapGuide = progressLoaded && !mapDebugMode && !firstMapTapDone &&
     !zoneProgress[ZONE_IDS.SYMBOL]?.hasStarted &&
     (zoneProgress[ZONE_IDS.SYMBOL]?.completedScenes || 0) === 0 &&
@@ -1686,7 +1712,11 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
                 style={ZONE_LABEL_OVERLAY_IDS[zone.id] ? getOverlayStyle(ZONE_LABEL_OVERLAY_IDS[zone.id]) : undefined}
               >
                 {state === 'completed' && (
-                  <span className="zone-check-badge zone-check-badge--label" aria-hidden="true">✓</span>
+                  <span
+                    className={`zone-check-badge zone-check-badge--label${showJourneyCelebration && PLAYABLE_JOURNEY_ZONE_IDS.includes(zone.id) ? ' zone-check-badge--journey-celebration' : ''}`}
+                    style={{ '--journey-check-delay': `${PLAYABLE_JOURNEY_ZONE_IDS.indexOf(zone.id) * 0.65}s` }}
+                    aria-hidden="true"
+                  >✓</span>
                 )}
                 {zone.name.replace(/\n/g, ' ')}
               </div>

@@ -2972,3 +2972,33 @@ MooshikaRideTransition rider img switched to .webp with .png onError fallback.
 ## [2026-10-16] - Image session B: Modak emotion candidates (approval pending)
 **Touched:** 7 new emotion-*-game3-opt.webp in modak/assets/images; docs/Modak-Emotions-Comparison.html; IMAGE_AUDIT_B.md.
 **Open:** Madhurima approves before any import switch; no commit/push.
+
+**Update:** Modak emotion imports switched to -opt.webp (NewModakSceneV7.jsx, FlowerJourneyGame2.jsx; imports only). Madhurima to test Modak games 2/3.
+
+
+## [2026-10-16] - Image session B: Modak scene-art candidates (approval pending)
+**Touched:** 5 new *-opt.webp in modak/assets/images; docs/Modak-Art-Comparison.html. Saving only ~0.16 MB (sources already lossy). Open: approval; no import changes; no commit/push.
+
+
+## [2026-10-16] - Image session B: Group 3 About Me Hut Phase 1 report
+**Touched:** docs/IMAGE_AUDIT_B.md only. food-bg.png is not live; the shared ganesha-final-new.svg (1.57 MB) loads in all 4 hut scenes; WebP render would be 17-27 KB.
+**Open:** Madhurima decides; no commit/push.
+
+
+## [2026-10-16] - Image session B: About Me Hut Ganesha WebP candidates (approval pending)
+**Touched:** 2 new public/images/ganesha-final-new-{512,800}.webp; docs/AboutMeHut-Ganesha-Comparison.html. Open: approval before any import switch; no commit/push.
+
+**Decisions:** Modak closed (other art skipped). Hut Ganesha stays SVG; no switch, App.jsx pre-warm untouched.
+
+
+## [2026-10-16] - Image session B: Dreams cloud candidate (approval pending)
+**Touched:** new cloud-opt.webp (enjoy/assets/images); docs/AboutMeHut-Cloud-Comparison.html. Open: approval; wish-image sizes need another measured play; no commit/push.
+
+
+## Image session A — Shloka Phase 1 reports (approval pending)
+**Touched:** docs/IMAGE_AUDIT_A.md; append-only root audit/changelog pointers. Read-only live-source trace and production measurements for Scene2 → Scene1 → Scene3 → scene4. By image first-load MB: Scene3 3.981, scene4 3.943, Scene2 3.120, Scene1 2.868; source-folder totals are not download totals. Existing inactive child preloads include later-game art. Shared/B files left alone; no candidates, import/preload or game-logic edits, no commit/push. One exclusive-lock private build exit 0; output cleaned after audit, logs outside repo.
+**Pending:** Madhurima approves Phase 1 per scene before candidates/comparison pages.
+
+
+## [2026-10-17] - Image session B: Dreams reveal candidates (approval pending)
+**Touched:** 3 new wish-images/*-opt.webp; docs/AboutMeHut-Cloud-Comparison.html (cloud + reveals). Open: approval; no import changes; no commit/push.

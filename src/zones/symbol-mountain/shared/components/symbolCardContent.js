@@ -6,7 +6,7 @@
 
 const eyesCard = {
   label: 'Eyes',
-  icon: '/images/icons/symbol-eyes-new.png',
+  icon: '/images/icons/symbol-eyes-new-opt.webp',
   affirmation: 'I can focus on what matters.',
   ganeshaLines: [
     'My eyes help me look carefully.',
@@ -19,7 +19,7 @@ const eyesCard = {
 
 const earCard = {
   label: 'Ear',
-  icon: '/images/icons/symbol-ears-new.png',
+  icon: '/images/icons/symbol-ears-new-opt.webp',
   affirmation: 'I can listen for what helps me.',
   ganeshaLines: [
     'My big ears are shaped like little filters.',
@@ -33,7 +33,7 @@ const earCard = {
 export const symbolCardContent = {
   modak: {
     label: 'Modak',
-    icon: '/images/icons/symbol-modak-new.png',
+    icon: '/images/icons/symbol-modak-new-opt.webp',
     affirmation: 'I can learn, keep trying, and find joy.',
     ganeshaLines: [
       'Do you know why I love Modak?',
@@ -46,7 +46,7 @@ export const symbolCardContent = {
 
   mooshika: {
     label: 'Mooshika',
-    icon: '/images/icons/symbol-mooshika-new.png',
+    icon: '/images/icons/symbol-mooshika-new-opt.webp',
     affirmation: 'I can keep going, one small step at a time.',
     ganeshaLines: [
       'Do you know why I ride Mooshika?',
@@ -59,7 +59,7 @@ export const symbolCardContent = {
 
   belly: {
     label: 'Belly',
-    icon: '/images/icons/symbol-belly-new.png',
+    icon: '/images/icons/symbol-belly-new-opt.webp',
     affirmation: 'I can have lots of feelings and keep going.',
     ganeshaLines: [
       'My belly can hold a lot.',
@@ -72,7 +72,7 @@ export const symbolCardContent = {
 
   lotus: {
     label: 'Lotus',
-    icon: '/images/icons/symbol-lotus-new.png',
+    icon: '/images/icons/symbol-lotus-new-opt.webp',
     affirmation: 'I can keep growing when things are hard.',
     ganeshaLines: [
       'The lotus grows up through muddy water.',
@@ -85,7 +85,7 @@ export const symbolCardContent = {
 
   trunk: {
     label: 'Trunk',
-    icon: '/images/icons/symbol-trunk-new.png',
+    icon: '/images/icons/symbol-trunk-new-opt.webp',
     affirmation: 'I can be strong and gentle.',
     ganeshaLines: [
       'My trunk can lift something heavy…',

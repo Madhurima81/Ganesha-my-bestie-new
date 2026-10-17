@@ -206,6 +206,23 @@
   vertical-align: middle;
 }
 
+.zone-check-badge--journey-celebration {
+  box-shadow: 0 0 0 4px rgba(255, 214, 105, 0.5), 0 0 24px 8px rgba(255, 196, 80, 0.8);
+  animation: journey-check-pulse 3s ease-in-out calc(0.5s + var(--journey-check-delay, 0s)) 3;
+}
+
+@keyframes journey-check-pulse {
+  0%, 30%, 100% { transform: scale(1); }
+  15% {
+    transform: scale(1.5);
+    box-shadow: 0 0 0 7px rgba(255, 224, 130, 0.65), 0 0 32px 12px rgba(255, 196, 80, 0.95);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zone-check-badge--journey-celebration { animation: none; }
+}
+
 /* ── LOCKED STATE ─────────────────────────────────
    Dimmed, desaturated, no pointer events
 ──────────────────────────────────────────────── */
