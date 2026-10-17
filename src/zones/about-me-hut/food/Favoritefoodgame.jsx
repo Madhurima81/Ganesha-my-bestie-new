@@ -88,11 +88,13 @@ import VOReplayButton from '../../../lib/components/feedback/VOReplayButton';
 import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
 import { useGaneshaVoice } from '../../../lib/hooks/useGaneshaVoice';
+import useGuardedReveal from '../../../lib/hooks/useGuardedReveal';
 import { logSceneEvent } from '../../../lib/utils/sceneEventLog';
 import { useGameSounds } from '../../../lib/hooks/useGameSounds';
 import usePauseAwareTimeout from '../../../lib/hooks/usePauseAwareTimeout';
 import useResumeCountdown from '../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
+import SceneStallPrompt from '../../../lib/components/feedback/SceneStallPrompt';
 
 // ?hitzones outlines the real tap box of every button in the scene.
 const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
@@ -500,6 +502,21 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const [showChildActivityTools, setShowChildActivityTools] = useState(false);
 
   const [discoveryFly, setDiscoveryFly] = useState(null);
+  const [revealConfig, setRevealConfig] = useState(null);
+  const revealConfigRef = useRef(null);
+  revealConfigRef.current = revealConfig;
+  const {
+    showRevealOnce,
+    markShown,
+    resetReveals,
+    expectReveal,
+    stall: revealStall,
+    resolveStall: resolveRevealStall,
+  } = useGuardedReveal({
+    sceneKey: 'favorite-food',
+    getRevealConfig: () => revealConfigRef.current,
+    setRevealConfig,
+  });
 
   // Idle hint state for Ganesha choices (0: none, 1: wobble@10s, 2: VO@18s, 3: strong glow@26s)
   const [idleHintLevel, setIdleHintLevel] = useState(0);
@@ -1216,6 +1233,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   }, [isReload, sceneState.gamePhase, isAudioOn]);
 
   // Auto-transition Handler (Fixes frozen screens)
+  const showComparisonCardOnce = useCallback(() => (
+    showRevealOnce('favorite-food-comparison', { id: 'favorite-food-comparison', phase: 'comparison-card' }, 'live')
+  ), [showRevealOnce]);
+
   useEffect(() => {
     let cancelTimer = null;
     const { gamePhase } = sceneState;
@@ -1241,7 +1262,12 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       cancelTimer = safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'child-friend-input' }); }, 0);
     }
     else if (gamePhase === 'friend-celebration') {
-      cancelTimer = safeSetTimeout(() => { sceneActions.updateState({ gamePhase: 'comparison-card' }); }, FRIEND_CELEBRATION_ADVANCE_DELAY_MS);
+      expectReveal(
+        'favorite-food-comparison',
+        { id: 'favorite-food-comparison', phase: 'comparison-card' },
+        'live',
+      );
+      cancelTimer = safeSetTimeout(showComparisonCardOnce, FRIEND_CELEBRATION_ADVANCE_DELAY_MS);
     }
 
     return () => cancelTimer?.();
@@ -1252,8 +1278,23 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     GANESHA_FRIEND_CORRECT_ADVANCE_DELAY_MS,
     FRIEND_CELEBRATION_ADVANCE_DELAY_MS,
     safeSetTimeout,
-    resumeHintCycleKey
+    resumeHintCycleKey,
+    expectReveal,
+    showComparisonCardOnce,
   ]);
+
+  useEffect(() => {
+    if (revealConfig && sceneState.gamePhase !== 'comparison-card') {
+      sceneActions.updateState({ gamePhase: 'comparison-card' });
+    }
+  }, [revealConfig, sceneActions, sceneState.gamePhase]);
+
+  useEffect(() => {
+    if (sceneState.gamePhase !== 'comparison-card') return undefined;
+    markShown('favorite-food-comparison');
+    setRevealConfig(null);
+    return undefined;
+  }, [markShown, sceneState.gamePhase]);
 
   useEffect(() => {
     if (sceneState.gamePhase === 'intro') {
@@ -2640,6 +2681,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       {/* Resume Countdown */}
       <ResumeCountdown value={countdownValue} />
+      <SceneStallPrompt show={!!revealStall} onTap={resolveRevealStall} />
 
       {/* Completion Screen */}
       {sceneState.showingCompletionScreen && (
@@ -2684,6 +2726,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           onReplay={() => {
             playUiTap();
             hardStopSceneAudio();
+            resetReveals();
+            setRevealConfig(null);
             SimpleSceneManager.setCurrentScene('about-me-hut', 'favorite-food', false, false);
             sceneActions.updateState({
               randomFoods: shuffleArray(foods),
