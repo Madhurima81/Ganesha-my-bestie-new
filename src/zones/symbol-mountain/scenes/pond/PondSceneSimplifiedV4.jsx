@@ -86,7 +86,6 @@ import trunkBefore from './assets/images/trunk-before.webp';
 import trunkAfter from './assets/images/trunk-after.webp';
 import ganeshaCharacter from './assets/images/ganesha-character.webp';
 
-const GANESHA_REFLECTION_IMAGE = '/images/ganesha-sit.svg';
 
 const RESUME_DELAY_MS = 3000;
 
@@ -236,7 +235,6 @@ const PondSceneSimplifiedV5 = ({
 };
 
 const SCENE_IMAGES = [
-  GANESHA_REFLECTION_IMAGE,
   pondBgFixed,
   pondStreamOverlay,
   pondTurtleSad,
@@ -246,17 +244,11 @@ const SCENE_IMAGES = [
   pondBigRock,
   pondPebble,
   pondFlower,
-  mooshikaCoach,
   symbolMooshikaColored,
   symbolModakColored,
   symbolBellyColored,
   symbolLotusColored,
   symbolTrunkColored,
-  lotusBefore,
-  lotusAfter,
-  trunkBefore,
-  trunkAfter,
-  ganeshaCharacter,
 ];
 
 const PondSceneContent = ({
@@ -2145,16 +2137,6 @@ const PondSceneContent = ({
                 />
               </div>
 
-              {/* Ganesha reflection in pond water — appears once the lotus blooms */}
-              {sceneState.lotusBloomed && (
-                <div className="pond-ganesha-reflection" aria-hidden="true">
-                  <img
-                    src={GANESHA_REFLECTION_IMAGE}
-                    alt=""
-                    className="pond-ganesha-reflection__img"
-                  />
-                </div>
-              )}
 
               {POND_OVERLAY_FRONT ? (
                 <div className="pond-bg-overlay pond-bg-overlay--front" style={{ backgroundImage: `url(${POND_OVERLAY_FRONT})` }} aria-hidden="true" />
