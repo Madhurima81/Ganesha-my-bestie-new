@@ -75,9 +75,9 @@ import wishForest2 from './assets/images/wish-images/wish-forest-2.webp';
 import wishForest3 from './assets/images/wish-images/wish-forest-3.webp';
 import wishForest4 from './assets/images/wish-images/wish-forest-4.webp';
 import baseImg from './assets/images/wish-images/base.webp';
-import flowerImg from './assets/images/wish-images/flower.webp';
-import bushImg from './assets/images/wish-images/bush.webp';
-import treeImg from './assets/images/wish-images/tree.webp';
+import flowerImg from './assets/images/wish-images/flower-opt.webp';
+import bushImg from './assets/images/wish-images/bush-opt.webp';
+import treeImg from './assets/images/wish-images/tree-opt.webp';
 import butterflyImg from './assets/images/wish-images/butterfly.webp';
 import birdImg from './assets/images/wish-images/bird.webp';
 import helpingImg from './assets/images/wish-images/helping.webp';
@@ -88,7 +88,7 @@ import angryImg from './assets/images/wish-images/angry.webp';
 import fightImg from './assets/images/wish-images/fight.webp';
 import hitImg from './assets/images/wish-images/hit.webp';
 import teasingImg from './assets/images/wish-images/teasing.webp';
-import cloudImg from './assets/images/cloud.webp';
+import cloudImg from './assets/images/cloud-opt.webp';
 import kindnessHeaderIcon from './assets/images/story-header/kindness-icon.webp';
 import sharingHeaderIcon from './assets/images/story-header/sharing-icon.webp';
 import natureHeaderIcon from './assets/images/story-header/nature-icon.webp';
@@ -810,6 +810,10 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const resumeSolvedWish = (n) => {
       // The FinalMoment effects would speak the success line again; this branch owns it.
       phaseVoiceRef.current[`wish${n}FinalMomentVo`] = true;
+      // Same for this wish's own intro/active line: the child heard it before leaving, and the
+      // phase-VO effect would speak it first, only for the success line to cut it off.
+      phaseVoiceRef.current[`wish${n}Active`] = true;
+      phaseVoiceRef.current[`wish${n}Intro`] = true;
       // Header shows the finished wish's discovery now (its save used to lag the solve).
       sceneActions.updateState({ storyDiscoveries: appendUniqueDiscovery(sceneState.storyDiscoveries, wishDiscoveries[n]) });
       if (sceneState[`wish${n}SuccessDone`]) {
