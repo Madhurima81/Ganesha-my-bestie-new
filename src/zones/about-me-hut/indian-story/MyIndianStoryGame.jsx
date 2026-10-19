@@ -12,6 +12,8 @@ import SimpleSceneManager from '../../../lib/services/SimpleSceneManager';
 import { useGaneshaVoice } from '../../../lib/hooks/useGaneshaVoice';
 import { useGameSounds } from '../../../lib/hooks/useGameSounds';
 import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
+import useGuardedReveal from '../../../lib/hooks/useGuardedReveal';
+import SceneStallPrompt from '../../../lib/components/feedback/SceneStallPrompt';
 import usePauseAwareTimeout from '../../../lib/hooks/usePauseAwareTimeout';
 import useResumeCountdown from '../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
@@ -574,6 +576,34 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const { speak, stop, mute: muteSpokenVoice } = useGaneshaVoice();
   const { playUiTap, playSparkle, playChime, playGlow } = useGameSounds();
+  const [revealConfig, setRevealConfig] = useState(null);
+  const revealConfigRef = useRef(null);
+  revealConfigRef.current = revealConfig;
+  const {
+    showRevealOnce,
+    markShown,
+    resetReveals,
+    expectReveal,
+    stall: revealStall,
+    resolveStall: resolveRevealStall,
+  } = useGuardedReveal({
+    sceneKey: 'my-indian-story',
+    getRevealConfig: () => revealConfigRef.current,
+    setRevealConfig,
+  });
+  const showOriginCardOnce = useCallback(() => (
+    showRevealOnce('my-indian-story-origin', { id: 'my-indian-story-origin', phase: STEPS.ORIGIN_CARD }, 'live')
+  ), [showRevealOnce]);
+  useEffect(() => {
+    if (revealConfig && sceneState.phase !== STEPS.ORIGIN_CARD) {
+      sceneActions.updateState({ phase: STEPS.ORIGIN_CARD });
+    }
+  }, [revealConfig, sceneActions, sceneState.phase]);
+  useEffect(() => {
+    if (sceneState.phase !== STEPS.ORIGIN_CARD) return;
+    markShown('my-indian-story-origin');
+    setRevealConfig(null);
+  }, [markShown, sceneState.phase]);
   const onReturnHint = useCallback(() => {
     setReturnHintNonce(n => n + 1);
   }, []);
@@ -588,6 +618,9 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   });
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
   // Refs
+  // A place name / the closing line is playing: dragging the glass must not cancel it (a cancel before the
+  // line starts makes the shared voice hook re-speak it, so the name or success line is heard twice).
+  const placeVoiceUntilRef = useRef(0);
   const discoveredRef = useRef(new Set(solvedAtMountRef.current.home ? PHASE1_LOCATIONS.map((_, i) => i) : []));
   const sparkleCancelRef = useRef(null);
   const phase1SpotSparkleTimerRef = useRef(null);
@@ -1378,6 +1411,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     const cancel1 = safeSetTimeout(() => {
       setShowCelebration(true);
       triggerSparkle('all', 2400);
+      placeVoiceUntilRef.current = Date.now() + 8000;
       const startedAt = Date.now();
       speakIfUnmuted(VOICE.phase1_complete, {
         age: childAge,
@@ -1613,12 +1647,13 @@ const discoverLocation = useCallback((index) => {
     });
     triggerSparkle('single', 1700);
     triggerPhase1SpotSparkle(index, 1700);
+    placeVoiceUntilRef.current = Date.now() + 2000;
     speakIfUnmuted(location.name, { age: childAge, moment: 'story' });
   }, [playSparkle, triggerMiniGesture, triggerSparkle, triggerPhase1SpotSparkle, speakIfUnmuted, childAge]);
 
   // Handle magnifying glass move
   const handleMglassMove = useCallback((newPosition) => {
-    stopVoice();
+    if (Date.now() >= placeVoiceUntilRef.current) stopVoice();
     setMglassPosition(newPosition);
     if (phase === STEPS.GANESHA_HOME) {
       // The child has understood the drag mechanic. Teaching hand should
@@ -1903,7 +1938,10 @@ const discoverLocation = useCallback((index) => {
     safeSetTimeout(advance, 4500);
   };
   const playLangChildConfirm = () => playChildConfirm(VOICE.language_confirmed, 'langChildConfirmDone', () => sceneActions.updateState({ phase: STEPS.FESTIVALS_GANESHA }));
-  const playFestChildConfirm = () => playChildConfirm(VOICE.festivals_confirmed, 'festChildConfirmDone', () => sceneActions.updateState({ phase: STEPS.ORIGIN_CARD }));
+  const playFestChildConfirm = () => {
+    expectReveal('my-indian-story-origin', { id: 'my-indian-story-origin', phase: STEPS.ORIGIN_CARD }, 'live');
+    playChildConfirm(VOICE.festivals_confirmed, 'festChildConfirmDone', showOriginCardOnce);
+  };
   const playHomeChildConfirm = () => playChildConfirm(VOICE.child_home_confirmed, 'homeChildConfirmDone', () => sceneActions.updateState({ phase: STEPS.LANGUAGE_GANESHA }));
   const playHomeChildConfirmRef = useRef(null);
   playHomeChildConfirmRef.current = playHomeChildConfirm;
@@ -1994,6 +2032,7 @@ const handleComplete = () => {
       )}
       <img src={bgImage} alt="Background" className="mis-background" />
       <ResumeCountdown value={countdownValue} />
+      <SceneStallPrompt show={!!revealStall} onTap={resolveRevealStall} />
       <ZoneBadgeButton variant="gameplay" zoneId="about-me-hut" onBack={() => {
         stopVoice();
         SimpleSceneManager.clearCurrentScene();
@@ -2088,6 +2127,8 @@ const handleComplete = () => {
           }}
           onReplay={() => {
             SimpleSceneManager.setCurrentScene('about-me-hut', 'my-indian-story', false, false);
+            resetReveals();
+            setRevealConfig(null);
             clearAllTimeouts();
             stopVoice();
             stop();
