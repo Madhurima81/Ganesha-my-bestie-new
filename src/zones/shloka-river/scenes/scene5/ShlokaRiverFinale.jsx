@@ -17,6 +17,8 @@ import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
 import { useGameSounds } from '../../../../lib/hooks/useGameSounds';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
+import useGuardedReveal from '../../../../lib/hooks/useGuardedReveal';
+import SceneStallPrompt from '../../../../lib/components/feedback/SceneStallPrompt';
 
 import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
@@ -397,6 +399,26 @@ const ShlokaRiverFinaleContent = ({
   // Guards triggerSuccessFlow (declared below) against double-firing when
   // both the live placeWord path and the SUCCESS resume-effect can call it.
   const successFlowStartedRef = useRef(false);
+  // The recap -> celebration step is a guarded reveal: the normal path and the watchdog's one recovery share
+  // one idempotent route, then SceneStallPrompt if even that does not land.
+  const [revealConfig, setRevealConfig] = useState(null);
+  const revealConfigRef = useRef(null);
+  revealConfigRef.current = revealConfig;
+  const {
+    showRevealOnce,
+    markShown,
+    resetReveals,
+    expectReveal,
+    stall: revealStall,
+    resolveStall: resolveRevealStall,
+  } = useGuardedReveal({
+    sceneKey: 'shloka-river-finale',
+    getRevealConfig: () => revealConfigRef.current,
+    setRevealConfig,
+  });
+  const showFinaleOnce = useCallback((source = 'live') => (
+    showRevealOnce('finale-celebration', { id: 'finale-celebration', phase: PHASES.FINALE }, source)
+  ), [showRevealOnce]);
 
   const phase = sceneState.phase || PHASES.INITIAL;
   const usedWords = new Set(slots.filter(Boolean));
@@ -599,6 +621,8 @@ const ShlokaRiverFinaleContent = ({
   useEffect(() => {
     if (phase !== PHASES.INITIAL) return;
     resumeHandledRef.current = false;
+    resetReveals();
+    setRevealConfig(null);
     finalChantStartedRef.current = false;
     chantRecapStartedRef.current = false;
     successFlowStartedRef.current = false;
@@ -782,13 +806,13 @@ const ShlokaRiverFinaleContent = ({
       chantRecapStartedRef.current = true;
 
       setChantHighlightIndex(null);
+      // 8 word clips take ~20 s, so the watchdog waits well past that before it steps in.
+      expectReveal('finale-celebration', { id: 'finale-celebration', phase: PHASES.FINALE }, 'live', 35000);
       playFullShloka({
         onWordStart: (index) => setChantHighlightIndex(index),
         onComplete: () => {
           setChantHighlightIndex(null);
-          safeSetTimeout(() => {
-            sceneActions.updateState({ phase: PHASES.FINALE });
-          }, 700);
+          safeSetTimeout(() => showFinaleOnce('live'), 700);
         },
       });
     };
@@ -824,7 +848,24 @@ const ShlokaRiverFinaleContent = ({
     // VO callbacks can fail to fire (missing file, iOS dropping events) —
     // don't strand SUCCESS on a dropped callback.
     safeSetTimeout(playCompletedShloka, 5000);
-  }, [playFullShloka, playSparkle, playVoice, safeSetTimeout, sceneActions]);
+  }, [expectReveal, playFullShloka, playSparkle, playVoice, safeSetTimeout, sceneActions, showFinaleOnce]);
+
+  useEffect(() => {
+    if (revealConfig && phase !== PHASES.FINALE) {
+      // A stuck recap must not keep playing under the celebration.
+      fullShlokaPlaybackTokenRef.current += 1;
+      fullShlokaAudioRef.current?.pause();
+      fullShlokaAudioRef.current = null;
+      setChantHighlightIndex(null);
+      sceneActions.updateState({ phase: PHASES.FINALE });
+    }
+  }, [phase, revealConfig, sceneActions]);
+
+  useEffect(() => {
+    if (phase !== PHASES.FINALE) return;
+    markShown('finale-celebration');
+    setRevealConfig(null);
+  }, [markShown, phase]);
 
   // Resume case: mounting directly into SUCCESS (reload) should fill the
   // board and continue into the completed-Shloka playback. Idempotent with
@@ -1196,6 +1237,7 @@ const ShlokaRiverFinaleContent = ({
           {/* [per-scene mute removed 2026-10-09] <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} /> */}
           <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
+          <SceneStallPrompt show={!!revealStall} onTap={resolveRevealStall} />
 
           {phase === PHASES.INITIAL && (
             <OpeningModal
