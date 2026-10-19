@@ -7,11 +7,11 @@ import GestureDemo from '../../../../../lib/components/feedback/GestureDemo';
 import usePausableTimers from '../../../../../lib/hooks/usePausableTimers';
 import './SuryakotiGame.css';
 
-import sharedSceneBg from '../assets/images/saurakoti-bg.png';
+import sharedSceneBg from '../assets/images-opt/saurakoti-bg-opt.webp';
 import sunImg from '../assets/images/Suryakoti/sun-zip.png';
-import bunnySadImg from '../assets/images/Suryakoti/bunny-sad-zip.png';
-import bunnyHappyImg from '../assets/images/Suryakoti/bunny-happy-zip.png';
-import burrowImg from '../assets/images/Suryakoti/burrow-zip.png';
+import bunnySadImg from '../assets/images-opt/Suryakoti/bunny-sad-zip-opt.webp';
+import bunnyHappyImg from '../assets/images-opt/Suryakoti/bunny-happy-zip-opt.webp';
+import burrowImg from '../assets/images-opt/Suryakoti/burrow-zip-opt.webp';
 
 const POS = {
   bunny: { l: 44, t: 43, w: 8 },

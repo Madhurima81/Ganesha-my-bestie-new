@@ -8,10 +8,10 @@ import { getLineCue } from '../../../../lib/config/content/voiceCues';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './NirvighnamGame.css';
 
-import sharedSceneBg from './assets/images/saurakoti-bg.png';
-import turtleSadImg from './assets/images/nirvighnam/nir-turtle-sad.png';
-import turtleHappyImg from './assets/images/nirvighnam/nir-turtle-happy.png';
-import nestImg from './assets/images/nirvighnam/nest.png';
+import sharedSceneBg from './assets/images-opt/saurakoti-bg-opt.webp';
+import turtleSadImg from './assets/images-opt/nirvighnam/nir-turtle-sad-opt.webp';
+import turtleHappyImg from './assets/images-opt/nirvighnam/nir-turtle-happy-opt.webp';
+import nestImg from './assets/images-opt/nirvighnam/nest-opt.webp';
 import stoneImg from './assets/images/nirvighnam/stone.png';
 import branchImg from './assets/images/nirvighnam/branch.png';
 import reedsClosedImg from './assets/images/nirvighnam/reeds-closed.png';

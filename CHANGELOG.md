@@ -3002,3 +3002,37 @@ MooshikaRideTransition rider img switched to .webp with .png onError fallback.
 
 ## [2026-10-17] - Image session B: Dreams reveal candidates (approval pending)
 **Touched:** 3 new wish-images/*-opt.webp; docs/AboutMeHut-Cloud-Comparison.html (cloud + reveals). Open: approval; no import changes; no commit/push.
+
+## [2026-10-19] - Image session A: Shloka Scene2 candidates (image approval pending)
+**Touched:** 14 new uniquely named Scene2/assets/images-opt/**/*-opt.webp; docs/Shloka-Scene2-Comparison.html; append-only docs/IMAGE_AUDIT_A.md and CHANGELOG.md. No imports/preloads or runtime code changed.
+**Result:** q85, alpha retained; same-size 2048×1536 background, DPR2+35% oversized sprites. Propose 10 replacements: production scene-owned budget 1.793 → 0.971 MB if approved. Keep Sun and three shadow originals because production PNGs are smaller. Rock and happy bunny quality flags first on the page; display/zoom visual checks and relative-file page controls verified, original/candidate/source hashes pass. No new production timing/build or speedup claim at candidate stage.
+**Scope:** Phase 1 approved; Scene2 → Scene3 → Scene4, one fully finished at a time; skip Scene1. STOP for Scene2 image approval before import-only switch. Samaprabha/Kurumedeva preload warm-up proposal deferred until all Phase 2 scenes finish. Shared/B files, voice/timer/game logic untouched; no commit/push.
+
+
+## [2026-10-19] - Image session A: approved Scene2 import-only rollout
+**Changed:** exactly 10 image-import lines in SuryakotiGame.jsx/SamaprabhaGame.jsx. Existing preload bindings resolve to -opt.webp; Sun and three shadows retained. docs/IMAGE_PASSCHECK_A.md added; audit/changelog appended.
+**Verified:** zero no-undef lines in default ESLint; existing 1 unused-var error/1 warning unchanged; focused esbuild, diff check, hashes and preload URL checks pass. One locked private production build exit 0 (430.7 s). Matched same-build reconstructed original-production-PNG vs optimized opening: images 3.062 → 2.299 MB, all transfer 4.050 → 3.415 MB; fully drawn 15.3 → 16.9 s, image settle 18.0 → 21.5 s. Cache-disabled Slow 4G 1024×768 DPR2; screenshots confirm endpoints. Baseline is payload reconstruction, not old source. Build output cleaned; logs outside repo.
+**Pending:** Madhurima tests Scene2 rock/happy bunny first with Disable cache unticked, then says commit. No commit/push here. Proceeding to Scene3 comparison only under her explicit instruction; no preload warm-up work.
+
+
+## [2026-10-19] - Image session A: Scene3 comparison (approval pending)
+**Touched:** 8 new unique Scene3/assets/images-opt/**/*-opt.webp; docs/Shloka-Scene3-Comparison.html; append-only audit/changelog. No Scene3 runtime edits.
+**Result:** propose 4 replacements (same-size background, two turtles, nest), production file budget 2.721 → 2.369 MB if approved. Keep branch and both reed alpha sprites original after edge-gate failures; stone/branch production PNGs are smaller too. Existing 23 small lossy WebPs untouched. All original/candidate/source hashes and relative-file page controls pass; flags first, display/zoom visual review done. No new build/timing or speedup claim.
+**Open:** STOP for Scene3 image approval. Scene2 import-only rollout/pass-check ready, not committed; no Scene4 work yet. Preload warm-up work deferred; no voice/timer/shared/game logic edits or commit/push.
+
+
+## [2026-10-19] - Image session A: approved Scene3 import-only rollout
+**Changed:** four image-import lines in NirvighnamGame.jsx; existing preload bindings automatically use approved URLs. Kept stone/branch/both reed originals. Scene3 pass-check and audit/changelog appended. Scene2 tested fine by Madhurima.
+**Verified:** default ESLint exit 0, no no-undef; focused esbuild/diff check/hash/scope and all four runtime preload URL checks pass. One locked private production build exit 0 (384.3 s); output cleaned, lock released, logs external. Matched same-build original-production-PNG payload vs optimized: images 4.436 → 3.687 MB; all 6.071 → 4.607 MB; opening 21.7 → 14.8 s; image settle 24.2 → 17.2 s. Cache-disabled Slow 4G 1024×768 DPR2; verified visual endpoints; payload reconstruction, not old-source build.
+**Open:** Madhurima tests Scene3 with cache enabled; no commit/push. Scene4 comparison requested next; imports require separate approval. No voice/timer/shared/gameplay or warm-up edits.
+
+
+## [2026-10-19] - Image session A: Scene4 boat comparison (approval pending)
+**Touched:** new scene4/assets/images-opt/boat-opt.webp and docs/Shloka-Scene4-Comparison.html; append-only audit/changelog. Original boat 396.3 →120.8 KB, 2048×1536 →1134×850 with alpha and DPR2+35% margin. Scene-owned static budget 2.413 →2.137 MB if approved.
+**Verified:** SSIM .9825, PSNR 39.15 dB, alpha-edge 2.91; display-size light/dark and 3× visual checks, 18 original hashes, source hashes and relative-file page controls pass. No flags. Other small lossy art/backgrounds retained. No import/preload switch, runtime change, production timing claim or commit/push. STOP for Scene4 image approval.
+
+
+## [2026-10-19] - Image session A: approved Scene4 boat rollout
+**Changed:** one boat image-import line in SarvakaryeshuGame.jsx; existing preload binding uses the new URL. Originals and other art untouched; no voice/timer/shared/game logic edits. Boat 396.3 →120.8 KB; static scene-owned files 2.413 →2.137 MB.
+**Checks:** ESLint default exit 0, no no-undef output; focused esbuild, import-only/preload checks and diff check pass. One locked private build exit 0 (485.7 s), output removed and lock released. Matched reconstructed original-WebP vs optimized opening images 3.943 →3.667 MB; opening 14.3 →14.3 s, settle 16.8 →17.3 s; cache-disabled Slow 4G 1024×768 DPR2, visually checked endpoints. Shared traffic included; no statistical speedup claim.
+**Pending:** Madhurima tests Scene4 with Disable cache unticked and says commit. No commit/push.

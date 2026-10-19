@@ -17,7 +17,7 @@ import trunkBeforeImg from './assets/images/sarvakaryeshu/trunk-before.webp';
 import trunkAfterImg from './assets/images/sarvakaryeshu/trunk-after.webp';
 import tuskBeforeImg from './assets/images/sarvakaryeshu/tusk-before.webp';
 import tuskAfterImg from './assets/images/sarvakaryeshu/tusk-after.webp';
-import boatImg from './assets/images/boat.webp';
+import boatImg from './assets/images-opt/boat-opt.webp';
 
 import trunkIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-trunk-new-opt.webp';
 import tuskIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-tusk-new.webp';
