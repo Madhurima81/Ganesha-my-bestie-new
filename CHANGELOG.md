@@ -3003,6 +3003,44 @@ MooshikaRideTransition rider img switched to .webp with .png onError fallback.
 ## [2026-10-17] - Image session B: Dreams reveal candidates (approval pending)
 **Touched:** 3 new wish-images/*-opt.webp; docs/AboutMeHut-Cloud-Comparison.html (cloud + reveals). Open: approval; no import changes; no commit/push.
 
+**Update:** Dreams flower/bush/tree/cloud imports switched to -opt.webp (ObstacleRemoverGame.jsx, imports only); not committed.
+
+
+## [2026-10-19] - Image session B: Family Tree, My Indian Story, Favourite Food closed
+**Changed:** docs/IMAGE_AUDIT_B.md only. Images already right-sized lossy WebP against CSS display sizes; no candidates.
+**Open:** Pond, Sacred Assembly, Finale Phase 1; Dreams pass-check; no commit/push.
+
+
+## [2026-10-19] - Image session B: Group 4 Pond Phase 1 report
+**Touched:** docs/IMAGE_AUDIT_B.md only. Pond preloads about 1.17 MB it never shows (mission before/after, character, coach) and a 2.39 MB ganesha-sit.svg for a 190 px reflection.
+**Open:** Madhurima approves rank 1/2; no commit/push.
+
+**Update (Pond):** SCENE_IMAGES preload list trimmed (mission before/after, character, coach, ganesha-sit.svg); preload array only. Not committed.
+
+
+## [2026-10-19] - Image session B: Group 5 Sacred Assembly closed
+**Changed:** docs/IMAGE_AUDIT_B.md only. Preload list is lean; unused divine/faded/stone images are imported but never fetched; nothing worth switching.
+**Open:** Finale (scene 5) Phase 1; no commit/push.
+
+
+## [2026-10-19] - Image session B: Group 6 Finale Phase 1 report
+**Changed:** docs/IMAGE_AUDIT_B.md only. One large item: choice-boat.png 706 KB shown at most 180 px, preloaded and reused 8+ times; estimated saving about 0.67 MB.
+**Open:** Madhurima decides whether to prepare the candidate; no commit/push.
+
+
+## [2026-10-19] - Image session B: Finale boat candidate (approval pending)
+**Touched:** new choice-boat-opt.webp (scene5/assets/images); docs/Finale-Boat-Comparison.html. 706 KB -> 24 KB; passes gate. Open: approval before ShlokaRiverFinale.jsx:34 switch; no commit/push.
+
+**Update:** Finale boat import switched to choice-boat-opt.webp (ShlokaRiverFinale.jsx:34); not committed.
+
+
+## [2026-10-19] - Image session B: final lone build + pass-check list
+**Touched:** docs/IMAGE_PASSCHECK_B.md (new). One production build at HEAD 38932dc6 + working tree: exit 0, build folder deleted, lock removed.
+**Open:** Madhurima runs docs/IMAGE_PASSCHECK_B.md; uncommitted image edits: ObstacleRemoverGame.jsx (Dreams), ShlokaRiverFinale.jsx (boat), PondSceneSimplifiedV4.jsx (preload trim); before/after measurement deferred.
+
+**Update (Pond):** lotus-bloom Ganesha reflection block removed at Madhurima's request (JSX only; not committed).
+
+
 ## [2026-10-19] - Image session A: Shloka Scene2 candidates (image approval pending)
 **Touched:** 14 new uniquely named Scene2/assets/images-opt/**/*-opt.webp; docs/Shloka-Scene2-Comparison.html; append-only docs/IMAGE_AUDIT_A.md and CHANGELOG.md. No imports/preloads or runtime code changed.
 **Result:** q85, alpha retained; same-size 2048×1536 background, DPR2+35% oversized sprites. Propose 10 replacements: production scene-owned budget 1.793 → 0.971 MB if approved. Keep Sun and three shadow originals because production PNGs are smaller. Rock and happy bunny quality flags first on the page; display/zoom visual checks and relative-file page controls verified, original/candidate/source hashes pass. No new production timing/build or speedup claim at candidate stage.
@@ -3036,3 +3074,14 @@ MooshikaRideTransition rider img switched to .webp with .png onError fallback.
 **Changed:** one boat image-import line in SarvakaryeshuGame.jsx; existing preload binding uses the new URL. Originals and other art untouched; no voice/timer/shared/game logic edits. Boat 396.3 →120.8 KB; static scene-owned files 2.413 →2.137 MB.
 **Checks:** ESLint default exit 0, no no-undef output; focused esbuild, import-only/preload checks and diff check pass. One locked private build exit 0 (485.7 s), output removed and lock released. Matched reconstructed original-WebP vs optimized opening images 3.943 →3.667 MB; opening 14.3 →14.3 s, settle 16.8 →17.3 s; cache-disabled Slow 4G 1024×768 DPR2, visually checked endpoints. Shared traffic included; no statistical speedup claim.
 **Pending:** Madhurima tests Scene4 with Disable cache unticked and says commit. No commit/push.
+
+
+## [2026-10-19] - Image session B: before/after measurement + partial cleanup
+**Touched:** docs/IMAGE_AUDIT_B.md; deleted 7 of my own rejected candidate .webp files (tracked). Builds and copy removed.
+**Result:** images requested (cache off): loader 2.121 -> 1.203 MB, map 0.988 -> 0.564, Zone Welcome 1.035 -> 0.607. Earlier map PNG figures were overstated: the production build already compresses public PNGs.
+**Open:** old originals/unused files need Madhurima's OK; no commit/push.
+
+
+## Image session A — approved Shloka later-game image warm-up
+**Changed:** preload-only edits in live Scene2/Scene3/Scene4 parents and Samaprabha/Kurumedeva/Sarvada children. Later images leave the opening preload batch and warm 2.5 s into the first game after visible first art loads. Direct Continue keeps active preload; cleanup is StrictMode-safe. Scene1 unchanged by request. No shared helper, voice, gameplay timer, resume or Play Again changes.
+**Verified:** default no-undef output empty, existing full lint findings unchanged; focused esbuild/lifecycle/diff checks pass. One locked production build exit 0; paired opening/warm-up/direct-Continue traces and screenshots recorded in docs/IMAGE_AUDIT_A.md. Private build deleted, lock released, logs external. No commit/push; user test pending.

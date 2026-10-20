@@ -168,3 +168,95 @@ New file `src/zones/about-me-hut/enjoy/assets/images/cloud-opt.webp` (420 px, 14
 
 ## Dreams reveal images (sizes read from code, not measured live; approval pending)
 The runtime recorder only caught the opening screen twice, so I used the inline sizes in `ObstacleRemoverGame.jsx` (flower 190 px, bush 210 px, tree 300 px). New files in `enjoy/assets/images/wish-images/`: `flower-opt.webp` 104 -> 27 KB (flagged: PSNR 37.9, edge 5.3), `bush-opt.webp` 102 -> 34 KB (ok), `tree-opt.webp` 83 -> 49 KB (ok). With the cloud: 0.45 MB -> 0.12 MB (saving about 0.33 MB). Combined page: docs/AboutMeHut-Cloud-Comparison.html (flagged first). Imports to change after approval: `ObstacleRemoverGame.jsx` lines 76-78, 89. Other wish images, Family Tree and Food sprites are unmeasured and not prepared.
+
+Dreams switched (approved): ObstacleRemoverGame.jsx lines 76-78 (flower, bush, tree) and 89 (cloud) -> `-opt.webp`. Imports only. Test: Dreams wish 3 reveals + cloud taps.
+
+## About Me Hut - Family Tree, My Indian Story, Favourite Food: closed, no candidates (2026-10-19)
+Checked against CSS display sizes: Family Tree deity images 512 px shown in 250 px circles (needs about 675 px at 2x +35 %, so already at or below need); India map 1600 px shown at `min(0.65 x app height, 78vw)` (about 500-670 css px, needs about 1,800 px: not oversized); icon sets (256 px, 13-25 KB each) and 200 px child icons already small lossy WebP. Favourite Food sprites (21-49 KB, 512 px) left for the same reason. Totals: Family Tree 0.36 MB, My Indian Story 0.65 MB, all lossy WebP. No new art, no import changes. About Me Hut is done once the Dreams pass-check is confirmed.
+
+# Group 4 - Pond (Phase 1, read-only), 2026-10-19
+Scope: `PondSceneSimplifiedV4.jsx` (+ `PondScene.css`, shared sidebar/OpeningModal already done). Old Pond variants ignored. No file changed. Sizes are source bytes.
+
+## What the scene preloads on mount vs what it really draws
+`SCENE_IMAGES` (line ~238) is passed to the preload hook, so everything in it is requested as soon as the scene mounts, shown or not.
+
+| Item | Size | Rendered? | Evidence |
+|---|---|---|---|
+| `/images/ganesha-sit.svg` (`GANESHA_REFLECTION_IMAGE`, first in the preload list) | **2,392 KB** (vector) | Yes, only once the lotus has bloomed, as a reflection at `width: var(--pond-reflection-size, 20%)`, `max-width: 190px` (`.pond-ganesha-reflection`), a plain `<img>` | line 2152; the single biggest file in the scene and fetched at scene entry |
+| `lotus-before.webp` 174, `lotus-after.webp` 168, `trunk-before.webp` 190, `trunk-after.webp` 231 KB (1536x1024) | **763 KB** | **No.** `missionImages` (line 126) is defined but never read anywhere; these four appear only there and in the preload list | grep: 3 references each, none in JSX |
+| `ganesha-character.webp` (as `ganeshaCharacter`) | **197 KB** | **No.** Passed as `characterImg` to `OpeningModal`, which never reads that prop | same finding as scene 3 |
+| `mooshika-coach.webp` (`mooshikaCoach`) | **205 KB** | **No.** Import + preload entry only (2 references) | |
+| Preloaded but never shown total | | | **about 1.17 MB** (4 mission images + character + coach), plus the SVG, which is shown late |
+
+## Images really drawn (lossy WebP unless noted)
+`pond-flower` 126 KB (1254 px; shown `clamp(60px, 10.5vw, 400px)`), `pond-turtle-sad` 119 KB (976x899), `pond-stream-overlay` 79 KB (1433x450), `trunk-lotus-bloomed/dormant/upright-new` 76/67/43 KB (1000 px), `pond-big-rock` 44 KB, `pond-pebble` 31 KB (1536x1024 each, large frames for small objects), `pond-bg-fixed` 32 KB background; sidebar icons already `-opt`. Real drawn art about 0.62 MB. Display sizes are layout-driven (vw/percent) and not yet measured.
+
+## Ranked options (nothing started)
+| Rank | Change | Estimated saving | Needs |
+|---|---|---|---|
+| 1 | `ganesha-sit.svg` -> small lossy WebP for the reflection (190 px max, so 512 px, about 17-25 KB) | about 2.3 MB at scene entry | your visual OK (it is a faint reflection; plain `<img>`, not the animated `GaneshaCharacter`) |
+| 2 | Drop the 6 never-shown images from `SCENE_IMAGES`: 4 mission images, `ganeshaCharacter`, `mooshikaCoach` (preload list only; keep the imports/assets) | about 1.17 MB at scene entry | your OK (reference-only, no art change; I would not delete files) |
+| 3 | Right-size pebble, rock, flower, turtle, stream overlay (1000-1536 px frames for small objects) | about 0.2-0.3 MB (estimate) | measured sizes (or a live run) then a comparison page |
+| Total (1+2) | | about 3.5 MB removed from the scene's first load, estimates | |
+
+Nothing measured in a browser yet (no timing claimed). Next after your answer: rank 2 is a 6-line deletion in the preload array; rank 1 gets a comparison page (SVG vs 512 WebP at 190 px on pond water colours).
+
+## Pond - changes made (2026-10-19)
+`PondSceneSimplifiedV4.jsx` `SCENE_IMAGES`: removed from the preload list `mooshikaCoach`, `lotusBefore`, `lotusAfter`, `trunkBefore`, `trunkAfter`, `ganeshaCharacter` (approved rank 2) and `GANESHA_REFLECTION_IMAGE` (`/images/ganesha-sit.svg`, 2.39 MB; Madhurima: not used). Preload array only; imports, `missionImages`, the `OpeningModal characterImg` prop and the reflection `<img>` block (`lotusBloomed`, ~line 2150) are untouched, and `ganesha-sit.svg` is not deleted. Rank 1 WebP candidate was made and removed again (flagged on alpha-edge; not needed). Note: if the lotus does bloom, the reflection `<img>` still requests the SVG at that moment; Madhurima to say whether to remove that render block.
+
+# Group 5 - Sacred Assembly (Phase 1, read-only), 2026-10-19
+Scope: `SacredAssemblySceneV8.jsx` + `GaneshaIllustration.jsx`. No file changed. Source bytes.
+
+| Item | Size | Really loaded? | Evidence |
+|---|---|---|---|
+| `final_symbol_background.webp` | 15 KB (2048 px, lossy) | Yes (preloaded, CSS background, line 1943) | fine |
+| 8 symbol icons | already `-opt` / small | Yes (preloaded) | Group 1 |
+| `ganesha-*-colored.webp` body-part images (ears 29, belly 19, right-hand 16, mouse 14, left-hand 12 KB, 750 px) | 0.09 MB | Yes (shown on the cards, `bodyPartImage`) | small and lossy |
+| `GaneshaIllustration` PNGs (base 73, mooshika 16, ear 16, lotus 12, trunk 12, modak 12, eyes 11, belly 9, tusk 7 KB) | 0.17 MB | Yes (the 560 px assembly figure) | already small |
+| `ganesha-divine.webp` | **282 KB** (1024x1536) | **No.** Passed as `characterImg` (ignored by `OpeningModal`) and as `ganeshaImage` to a completion effect called with `showCentralGanesha={false}` (`RotatingOrbsEffect`, line 108 guard) | importing a URL does not download it; it is not in the preload list |
+| `ganesha-faded.webp` 137 KB, `ganesha-stone.webp` 87 KB | 0.22 MB | **No.** Import only, one reference each | not fetched |
+| Preload list (`SCENE_IMAGES`, line 554) | background + 8 icons only | | already lean |
+
+Result: the scene's real first-load art is about 0.3-0.5 MB, all small lossy WebP or tiny PNGs, and the preload list contains nothing that is never shown (unlike Pond). The 0.5 MB of never-rendered imports is not downloaded. **No change recommended; Sacred Assembly closed.** (Not timed in a browser. Optional tidy: delete the unused imports in a later cleanup; no image saving.)
+
+# Group 6 - Shloka Finale / scene 5 (Phase 1, read-only), 2026-10-19
+Scope: `scene5/ShlokaRiverFinale.jsx` (+ `ShlokaRiverFinaleData.js`, CSS). Old/backup variants and unused assets (`bg.png`, `boat-sail.*`, `raft.png`, animal PNGs, `recap-boats/`, `river-finale-bg.png`) ignored; no file changed. Source bytes.
+
+| Item | Size | Display | Loaded? | Note |
+|---|---|---|---|---|
+| **`choice-boat.png`** (`neutralBoat`) | **706 KB** (1254x1254 PNG, alpha) | `.srf-neutral-boat` is 100 % of its boat: choice boats `clamp(130px, 17vw, 180px)`, journey boats 72-104 px (also 118-150 px on small screens) | **Yes, first in the preload list** (`SCENE_IMAGES`, line ~197) and rendered 8+ times from one file | the only large item; 1254 px for at most 180 px; DPR2 + 35 % margin = 486 px |
+| `river-finale-bg.webp` | 65 KB (2048x1536, lossy) | full stage | yes | fine |
+| 8 reveal symbol images (`symbols/*-symbol.webp`, trunk already `-opt`) | 16-51 KB each, 0.22 MB (512 px) | symbol orbs about 72-104 px | yes (preloaded) | already small; resizing would save only about 0.1 MB, not worth it |
+| `/images/new-ganesha-sit-modak.webp` (opening) | 64 KB | | yes | fine |
+Preload list (`SCENE_IMAGES`) contains only things the scene draws; nothing wasted. Scene total about 1.0 MB, of which 0.71 MB is the one boat PNG.
+
+## Ranked option (not started)
+| Rank | Change | Est. after | Est. saving | Needs |
+|---|---|---|---|---|
+| 1 | `choice-boat.png` -> new `choice-boat-opt.webp` (512 px, q85, alpha kept) | about 20-35 KB | **about 0.67 MB at scene entry** | comparison page (boat is a flat illustration with soft edges and the word icon sits on top), your OK, then one import line (`ShlokaRiverFinale.jsx:34`) |
+| 2 | symbol reveals to display size | 0.22 -> about 0.12 MB | about 0.1 MB | not recommended (small gain) |
+Nothing measured in a browser; no timing claim. Scene 4 (Sarvakaryeshu + Sarvada) belongs to session A.
+
+## Finale boat - Phase 2 candidate (approval pending)
+New file `scene5/assets/images/choice-boat-opt.webp` (512 px, q85, alpha kept): 706 KB -> 24 KB (saving about 0.68 MB). Gate vs the PNG at 104/180/208/360/486 px: SSIM 0.989, PSNR 39.7 dB, alpha-edge 2.3, alpha error 0.4: passes. Page: docs/Finale-Boat-Comparison.html. Original untouched; nothing imported. After approval: change `ShlokaRiverFinale.jsx:34` only.
+
+Finale boat switched (approved): ShlokaRiverFinale.jsx:34 `choice-boat.png` -> `choice-boat-opt.webp`. Import only. Test: Finale boats (choice + journey).
+
+Pond reflection REMOVED (Madhurima, 2026-10-19): deleted the `pond-ganesha-reflection` img block (shown when lotusBloomed) and the `GANESHA_REFLECTION_IMAGE` constant in PondSceneSimplifiedV4.jsx. `.pond-ganesha-reflection*` CSS in PondScene.css is now dead and left in place; `public/images/ganesha-sit.svg` not deleted.
+
+# Before / after measurement and cleanup - 2026-10-19
+Method: two private production builds, one at a time with the lock (before = `git archive` of `6c0342d8`, the commit before the Group 1 switches, built from a copy outside the repo; after = the current working tree). Headless Chromium 1024x768, DPR 2, cache disabled, service worker blocked, no throttling, local server, seeded returning profile, audio off. Images only; unique URLs; completed-response bytes. Both build folders and the copy were deleted afterwards (lock was free for both; session A took the lock for its own build after mine finished).
+
+| Stage | Before: images / MB | After: images / MB | Saving |
+|---|---|---|---|
+| Loader + welcome (page idle) | 32 / **2.121** | 26 / **1.203** | **0.92 MB** |
+| Tap Start Adventure -> map | 19 / **0.988** | 19 / **0.564** | **0.42 MB** |
+| Tap Modak Mountain -> Zone Welcome | 19 / **1.035** | 19 / **0.607** | **0.43 MB** (includes the 445 KB lossless belly icon, now 16 KB) |
+No timing claim: nothing was throttled and "fully drawn" was not measured.
+
+**Correction to my earlier Phase 1 numbers:** the production build runs `vite-plugin-image-optimizer` (`vite.config.js:52`, PNG quality 82), so the deployed map PNGs were already about 0.6 MB, not 3.9 MB (waterfall 262 KB, stream 181 KB, bridge 155 KB; `welcome-back-bg.png` 337 KB, symbol card PNG 146 KB). The "about 4.3 MB" I computed earlier for the map was wrong; the measured map saving is 0.42 MB. Lossless WebP files (the sidebar icons) and existing WebPs are not recompressed by that plugin, so those savings (belly 445 KB -> 16 KB etc.) were real. Same caveat applies to the Finale boat: the deployed `choice-boat.png` was probably smaller than the 706 KB source (not measured), so the 0.68 MB estimate is an upper bound.
+
+## Cleanup done
+Deleted only my own rejected, unreferenced candidates (all tracked in git, recoverable): `public/images/ganesha-final-new-512.webp`, `-800.webp`; Modak `ganesha-game3-new-opt`, `fj-flower-cream-opt`, `fj-flower-coral-opt`, `fj-tree-new-opt`, `fj-branch-new-opt` (.webp). Checked first: no references anywhere in src, public, index.html or vite config.
+## Cleanup NOT done (unreferenced by the live app but originals/old files; need your OK, ideally after a checkpoint commit)
+`food-bg.png` and `old-images/*` (About Me food), `welcome-background-recent.png` / `-1.png` / `-old.png` / `-3.png`, `public/images/ganesha-sit.svg` (2.39 MB, no longer used by Pond), the Modak PNG originals and twins (`emotion-*-game3.png` / `.webp` twins) and the other old-format PNG twins, and dead `.pond-ganesha-reflection*` CSS in `PondScene.css`. Also `docs/Modak-Art-Comparison.html` and `docs/AboutMeHut-Ganesha-Comparison.html` now describe deleted files.
