@@ -961,6 +961,7 @@ const SuryakotiBankContent = ({
                 />
 
                 <SamaprabhaGame
+                  warmImages={sceneState.phase === PHASES.SURYAKOTI_GAME && !isRecorderOpen && !sidebarPause.isSidebarPaused}
                   isActive={sceneState.phase === PHASES.SAMAPRABHA_GAME}
                   introComplete={samaIntroComplete}
                   introVoStarted={samaIntroVoStarted}

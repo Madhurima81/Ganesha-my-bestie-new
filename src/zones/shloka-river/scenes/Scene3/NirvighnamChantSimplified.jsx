@@ -939,6 +939,7 @@ const NirvighnamChantContent = ({
 
               {/* ── KURUMEDEVA GAME — tap friends ── */}
               <KurumedevaGame
+                warmImages={sceneState.phase === PHASES.NIRVIGHNAM_GAME && !isRecorderOpen && !sidebarPause.isSidebarPaused}
                 isActive={sceneState.phase === PHASES.KURUMEDEVA_GAME}
                 initialRounds={sceneState.roundsDone || 0}
                 onBeatComplete={(n) => sceneActions.checkpoint({ roundsDone: n })}

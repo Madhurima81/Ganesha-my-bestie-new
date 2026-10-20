@@ -1,4 +1,4 @@
-import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
+import PoseImage, { preparePose, usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
@@ -82,8 +82,11 @@ const POSE_ASSETS = [
   nightSceneImg,
 ];
 
+const NO_PRELOAD_IMAGES = [];
+
 export default function SarvadaGame({
   isActive = false,
+  warmImages = false,
   hideElements = false,
   onMicroWin = () => {},
   onPhaseComplete = () => {},
@@ -98,7 +101,21 @@ export default function SarvadaGame({
   onBeatComplete = () => {},
   onTimesVoDone = () => {},
 }) {
-  usePreloadPoses(POSE_ASSETS);
+  usePreloadPoses(isActive ? POSE_ASSETS : NO_PRELOAD_IMAGES);
+  useEffect(() => {
+    if (!warmImages || isActive) return undefined;
+    let timer;
+    const warm = () => {
+      const images = [...document.querySelectorAll('.sarva-game:not(.is-hidden) img')];
+      if (!images.length || images.some((image) => !image.complete || !image.naturalWidth)) {
+        timer = setTimeout(warm, 250);
+        return;
+      }
+      POSE_ASSETS.forEach((src) => { preparePose(src).catch(() => {}); });
+    };
+    timer = setTimeout(warm, 2500);
+    return () => clearTimeout(timer);
+  }, [warmImages, isActive]);
   const { playVoice: playSceneLine, stopVoice: stopSceneVoice, playWord, playSyllable, setBeat } = voiceGuidance;
   useWarmSanskritAudio('sarvada', AUDIO); // first tap plays instantly
   const [seedTimes] = useState(() => (

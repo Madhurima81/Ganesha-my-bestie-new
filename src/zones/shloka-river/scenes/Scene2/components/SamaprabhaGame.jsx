@@ -1,4 +1,4 @@
-import PoseImage, { usePreloadPoses } from '../../../../../lib/components/animation/PoseImage';
+import PoseImage, { preparePose, usePreloadPoses } from '../../../../../lib/components/animation/PoseImage';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import SyllableHighlight from '../../../shared/SyllableHighlight';
 import GestureDemo from '../../../../../lib/components/feedback/GestureDemo';
@@ -222,8 +222,11 @@ const POSE_ASSETS = [
   shadowLeavesImg,
 ];
 
+const NO_PRELOAD_IMAGES = [];
+
 export default function SamaprabhaGame({
   isActive = false,
+  warmImages = false,
   introComplete = true,
   introVoStarted = true,
   hideElements = false,
@@ -245,7 +248,21 @@ export default function SamaprabhaGame({
   isSidebarOpen,
 }) {
   const handPaused = isSidebarOpen ?? isPaused;
-  usePreloadPoses(POSE_ASSETS);
+  usePreloadPoses(isActive ? POSE_ASSETS : NO_PRELOAD_IMAGES);
+  useEffect(() => {
+    if (!warmImages || isActive) return undefined;
+    let timer;
+    const warm = () => {
+      const images = [...document.querySelectorAll('.surya-game:not(.is-hidden) img')];
+      if (!images.length || images.some((image) => !image.complete || !image.naturalWidth)) {
+        timer = setTimeout(warm, 250);
+        return;
+      }
+      POSE_ASSETS.forEach((src) => { preparePose(src).catch(() => {}); });
+    };
+    timer = setTimeout(warm, 2500);
+    return () => clearTimeout(timer);
+  }, [warmImages, isActive]);
   const { playVoice: playSceneLine, playSyllable, playWord, stopVoice } = voiceGuidance;
   useWarmSanskritAudio('samaprabha', AUDIO.syllables); // first tap plays instantly
 

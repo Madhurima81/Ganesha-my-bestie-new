@@ -1,4 +1,4 @@
-import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
+import PoseImage, { preparePose, usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
@@ -281,8 +281,11 @@ const POSE_ASSETS = [
   helpHandIconImg,
 ];
 
+const NO_PRELOAD_IMAGES = [];
+
 export default function KurumedevaGame({
   isActive = false,
+  warmImages = false,
   introComplete = true,
   hideElements = false,
   onMicroWin = () => {},
@@ -299,7 +302,21 @@ export default function KurumedevaGame({
   isSidebarOpen,
 }) {
   const handPaused = isSidebarOpen ?? isPaused;
-  usePreloadPoses(POSE_ASSETS);
+  usePreloadPoses(isActive ? POSE_ASSETS : NO_PRELOAD_IMAGES);
+  useEffect(() => {
+    if (!warmImages || isActive) return undefined;
+    let timer;
+    const warm = () => {
+      const images = [...document.querySelectorAll('.nirv-game:not(.is-hidden) img')];
+      if (!images.length || images.some((image) => !image.complete || !image.naturalWidth)) {
+        timer = setTimeout(warm, 250);
+        return;
+      }
+      POSE_ASSETS.forEach((src) => { preparePose(src).catch(() => {}); });
+    };
+    timer = setTimeout(warm, 2500);
+    return () => clearTimeout(timer);
+  }, [warmImages, isActive]);
   const { playVoice: playSceneLine, playSyllable, playWord, stopVoice: rawStopVoice } = voiceGuidance;
   // A syllable is never cut off: touches and the plank-round instruction wait for it to finish.
   const syllableBusyRef = useRef(false);

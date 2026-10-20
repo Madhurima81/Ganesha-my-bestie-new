@@ -851,6 +851,7 @@ const SarvakaryeshuChantContent = ({
                 />
 
                 <SarvadaGame
+                  warmImages={sceneState.phase === PHASES.SARVAKARYESHU_GAME && !isRecorderOpen && !sidebarPause.isSidebarPaused}
                   isActive={sceneState.phase === PHASES.SARVADA_GAME}
                   hideElements={!!revealConfig || showPowerOverlay}
                   onMicroWin={handleMicroWin}
