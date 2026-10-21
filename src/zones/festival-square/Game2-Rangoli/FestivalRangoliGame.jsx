@@ -21,6 +21,12 @@ import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
 import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
 import SceneManager from '../../../lib/components/scenes/SceneManager';
+import GameStateManager from '../../../lib/services/GameStateManager';
+import ProgressManager from '../../../lib/services/ProgressManager';
+import SimpleSceneManager from '../../../lib/services/SimpleSceneManager';
+import useSceneReset from '../../../lib/hooks/useSceneReset';
+import { getSceneResetConfig } from '../../../lib/config/SceneResetConfigs';
+import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';
 
 // 🎨 DESIGN COMPLETION OVERLAY COMPONENT
 const DesignCompletionOverlay = ({
@@ -171,6 +177,7 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
   const [ganeshaMessage, setGaneshaMessage] = useState('');
   const [showGaneshaMessage, setShowGaneshaMessage] = useState(false);
   const [showPauseMenu, setShowPauseMenu] = useState(false);
+  const { resetScene } = useSceneReset(sceneActions, 'festival-square', 'game2', getSceneResetConfig('game2'));
   const completionModalContent = getCompletionModal('festival-square', 'game2');
   const completionIcons = ['learn-icon', 'draw-icon', 'design-icon'];
 
@@ -1003,6 +1010,7 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
         gameName="Rangoli Artistry"
         currentStars={gameState.stars}
         hasDesignOption={true}
+        onOpen={() => setShowPauseMenu(true)}
         onResume={() => setShowPauseMenu(false)}
         onRestart={() => { setShowPauseMenu(false); startOverCurrentDesign(); }}
         onBackToModes={() => {
@@ -1084,6 +1092,7 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
             }
 
             // Reset to selection screen
+            resetScene();
             resetToSelection();
             setShowSceneCompletion(false);
 
@@ -1143,6 +1152,8 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
           total: 1
         }}
       />
+
+      <BackToMapButton onNavigate={onNavigate} />
     </div>
   );
 };

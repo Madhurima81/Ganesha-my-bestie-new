@@ -15,6 +15,12 @@ import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
 import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
 import SceneManager from '../../../lib/components/scenes/SceneManager';
+import GameStateManager from '../../../lib/services/GameStateManager';
+import ProgressManager from '../../../lib/services/ProgressManager';
+import SimpleSceneManager from '../../../lib/services/SimpleSceneManager';
+import useSceneReset from '../../../lib/hooks/useSceneReset';
+import { getSceneResetConfig } from '../../../lib/config/SceneResetConfigs';
+import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';
 
 import PujaSidebar from './components/sidebars/PujaSidebar';
 import FixSidebar from './components/sidebars/FixSidebar';
@@ -773,6 +779,7 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
   const [timerActive, setTimerActive] = useState(false);
 
   const [showPauseMenu, setShowPauseMenu] = useState(false);
+  const { resetScene } = useSceneReset(sceneActions, 'festival-square', 'game4', getSceneResetConfig('game4'));
   const [showMissionComplete, setShowMissionComplete] = useState(false);
   const [completedMissionData, setCompletedMissionData] = useState(null);
 
@@ -966,7 +973,7 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
       selectedDecoration: null,
       placedDecorations: new Map(),
       decorationPositions: new Map(),
-      phase: PHASES.CHOOSING
+      phase: PHASES.DISCOVERY
     });
 
     setCurrentStep(1);
@@ -1509,6 +1516,7 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
           </div>
 
         </div>
+        <BackToMapButton onNavigate={onNavigate} />
       </div>
     );
   }
@@ -1584,6 +1592,7 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
             })}
           </div>
         </div>
+        <BackToMapButton onNavigate={onNavigate} />
       </div>
     );
   }
@@ -1627,6 +1636,7 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
             </button>
           </div>
         </div>
+        <BackToMapButton onNavigate={onNavigate} />
       </div>
     );
   }
@@ -2355,6 +2365,7 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
           gameName="Mandap Decoration"
           currentStars={gameState.stars}
           hasDesignOption={false}
+          onOpen={() => setShowPauseMenu(true)}
           onResume={() => setShowPauseMenu(false)}
           onRestart={() => {
             setShowPauseMenu(false);
@@ -2364,7 +2375,7 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
               if (selectedMission.type === 'light') { setTimeRemaining(60); setTimerActive(false); }
             } else {
               localStorage.removeItem('mandapGame');
-              setGameState({ phase: PHASES.CHOOSING, selectedCategory: null, selectedDecoration: null, placedDecorations: new Map(), decorationPositions: new Map(), decorationCount: 0, stars: 0, gameStartTime: Date.now(), completed: false, showDoneButton: false });
+              setGameState({ phase: PHASES.DISCOVERY, selectedCategory: null, selectedDecoration: null, placedDecorations: new Map(), decorationPositions: new Map(), decorationCount: 0, stars: 0, gameStartTime: Date.now(), completed: false, showDoneButton: false });
               resetMissionState();
               setHighlightedZones(new Set());
               setShowSparkle(null);
@@ -2458,6 +2469,7 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
               }
 
               // RESET ALL GAME STATE - fresh start
+              resetScene();
               setGameState({
                 phase: 'intro',
                 placedDecorations: new Map(),
@@ -2535,6 +2547,7 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
           }}
         />
 
+        <BackToMapButton onNavigate={onNavigate} />
       </div>
     );
   }

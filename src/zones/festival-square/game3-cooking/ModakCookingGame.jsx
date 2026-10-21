@@ -1240,6 +1240,7 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
         gameName="Modak Mastery"
         currentStars={sceneState.stars}
         hasDesignOption={false}
+        onOpen={() => setShowPauseMenu(true)}
         onResume={() => setShowPauseMenu(false)}
         onRestart={() => { setShowPauseMenu(false); resetScene(); }}
         onComplete={() => { setShowPauseMenu(false); completeGame(); }}

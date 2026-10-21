@@ -6,7 +6,7 @@
   width: 100vw;
   height: var(--app-height, 100vh);
   overflow: hidden;
-  font-family: 'Comic Sans MS', cursive;
+  font-family: 'Baloo 2', cursive;
 }
 
 /* Background */
@@ -1007,7 +1007,7 @@
   color: #FF6B35;
   margin: 0 0 5px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-  font-family: 'Comic Sans MS', cursive;
+  font-family: 'Baloo 2', cursive;
 }
 
 .completion-subtitle {
@@ -1166,7 +1166,7 @@
   color: #FF6B35;
   margin: 0 0 5px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-  font-family: 'Comic Sans MS', cursive;
+  font-family: 'Baloo 2', cursive;
 }
 
 .completion-subtitle {

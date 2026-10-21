@@ -7,7 +7,7 @@
   background: url('./assets/images/pianogame-bg.png') center/cover no-repeat;
   position: relative;
   overflow: hidden;
-  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'Baloo 2', cursive;
 }
 
 /* ===== INTRO WELCOME SCREEN (Inspired by Rangoli Game) ===== */
@@ -47,7 +47,7 @@
   padding: 20px 25px;
   max-width: 450px;
   text-align: center;
-  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'Baloo 2', cursive;
   font-size: 1.5rem;
   color: #a5682a;
   line-height: 1.4;
@@ -189,7 +189,7 @@
 
 /* Title: "Choose your musical adventure!" */
 .mode-subtitle {
-  font-family: 'Comic Sans MS', cursive, sans-serif; /* Keeping the fun font */
+  font-family: 'Baloo 2', cursive; /* Keeping the fun font */
   font-size: 2.5rem;
   color: #8c5b3c; /* A warm brown, like the Rangoli text */
   margin-bottom: 20px;
@@ -240,7 +240,7 @@
 
 /* "Free Play" & "Festival Challenge" title */
 .mode-card h2 {
-  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'Baloo 2', cursive;
   font-size: 1.8rem;
   color: #c57545; /* Darker, rustic orange color for titles */
   margin: 0 0 8px 0;
@@ -584,7 +584,7 @@
   color: #FF6B35;
   margin: 0 0 5px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-  font-family: 'Comic Sans MS', cursive;
+  font-family: 'Baloo 2', cursive;
 }
 
 .completion-subtitle {

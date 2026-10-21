@@ -5,7 +5,7 @@
   width: 100vw;
   height: var(--app-height, 100vh);
   overflow: hidden;
-  font-family: 'Comic Sans MS', cursive;
+  font-family: 'Baloo 2', cursive;
 }
 
 /* Background */
@@ -524,7 +524,7 @@
   border-radius: 30px;
   padding: 18px 35px;
   cursor: pointer;
-  font-family: 'Comic Sans MS', cursive;
+  font-family: 'Baloo 2', cursive;
   font-weight: bold;
   color: white;
   font-size: 22px;
@@ -616,7 +616,7 @@
   border-radius: 30px;
   padding: 18px 35px;
   cursor: pointer;
-  font-family: 'Comic Sans MS', cursive;
+  font-family: 'Baloo 2', cursive;
   font-weight: bold;
   color: white;
   font-size: 20px;

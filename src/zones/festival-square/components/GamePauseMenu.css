@@ -168,3 +168,25 @@
   0% { opacity: 0; transform: scale(0.6) translateY(-20px); }
   100% { opacity: 1; transform: scale(1) translateY(0); }
 }
+/* Shared pause trigger — rendered by GamePauseMenu itself so no scene can forget it */
+.fsPauseOpenBtn {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top, 0px));
+  right: max(12px, env(safe-area-inset-right, 0px));
+  width: clamp(60px, 5.5vw, 68px);
+  height: clamp(60px, 5.5vw, 68px);
+  border-radius: 50%;
+  border: 3px solid #ff6f00;
+  background: linear-gradient(135deg, #fff8e1, #ffe0b2);
+  font-family: 'Baloo 2', cursive;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  -webkit-tap-highlight-color: transparent;
+}
+.fsPauseOpenBtn:active { transform: scale(0.94); }

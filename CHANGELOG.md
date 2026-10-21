@@ -1,5 +1,10 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-21] - Festival Square systemic fixes (branch festival-square-fixes, uncommitted)
+**Touched:** src/zones/festival-square/ (GamePauseMenu.jsx/.css, FestivalPianoGame.jsx, FestivalRangoliGame.jsx, ModakCookingGame.jsx, MandapDecorationGame.jsx, 8 CSS files).
+**Changed:** Rangoli and Mandap now import the ProgressManager, GameStateManager and SimpleSceneManager they already called. Added BackToMapButton to Piano, Rangoli and Mandap and useSceneReset (on Replay) to Rangoli and Mandap. GamePauseMenu renders its own touch ⏸️ trigger (`onOpen`), wired into Rangoli, Modak and Mandap; Piano keeps the GameLayout pause button. Every Comic Sans font-family replaced with Baloo 2. Mandap `PHASES.CHOOSING` (undefined) became `PHASES.DISCOVERY`.
+**Verified:** `npm run build` passes. Not tested in a browser: pause/back button placement, Replay flows.
+**Open:** Piano not given useSceneReset (default config would set phase 'initial'; its own Replay already resets its keys). Modak's `game3` has no SceneResetConfigs entry. Piano logic patches, Light Challenge untimed rewrite, Rangoli fixes and audio still to do. Duplicate global `.game-pause-button` rules remain in 4 CSS files.
 ## [2026-10-15] - My Indian Story completion voice and journey button
 **Touched:** src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx, src/lib/components/celebration/SceneCompletionCelebration.jsx (commit e3b34569).
 **Changed:** The existing completion screen now says "I loved learning about you!" aloud. Its primary button reads "See My Journey" and saves completion before opening the main map. Added an optional primaryLabel prop to the shared celebration component; a custom-labelled final CTA uses onContinue when supplied. Existing scenes retain their default labels and navigation. The original subtitle, three story icons and secondary actions remain unchanged; no additional Lodge celebration screen was added.
