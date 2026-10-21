@@ -923,6 +923,26 @@ const initializeApp = async () => {
       return;
     }
 
+    // Kid-test shortcut (opt-in, no visible UI): ?kidtest=1 skips the parent gate, sign-in and the name/age step
+    // for a device with no profile yet and goes straight to "pick your friend" (the same screen the installed-PWA
+    // resume uses). Optional ?name=Aarav&age=8. Remembered, so an installed app launched without the query string
+    // behaves the same; ?kidtest=0 turns it off again. Devices that already have a profile are unaffected.
+    try {
+      if (params.get('kidtest') === '1') localStorage.setItem('gmb_kidtest', '1');
+      if (params.get('kidtest') === '0') localStorage.removeItem('gmb_kidtest');
+      if (!hasExistingProfiles && localStorage.getItem('gmb_kidtest') === '1') {
+        const kidName = (params.get('name') || '').trim().slice(0, 20);
+        const kidAge = Number(params.get('age'));
+        if (kidName || !localStorage.getItem('gmb_onboarding_name')) {
+          localStorage.setItem('gmb_onboarding_name', kidName || 'Friend');
+        }
+        if (kidAge >= 3 && kidAge <= 14) localStorage.setItem('gmb_onboarding_age', String(Math.round(kidAge)));
+        else if (!localStorage.getItem('gmb_onboarding_age')) localStorage.setItem('gmb_onboarding_age', '7');
+        setCurrentView('handoff');
+        return;
+      }
+    } catch (e) { /* storage blocked: fall through to the normal flow */ }
+
     // Installed-PWA relaunch after the parent captured name + age but before a
     // profile was created (they installed mid-setup). The child opens the app
     // straight to "pick your friend" → Mooshika ride → Meet Ganesha → map.
