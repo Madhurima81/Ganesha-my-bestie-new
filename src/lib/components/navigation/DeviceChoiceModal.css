@@ -131,3 +131,15 @@
 }
 .dcm-btn:disabled { opacity: 0.55; box-shadow: 0 5px 0 #9b7dd8; cursor: default; }
 .dcm-error { color: #8b2f4b; font-weight: 700; }
+
+/* QR + link views */
+.dcm-qr {
+  width: min(240px, 100%);
+  height: auto;
+  padding: 10px;
+  background: #fff;
+  border: 2px solid #ece4f8;
+  border-radius: 16px;
+  image-rendering: pixelated;
+}
+.dcm-linkbox { height: 44px; font-size: 12.5px; }
