@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preview Pass-check</title>
+<style>
+  :root{--ink:#3d2b24;--heading:#5D2E0F;--muted:#846f65;--paper:#fffdf6;--bg:#f7f2ea;--border:#eadfc9;--purple:#7356b4;--ok:#2E7D32}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito','Segoe UI',sans-serif;line-height:1.5}
+  .wrap{max-width:820px;margin:0 auto;padding:20px 16px 60px}
+  h1{font-family:'Baloo 2','Trebuchet MS',sans-serif;color:var(--heading);font-size:28px;margin:6px 0 2px}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 18px}
+  .bar{position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:2}
+  .track{height:8px;background:#efe7d7;border-radius:99px;overflow:hidden}
+  .fill{height:100%;width:0;background:var(--purple);transition:width .2s}
+  .meta{font-size:12px;color:var(--muted);font-weight:700;margin-top:4px}
+  section{background:var(--paper);border:1px solid var(--border);border-radius:18px;margin:14px 0;padding:6px 16px 10px}
+  h2{font-family:'Baloo 2','Trebuchet MS',sans-serif;color:var(--heading);font-size:19px;margin:10px 0 2px}
+  .why{font-size:13px;color:var(--muted);margin:0 0 6px}
+  label{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid #f1e9dc;cursor:pointer}
+  label:first-of-type{border-top:0}
+  input[type=checkbox]{width:24px;height:24px;margin-top:2px;accent-color:var(--purple);flex:none}
+  .t{font-weight:800}
+  .e{font-size:13px;color:#69564d}
+  .tag{display:inline-block;font-size:11px;font-weight:800;background:#f3ecff;color:#4f378b;border-radius:99px;padding:1px 8px;margin-left:6px}
+  .note{border:1px solid #eadbbd;background:#fff8e5;border-radius:14px;padding:10px 14px;font-size:13px;margin:12px 0}
+  textarea{width:100%;min-height:60px;border:1px solid #e5d9c7;border-radius:12px;padding:8px 10px;font:inherit;font-size:13px;margin-top:6px}
+  button{border:1px solid #dfd2f4;background:#fffaf0;color:#4f378b;border-radius:99px;height:36px;padding:0 14px;font-weight:800;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Preview Pass-check</h1>
+  <p class="sub">Only what is left. Continue, Play Again, stall prompts, voice fixes and the new images were already tested on the dev server, so they are not repeated here.</p>
+
+  <div class="bar">
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <div class="meta"><span id="count">0 of 0 done</span> &nbsp;·&nbsp; <button type="button" id="reset">Clear ticks</button></div>
+  </div>
+
+  <div class="note"><strong>Before you start:</strong> open the Netlify <em>staging</em> preview link, not localhost. Keep DevTools "Disable cache" <strong>unticked</strong>.</div>
+
+  <section>
+    <h2>1. The preview itself <span class="tag">laptop · 10 min</span></h2>
+    <p class="why">Checks that the hosted build works, not just the dev server.</p>
+    <label><input type="checkbox" data-k="p1"><span><span class="t">Preview loads and the loader finishes</span><br><span class="e">No blank screen, no console errors on load.</span></span></label>
+    <label><input type="checkbox" data-k="p2"><span><span class="t">One scene plays with sound</span><br><span class="e">Pick any scene. The first line speaks and the scene responds to taps.</span></span></label>
+    <label><input type="checkbox" data-k="p3"><span><span class="t">Service worker installed</span><br><span class="e">DevTools → Application → Service Workers shows it activated.</span></span></label>
+  </section>
+
+  <section>
+    <h2>2. PWA update check <span class="tag">needs a 2nd deploy</span></h2>
+    <p class="why">The main test for the new -opt image filenames. Tell Claude when section 1 is done; a tiny harmless change is pushed as the second deploy.</p>
+    <label><input type="checkbox" data-k="u1"><span><span class="t">Second deploy finished on Netlify</span><br><span class="e">Green build for the new commit.</span></span></label>
+    <label><input type="checkbox" data-k="u2"><span><span class="t">Reload the preview twice</span><br><span class="e">The new version appears (check the deploy time or the change that was pushed).</span></span></label>
+    <label><input type="checkbox" data-k="u3"><span><span class="t">No stale or blank pictures</span><br><span class="e">Open Pond, Dreams, the Finale and Scene 2 to 4. Every picture shows, none look old or missing.</span></span></label>
+  </section>
+
+  <section>
+    <h2>3. Real-phone loading <span class="tag">phone · mobile data</span></h2>
+    <p class="why">Session B measured the bytes; nobody has timed it on a real phone yet.</p>
+    <label><input type="checkbox" data-k="l1"><span><span class="t">Loader to map</span><br><span class="e">Time from opening the link to the map being tappable. Note it below.</span></span></label>
+    <label><input type="checkbox" data-k="l2"><span><span class="t">Zone Welcome</span><br><span class="e">Time from tapping a zone to its welcome screen being ready. Note it below.</span></span></label>
+    <label><input type="checkbox" data-k="l3"><span><span class="t">Feels faster than before</span><br><span class="e">Your honest impression compared with the last version you tried on this phone.</span></span></label>
+    <textarea placeholder="Times / device / network…" data-k="n3"></textarea>
+  </section>
+
+  <section>
+    <h2>4. Device layout (QA Copilot) <span class="tag">Pixel · iPhone · iPad</span></h2>
+    <p class="why">Run the GMB QA Copilot only on the scenes whose pictures or layout changed. Sizes, clipping and tap targets.</p>
+    <label><input type="checkbox" data-k="d1"><span><span class="t">Pond</span><br><span class="e">Pictures fit and look right with the reflection removed.</span></span></label>
+    <label><input type="checkbox" data-k="d2"><span><span class="t">Dreams</span><br><span class="e">Cloud, flower, bush and tree look right and are not clipped.</span></span></label>
+    <label><input type="checkbox" data-k="d3"><span><span class="t">Shloka Finale</span><br><span class="e">Choice boats and the sailing boats look right and tap well.</span></span></label>
+    <label><input type="checkbox" data-k="d4"><span><span class="t">Shloka Scene 2, 3 and 4</span><br><span class="e">Suryakoti/Samaprabha, Nirvighnam/Kurumedeva and Sarvakaryeshu/Sarvada: art sharp, nothing clipped, second games start without a pause.</span></span></label>
+    <label><input type="checkbox" data-k="d5"><span><span class="t">Phone Stress viewport (740×360)</span><br><span class="e">Same scenes still fit with no clipping.</span></span></label>
+  </section>
+
+  <section>
+    <h2>5. iPhone and iPad voice <span class="tag">Safari</span></h2>
+    <p class="why">Safari speaks differently from Chrome. Skip this section if you have already tested it on an iPhone or iPad.</p>
+    <label><input type="checkbox" data-k="v1"><span><span class="t">First line of a scene speaks</span><br><span class="e">Open a scene fresh. The opening line is heard without tapping twice.</span></span></label>
+    <label><input type="checkbox" data-k="v2"><span><span class="t">My Indian Story place names</span><br><span class="e">Drag the glass over a place. The name plays once, in full, and the closing line is not cut.</span></span></label>
+    <label><input type="checkbox" data-k="v3"><span><span class="t">Continue after leaving a scene</span><br><span class="e">Leave mid-scene, come back, tap Continue. The line is heard and the scene is not stuck.</span></span></label>
+  </section>
+
+  <section>
+    <h2>Anything else you noticed</h2>
+    <textarea placeholder="Notes…" data-k="n9"></textarea>
+  </section>
+
+  <p class="sub">Nothing goes live until you approve a merge to production and a backup branch exists.</p>
+</div>
+<script>
+(function(){
+  var KEY='gmb-preview-passcheck-v1', boxes=[].slice.call(document.querySelectorAll('input[type=checkbox]')), notes=[].slice.call(document.querySelectorAll('textarea'));
+  var state={};
+  try{ state=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){}
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
+  function paint(){
+    var done=boxes.filter(function(b){return b.checked}).length;
+    document.getElementById('count').textContent=done+' of '+boxes.length+' done';
+    document.getElementById('fill').style.width=(boxes.length?done/boxes.length*100:0)+'%';
+  }
+  boxes.forEach(function(b){ b.checked=!!state[b.dataset.k]; b.addEventListener('change',function(){ state[b.dataset.k]=b.checked; save(); paint(); }); });
+  notes.forEach(function(n){ n.value=state[n.dataset.k]||''; n.addEventListener('input',function(){ state[n.dataset.k]=n.value; save(); }); });
+  document.getElementById('reset').addEventListener('click',function(){ boxes.forEach(function(b){ b.checked=false; state[b.dataset.k]=false; }); save(); paint(); });
+  paint();
+})();
+</script>
+</body>
+</html>
