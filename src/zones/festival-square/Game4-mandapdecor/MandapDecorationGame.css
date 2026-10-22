@@ -3498,3 +3498,10 @@ filter:
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-3px); }
 }
+.mandapCompletionBonus {
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(18px, 2.4vw, 26px);
+  font-weight: 700;
+  color: #e65100;
+  margin: 6px 0 0;
+}

@@ -34,7 +34,8 @@ const DesignCompletionOverlay = ({
   designName,
   starsEarned,
   onPlayAgain,
-  onCreateAnother
+  onCreateAnother,
+  onFinish
 }) => {
   if (!show) return null;
 
@@ -78,6 +79,13 @@ const DesignCompletionOverlay = ({
         </div>
 
         <div className="completion-buttons">
+          {onFinish && (
+            <button className="completion-btn rangoliFinishBtn" onClick={onFinish}>
+              <span className="btn-icon">🏆</span>
+              <span className="btn-text">Finish!</span>
+            </button>
+          )}
+
           <button className="completion-btn play-again" onClick={onPlayAgain}>
             <span className="btn-icon">🔄</span>
             <span className="btn-text">Play Again!</span>
@@ -956,6 +964,18 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
         show={gameState.showDesignComplete}
         designName={gameState.completedDesignData?.name}
         starsEarned={gameState.completedDesignData?.starsEarned || 0}
+
+        onFinish={() => {
+          // Completing any one design is the win; "Create Another" stays an optional bonus
+          setGameState(prev => ({
+            ...prev,
+            showDesignComplete: false,
+            completedDesignData: null,
+            completed: true,
+            stars: Math.max(8, prev.stars)
+          }));
+          setShowSceneCompletion(true);
+        }}
 
         onPlayAgain={() => {
           // Replay the SAME design - clear its colors and start fresh

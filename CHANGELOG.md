@@ -1,6 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
-## [2026-10-21] - Festival Square systemic fixes (branch festival-square-fixes, uncommitted)
+## [2026-10-22] - Festival Square gameplay: untimed Light Challenge, Rangoli Finish (branch festival-square-fixes, uncommitted)
+**Touched:** MandapDecorationGame.jsx/.css, FestivalRangoliGame.jsx/.css.
+**Changed:** Light Challenge had no win path (lightsPlaced never incremented; only a time-up fail). It is now untimed: counts each of the 5 lights once, header shows 💡 n/5, finishes with 5 stars, or 8 plus a "Lightning fast" message if under 60s (hidden count-up clock, starts after the intro). Rangoli: completion overlay gets a Finish! button that sets completed and opens SceneCompletionCelebration (previously unreachable).
+**Verified:** `npm run build` passes. Not played in a browser.
+**Open:** test both flows on device; Rangoli Replay after Finish; other gameplay suggestions (Piano phrases, Modak steam puffs, Mandap eco/free-play/scene win) not started.
+
+## [2026-10-21] - Festival Square systemic fixes (branch festival-square-fixes, committed 86df4e3a)
 **Touched:** src/zones/festival-square/ (GamePauseMenu.jsx/.css, FestivalPianoGame.jsx, FestivalRangoliGame.jsx, ModakCookingGame.jsx, MandapDecorationGame.jsx, 8 CSS files).
 **Changed:** Rangoli and Mandap now import the ProgressManager, GameStateManager and SimpleSceneManager they already called. Added BackToMapButton to Piano, Rangoli and Mandap and useSceneReset (on Replay) to Rangoli and Mandap. GamePauseMenu renders its own touch ⏸️ trigger (`onOpen`), wired into Rangoli, Modak and Mandap; Piano keeps the GameLayout pause button. Every Comic Sans font-family replaced with Baloo 2. Mandap `PHASES.CHOOSING` (undefined) became `PHASES.DISCOVERY`.
 **Verified:** `npm run build` passes. Not tested in a browser: pause/back button placement, Replay flows.
