@@ -165,7 +165,9 @@ class PwaInstallManager {
   shouldShowAnyNudge() {
     if (this.hasExhaustedDismissals()) return false;
     if (isStandalone()) return false; // already installed
-    return this.isAvailable() || isIOS();
+    // Android browsers without a native prompt (Samsung Internet, Firefox, Chrome before it fires) still get the
+    // menu walkthrough from getInstallGuide(); desktop stays quiet.
+    return this.isAvailable() || isIOS() || isAndroid();
   }
 
   // Subscribe to prompt-availability changes. Returns an unsubscribe function.
