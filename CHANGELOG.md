@@ -1,5 +1,10 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-30] - Piano: bigger keyboard (CSS only, branch festival-square-fixes, uncommitted)
+**Touched:** Game1-piano/FestivalPianoGame.css.
+**Changed:** Keyboard max width 640 -> 820px with an ivory platform, taller keys (clamp 110-175px), bigger Sa/Re/Ga labels; phone and short-landscape overrides updated. Hint animation, JSX and gameplay untouched. Phone side padding trimmed to 8px so the keys are 61px wide at 360px (they were 57px).
+**Verified:** measured in the harness: desktop keyboard 820px, keys 144x156; 360px keys 61x126, no sideways scroll. `npm run build` not re-run after this CSS-only change.
+
 ## [2026-10-29] - Piano melody: published Jai Ganesh Deva refrain (branch festival-square-fixes)
 **Touched:** Game1-piano/FestivalPianoGame.jsx (from Downloads/FestivalPianoGame.aarti.jsx). CSS unchanged (kept the 60px min-height rule).
 **Changed:** Placeholder melody replaced by the 15-note opening refrain in four parts: C C D D | E E E E | E E F E | D E D, with per-note gap/hold timings and "Part n of 4". Notes checked against the cited Synthesizer Notes page (C~ CD~ D E~ EE~ E / E~ EF~ E DE~ D). Tune playback keeps the new spacing.
