@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-29] - Piano melody: published Jai Ganesh Deva refrain (branch festival-square-fixes)
+**Touched:** Game1-piano/FestivalPianoGame.jsx (from Downloads/FestivalPianoGame.aarti.jsx). CSS unchanged (kept the 60px min-height rule).
+**Changed:** Placeholder melody replaced by the 15-note opening refrain in four parts: C C D D | E E E E | E E F E | D E D, with per-note gap/hold timings and "Part n of 4". Notes checked against the cited Synthesizer Notes page (C~ CD~ D E~ EE~ E / E~ EF~ E DE~ D). Tune playback keeps the new spacing.
+**Verified:** in the harness: demo, four parts (4/4/4/3 dots), completion dialog, Hear My Tune; no errors.
+**Open:** timing is an approximation of the page's sustain marks - check against the chosen vocal recording; confirm pitches match the family version; test whether E E E E (Part 2) works for ages 5-7; stars still 0 in the celebration.
+
 ## [2026-10-28] - Piano replaced with the supplied FestivalPianoGame.updated files (branch festival-square-fixes, uncommitted)
 **Touched:** Game1-piano/FestivalPianoGame.jsx and .css (replaced from Downloads/FestivalPianoGame.updated.*), plus a 60px min-height rule.
 **Changed:** Minimal rewrite: 5 pitched keys (Sa-Re-Ga-Ma-Pa, no instrument art), one song with 3 phrases, auto demo then child's turn, 2 misses replay the phrase, 3-step hint ladder (10s/18s/26s), pause-safe timers, Hear Again, Free Play with timed record/playback, completion dialog. Replaces the 4-song list, animals, stars, orchestra payoff and idle voice hints from commit 5956b389 (still in git history).

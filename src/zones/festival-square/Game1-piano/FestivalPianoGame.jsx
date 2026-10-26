@@ -21,16 +21,28 @@ const KEYS = [
   { id: 'drum',      sargam: 'Pa', western: 'G', hz: 392.00, color: '#3FA36C' }
 ];
 
-// TEMPORARY DEMO PATTERN copied from the old code. This is NOT verified Jai Ganesh Deva notation.
-// Replace 'phrases' with musically valid, manually chosen phrases after melody + vocal approval.
-// Keep future vocal assets separate from the instant-feedback key synthesizer.
+// Opening refrain, C-scale arrangement cross-checked against:
+// https://www.synthesizernotes.com/jai-ganesh-deva-ganesh-aarti-piano.html
+// The published sequences are C C D D E E E E / E E F E D E D.
+// We divide these into four short, PLAYABLE segments for a young child.
+// Note durations below are approximate interpretations of the page's
+// sustain (~) and connected-note notation; they are NOT a verified tempo.
+// Final recording must be checked against these pitches before release.
 const SONG = {
   id: 'jai-ganesh-aarti',
   name: 'Jai Ganesh Deva',
   phrases: [
-    ['bells', 'cymbals', 'shehnai'],
-    ['bells', 'cymbals', 'shehnai'],
-    ['shehnai', 'cymbals', 'bells']
+    ['bells', 'bells', 'cymbals', 'cymbals'],  // C C D D
+    ['shehnai', 'shehnai', 'shehnai', 'shehnai'], // E E E E
+    ['shehnai', 'shehnai', 'dhol', 'shehnai'],   // E E F E
+    ['cymbals', 'shehnai', 'cymbals']           // D E D
+  ],
+  // Time between note starts, milliseconds, plus approximate sustain duration.
+  phraseTiming: [
+    [{ gapMs: 650, holdMs: 530 }, { gapMs: 340, holdMs: 250 }, { gapMs: 560, holdMs: 450 }, { gapMs: 430, holdMs: 320 }],
+    [{ gapMs: 630, holdMs: 510 }, { gapMs: 340, holdMs: 250 }, { gapMs: 560, holdMs: 450 }, { gapMs: 650, holdMs: 530 }],
+    [{ gapMs: 630, holdMs: 510 }, { gapMs: 320, holdMs: 250 }, { gapMs: 560, holdMs: 440 }, { gapMs: 430, holdMs: 330 }],
+    [{ gapMs: 360, holdMs: 290 }, { gapMs: 650, holdMs: 520 }, { gapMs: 800, holdMs: 660 }]
   ]
 };
 const NOTE_MS = 600;
@@ -131,24 +143,32 @@ function FestivalPianoContent({ sceneState, sceneActions, onComplete, onNavigate
     } catch (error) { console.warn('Piano audio unavailable', error); }
   }, []);
 
-  const playSequence = useCallback((ids, { after, preserveHints = false } = {}) => {
+  const playSequence = useCallback((ids, { after, preserveHints = false, phraseNumber = null } = {}) => {
     // Cancel scheduled notes, not the child's completed challenge progress.
     playbackToken.current += 1;
     const token = playbackToken.current;
     clearTimers(timersRef);
     if (!preserveHints) clearTimers(hintTimersRef);
     stopNotes();
-    ids.forEach((id, index) => schedule(() => {
+    const timing = phraseNumber == null ? null : SONG.phraseTiming[phraseNumber];
+    let noteStartMs = 0;
+    ids.forEach((id, index) => {
+      const startMs = noteStartMs;
+      const noteTiming = timing?.[index];
+      noteStartMs += noteTiming?.gapMs ?? NOTE_MS;
+      schedule(() => {
       if (token !== playbackToken.current || pausedRef.current) return;
       const key = KEYS.find(k => k.id === id);
       if (!key) return;
-      playNote(key, DEMO_NOTE_MS / 1000);
+      const holdMs = noteTiming?.holdMs ?? DEMO_NOTE_MS;
+      playNote(key, holdMs / 1000);
       setActiveKey(id);
-      schedule(() => { if (token === playbackToken.current) setActiveKey(null); }, DEMO_NOTE_MS);
-    }, index * NOTE_MS));
+      schedule(() => { if (token === playbackToken.current) setActiveKey(null); }, holdMs);
+      }, startMs);
+    });
     schedule(() => {
       if (token === playbackToken.current && !pausedRef.current) after?.();
-    }, ids.length * NOTE_MS + 200);
+    }, noteStartMs + 200);
   }, [clearTimers, schedule, stopNotes, playNote]);
 
   const armHints = useCallback((index) => {
@@ -164,6 +184,7 @@ function FestivalPianoContent({ sceneState, sceneActions, onComplete, onNavigate
       setIsDemo(true);
       playSequence(SONG.phrases[index], {
         preserveHints: true,
+        phraseNumber: index,
         after: () => { demoRef.current = false; setIsDemo(false); }
       });
     }, 18000, true);
@@ -180,6 +201,7 @@ function FestivalPianoContent({ sceneState, sceneActions, onComplete, onNavigate
     setHintLevel(0);
     if (!keepStep) { stepRef.current = 0; setStepIndex(0); }
     playSequence(SONG.phrases[index], {
+      phraseNumber: index,
       after: () => {
         demoRef.current = false;
         setIsDemo(false);
@@ -286,6 +308,11 @@ function FestivalPianoContent({ sceneState, sceneActions, onComplete, onNavigate
     clearTimers(timersRef);
     stopNotes();
     const start = withTiming ? ids[0].at : 0;
+    // Approved refrain uses four phrase-specific note spacings.
+    const completeGaps = SONG.phraseTiming.flat().map(n => n.gapMs);
+    const noteStarts = [];
+    let running = 0;
+    completeGaps.forEach(gap => { noteStarts.push(running); running += gap; });
     ids.forEach((note, i) => schedule(() => {
       if (token !== playbackToken.current || pausedRef.current) return;
       const id = withTiming ? note.id : note;
@@ -294,8 +321,8 @@ function FestivalPianoContent({ sceneState, sceneActions, onComplete, onNavigate
       playNote(key);
       setActiveKey(id);
       schedule(() => { if (token === playbackToken.current) setActiveKey(null); }, 300);
-    }, withTiming ? Math.min(30000, note.at - start) : i * NOTE_MS));
-    const end = withTiming ? Math.min(30000, ids[ids.length - 1].at - start) : (ids.length - 1) * NOTE_MS;
+    }, withTiming ? Math.min(30000, note.at - start) : (noteStarts[i] ?? i * NOTE_MS)));
+    const end = withTiming ? Math.min(30000, ids[ids.length - 1].at - start) : (noteStarts[ids.length - 1] ?? (ids.length - 1) * NOTE_MS);
     schedule(() => {
       if (token !== playbackToken.current) return;
       freePlayingRef.current = false; setFreePlaying(false); setIsHearingTune(false);
@@ -338,7 +365,7 @@ function FestivalPianoContent({ sceneState, sceneActions, onComplete, onNavigate
           <h1>{screen === 'challenge' ? SONG.name : 'Make Your Music'}</h1>
           {screen === 'challenge' ? <>
             <p className="fp-status" aria-live="polite">{isDemo ? "Ganesha's turn — listen" : (hintLevel === 1 ? 'Remember the tune? Try a note!' : hintLevel >= 3 ? 'Try the glowing key' : 'Your turn!')}</p>
-            <p className="fp-progress">Phrase {phraseIndex + 1} of {SONG.phrases.length}</p>
+            <p className="fp-progress">Part {phraseIndex + 1} of {SONG.phrases.length}</p>
             <div className="fp-dots" aria-label={`${stepIndex} of ${phrase.length} notes completed`}>
               {phrase.map((_, i) => <span key={i} className={i < stepIndex ? 'done' : ''} />)}
             </div>
