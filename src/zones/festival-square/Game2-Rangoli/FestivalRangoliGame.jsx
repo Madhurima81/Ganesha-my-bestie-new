@@ -14,10 +14,7 @@ import { getCompletionModal } from "../../../lib/config/content";
 import ganeshaArtist from './assets/images/ganesha-artist.png';
 // In FestivalPianoGame.jsx (or any game inside Game1-piano folder)
 import GamePauseMenu from '../components/GamePauseMenu';
-import HomeButton from '../../../lib/components/ui/HomeButton';
 import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
-import AudioToggle from '../../../lib/components/ui/AudioToggle';
-import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
 import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
 import SceneManager from '../../../lib/components/scenes/SceneManager';
@@ -26,7 +23,6 @@ import ProgressManager from '../../../lib/services/ProgressManager';
 import SimpleSceneManager from '../../../lib/services/SimpleSceneManager';
 import useSceneReset from '../../../lib/hooks/useSceneReset';
 import { getSceneResetConfig } from '../../../lib/config/SceneResetConfigs';
-import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';
 
 // 🎨 DESIGN COMPLETION OVERLAY COMPONENT
 const DesignCompletionOverlay = ({
@@ -481,245 +477,87 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
     setSelectedColor('#FF6B6B');
   };
 
-  // Generate rangoli SVG based on design
+  // Draw each rangoli as a distinct, flat-vector pattern. Each region remains
+  // its own tap target so coloring progress and saved section IDs stay intact.
   const generateRangoliSVG = (design) => {
+    const outline = '#76513F';
+    const lineProps = { stroke: outline, strokeWidth: 1.6, strokeLinejoin: 'round' };
+    const fillSection = (sectionNumber) => colors[`section-${sectionNumber}`] || '#FFFDF8';
+    const colorablePath = (sectionNumber, d, extra = {}) => (
+      <path
+        key={`section-${sectionNumber}`}
+        d={d}
+        fill={fillSection(sectionNumber)}
+        {...lineProps}
+        {...extra}
+        style={{ cursor: 'pointer' }}
+        onClick={() => handleSectionClick(`section-${sectionNumber}`)}
+      />
+    );
+
+    const petalPath = 'M150 150 C132 128 126 100 150 70 C174 100 168 128 150 150 Z';
+    const petalRing = (count, start, firstSection, scale = 1) => Array.from({ length: count }, (_, i) => (
+      <g key={`petal-${firstSection + i}`} transform={`rotate(${start + i * (360 / count)} 150 150) scale(${scale})`}>
+        {colorablePath(firstSection + i, petalPath)}
+        <path d="M150 143 Q150 112 150 81" fill="none" stroke={outline} strokeWidth="1" opacity=".48" pointerEvents="none" />
+      </g>
+    ));
+
     if (design.id === 'lotus') {
       return (
-        <svg width="100%" height="100%" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-          {/* SVG Texture Patterns */}
-          <defs>
-            <pattern id="sandTexture" patternUnits="userSpaceOnUse" width="8" height="8">
-              <rect width="8" height="8" fill="currentColor" />
-              <circle cx="2" cy="2" r="0.8" fill="rgba(255,255,255,0.3)" />
-              <circle cx="6" cy="6" r="0.5" fill="rgba(255,255,255,0.2)" />
-              <circle cx="4" cy="1" r="0.3" fill="rgba(0,0,0,0.1)" />
-              <circle cx="1" cy="5" r="0.4" fill="rgba(0,0,0,0.08)" />
-            </pattern>
-
-            <filter id="textureFilter">
-              <feTurbulence baseFrequency="0.9" numOctaves="4" result="noise" />
-              <feColorMatrix in="noise" type="saturate" values="0" />
-              <feComponentTransfer>
-                <feFuncA type="discrete" tableValues="0.1 0.15 0.1 0.2" />
-              </feComponentTransfer>
-              <feComposite operator="over" in2="SourceGraphic" />
-            </filter>
-          </defs>
-
-          {/* Outer petals - 8 sections */}
-          {Array.from({ length: 8 }).map((_, i) => {
-            const angle = (i * 45) * Math.PI / 180;
-            const x1 = 150 + 80 * Math.cos(angle);
-            const y1 = 150 + 80 * Math.sin(angle);
-            const sectionColor = colors[`section-${i + 1}`] || 'white';
-
-            return (
-              <g key={`outer-${i}`}>
-                {/* Base color with texture */}
-                <ellipse
-                  cx={x1}
-                  cy={y1}
-                  rx="25"
-                  ry="15"
-                  fill={sectionColor}
-                  stroke="black"
-                  strokeWidth="2"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handleSectionClick(`section-${i + 1}`)}
-                  transform={`rotate(${i * 45} ${x1} ${y1})`}
-                  filter={sectionColor !== 'white' ? 'url(#textureFilter)' : ''}
-                />
-                {/* Highlight overlay for texture */}
-                {sectionColor !== 'white' && (
-                  <ellipse
-                    cx={x1}
-                    cy={y1}
-                    rx="22"
-                    ry="12"
-                    fill="rgba(255,255,255,0.2)"
-                    stroke="none"
-                    style={{ pointerEvents: 'none' }}
-                    transform={`rotate(${i * 45} ${x1} ${y1})`}
-                  />
-                )}
-                {/* Shadow for depth */}
-                {sectionColor !== 'white' && (
-                  <ellipse
-                    cx={x1 + 1}
-                    cy={y1 + 1}
-                    rx="24"
-                    ry="14"
-                    fill="rgba(0,0,0,0.15)"
-                    stroke="none"
-                    style={{ pointerEvents: 'none' }}
-                    transform={`rotate(${i * 45} ${x1 + 1} ${y1 + 1})`}
-                  />
-                )}
-              </g>
-            );
-          })}
-
-          {/* Inner petals - 8 sections */}
-          {Array.from({ length: 8 }).map((_, i) => {
-            const angle = (i * 45 + 22.5) * Math.PI / 180;
-            const x = 150 + 50 * Math.cos(angle);
-            const y = 150 + 50 * Math.sin(angle);
-            const sectionColor = colors[`section-${i + 9}`] || 'white';
-
-            return (
-              <g key={`inner-${i}`}>
-                {/* Shadow */}
-                {sectionColor !== 'white' && (
-                  <ellipse
-                    cx={x + 1}
-                    cy={y + 1}
-                    rx="19"
-                    ry="11"
-                    fill="rgba(0,0,0,0.15)"
-                    stroke="none"
-                    style={{ pointerEvents: 'none' }}
-                    transform={`rotate(${i * 45 + 22.5} ${x + 1} ${y + 1})`}
-                  />
-                )}
-                {/* Base color */}
-                <ellipse
-                  cx={x}
-                  cy={y}
-                  rx="20"
-                  ry="12"
-                  fill={sectionColor}
-                  stroke="black"
-                  strokeWidth="2"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handleSectionClick(`section-${i + 9}`)}
-                  transform={`rotate(${i * 45 + 22.5} ${x} ${y})`}
-                  filter={sectionColor !== 'white' ? 'url(#textureFilter)' : ''}
-                />
-                {/* Highlight */}
-                {sectionColor !== 'white' && (
-                  <ellipse
-                    cx={x}
-                    cy={y}
-                    rx="17"
-                    ry="9"
-                    fill="rgba(255,255,255,0.25)"
-                    stroke="none"
-                    style={{ pointerEvents: 'none' }}
-                    transform={`rotate(${i * 45 + 22.5} ${x} ${y})`}
-                  />
-                )}
-              </g>
-            );
-          })}
-
-          {/* Center circles with enhanced texture */}
-          <g>
-            {/* Outer center shadow */}
-            {colors['section-17'] !== 'white' && (
-              <circle cx="151" cy="151" r="29" fill="rgba(0,0,0,0.2)" stroke="none" style={{ pointerEvents: 'none' }} />
-            )}
-            {/* Outer center */}
-            <circle
-              cx="150"
-              cy="150"
-              r="30"
-              fill={colors['section-17'] || 'white'}
-              stroke="black"
-              strokeWidth="2"
-              style={{ cursor: 'pointer' }}
-              onClick={() => handleSectionClick('section-17')}
-              filter={colors['section-17'] !== 'white' ? 'url(#textureFilter)' : ''}
-            />
-            {/* Outer center highlight */}
-            {colors['section-17'] !== 'white' && (
-              <circle cx="147" cy="147" r="25" fill="rgba(255,255,255,0.3)" stroke="none" style={{ pointerEvents: 'none' }} />
-            )}
-
-            {/* Inner center shadow */}
-            {colors['section-18'] !== 'white' && (
-              <circle cx="151" cy="151" r="19" fill="rgba(0,0,0,0.25)" stroke="none" style={{ pointerEvents: 'none' }} />
-            )}
-            {/* Inner center */}
-            <circle
-              cx="150"
-              cy="150"
-              r="20"
-              fill={colors['section-18'] || 'white'}
-              stroke="black"
-              strokeWidth="2"
-              style={{ cursor: 'pointer' }}
-              onClick={() => handleSectionClick('section-18')}
-              filter={colors['section-18'] !== 'white' ? 'url(#textureFilter)' : ''}
-            />
-            {/* Inner center highlight */}
-            {colors['section-18'] !== 'white' && (
-              <circle cx="147" cy="147" r="15" fill="rgba(255,255,255,0.4)" stroke="none" style={{ pointerEvents: 'none' }} />
-            )}
-          </g>
-
-          {/* Decorative dots with texture */}
-          {Array.from({ length: 6 }).map((_, i) => {
-            const angle = (i * 60) * Math.PI / 180;
-            const x = 150 + 70 * Math.cos(angle);
-            const y = 150 + 70 * Math.sin(angle);
-            const sectionColor = colors[`section-${i + 19}`] || 'white';
-
-            return (
-              <g key={`dot-${i}`}>
-                {/* Dot shadow */}
-                {sectionColor !== 'white' && (
-                  <circle cx={x + 1} cy={y + 1} r="7" fill="rgba(0,0,0,0.2)" stroke="none" style={{ pointerEvents: 'none' }} />
-                )}
-                {/* Dot base */}
-                <circle
-                  cx={x}
-                  cy={y}
-                  r="8"
-                  fill={sectionColor}
-                  stroke="black"
-                  strokeWidth="2"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handleSectionClick(`section-${i + 19}`)}
-                  filter={sectionColor !== 'white' ? 'url(#textureFilter)' : ''}
-                />
-                {/* Dot highlight */}
-                {sectionColor !== 'white' && (
-                  <circle cx={x - 1} cy={y - 1} r="5" fill="rgba(255,255,255,0.4)" stroke="none" style={{ pointerEvents: 'none' }} />
-                )}
-              </g>
-            );
+        <svg width="100%" height="100%" viewBox="0 0 300 300" role="img" aria-label="Lotus rangoli to color" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="150" cy="150" r="137" fill="none" stroke="#D8AE72" strokeWidth="1.5" strokeDasharray="2 6" />
+          {petalRing(8, 0, 1, 1.18)}
+          {petalRing(8, 22.5, 9, .83)}
+          {colorablePath(17, 'M150 119 C169 130 181 143 181 150 C181 168 166 181 150 181 C134 181 119 168 119 150 C119 143 131 130 150 119 Z')}
+          {colorablePath(18, 'M150 129 C163 138 171 146 171 151 C171 163 161 172 150 172 C139 172 129 163 129 151 C129 146 137 138 150 129 Z')}
+          {Array.from({ length: 6 }, (_, i) => {
+            const angle = (i * 60 - 90) * Math.PI / 180;
+            const cx = 150 + 116 * Math.cos(angle);
+            const cy = 150 + 116 * Math.sin(angle);
+            return colorablePath(19 + i, `M${cx} ${cy - 7} C${cx + 7} ${cy - 7} ${cx + 7} ${cy + 7} ${cx} ${cy + 7} C${cx - 7} ${cy + 7} ${cx - 7} ${cy - 7} ${cx} ${cy - 7} Z`);
           })}
         </svg>
       );
     }
 
-    // Simplified designs for peacock and mandala
+    if (design.id === 'peacock') {
+      const feathers = Array.from({ length: 8 }, (_, i) => (
+        <g key={`feather-${i}`} transform={`rotate(${-56 + i * 16} 150 205)`}>
+          {colorablePath(i + 1, 'M150 205 C119 177 105 126 150 55 C195 126 181 177 150 205 Z')}
+          <ellipse cx="150" cy="112" rx="13" ry="21" fill={fillSection(i + 9)} {...lineProps} onClick={() => handleSectionClick(`section-${i + 9}`)} style={{ cursor: 'pointer' }} />
+          <ellipse cx="150" cy="112" rx="6" ry="11" fill={fillSection(i + 17)} {...lineProps} onClick={() => handleSectionClick(`section-${i + 17}`)} style={{ cursor: 'pointer' }} />
+          <path d="M150 200 Q150 158 150 75" fill="none" stroke={outline} strokeWidth="1" opacity=".45" pointerEvents="none" />
+        </g>
+      ));
+      return (
+        <svg width="100%" height="100%" viewBox="0 0 300 300" role="img" aria-label="Peacock rangoli to color" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="150" cy="150" r="137" fill="none" stroke="#D8AE72" strokeWidth="1.5" strokeDasharray="2 6" />
+          {feathers}
+          {colorablePath(25, 'M137 188 C133 175 140 161 150 157 C160 161 167 175 163 188 L159 215 L141 215 Z')}
+          {colorablePath(26, 'M145 213 C137 225 128 229 119 228 C125 219 133 214 145 213 Z')}
+          {colorablePath(27, 'M155 213 C167 225 178 229 187 228 C181 219 171 214 155 213 Z')}
+          {colorablePath(28, 'M146 171 C132 160 132 145 142 139 C151 145 153 158 150 170 Z')}
+          {Array.from({ length: 4 }, (_, i) => {
+            const angle = (i * 90 - 45) * Math.PI / 180;
+            const cx = 150 + 128 * Math.cos(angle);
+            const cy = 150 + 128 * Math.sin(angle);
+            return colorablePath(29 + i, `M${cx} ${cy - 5} C${cx + 5} ${cy - 5} ${cx + 5} ${cy + 5} ${cx} ${cy + 5} C${cx - 5} ${cy + 5} ${cx - 5} ${cy - 5} ${cx} ${cy - 5} Z`);
+          })}
+          <circle cx="150" cy="111" r="2.5" fill="#D8AE72" pointerEvents="none" />
+        </svg>
+      );
+    }
+
+    // A balanced 40-part mandala: three petal rings plus a two-part centre.
     return (
-      <svg width="100%" height="100%" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-        {/* Generic pattern with appropriate number of sections */}
-        {Array.from({ length: design.sections }).map((_, i) => {
-          const angle = (i * (360 / design.sections)) * Math.PI / 180;
-          const radius = 50 + (i % 3) * 25;
-          const x = 150 + radius * Math.cos(angle);
-          const y = 150 + radius * Math.sin(angle);
-
-          return (
-            <circle
-              key={`section-${i}`}
-              cx={x}
-              cy={y}
-              r={8 + (i % 3) * 4}
-              fill={colors[`section-${i + 1}`] || 'white'}
-              stroke="black"
-              strokeWidth="2"
-              style={{ cursor: 'pointer' }}
-              onClick={() => handleSectionClick(`section-${i + 1}`)}
-            />
-          );
-        })}
-
-        {/* Center element */}
-        <circle cx="150" cy="150" r="20" fill={colors['section-center'] || 'white'} stroke="black" strokeWidth="3" style={{ cursor: 'pointer' }} onClick={() => handleSectionClick('section-center')} />
+      <svg width="100%" height="100%" viewBox="0 0 300 300" role="img" aria-label="Festival mandala to color" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="150" cy="150" r="139" fill="none" stroke="#D8AE72" strokeWidth="1.5" strokeDasharray="2 6" />
+        {petalRing(12, 0, 1, 1.15)}
+        {petalRing(16, 11.25, 13, .82)}
+        {petalRing(10, 18, 29, .52)}
+        {colorablePath(39, 'M150 130 C165 136 170 145 170 150 C170 161 161 170 150 170 C139 170 130 161 130 150 C130 145 135 136 150 130 Z')}
+        {colorablePath(40, 'M150 139 C158 143 161 147 161 151 C161 157 156 162 150 162 C144 162 139 157 139 151 C139 147 142 143 150 139 Z')}
       </svg>
     );
   };
@@ -729,9 +567,7 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
       {/* Background */}
       <div className="rangoli-background" />
 
-      <HomeButton onNavigate={onNavigate} />
-      <ZoneBadgeButton zoneId="festival-square" onBack={() => onNavigate?.('zone-welcome')} />
-      <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
+      <ZoneBadgeButton variant="gameplay" zoneId="festival-square" onBack={() => onNavigate?.('zone-welcome')} />
 
 
       {/* Opening Modal - Replaces Introduction Scene */}
@@ -1030,7 +866,6 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
         gameName="Rangoli Artistry"
         currentStars={gameState.stars}
         hasDesignOption={true}
-        onOpen={() => setShowPauseMenu(true)}
         onResume={() => setShowPauseMenu(false)}
         onRestart={() => { setShowPauseMenu(false); startOverCurrentDesign(); }}
         onBackToModes={() => {
@@ -1138,42 +973,6 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
         />
       )}
 
-      {/* ADD TOCA BOCA NAV HERE */}
-      <TocaBocaNav
-        onHome={() => onNavigate?.('home')}
-        onProgress={() => {
-          // Show progress/cultural celebration if you have it
-          console.log('Show festival progress');
-        }}
-        onHelp={() => console.log('Show help')}
-        onParentMenu={() => console.log('Parent menu')}
-        isAudioOn={isAudioOn}
-        onAudioToggle={toggleAudio}
-        onZonesClick={() => onNavigate?.('zones')}
-        onStartFresh={() => {
-          // Reset ENTIRE game - back to introduction
-          setGameState({
-            phase: PHASES.INTRODUCTION,
-            selectedDesign: null,
-            coloredSections: 0,
-            totalSections: 0,
-            celebrationStarted: false,
-            gameStartTime: Date.now(),
-            stars: 0,
-            completed: false,
-            showDoneButton: false
-          });
-          setSavedDesigns({});
-          setColors({});
-        }}
-        currentProgress={{
-          stars: gameState.stars || 0,
-          completed: gameState.completed ? 1 : 0,
-          total: 1
-        }}
-      />
-
-      <BackToMapButton onNavigate={onNavigate} />
     </div>
   );
 };

@@ -9,17 +9,13 @@ import { getCompletionModal } from '../../../lib/config/content';
 import SceneManager from '../../../lib/components/scenes/SceneManager';
 import useSceneReset from '../../../lib/hooks/useSceneReset';
 import { getSceneResetConfig } from '../../../lib/config/SceneResetConfigs';
-import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';
 
 // Import completion component
 import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 import GamePauseMenu from '../components/GamePauseMenu';
-import HomeButton from '../../../lib/components/ui/HomeButton';
 import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
-import AudioToggle from '../../../lib/components/ui/AudioToggle';
 import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
-import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
 
 // Import assets
 import cookingBg from './assets/images/cooking-bg.png';
@@ -897,9 +893,7 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Background */}
       <div className="cooking-background" style={{ backgroundImage: `url(${cookingBg})` }} />
 
-      <HomeButton onNavigate={onNavigate} />
-      <ZoneBadgeButton zoneId="festival-square" onBack={() => onNavigate?.('zone-welcome')} />
-      <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
+      <ZoneBadgeButton variant="gameplay" zoneId="festival-square" onBack={() => onNavigate?.('zone-welcome')} />
 
       {/* Progress Board - ICONS ONLY */}
       <div className="progress-board">
@@ -1240,7 +1234,6 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
         gameName="Modak Mastery"
         currentStars={sceneState.stars}
         hasDesignOption={false}
-        onOpen={() => setShowPauseMenu(true)}
         onResume={() => setShowPauseMenu(false)}
         onRestart={() => { setShowPauseMenu(false); resetScene(); }}
         onComplete={() => { setShowPauseMenu(false); completeGame(); }}
@@ -1294,30 +1287,6 @@ const ModakCookingGameContent = ({ sceneState, sceneActions, isReload, onComplet
         />
       )}
 
-      <TocaBocaNav
-        onHome={() => {
-          if (onNavigate) onNavigate('home');
-        }}
-        onProgress={() => {
-          console.log('Show festival progress');
-        }}
-        onHelp={() => console.log('Show help')}
-        onParentMenu={() => console.log('Parent menu')}
-        isAudioOn={isAudioOn}
-        onAudioToggle={toggleAudio}
-        onZonesClick={() => {
-          if (onNavigate) onNavigate('zones');
-        }}
-        onStartFresh={() => resetScene()}
-        currentProgress={{
-          stars: sceneState.stars || 0,
-          completed: sceneState.completed ? 1 : 0,
-          total: 1
-        }}
-      />
-
-      {/* BackToMapButton */}
-      {sceneState.welcomeShown && <BackToMapButton onNavigate={onNavigate} />}
     </div>
   );
 };

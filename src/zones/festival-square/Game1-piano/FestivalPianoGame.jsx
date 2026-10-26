@@ -12,14 +12,10 @@ import InteractionManager from "../../../lib/components/scenes/InteractionManage
 import GameStateManager from "../../../lib/services/GameStateManager";
 import ProgressManager from '../../../lib/services/ProgressManager';
 import SimpleSceneManager from '../../../lib/services/SimpleSceneManager';
-import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';
 
 import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 import GamePauseMenu from '../components/GamePauseMenu';
-import HomeButton from '../../../lib/components/ui/HomeButton';
 import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
-import AudioToggle from '../../../lib/components/ui/AudioToggle';
-import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
 import GameLayout from '../../../lib/components/layout/GameLayout';
 import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
@@ -527,7 +523,6 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
           characterImg={ganeshaGameScene}
           showButton={true}
         />
-        <TocaBocaNav onHome={() => onNavigate?.('home')} onZonesClick={() => onNavigate?.('zones')} />
       </>
     );
   }
@@ -559,8 +554,6 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
               </div>
               <div className="progress-summary"></div>
             </div>
-            <TocaBocaNav onHome={() => onNavigate?.('home')} onZonesClick={() => onNavigate?.('zones')} currentProgress={{ stars: sceneState.stars || 0, completed: sceneState.phase === PHASES.COMPLETE ? 1 : 0, total: 1 }} />
-            <BackToMapButton onNavigate={onNavigate} />
           </div>
         </MessageManager>
       </InteractionManager>
@@ -587,8 +580,6 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
                 );
               })}
             </div>
-            <TocaBocaNav onHome={() => onNavigate?.('home')} onZonesClick={() => onNavigate?.('zones')} currentProgress={{ stars: sceneState.challengeStars || 0, completed: Object.keys(sceneState.completedSongs).length, total: FESTIVAL_SONGS.length }} />
-            <BackToMapButton onNavigate={onNavigate} />
           </div>
         </MessageManager>
       </InteractionManager>
@@ -750,10 +741,7 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
               }}
             />
 
-            <HomeButton onNavigate={onNavigate} />
-            <ZoneBadgeButton zoneId="festival-square" onBack={() => onNavigate?.('zone-welcome')} />
-            <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
-            <BackToMapButton onNavigate={onNavigate} />
+            <ZoneBadgeButton variant="gameplay" zoneId="festival-square" onBack={() => onNavigate?.('zone-welcome')} />
 
             <GamePauseMenu
               show={sceneState.showPauseMenu}

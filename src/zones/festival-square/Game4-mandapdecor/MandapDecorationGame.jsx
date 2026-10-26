@@ -8,10 +8,7 @@ import { getCompletionModal } from '../../../lib/config/content';
 import FreeDraggableItem from '../../../lib/components/interactive/FreeDraggableItem';
 import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 import GamePauseMenu from '../components/GamePauseMenu';
-import HomeButton from '../../../lib/components/ui/HomeButton';
 import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
-import AudioToggle from '../../../lib/components/ui/AudioToggle';
-import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
 import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
 import SceneManager from '../../../lib/components/scenes/SceneManager';
@@ -20,7 +17,6 @@ import ProgressManager from '../../../lib/services/ProgressManager';
 import SimpleSceneManager from '../../../lib/services/SimpleSceneManager';
 import useSceneReset from '../../../lib/hooks/useSceneReset';
 import { getSceneResetConfig } from '../../../lib/config/SceneResetConfigs';
-import BackToMapButton from '../../../lib/components/navigation/BackToMapButton';
 
 import PujaSidebar from './components/sidebars/PujaSidebar';
 import FixSidebar from './components/sidebars/FixSidebar';
@@ -1486,12 +1482,6 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
           characterImg={ganeshaImage}
           showButton={true}
         />
-        <TocaBocaNav
-          onHome={() => onNavigate?.('home')}
-          onZonesClick={() => onNavigate?.('zones')}
-          isAudioOn={isAudioOn}
-          onAudioToggle={toggleAudio}
-        />
       </>
     );
   }
@@ -1541,7 +1531,6 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
           </div>
 
         </div>
-        <BackToMapButton onNavigate={onNavigate} />
       </div>
     );
   }
@@ -1617,7 +1606,6 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
             })}
           </div>
         </div>
-        <BackToMapButton onNavigate={onNavigate} />
       </div>
     );
   }
@@ -1661,7 +1649,6 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
             </button>
           </div>
         </div>
-        <BackToMapButton onNavigate={onNavigate} />
       </div>
     );
   }
@@ -1710,9 +1697,7 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
           </div>
         )}
 
-        <HomeButton onNavigate={onNavigate} />
-        <ZoneBadgeButton zoneId="festival-square" onBack={() => onNavigate?.('zone-welcome')} />
-        <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
+        <ZoneBadgeButton variant="gameplay" zoneId="festival-square" onBack={() => onNavigate?.('zone-welcome')} />
 
 
 
@@ -2391,7 +2376,6 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
           gameName="Mandap Decoration"
           currentStars={gameState.stars}
           hasDesignOption={false}
-          onOpen={() => setShowPauseMenu(true)}
           onResume={() => setShowPauseMenu(false)}
           onRestart={() => {
             setShowPauseMenu(false);
@@ -2533,47 +2517,6 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
           />
         )}
 
-        <TocaBocaNav
-          onHome={() => {
-            if (onNavigate) onNavigate('home');
-          }}
-          onProgress={() => {
-            console.log('Show festival progress');
-          }}
-          onHelp={() => console.log('Show help')}
-          onParentMenu={() => console.log('Parent menu')}
-          isAudioOn={isAudioOn}
-          onAudioToggle={toggleAudio}
-          onZonesClick={() => {
-            if (onNavigate) onNavigate('zones');
-          }}
-          onStartFresh={() => {
-            // Reset entire decoration game
-            localStorage.removeItem('mandapGame');
-
-            setGameState({
-              phase: 'intro',
-              placedDecorations: new Map(),
-              decorationPositions: new Map(),
-              stars: 0,
-              showDoneButton: false,
-              completed: false
-            });
-            setHighlightedZones(new Set());
-            setShowSparkle(null);
-            setShowCulturalNote(null);
-            setMilestoneSparkle(false);
-            setShowSceneCompletion(false);
-            setNearDeleteZone(false);
-          }}
-          currentProgress={{
-            stars: gameState.stars || 0,
-            completed: gameState.completed ? 1 : 0,
-            total: 1
-          }}
-        />
-
-        <BackToMapButton onNavigate={onNavigate} />
       </div>
     );
   }

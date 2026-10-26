@@ -1,5 +1,16 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-26] - DrawingPad rebuilt (branch festival-square-fixes, uncommitted)
+**Touched:** about-me-hut/components/Drawingpad.jsx + .css, food/Favoritefoodgame.css, enjoy/DreamsWishesGame.css.
+**Changed:** The text tool was broken (typed text lost on canvas tap, no confirm button, saved text twice the preview size, drifted on phone layouts), so the whole pad was rebuilt. Fixed 900x600 canvas, pointer events with smoothed strokes, 9 colours, brush/eraser/text, 3 sizes, Undo + Redo, big Done. Text is a typed box with a green tick; it is drawn onto the canvas at the size shown, so Undo, eraser and the saved PNG treat it like any stroke. All classes are `dpad-` prefixed (the old `.done-btn`/`.undo-btn` leaked globally). Removed the Food pad overrides and the Dreams scale(0.8/1.3) transforms; the pad sizes itself. Props unchanged (prompt, onSave, onCancel, initialData, onAutoSave). Save file is now my-drawing.png.
+**Verified:** build passes. Checked in a throwaway page (1180x820 and 812x375): stroke, text via Enter, Undo, Redo, Done returns the PNG. Not tested on a real iPad, inside the Food/Dreams scenes themselves, or with a restored draft.
+**Open:** play Food and Dreams drawing steps on device. Dragging text after placing it was dropped on purpose. No audio feedback on pad buttons.
+## [2026-10-26] - Festival Square chrome matched to live zones (branch festival-square-fixes, uncommitted)
+**Touched:** FestivalPianoGame/RangoliGame/ModakCookingGame/MandapDecorationGame .jsx, GamePauseMenu.jsx/.css (reverted to pre-trigger state), src/dev/GameTestHarness.jsx.
+**Changed:** Added fs-piano/fs-rangoli/fs-modak/fs-mandap to the game harness. Removed TocaBocaNav, HomeButton, per-scene AudioToggle, BackToMapButton and the shared pause trigger from the four scenes; ZoneBadgeButton now uses variant="gameplay" like Pond. Live-zone chrome is zone badge + voice replay.
+**Verified:** build passes. Modak opening modal and font checked in the harness; other scenes not viewed.
+**Open:** no VOReplayButton: Festival scenes only use useVoiceGuidance for idle hints and play no per-phase VO line to replay. Modak and Mandap pause menus now have no trigger (Piano keeps GameLayout pause, Rangoli Esc only). Replace with useSidebarPause if wanted.
+
 ## [2026-10-22] - Festival Square gameplay: untimed Light Challenge, Rangoli Finish (branch festival-square-fixes, uncommitted)
 **Touched:** MandapDecorationGame.jsx/.css, FestivalRangoliGame.jsx/.css.
 **Changed:** Light Challenge had no win path (lightsPlaced never incremented; only a time-up fail). It is now untimed: counts each of the 5 lights once, header shows 💡 n/5, finishes with 5 stars, or 8 plus a "Lightning fast" message if under 60s (hidden count-up clock, starts after the intro). Rangoli: completion overlay gets a Finish! button that sets completed and opens SceneCompletionCelebration (previously unreachable).

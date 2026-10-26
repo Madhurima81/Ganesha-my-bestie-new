@@ -8,21 +8,9 @@ const GamePauseMenu = ({
   onResume,
   onRestart,
   onBackToModes, // This prop is for the purple button
-  onComplete, // This prop is for the yellow button
-  onOpen // When given, the menu shows its own ⏸️ trigger while closed (touch devices have no Esc key)
+  onComplete // This prop is for the yellow button
 }) => {
-  if (!show) {
-    return onOpen ? (
-      <button
-        type="button"
-        className="fsPauseOpenBtn"
-        aria-label="Pause game"
-        onClick={onOpen}
-      >
-        ⏸️
-      </button>
-    ) : null;
-  }
+  if (!show) return null;
 
   return (
     <div className="game-pause-overlay">
