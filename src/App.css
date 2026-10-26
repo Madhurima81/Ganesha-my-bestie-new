@@ -239,15 +239,21 @@ button {
   z-index: 1000;
 }
 
-/* Accessibility - Focus indicators (purple-only visual system) */
-button:focus,
+/* Accessibility - Focus indicators (purple-only visual system).
+   Keyboard focus only (:focus-visible). The old rule also matched plain `button:focus`, so every tap or click
+   on a transparent game hotspot (Mooshika, the Pond rocks, ...) left a purple bar under it. */
 button:focus-visible,
-.primary-btn:focus,
 .primary-btn:focus-visible,
 .primary-btn:active {
   outline: none;
   border-color: transparent;
   box-shadow: 0 6px 0 #5a3fc0;
+}
+
+/* A mouse or touch tap focuses a button without showing any ring (older Safari/Firefox draw one on :focus). */
+button:focus:not(:focus-visible),
+.primary-btn:focus:not(:focus-visible) {
+  outline: none;
 }
 
 a:focus,
