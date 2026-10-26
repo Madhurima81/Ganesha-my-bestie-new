@@ -3,7 +3,7 @@
 // 4-digit PIN entry + first-time setup.
 // First visit: creates PIN. Returning: verifies PIN.
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { isPinSet, setPin, verifyPin } from '../../utils/dashboardData'
 
 const C = {
@@ -82,6 +82,28 @@ export default function PinScreen({ onSuccess }) {
     if (step === 'confirm') setConfirm(c => c.slice(0, -1))
     else                     setPin_(p => p.slice(0, -1))
   }
+
+  // Hardware keyboard: 0-9 (top row or number pad) = a digit, Backspace/Delete = remove one. Goes through
+  // the same handlers as the on-screen keypad (read via a ref so the listener is added once). Ignored
+  // with Ctrl/Cmd/Alt held and while typing in a text field.
+  const keyHandlersRef = useRef({})
+  keyHandlersRef.current = { handleDigit, handleDelete }
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (event.ctrlKey || event.metaKey || event.altKey) return
+      const tag = event.target?.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || event.target?.isContentEditable) return
+      if (/^[0-9]$/.test(event.key)) {
+        event.preventDefault()
+        keyHandlersRef.current.handleDigit(event.key)
+      } else if (event.key === 'Backspace' || event.key === 'Delete') {
+        event.preventDefault()
+        keyHandlersRef.current.handleDelete()
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
 
   const currentInput = step === 'confirm' ? confirm : pin
   const digits       = [1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, '⌫']

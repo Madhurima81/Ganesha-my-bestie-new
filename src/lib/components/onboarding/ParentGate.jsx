@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import OnboardingCard from './OnboardingCard';
 import './ParentGate.css';
 
@@ -52,6 +52,29 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
       return next;
     });
   }, [challenge, onComplete]);
+
+  // Hardware keyboard: 0-9 (top row or number pad) types a digit, Backspace/Delete removes one,
+  // Escape clears. Same path as the on-screen keypad, so the answer check and the reset on a wrong
+  // answer behave identically. Ignored with Ctrl/Cmd/Alt held and while typing in a text field.
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+      const tag = event.target?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || event.target?.isContentEditable) return;
+      if (/^[0-9]$/.test(event.key)) {
+        event.preventDefault();
+        handleKey(event.key);
+      } else if (event.key === 'Backspace' || event.key === 'Delete') {
+        event.preventDefault();
+        handleKey('back');
+      } else if (event.key === 'Escape') {
+        event.preventDefault();
+        handleKey('clear');
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [handleKey]);
 
   const displaySlots = challenge.digits.map((_, i) => input[i] || '');
 
