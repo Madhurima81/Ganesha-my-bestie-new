@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-28] - Piano replaced with the supplied FestivalPianoGame.updated files (branch festival-square-fixes, uncommitted)
+**Touched:** Game1-piano/FestivalPianoGame.jsx and .css (replaced from Downloads/FestivalPianoGame.updated.*), plus a 60px min-height rule.
+**Changed:** Minimal rewrite: 5 pitched keys (Sa-Re-Ga-Ma-Pa, no instrument art), one song with 3 phrases, auto demo then child's turn, 2 misses replay the phrase, 3-step hint ladder (10s/18s/26s), pause-safe timers, Hear Again, Free Play with timed record/playback, completion dialog. Replaces the 4-song list, animals, stars, orchestra payoff and idle voice hints from commit 5956b389 (still in git history).
+**Verified:** build passes; in the harness: modes, demo -> your turn, miss replay, three phrases, completion dialog, Done -> scene celebration; no console errors; 360px keys 59x141 (Hear Again was 44px tall, now min 60).
+**Open:** the melody is the old placeholder, not verified Jai Ganesh Deva notation; stars/totalStars are 0 in the celebration; Downloads also has lotus_colouring_page.svg and Symmetrical Lotus Coloring Page.png (not yet used, for Rangoli).
+
 ## [2026-10-27] - Piano gameplay: phrases with auto-listen (branch festival-square-fixes, uncommitted)
 **Touched:** Game1-piano/FestivalPianoGame.jsx, FestivalPianoGame.css.
 **Changed:** Challenge songs are split into 3-note phrases: Ganesha plays a phrase, the game then listens automatically (Hear Song / Record buttons removed; status shows Listen / Your turn plus Phrase n of N). 2 misses pulse the right key, 3 misses replay the phrase; wrong notes are no longer recorded. Try Another returns to the song list; Play Again and the replay button restart from the current phrase. Free Play: finding all 5 instruments plays an orchestra with all animals dancing; cultural note stays 3s; dancing animals use a ref (stale-state fix). Song cards show note count, not difficulty stars. A reloaded mid-phrase song restarts that phrase.
