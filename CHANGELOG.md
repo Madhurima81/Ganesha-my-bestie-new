@@ -1,10 +1,19 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-27] - Piano gameplay: phrases with auto-listen (branch festival-square-fixes, uncommitted)
+**Touched:** Game1-piano/FestivalPianoGame.jsx, FestivalPianoGame.css.
+**Changed:** Challenge songs are split into 3-note phrases: Ganesha plays a phrase, the game then listens automatically (Hear Song / Record buttons removed; status shows Listen / Your turn plus Phrase n of N). 2 misses pulse the right key, 3 misses replay the phrase; wrong notes are no longer recorded. Try Another returns to the song list; Play Again and the replay button restart from the current phrase. Free Play: finding all 5 instruments plays an orchestra with all animals dancing; cultural note stays 3s; dancing animals use a ref (stale-state fix). Song cards show note count, not difficulty stars. A reloaded mid-phrase song restarts that phrase.
+**Verified:** built; driven in the game harness (phrase flow, misses and hint, replay, song complete, Try Another, orchestra). Audio not heard.
+**Also:** audio context resumes on first tap; keys are centred on their x% and sized with clamp(60-100px) plus a phone breakpoint (checked at 360px: five 60x72 keys, no overlap, no sideways scroll); the Save-as-JSON button and its function are removed.
+**Open:** real aarti vocal clips (needs recordings); FestivalPianoMusicalChallenge.jsx and FestivalPianoModeSelection.jsx are unused dead code.
+
 ## [2026-10-26] - DrawingPad rebuilt (branch festival-square-fixes, uncommitted)
 **Touched:** about-me-hut/components/Drawingpad.jsx + .css, food/Favoritefoodgame.css, enjoy/DreamsWishesGame.css.
 **Changed:** The text tool was broken (typed text lost on canvas tap, no confirm button, saved text twice the preview size, drifted on phone layouts), so the whole pad was rebuilt. Fixed 900x600 canvas, pointer events with smoothed strokes, 9 colours, brush/eraser/text, 3 sizes, Undo + Redo, big Done. Text is a typed box with a green tick; it is drawn onto the canvas at the size shown, so Undo, eraser and the saved PNG treat it like any stroke. All classes are `dpad-` prefixed (the old `.done-btn`/`.undo-btn` leaked globally). Removed the Food pad overrides and the Dreams scale(0.8/1.3) transforms; the pad sizes itself. Props unchanged (prompt, onSave, onCancel, initialData, onAutoSave). Save file is now my-drawing.png.
 **Verified:** build passes. Checked in a throwaway page (1180x820 and 812x375): stroke, text via Enter, Undo, Redo, Done returns the PNG. Not tested on a real iPad, inside the Food/Dreams scenes themselves, or with a restored draft.
-**Open:** play Food and Dreams drawing steps on device. Dragging text after placing it was dropped on purpose. No audio feedback on pad buttons.
+**Layout (later):** Undo/Redo, Done and Save moved under the tools in the left column; thinner frame and desk strip so the paper fills the pad. Short phone-landscape screens (height <= 520px) keep a right-hand action column because the left one cannot fit.
+**iPad:** landscape (1024x768) keeps tools + actions on the left with a thin wood frame on the paper; portrait iPad and phones stack paper on top, tools and actions underneath. Checked 1024x768 and 820x1180 in a test page.
+**Open:** play Food and Dreams drawing steps on device. Text stays floating (draggable, tap to edit, recolours) after ✓/Enter until the child taps a tool, the canvas, Done or Save, which draws it onto the picture. No audio feedback on pad buttons.
 ## [2026-10-26] - Festival Square chrome matched to live zones (branch festival-square-fixes, uncommitted)
 **Touched:** FestivalPianoGame/RangoliGame/ModakCookingGame/MandapDecorationGame .jsx, GamePauseMenu.jsx/.css (reverted to pre-trigger state), src/dev/GameTestHarness.jsx.
 **Changed:** Added fs-piano/fs-rangoli/fs-modak/fs-mandap to the game harness. Removed TocaBocaNav, HomeButton, per-scene AudioToggle, BackToMapButton and the shared pause trigger from the four scenes; ZoneBadgeButton now uses variant="gameplay" like Pond. Live-zone chrome is zone badge + voice replay.

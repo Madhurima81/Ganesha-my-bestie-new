@@ -461,7 +461,7 @@
 .piano-keys-frame-simple { position: absolute; bottom: 0; left: 0; right: 0; height: 150px; background: linear-gradient(180deg, rgba(101, 67, 33, 0.8) 0%, rgba(139, 90, 43, 0.9) 100%); border-radius: 15px 15px 0 0; box-shadow: inset 0 -5px 20px rgba(0, 0, 0, 0.3); border: 3px solid rgba(101, 67, 33, 0.9); }
 
 /* 3D Piano Keys */
-.piano-key { position: absolute; width: 100px; height: 120px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; user-select: none; z-index: 51; overflow: hidden; box-shadow: 0 8px 16px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.2); border: 2px solid rgba(0,0,0,0.2); transform: scale(1) translateY(0); }
+.piano-key { position: absolute; box-sizing: border-box; --pianoKeyW: clamp(60px, 13vw, 100px); width: var(--pianoKeyW); height: clamp(72px, 16vw, 120px); margin-left: calc(var(--pianoKeyW) / -2); border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; user-select: none; z-index: 51; overflow: hidden; box-shadow: 0 8px 16px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.2); border: 2px solid rgba(0,0,0,0.2); transform: scale(1) translateY(0); }
 .piano-key:hover { transform: translateY(-2px) !important; box-shadow: 0 12px 20px rgba(0,0,0,0.4), 0 6px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -1px 0 rgba(0,0,0,0.3); }
 .piano-key.active { transform: scale(0.95) translateY(2px) !important; box-shadow: 0 4px 8px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 2px 4px rgba(0,0,0,0.2), inset 0 -1px 0 rgba(255,255,255,0.2); }
 .piano-key.discovered { box-shadow: 0 8px 16px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.2), 0 0 10px rgba(255, 215, 0, 0.5); }
@@ -718,4 +718,35 @@
 .completion-btn:disabled:hover {
   transform: none !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+/* Phrase-by-phrase challenge status */
+.pianoPhraseStatus {
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(20px, 2.6vw, 30px);
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  margin: 6px 0 0;
+  min-height: 1.4em;
+}
+.pianoPhraseCount {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(14px, 1.8vw, 18px);
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+.piano-key.pianoKeyHint {
+  animation: pianoKeyHintPulse 0.5s ease-in-out infinite;
+  transform: scale(1.1);
+}
+@keyframes pianoKeyHintPulse {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.6)); }
+  50% { filter: drop-shadow(0 0 18px rgba(255, 215, 0, 1)); }
+}
+
+/* Phones: let the keyboard use nearly the full width so five 60px+ keys fit without overlapping */
+@media (max-width: 600px) {
+  .piano-base { width: 96%; }
+  .instrument-icon { width: 44px; height: 44px; }
 }

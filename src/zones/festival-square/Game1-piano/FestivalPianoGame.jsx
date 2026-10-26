@@ -54,11 +54,11 @@ const ANIMAL_INSTRUMENT_MAP = {
 
 // Instrument configuration
 const INSTRUMENTS = [
-  { id: 'bells', name: 'Sa (C)', indianName: 'सा', color: '#4169E1', culturalNote: 'Base note - like the foundation of a house!', keyPosition: { x: 20, y: 65 }, soundFreq: { base: 261.63, harmonics: [523.25, 1046.50] } },
-  { id: 'cymbals', name: 'Re (D)', indianName: 'रे', color: '#FFD700', culturalNote: 'Second note - adds rhythm to the melody!', keyPosition: { x: 35, y: 65 }, soundFreq: { base: 293.66, harmonics: [587.33, 1174.66] } },
+  { id: 'bells', name: 'Sa (C)', indianName: 'सा', color: '#4169E1', culturalNote: 'Base note - like the foundation of a house!', keyPosition: { x: 14, y: 65 }, soundFreq: { base: 261.63, harmonics: [523.25, 1046.50] } },
+  { id: 'cymbals', name: 'Re (D)', indianName: 'रे', color: '#FFD700', culturalNote: 'Second note - adds rhythm to the melody!', keyPosition: { x: 32, y: 65 }, soundFreq: { base: 293.66, harmonics: [587.33, 1174.66] } },
   { id: 'shehnai', name: 'Ga (E)', indianName: 'ग', color: '#FF8C00', culturalNote: 'Third note - brings joy to celebrations!', keyPosition: { x: 50, y: 65 }, soundFreq: { base: 329.63, harmonics: [659.25, 1318.51] } },
-  { id: 'dhol', name: 'Ma (F)', indianName: 'म', color: '#DC143C', culturalNote: 'Fourth note - powerful like a drum!', keyPosition: { x: 65, y: 65 }, soundFreq: { base: 349.23, harmonics: [698.46, 1396.91] } },
-  { id: 'drum', name: 'Pa (G)', indianName: 'प', color: '#32CD32', culturalNote: 'Fifth note - perfect harmony!', keyPosition: { x: 80, y: 65 }, soundFreq: { base: 392.00, harmonics: [784.00, 1568.00] } }
+  { id: 'dhol', name: 'Ma (F)', indianName: 'म', color: '#DC143C', culturalNote: 'Fourth note - powerful like a drum!', keyPosition: { x: 68, y: 65 }, soundFreq: { base: 349.23, harmonics: [698.46, 1396.91] } },
+  { id: 'drum', name: 'Pa (G)', indianName: 'प', color: '#32CD32', culturalNote: 'Fifth note - perfect harmony!', keyPosition: { x: 86, y: 65 }, soundFreq: { base: 392.00, harmonics: [784.00, 1568.00] } }
 ];
 
 // Ganesha Songs
@@ -68,6 +68,14 @@ const FESTIVAL_SONGS = [
   { id: 'shendur-lal', name: 'Shendur Lal Chadhayo', festival: 'Ganesh Visarjan', difficulty: 2, icon: '🟠', description: 'Sung during Ganesh immersion ceremonies', melody: ['shehnai', 'cymbals', 'bells', 'cymbals', 'shehnai', 'shehnai', 'cymbals', 'bells'], culturalNote: 'About offering red sindoor to Ganesha - played during visarjan processions', unlocked: false },
   { id: 'sukh-karta', name: 'Sukh Karta Dukh Harta', festival: 'Ganesh Aarti', difficulty: 3, icon: '✨', description: 'Prayer praising Ganesha as the giver of happiness', melody: ['bells', 'cymbals', 'shehnai', 'shehnai', 'cymbals', 'shehnai', 'bells', 'cymbals', 'shehnai', 'cymbals', 'bells', 'bells', 'bells'], culturalNote: 'Means "Giver of joy, remover of sorrow, destroyer of obstacles"', unlocked: false }
 ];
+
+// Songs are learned a short phrase at a time: Ganesha plays a phrase, then the child repeats it.
+const PHRASE_SIZE = 3;
+const getPhrases = (melody) => {
+  const phrases = [];
+  for (let i = 0; i < melody.length; i += PHRASE_SIZE) phrases.push(melody.slice(i, i + PHRASE_SIZE));
+  return phrases;
+};
 
 const SongCompletionOverlay = ({
   show,
@@ -174,7 +182,7 @@ const FestivalPianoGame = ({ onComplete, onNavigate, zoneId = 'festival-square',
         initialState={{
           currentMode: GAME_MODES.INTRO,
           phase: PHASES.DISCOVERY, tapCount: 0, discoveredInstruments: {}, celebrationStarted: false, gameStartTime: Date.now(),
-          unlockedSongs: { 'jai-ganesh-aarti': true }, completedSongs: {}, challengeStars: 0, currentSong: null, currentStep: 0, challengeAttempts: 0,
+          unlockedSongs: { 'jai-ganesh-aarti': true }, completedSongs: {}, challengeStars: 0, currentSong: null, currentStep: 0, currentPhrase: 0, missCount: 0, orchestraPlayed: false, challengeAttempts: 0,
           isDemoPlaying: false, demoStep: 0, isRecording: false, recordedNotes: [], hasRecording: false, isPlayingRecording: false,
           stars: 0, completed: false, showDoneButton: false, activeKey: null, showSparkle: null, showCulturalNote: null, showCompletionBadge: false, showSceneCompletion: false, showPauseMenu: false,
           showSongComplete: false, completedSongData: null,
@@ -204,6 +212,8 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
 
   const audioContextRef = useRef(null);
   const timeoutsRef = useRef([]);
+  const dancingRef = useRef({});
+  const orchestraRef = useRef(false);
   const completionModalContent = getCompletionModal('festival-square', 'game1');
   const completionIcons = ['listen-icon', 'play-icon', 'create-icon'];
 
@@ -227,6 +237,8 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
 
   const playSound = (instrument, duration = 0.3) => {
     if (!audioContextRef.current) return;
+    // iOS/Chrome start the audio engine suspended until a tap; without this the first notes are silent
+    if (audioContextRef.current.state === 'suspended') audioContextRef.current.resume();
     const ctx = audioContextRef.current, now = ctx.currentTime;
     instrument.soundFreq.harmonics.forEach((freq, index) => {
       const osc = ctx.createOscillator(), gain = ctx.createGain();
@@ -238,14 +250,16 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
     });
   };
 
+  // Dancing animals live in a ref so a timer never restores a stale copy of the state
   const triggerAnimalDance = (instrumentId) => {
     const animalType = ANIMAL_INSTRUMENT_MAP[instrumentId];
     if (!animalType) return;
-    sceneActions.updateState({ dancingAnimals: { ...sceneState.dancingAnimals, [animalType]: true } });
+    dancingRef.current[animalType] = true;
+    sceneActions.updateState({ dancingAnimals: { ...dancingRef.current } });
     safeSetTimeout(() => {
-      const newDancing = { ...sceneState.dancingAnimals };
-      delete newDancing[animalType];
-      sceneActions.updateState({ dancingAnimals: newDancing });
+      if (orchestraRef.current) return; // the all-animals finale owns the dancing until it ends
+      delete dancingRef.current[animalType];
+      sceneActions.updateState({ dancingAnimals: { ...dancingRef.current } });
     }, 1200);
   };
 
@@ -261,11 +275,12 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
     }
   };
 
-  const playDemo = () => {
-    if (!sceneState.currentSong || sceneState.isDemoPlaying) return;
-    sceneActions.updateState({ isDemoPlaying: true, demoStep: 0, currentStep: 0 });
-    const melody = sceneState.currentSong.melody;
-    melody.forEach((id, index) => {
+  // Ganesha plays one phrase, then the game listens for the child automatically (no buttons to press)
+  const playPhrase = (song, phraseIdx) => {
+    const phrase = getPhrases(song.melody)[phraseIdx];
+    if (!phrase) return;
+    sceneActions.updateState({ isDemoPlaying: true, isRecording: false, demoStep: 0, currentStep: 0 });
+    phrase.forEach((id, index) => {
       safeSetTimeout(() => {
         const instrument = INSTRUMENTS.find(i => i.id === id);
         if (instrument) {
@@ -274,8 +289,8 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
           sceneActions.updateState({ demoStep: index + 1 });
           safeSetTimeout(() => setLocalUIState(prev => ({ ...prev, activeKey: null, showSparkle: null })), 400);
         }
-        if (index === melody.length - 1) {
-          safeSetTimeout(() => sceneActions.updateState({ isDemoPlaying: false, demoStep: 0 }), 800);
+        if (index === phrase.length - 1) {
+          safeSetTimeout(() => sceneActions.updateState({ isDemoPlaying: false, demoStep: 0, isRecording: true }), 900);
         }
       }, index * 600);
     });
@@ -301,28 +316,44 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
 
   const handleSongSelect = (song) => {
     if (!song.unlocked && !sceneState.unlockedSongs[song.id]) return;
-    sceneActions.updateState({ currentSong: song, currentStep: 0, recordedNotes: [], isRecording: false });
-    safeSetTimeout(playDemo, 1000);
+    sceneActions.updateState({ currentSong: song, currentStep: 0, currentPhrase: 0, missCount: 0, recordedNotes: [], isRecording: false });
+    safeSetTimeout(() => playPhrase(song, 0), 1000);
   };
 
   const handleChallengeKeyPress = (instrument) => {
-    const { currentSong, currentStep, isDemoPlaying, isPlayingRecording, isRecording } = sceneState;
+    const { currentSong, currentStep, currentPhrase, isDemoPlaying, isPlayingRecording, isRecording } = sceneState;
     if (!currentSong || isDemoPlaying || isPlayingRecording || !isRecording) return;
-    const expectedKey = currentSong.melody[currentStep];
+    const phrases = getPhrases(currentSong.melody);
+    const phrase = phrases[currentPhrase];
+    const expectedKey = phrase[currentStep];
     const isCorrect = instrument.id === expectedKey;
     playSound(instrument, 0.3);
-    sceneActions.updateState({ recordedNotes: [...sceneState.recordedNotes, { instrumentId: instrument.id }] });
     setLocalUIState(prev => ({ ...prev, activeKey: instrument.id, showSparkle: isCorrect ? instrument.id : 'wrong' }));
     if (isCorrect) {
+      // Only correct notes are kept, so "Hear My Song" plays the real tune
+      sceneActions.updateState({ recordedNotes: [...sceneState.recordedNotes, { instrumentId: instrument.id }] });
       const nextStep = currentStep + 1;
-      if (nextStep >= currentSong.melody.length) {
-        sceneActions.updateState({ isRecording: false, hasRecording: true });
-        handleSongComplete(currentSong);
+      if (nextStep >= phrase.length) {
+        const nextPhrase = currentPhrase + 1;
+        if (nextPhrase >= phrases.length) {
+          sceneActions.updateState({ isRecording: false, hasRecording: true, missCount: 0 });
+          handleSongComplete(currentSong);
+        } else {
+          sceneActions.updateState({ currentPhrase: nextPhrase, currentStep: 0, isRecording: false, missCount: 0 });
+          safeSetTimeout(() => playPhrase(currentSong, nextPhrase), 1200);
+        }
       } else {
-        sceneActions.updateState({ currentStep: nextStep });
+        sceneActions.updateState({ currentStep: nextStep, missCount: 0 });
       }
     } else {
-      sceneActions.updateState({ challengeAttempts: sceneState.challengeAttempts + 1 });
+      // Gentle redirect: after 3 misses Ganesha replays the phrase; at 2 the right key pulses
+      const misses = (sceneState.missCount || 0) + 1;
+      if (misses >= 3) {
+        sceneActions.updateState({ challengeAttempts: sceneState.challengeAttempts + 1, isRecording: false, currentStep: 0, missCount: 0 });
+        safeSetTimeout(() => playPhrase(currentSong, currentPhrase), 800);
+      } else {
+        sceneActions.updateState({ challengeAttempts: sceneState.challengeAttempts + 1, missCount: misses });
+      }
     }
     safeSetTimeout(() => setLocalUIState(prev => ({ ...prev, activeKey: null, showSparkle: null })), 300);
   };
@@ -376,7 +407,21 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
     if (totalDiscovered >= 3 && !sceneState.celebrationStarted) {
       sceneActions.updateState({ celebrationStarted: true, showDoneButton: true });
     }
-    safeSetTimeout(() => setLocalUIState(prev => ({ ...prev, activeKey: null, showSparkle: null, showCulturalNote: null })), 400);
+    // Finding all five instruments: a little orchestra plays and every animal dances
+    if (totalDiscovered === 5 && !sceneState.orchestraPlayed) {
+      orchestraRef.current = true;
+      INSTRUMENTS.forEach(id => { dancingRef.current[ANIMAL_INSTRUMENT_MAP[id.id]] = true; });
+      sceneActions.updateState({ orchestraPlayed: true, dancingAnimals: { ...dancingRef.current } });
+      INSTRUMENTS.forEach((inst, i) => safeSetTimeout(() => playSound(inst, 0.8), 400 + i * 200));
+      safeSetTimeout(() => {
+        orchestraRef.current = false;
+        dancingRef.current = {};
+        sceneActions.updateState({ dancingAnimals: {} });
+      }, 2800);
+    }
+    // The key glow clears quickly, but the cultural note stays long enough to read
+    safeSetTimeout(() => setLocalUIState(prev => ({ ...prev, activeKey: null, showSparkle: null })), 400);
+    if (!wasDiscovered) safeSetTimeout(() => setLocalUIState(prev => ({ ...prev, showCulturalNote: null })), 3000);
   };
 
   const handleKeyPress = (instrument) => {
@@ -389,7 +434,17 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
     safeSetTimeout(() => sceneActions.updateState({ showSceneCompletion: true }), 500);
   };
 
-  const getNextExpectedKey = () => (sceneState.currentMode === GAME_MODES.CHALLENGE && sceneState.currentSong) ? sceneState.currentSong.melody[sceneState.currentStep] : null;
+  const getNextExpectedKey = () => (sceneState.currentMode === GAME_MODES.CHALLENGE && sceneState.currentSong)
+    ? getPhrases(sceneState.currentSong.melody)[sceneState.currentPhrase || 0]?.[sceneState.currentStep] ?? null
+    : null;
+
+  // A reload can leave a half-played phrase saved (no timers survive): start that phrase again
+  useEffect(() => {
+    if (sceneState?.currentMode === GAME_MODES.CHALLENGE && sceneState.currentSong && !sceneState.showSongComplete) {
+      const id = setTimeout(() => playPhrase(sceneState.currentSong, sceneState.currentPhrase || 0), 800);
+      return () => clearTimeout(id);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleFreePlayRecording = () => {
     if (freePlayRecording.isRecording) {
@@ -455,22 +510,6 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
     }));
   };
 
-  const downloadRecording = () => {
-    const data = {
-      notes: freePlayRecording.recordedNotes.map(n => n.instrumentId),
-      timestamp: new Date().toISOString()
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `my-melody-${Date.now()}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
   // Handle restart
   const handleRestart = () => {
     console.log('Restarting game');
@@ -480,6 +519,7 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
       tapCount: 0,
       discoveredInstruments: {},
       celebrationStarted: false,
+      orchestraPlayed: false,
       gameStartTime: Date.now(),
       stars: 0,
       completed: false,
@@ -574,7 +614,7 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
                 return (
                   <div key={song.id} className={`song-card-simple ${!isUnlocked ? 'locked' : ''} ${isCompleted ? 'completed' : ''}`} onClick={() => isUnlocked && handleSongSelect(song)}>
                     <div className="song-icon-big">{song.icon}</div><h3 className="song-name-simple">{song.name}</h3><p className="song-type-simple">{song.festival}</p>
-                    <div className="song-difficulty-simple">{Array.from({ length: song.difficulty }).map((_, i) => <span key={i} className="star-filled">⭐</span>)}</div>
+                    <div className="song-difficulty-simple">🎵 {song.melody.length} notes</div>
                     {isCompleted && <div className="completed-badge">✓</div>} {!isUnlocked && <div className="locked-badge"><span className="lock">🔒</span></div>}
                   </div>
                 );
@@ -599,13 +639,11 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
           handleRestart();
           setFreePlayRecording({ isRecording: false, recordedNotes: [], hasRecording: false });
         } else if (sceneState.currentMode === GAME_MODES.CHALLENGE && sceneState.currentSong) {
-          sceneActions.updateState({
-            currentStep: 0,
-            recordedNotes: [],
-            isRecording: false,
-            isDemoPlaying: false,
-            isPlayingRecording: false
-          });
+          // Replay = hear the current phrase again
+          timeoutsRef.current.forEach(id => clearTimeout(id));
+          timeoutsRef.current = [];
+          sceneActions.updateState({ missCount: 0, isPlayingRecording: false });
+          playPhrase(sceneState.currentSong, sceneState.currentPhrase || 0);
         }
       }}
       showMenuLabel={true}
@@ -622,14 +660,10 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
             {isChallengePlaying && (
               <div className="challenge-header-simple">
                 <h2 className="song-title-simple">{sceneState.currentSong.icon} {sceneState.currentSong.name}</h2>
-                <div className="simple-controls">
-                  <button className="simple-play-button" onClick={playDemo} disabled={sceneState.isDemoPlaying || sceneState.isPlayingRecording || sceneState.isRecording}>▶️ Hear Song</button>
-                  <button className={`simple-record-button ${sceneState.isRecording ? 'recording' : ''}`} onClick={() => sceneActions.updateState({ isRecording: !sceneState.isRecording, recordedNotes: [] })} disabled={sceneState.isDemoPlaying || sceneState.isPlayingRecording}>
-                    {sceneState.isRecording ? '⏹️ Playing...' : '⏺️ Your Turn!'}
-                  </button>
-                </div>
+                <p className="pianoPhraseStatus">{sceneState.isDemoPlaying ? '👂 Listen...' : sceneState.isRecording ? '🎹 Your turn!' : ' '}</p>
+                <div className="pianoPhraseCount">Phrase {(sceneState.currentPhrase || 0) + 1} of {getPhrases(sceneState.currentSong.melody).length}</div>
                 <div className="progress-dots-simple">
-                  {sceneState.currentSong.melody.map((_, i) => <span key={i} className={`dot ${i < sceneState.currentStep ? 'done' : ''} ${i === sceneState.currentStep && sceneState.isRecording ? 'now' : ''}`} />)}
+                  {(getPhrases(sceneState.currentSong.melody)[sceneState.currentPhrase || 0] || []).map((_, i) => <span key={i} className={`dot ${i < sceneState.currentStep ? 'done' : ''} ${i === sceneState.currentStep && sceneState.isRecording ? 'now' : ''}`} />)}
                 </div>
               </div>
             )}
@@ -646,7 +680,7 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
             <div className="piano-base">
               <div className="piano-keys-frame-simple" />
               {INSTRUMENTS.map(instrument => (
-                <div key={instrument.id} className={`piano-key key-${instrument.id} ${localUIState.activeKey === instrument.id ? 'active' : ''} ${sceneState.discoveredInstruments[instrument.id] ? 'discovered' : ''} ${nextExpectedKey === instrument.id && sceneState.isRecording ? 'highlighted-next' : ''}`} style={{ left: `${instrument.keyPosition.x}%`, top: `${instrument.keyPosition.y}%` }} onClick={() => handleKeyPress(instrument)}>
+                <div key={instrument.id} className={`piano-key key-${instrument.id} ${localUIState.activeKey === instrument.id ? 'active' : ''} ${sceneState.discoveredInstruments[instrument.id] ? 'discovered' : ''} ${nextExpectedKey === instrument.id && sceneState.isRecording ? 'highlighted-next' : ''} ${nextExpectedKey === instrument.id && sceneState.isRecording && (sceneState.missCount || 0) >= 2 ? 'pianoKeyHint' : ''}`} style={{ left: `${instrument.keyPosition.x}%`, top: `${instrument.keyPosition.y}%` }} onClick={() => handleKeyPress(instrument)}>
                   <div className={`instrument-icon icon-${instrument.id}`} />
                   {localUIState.showSparkle === instrument.id && <div className="key-sparkles">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="sparkle" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }} />)}</div>}
                 </div>
@@ -678,16 +712,13 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
                     >
                       {sceneState.isPlayingRecording ? '⏹️ Stop' : '▶️ Hear'}
                     </button>
-                    <button className="free-download-btn" onClick={downloadRecording}>
-                      ⬇️ Save
-                    </button>
                   </>
                 )}
               </div>
             )}
 
 
-            {localUIState.showSparkle === 'wrong' && (<div className="wrong-feedback">❌ Try again!</div>)}
+            {localUIState.showSparkle === 'wrong' && (<div className="wrong-feedback">🎵 Almost! Listen again</div>)}
 
             <SongCompletionOverlay
               show={sceneState.showSongComplete}
@@ -708,11 +739,14 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
                   completedSongData: null,
                   currentSong: songToReplay,
                   currentStep: 0,
+                  currentPhrase: 0,
+                  missCount: 0,
                   recordedNotes: [],
                   isRecording: false,
                   isDemoPlaying: false,
                   isPlayingRecording: false
                 });
+                if (songToReplay) safeSetTimeout(() => playPhrase(songToReplay, 0), 800);
               }}
 
               onHearMySong={() => {
@@ -734,9 +768,11 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
                   completedSongData: null,
                   currentSong: null,
                   currentStep: 0,
+                  currentPhrase: 0,
+                  missCount: 0,
                   recordedNotes: [],
                   isPlayingRecording: false,
-                  currentMode: GAME_MODES.SELECTION  // ← Go to mode selection!
+                  currentMode: GAME_MODES.CHALLENGE  // back to the song list, not the mode screen
                 });
               }}
             />
@@ -753,7 +789,10 @@ const FestivalPianoContent = ({ sceneState, sceneActions, isReload, onComplete, 
                   handleRestart();
                   setFreePlayRecording({ isRecording: false, recordedNotes: [], hasRecording: false });
                 } else if (sceneState.currentMode === GAME_MODES.CHALLENGE && sceneState.currentSong) {
-                  sceneActions.updateState({ currentStep: 0, recordedNotes: [], isRecording: false, isDemoPlaying: false, isPlayingRecording: false });
+                  timeoutsRef.current.forEach(id => clearTimeout(id));
+                  timeoutsRef.current = [];
+                  sceneActions.updateState({ currentStep: 0, currentPhrase: 0, missCount: 0, recordedNotes: [], isRecording: false, isDemoPlaying: false, isPlayingRecording: false });
+                  playPhrase(sceneState.currentSong, 0);
                 }
               }}
               onBackToModes={() => {
