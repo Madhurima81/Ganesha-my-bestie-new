@@ -48,6 +48,9 @@ export function detectPlatform() {
     if (/CriOS/.test(ua)) browser = 'chrome';
     else if (/FxiOS/.test(ua)) browser = 'firefox';
     else if (/EdgiOS/.test(ua)) browser = 'edge';
+    // The Google app (GSA) and chat/social apps open links in their own viewer, which usually has no
+    // Add to Home Screen; the parent has to open the page in Safari first.
+    else if (/GSA\/|FBAN|FBAV|Instagram|Line\/|MicroMessenger/.test(ua)) browser = 'inapp';
     else browser = 'safari'; // any other iOS browser uses the Safari-style share sheet
   } else if (os === 'android') {
     if (/SamsungBrowser/.test(ua)) browser = 'samsung';
@@ -89,8 +92,9 @@ export function getInstallGuide() {
     // Every iOS browser routes through the OS share sheet; only the button's spot differs:
     // iPhone Safari = bottom bar, iPad Safari = top toolbar next to the address bar,
     // Chrome/Edge/Firefox = address bar.
+    const inApp = browser === 'inapp';
     const shareSpot =
-      browser !== 'safari'
+      browser === 'chrome' || browser === 'edge' || browser === 'firefox'
         ? 'the Share button in the address bar'
         : isIPad()
           ? 'the Share button at the top of the screen, next to the address bar'
@@ -102,6 +106,9 @@ export function getInstallGuide() {
       installed,
       title: 'Add to Home Screen',
       steps: [
+        ...(inApp
+          ? [{ icon: '🧭', text: 'This page is open inside another app (like Google, an email or a chat). Open it in Safari first: use “Open in Safari” in that app’s menu, or copy the link and paste it into Safari.' }]
+          : []),
         { icon: '⬆️', text: `Tap ${shareSpot} (the box with an arrow).` },
         { icon: '➕', text: 'Choose “Add to Home Screen”. If you do not see it, tap “More” or scroll down the list.' },
         { icon: '✅', text: 'Tap “Add” — the Ganesha icon appears on your home screen.' },
