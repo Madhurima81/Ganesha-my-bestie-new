@@ -20,6 +20,13 @@ export function isIOS() {
   return isAppleMobile && !window.MSStream;
 }
 
+// iPadOS 13+ Safari reports itself as a Mac, so the touch-points check is what tells it from a laptop.
+export function isIPad() {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent || '';
+  return /iPad/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
 export function isStandalone() {
   if (typeof window === 'undefined') return false;
   return window.matchMedia?.('(display-mode: standalone)')?.matches || window.navigator?.standalone === true;
@@ -79,12 +86,15 @@ export function getInstallGuide() {
   }
 
   if (os === 'ios') {
-    // Every iOS browser routes through the OS share sheet; only the button's
-    // spot differs (Safari = bottom bar, Chrome/Edge/Firefox = address bar).
+    // Every iOS browser routes through the OS share sheet; only the button's spot differs:
+    // iPhone Safari = bottom bar, iPad Safari = top toolbar next to the address bar,
+    // Chrome/Edge/Firefox = address bar.
     const shareSpot =
-      browser === 'safari'
-        ? 'the Share button at the bottom of the screen'
-        : 'the Share button in the address bar';
+      browser !== 'safari'
+        ? 'the Share button in the address bar'
+        : isIPad()
+          ? 'the Share button at the top of the screen, next to the address bar'
+          : 'the Share button at the bottom of the screen';
     return {
       os,
       browser,
@@ -93,8 +103,12 @@ export function getInstallGuide() {
       title: 'Add to Home Screen',
       steps: [
         { icon: '⬆️', text: `Tap ${shareSpot} (the box with an arrow).` },
-        { icon: '➕', text: 'Choose “Add to Home Screen”.' },
+        { icon: '➕', text: 'Choose “Add to Home Screen”. If you do not see it, tap “More” or scroll down the list.' },
         { icon: '✅', text: 'Tap “Add” — the Ganesha icon appears on your home screen.' },
+        // Safari only: a page opened inside an email/chat app may not offer Add to Home Screen at all.
+        ...(browser === 'safari'
+          ? [{ icon: '💡', text: 'Tip: open this page in Safari first, not inside another app (an email or chat).' }]
+          : []),
       ],
     };
   }
