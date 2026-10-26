@@ -1,5 +1,5 @@
 /* Minimal Festival Piano — compatible with the supplied background asset */
-.festival-piano-game { width: 100%; min-height: var(--app-height, 100dvh); position: relative; overflow: hidden; box-sizing: border-box; background: url('./assets/images/pianogame-bg.png') center/cover no-repeat; font-family: 'Baloo 2', cursive; color: #5D2E0F; }
+.festival-piano-game { width: 100%; min-height: var(--app-height, 100dvh); position: relative; overflow: hidden; box-sizing: border-box; background: url('./assets/images/festive-diwali-ground-bg.webp') center/cover no-repeat; font-family: 'Baloo 2', cursive; color: #5D2E0F; }
 .festival-piano-game *, .festival-piano-game *::before, .festival-piano-game *::after { box-sizing: border-box; }
 .fp-center { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px; padding: 24px; }
 .fp-center h1 { font-size: clamp(26px,5vw,44px); text-align: center; margin: 0; }

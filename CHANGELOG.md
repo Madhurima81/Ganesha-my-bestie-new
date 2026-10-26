@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-31] - Piano background: Festive Diwali ground (branch festival-square-fixes, uncommitted)
+**Touched:** Game1-piano/FestivalPianoGame.css, new assets/images/festive-diwali-ground-bg.webp.
+**Changed:** Piano background switched from pianogame-bg.png to "Festive Diwali Ground with Rangoli and Diyas" (supplied PNG 2.1 MB converted to 55 KB WebP, 1672x941). Old pianogame-bg.png left in place (unused by the live scene now).
+**Verified:** challenge screen in the harness: title, status, Hear Again and keys read clearly on the new background. Build not re-run.
+**Open:** only Piano uses it; Rangoli still has rangoligame-bg.png. The same image would also suit Rangoli if wanted.
+
 ## [2026-10-30] - Piano: bigger keyboard (CSS only, branch festival-square-fixes, uncommitted)
 **Touched:** Game1-piano/FestivalPianoGame.css.
 **Changed:** Keyboard max width 640 -> 820px with an ivory platform, taller keys (clamp 110-175px), bigger Sa/Re/Ga labels; phone and short-landscape overrides updated. Hint animation, JSX and gameplay untouched. Phone side padding trimmed to 8px so the keys are 61px wide at 360px (they were 57px).
