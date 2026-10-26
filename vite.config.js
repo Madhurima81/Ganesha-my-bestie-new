@@ -5,6 +5,7 @@ import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 import fs from 'fs'
 import path from 'path'
 import annotationsPlugin from './src/dev/viteAnnotationsPlugin.js'
+import liveAssetsPlugin from './src/lib/offline/liveAssetsPlugin.js'
 
 // Custom plugin to enforce case-sensitive imports (catches issues that would fail on Linux)
 function caseSensitivePlugin() {
@@ -47,6 +48,8 @@ export default defineConfig(({ command }) => ({
     caseSensitivePlugin(),
     annotationsPlugin(),
     react(),
+    // Writes dist/live-assets.json: every file the live app needs, for the one-time offline download.
+    liveAssetsPlugin(),
     // PNG → WebP conversion only — SVGs are untouched (clean in Inkscape first)
     // Skip icons folder to avoid optimization issues
     ViteImageOptimizer({
@@ -88,11 +91,21 @@ export default defineConfig(({ command }) => ({
           },
           // Audio: cache-first, keep indefinitely
           {
-            urlPattern: /\/audio\/.+\.(mp3|wav)$/i,
+            urlPattern: /\/(?:audio|assets)\/.+\.(mp3|wav|webm|ogg|m4a)$/i,
             handler: 'CacheFirst',
             options: {
               cacheName: 'ganesha-audio',
               expiration: { maxEntries: 300 },
+              cacheableResponse: { statuses: [0, 200] }
+            }
+          },
+          // First-time intro story pictures (public/intro-story): cache-first, saved by the offline download.
+          {
+            urlPattern: /\/intro-story\/.+\.(png|jpe?g|webp|svg)$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'ganesha-intro-story',
+              expiration: { maxEntries: 40 },
               cacheableResponse: { statuses: [0, 200] }
             }
           },

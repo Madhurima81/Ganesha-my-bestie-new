@@ -46,6 +46,7 @@ import {
   clearZoneReturnFocus,
 } from './lib/utils/zoneNavigationState';
 import { isStandalone } from './lib/services/PwaInstallManager';
+import OfflineReadyManager from './lib/components/offline/OfflineReadyManager';
 
 const AVATAR_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
 
@@ -1563,6 +1564,8 @@ chants: result?.chants || result?.chantedVerses || {},
         gameplay). CSS-driven, so it covers the screen in portrait before any
         route JS mounts. Temporary for beta testing. */}
     <PortraitLockOverlay />
+    {/* Saves the live app on the device once, so the installed app plays offline like a downloaded app. */}
+    <OfflineReadyManager view={currentView} />
     {/* GameCoachProvider disabled — not used per CLAUDE.md */}
     <Suspense fallback={
       <div className="enhanced-loading-screen">
