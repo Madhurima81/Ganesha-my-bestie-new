@@ -427,6 +427,8 @@ function App() {
   useEffect(() => { publishAppView(currentView); }, [currentView]);
   const [currentZone, setCurrentZone] = useState(null);
   const [currentScene, setCurrentScene] = useState(null);
+  // Which zone/scene is open, read by the asset recorder (?recordassets=1) so it can file each fetched file under its scene.
+  useEffect(() => { window.__gmbZone = currentZone; window.__gmbScene = currentScene; }, [currentZone, currentScene]);
   const [currentProfile, setCurrentProfile] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0); // ADD THIS LINE

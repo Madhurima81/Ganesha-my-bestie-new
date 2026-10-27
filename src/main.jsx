@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import { UpdateManager } from './lib/components/offline/UpdateManager.jsx'
 import { installChunkErrorHandlers } from './lib/components/offline/updateGuard.js'
+import { recorderWanted } from './lib/offline/assetRecorderCore'
 
 // AppV1/V2/V3 removed — dead code whose static imports pulled old scene
 // versions (and NewModakSceneV7) into the main bundle.
@@ -43,6 +44,12 @@ if (typeof window !== 'undefined' && 'serviceWorker' in navigator && (
     .then(() => (window.caches ? caches.keys() : Promise.resolve([])))
     .then((keys) => Promise.all((keys || []).map((k) => caches.delete(k))))
     .catch(() => {});
+}
+
+// ?recordassets=1: record which files each scene really loads (for the offline download list). Test builds only in
+// practice: families never use the flag, and the recorder is a separate chunk loaded only here.
+if (typeof window !== 'undefined' && recorderWanted(window.location.search)) {
+  import('./lib/offline/assetRecorder').then((m) => m.startAssetRecorder()).catch(() => {});
 }
 
 // Failed lazy chunk after a deploy: reload once on a safe view, otherwise show the Tap-to-refresh card.
