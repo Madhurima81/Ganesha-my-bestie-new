@@ -6,6 +6,7 @@ import ScreenHeader from '../shared/ScreenHeader';
 import MooshikaRideTransition from './MooshikaRideTransition';
 import pwaInstallManager, { getInstallGuide } from '../../services/PwaInstallManager';
 import ParentGate from '../onboarding/ParentGate';
+import OfflinePrepareStep from '../onboarding/OfflinePrepareStep';
 import AudioToggle from '../ui/AudioToggle/AudioToggle';
 import useAudioPreference from '../../hooks/useAudioPreference';
 import { playUiTap } from '../../services/AudioService';
@@ -284,6 +285,12 @@ const CleanProfileSelector = ({
     setShowInstallSteps(false);
     setAllSetPhase('handoff');
   };
+  // After the install step (or straight away when there is nothing to install): the "Getting Ganesha ready" download,
+  // then the hand-off. The step moves on by itself when there is nothing to download.
+  const goToPrepare = () => {
+    setShowInstallSteps(false);
+    setAllSetPhase('prepare');
+  };
 
   // ONE "All set" scene, two states (content transition — no new page):
   //   'install'  — final setup step: add GMB to the Home Screen
@@ -305,7 +312,7 @@ const CleanProfileSelector = ({
               </li>
             ))}
           </ul>
-          <PrimaryBtn label="Done" onClick={goToHandoff} size="md" fullWidth className="final-cta-btn" />
+          <PrimaryBtn label="Done" onClick={goToPrepare} size="md" fullWidth className="final-cta-btn" />
           <button type="button" className="back-btn" onClick={() => setShowInstallSteps(false)}>
             ← Back
           </button>
@@ -327,7 +334,7 @@ const CleanProfileSelector = ({
             onClick={async () => {
               if (guide.canNativePrompt) {
                 await pwaInstallManager.promptInstall();
-                goToHandoff();
+                goToPrepare();
               } else {
                 setShowInstallSteps(true);
               }
@@ -341,12 +348,20 @@ const CleanProfileSelector = ({
             className="back-btn"
             onClick={() => {
               pwaInstallManager.recordDismissal();
-              goToHandoff();
+              goToPrepare();
             }}
           >
             Maybe later
           </button>
         </>,
+        'allset-screen'
+      );
+    }
+
+    // Nothing to install (or install step finished): the visible download step, unless already at the hand-off.
+    if (allSetPhase !== 'handoff') {
+      return renderHandoffCard(
+        <OfflinePrepareStep onFinish={goToHandoff} />,
         'allset-screen'
       );
     }

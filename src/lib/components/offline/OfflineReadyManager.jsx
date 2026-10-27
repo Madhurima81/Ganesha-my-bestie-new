@@ -7,11 +7,15 @@ import React, { useEffect, useState } from 'react';
 import {
   loadManifest, isReadyFor, markReady, downloadAll, pruneObsolete,
 } from '../../offline/precacheLive';
+import { isProd } from '../../offline/env';
 
-// Screens where a background download is fine. Not 'scene' (gameplay), not boot/error.
-const CALM_VIEWS = new Set(['main-welcome', 'landing', 'profile-welcome', 'profile-selector', 'profile-create', 'handoff', 'map', 'zone-welcome']);
+// Screens where a background download is fine: only AFTER setup, when a profile exists. Before that the grown-up
+// sees the visible "Getting Ganesha ready" step in setup (OfflinePrepareStep) and owns the download; starting here
+// as well would spend a family's data while they are only looking at the landing or welcome screen. Not 'scene'
+// (gameplay), not boot/error.
+const CALM_VIEWS = new Set(['profile-welcome', 'profile-selector', 'map', 'zone-welcome']);
 // Where the note is shown (a grown-up is most likely looking, and nothing important is covered).
-const NOTE_VIEWS = new Set(['main-welcome', 'profile-welcome', 'map', 'zone-welcome']);
+const NOTE_VIEWS = new Set(['profile-welcome', 'map', 'zone-welcome']);
 
 const supported = () => typeof window !== 'undefined' && 'caches' in window && 'serviceWorker' in navigator;
 
@@ -21,7 +25,7 @@ export default function OfflineReadyManager({ view }) {
   const [retry, setRetry] = useState(0);
 
   useEffect(() => {
-    if (!import.meta.env.PROD || !supported() || !CALM_VIEWS.has(view)) return undefined;
+    if (!isProd() || !supported() || !CALM_VIEWS.has(view)) return undefined;
     if (navigator.connection?.saveData) return undefined; // the family asked the phone to save data
     let cancelled = false;
     let doneTimer = null;
