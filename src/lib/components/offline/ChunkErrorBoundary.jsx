@@ -4,6 +4,7 @@
 // to the next boundary exactly as before.
 import React, { useEffect, useState } from 'react';
 import { CHUNK_FAILED_EVENT, handleChunkFailure, isChunkLoadError } from './updateGuard';
+import { GANESHA_USAGE_SYSTEM } from '../../config/ganeshaUsageSystem';
 
 // "Something new" is for a fresh deploy that removed the file. When the device is simply offline and this part of
 // the app was never opened (so it is not saved yet), refreshing cannot help: say that plainly instead.
@@ -15,36 +16,46 @@ export const RefreshCard = () => {
     window.addEventListener('offline', update);
     return () => { window.removeEventListener('online', update); window.removeEventListener('offline', update); };
   }, []);
+  // Same look as the Ganesha loading page (floating Ganesha, glow, welcome sky) so this never feels like an error page.
+  const ink = '#4a2f86';
   return (
-    <div
-      role="alert"
-      style={{
-        position: 'fixed', inset: 0, zIndex: 10000, display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center', gap: '16px', padding: '24px',
-        background: '#FFF8E7', textAlign: 'center'
-      }}
-    >
-      <div style={{ fontSize: '72px', lineHeight: 1 }} aria-hidden="true">🐘</div>
-      <h1 style={{ fontFamily: "'Baloo 2', sans-serif", fontWeight: 800, fontSize: '32px', color: '#5e49a8', margin: 0 }}>
-        {offline ? 'You are offline' : 'Ganesha has something new!'}
-      </h1>
-      <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: '18px', color: '#6b5f8e', margin: 0, maxWidth: '420px' }}>
-        {offline
-          ? 'This part of the game is not saved on this device yet. Connect to the internet and try again. Your stars are safe.'
-          : 'Tap to refresh and keep playing. Your stars are safe.'}
-      </p>
-      <button
-        type="button"
-        onClick={() => window.location.reload()}
+    <div role="alert" className="enhanced-loading-screen" style={{ zIndex: 10000 }}>
+      <div className="bg-overlay" />
+      <div className="bg-vignette" />
+      <div
+        className="loading-ganesha-container"
+        style={{ width: 'clamp(110px, 26vh, 300px)', height: 'clamp(110px, 26vh, 300px)', marginBottom: 'clamp(4px, 1.5vh, 14px)' }}
+      >
+        <div className="loading-ganesha-glow" />
+        <img src={GANESHA_USAGE_SYSTEM.loading.asset} alt="Ganesha" className="loading-ganesha" />
+      </div>
+      <div
         style={{
-          minWidth: '220px', minHeight: '64px', border: 'none', borderRadius: '999px', padding: '14px 32px',
-          fontFamily: "'Baloo 2', sans-serif", fontWeight: 700, fontSize: '22px', color: '#fff',
-          background: 'linear-gradient(135deg,#FF9933,#FF5722)', boxShadow: '0 8px 24px rgba(255,87,34,0.3)',
-          cursor: 'pointer'
+          position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center',
+          gap: 'clamp(8px, 1.6vh, 14px)', padding: '0 24px', textAlign: 'center',
         }}
       >
-        {offline ? 'Try again' : 'Tap to refresh'}
-      </button>
+        <h1 style={{ fontFamily: "'Baloo 2', sans-serif", fontWeight: 800, fontSize: 'clamp(22px, 4.2vh, 32px)', color: ink, margin: 0, textShadow: '0 1px 8px rgba(255,255,255,0.8)' }}>
+          {offline ? 'You are offline' : 'Ganesha has something new!'}
+        </h1>
+        <p style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: 'clamp(14px, 2.6vh, 18px)', color: ink, margin: 0, maxWidth: '420px', textShadow: '0 1px 6px rgba(255,255,255,0.8)' }}>
+          {offline
+            ? 'This part of the game is not saved on this device yet. Connect to the internet and try again. Your stars are safe.'
+            : 'Tap to refresh and keep playing. Your stars are safe.'}
+        </p>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          style={{
+            minWidth: '220px', minHeight: '64px', border: 'none', borderRadius: '999px', padding: '14px 32px',
+            fontFamily: "'Baloo 2', sans-serif", fontWeight: 700, fontSize: '22px', color: '#fff',
+            background: 'linear-gradient(135deg,#FF9933,#FF5722)', boxShadow: '0 8px 24px rgba(255,87,34,0.3)',
+            cursor: 'pointer'
+          }}
+        >
+          {offline ? 'Try again' : 'Tap to refresh'}
+        </button>
+      </div>
     </div>
   );
 };
