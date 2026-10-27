@@ -19,7 +19,9 @@ const MEDIA_EXT = 'png|jpe?g|webp|svg|gif|mp3|wav|webm|ogg|m4a';
 const MEDIA_FILE_RE = new RegExp(`\\.(${MEDIA_EXT})$`, 'i');
 // Any string literal that starts with one of the public media folders (quote, backtick or url( in CSS).
 const PUBLIC_REF_RE = /["'`(]\s*(\/(?:images|audio|intro-story)\/[^"'`\s${}()\\]*)/g;
-const SKIP_CHUNK_RE = /(^|\/)(vendor-|lazy-)/; // shell is precached already; analytics SDKs are pointless offline
+// A bare media file name inside live code, e.g. sfx-chime.wav or app-Vakratunda.png (no spaces; %20 is decoded later).
+const NAME_TOKEN_RE = new RegExp(`[A-Za-z0-9_%@.-]+\\.(?:${MEDIA_EXT})(?![A-Za-z0-9])`, 'g');
+const SKIP_CHUNK_RE = /(^|\/)(vendor-|lazy-|assetRecorder)/; // shell is precached already; analytics SDKs are pointless offline
 
 const walk = (dir, out = []) => {
   if (!fs.existsSync(dir)) return out;
@@ -33,7 +35,9 @@ const walk = (dir, out = []) => {
 
 // Resolve one mentioned public path to real files: exact file, a folder ("/audio/words/"), or a prefix.
 export function resolvePublicRef(ref, publicDir, warnings = []) {
-  const clean = ref.split('?')[0].split('#')[0];
+  let clean = ref.split('?')[0].split('#')[0];
+  // Code writes spaces as %20 ("/audio/ambient/map%20ambient%20sound.mp3"); the file on disk has real spaces.
+  try { clean = decodeURIComponent(clean); } catch { /* not valid percent-encoding: use as written */ }
   const rel = clean.replace(/^\//, '');
   const abs = path.join(publicDir, rel);
   if (MEDIA_FILE_RE.test(clean)) {
@@ -55,7 +59,26 @@ export function resolvePublicRef(ref, publicDir, warnings = []) {
   return walk(dir).filter((f) => path.basename(f).startsWith(base));
 }
 
-const toUrl = (publicDir, abs) => '/' + path.relative(publicDir, abs).split(path.sep).join('/');
+// Encoded, so the key matches the URL the browser actually requests ("map%20ambient%20sound.mp3").
+const toUrl = (publicDir, abs) => encodeURI('/' + path.relative(publicDir, abs).split(path.sep).join('/'));
+
+// Zones that are not in the live product (Cave of Secrets is obsolete, Festival Square is parked): their big
+// backgrounds are named in zone data and opening screens but a child cannot reach them, so do not download them.
+export const NOT_LIVE_PUBLIC_RE = /^\/images\/(festivalsquare-bg|cave-of-secrets-background|cave-bg)\.[a-z0-9]+$/i;
+
+// A heavy original is dropped only when the app never names it directly (it was swept in by a folder or prefix
+// reference such as "/images/new-explorer-" or "/audio/ambient/") AND its lighter twin is in the list too.
+// png/jpg -> webp (the avatars use the png only if the webp fails to load); wav -> mp3.
+export function dropHeavyTwins(urls, exactUrls) {
+  const set = new Set(urls);
+  const dropped = [];
+  for (const u of urls) {
+    if (exactUrls.has(u)) continue;
+    const twin = /\.(png|jpe?g)$/i.test(u) ? u.replace(/\.(png|jpe?g)$/i, '.webp') : /\.wav$/i.test(u) ? u.replace(/\.wav$/i, '.mp3') : null;
+    if (twin && set.has(twin)) dropped.push(u);
+  }
+  return dropped;
+}
 
 export function collectLiveAssets(bundle, publicDir, liveSceneFiles = []) {
   const files = new Map(); // url -> bytes
@@ -68,7 +91,16 @@ export function collectLiveAssets(bundle, publicDir, liveSceneFiles = []) {
     const src = item.type === 'asset' ? item.source : item.code;
     return typeof src === 'string' ? Buffer.byteLength(src) : (src?.byteLength || 0);
   };
-  const scanText = (text) => { for (const m of text.matchAll(PUBLIC_REF_RE)) publicRefs.add(m[1]); };
+  // Bare file names written in live code ("sfx-chime.wav", voice config "file: 'opening.wav'") have no folder in
+  // them, so the path pattern cannot see them; collect them too.
+  const nameTokens = new Set();
+  const scanText = (text) => {
+    for (const m of text.matchAll(PUBLIC_REF_RE)) publicRefs.add(m[1]);
+    for (const m of text.matchAll(NAME_TOKEN_RE)) {
+      nameTokens.add(m[0]);
+      try { nameTokens.add(decodeURIComponent(m[0])); } catch { /* keep the raw form only */ }
+    }
+  };
   const cssSeen = new Set();
   const scanCss = (cssFile) => {
     if (cssSeen.has(cssFile)) return;
@@ -140,14 +172,52 @@ export function collectLiveAssets(bundle, publicDir, liveSceneFiles = []) {
   }
   const deadChunks = chunks.length - reached.size - entries.length;
 
+  const exactUrls = new Set(); // public files the app names directly (a full file name in the code)
   for (const ref of publicRefs) {
-    for (const abs of resolvePublicRef(ref, publicDir, warnings)) add(toUrl(publicDir, abs), fs.statSync(abs).size);
+    const isExact = MEDIA_FILE_RE.test(ref.split('?')[0].split('#')[0]);
+    for (const abs of resolvePublicRef(ref, publicDir, warnings)) {
+      const url = toUrl(publicDir, abs);
+      add(url, fs.statSync(abs).size);
+      if (isExact) exactUrls.add(url);
+    }
+  }
+
+  // Public media files the live code names by bare file name. A name that exists once in public/ is certain; a
+  // common name (e.g. "opening.wav" in every scene folder) only counts in folders the list already uses.
+  const allPublic = walk(publicDir);
+  const baseCount = new Map();
+  for (const abs of allPublic) baseCount.set(path.basename(abs), (baseCount.get(path.basename(abs)) || 0) + 1);
+  const usedDirs = new Set([...files.keys()].map((u) => decodeURIComponent(u).replace(/\/[^/]*$/, '')));
+  for (const abs of allPublic) {
+    const base = path.basename(abs);
+    if (base.length < 6 || !nameTokens.has(base)) continue;
+    const url = toUrl(publicDir, abs);
+    const dir = decodeURIComponent(url).replace(/\/[^/]*$/, '');
+    if (baseCount.get(base) === 1 || usedDirs.has(dir)) {
+      add(url, fs.statSync(abs).size);
+      exactUrls.add(url); // named by the app: never trimmed as a heavy twin
+    }
+  }
+
+  // Trim what a child cannot reach or never needs (see NOT_LIVE_PUBLIC_RE / dropHeavyTwins).
+  let notLive = 0, heavyTwins = 0, trimmedBytes = 0;
+  for (const url of [...files.keys()]) {
+    if (NOT_LIVE_PUBLIC_RE.test(url)) { trimmedBytes += files.get(url); files.delete(url); notLive++; }
+  }
+  for (const url of dropHeavyTwins([...files.keys()], exactUrls)) {
+    trimmedBytes += files.get(url); files.delete(url); heavyTwins++;
   }
 
   const list = [...files.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([u, s]) => ({ u, s }));
   const totalBytes = list.reduce((n, f) => n + f.s, 0);
   const version = crypto.createHash('sha1').update(list.map((f) => `${f.u}:${f.s}`).join('\n')).digest('hex').slice(0, 12);
-  return { manifest: { version, count: list.length, totalBytes, files: list }, warnings: [...new Set(warnings)], liveChunks, deadChunks };
+  return {
+    manifest: { version, count: list.length, totalBytes, files: list },
+    warnings: [...new Set(warnings)],
+    liveChunks,
+    deadChunks,
+    trimmed: { notLive, heavyTwins, bytes: trimmedBytes },
+  };
 }
 
 // Live scene files = the scene registry's `file:` entries, minus obsolete/parked zones and backups.
@@ -188,10 +258,10 @@ export default function liveAssetsPlugin() {
     },
     generateBundle(_options, bundle) {
       const liveSceneFiles = readLiveSceneFiles();
-      const { manifest, warnings, liveChunks, deadChunks } = collectLiveAssets(bundle, publicDir, liveSceneFiles);
+      const { manifest, warnings, liveChunks, deadChunks, trimmed } = collectLiveAssets(bundle, publicDir, liveSceneFiles);
       this.emitFile({ type: 'asset', fileName: 'live-assets.json', source: JSON.stringify(manifest) });
       const mb = (manifest.totalBytes / 1048576).toFixed(1);
-      this.info?.(`live-assets.json: ${manifest.count} files, ${mb} MB (${liveChunks} live chunks, ${deadChunks} not reached by a live scene or screen)`);
+      this.info?.(`live-assets.json: ${manifest.count} files, ${mb} MB (${liveChunks} live chunks, ${deadChunks} not reached by a live scene or screen; trimmed ${trimmed.notLive} not-live-zone and ${trimmed.heavyTwins} heavy-twin files, ${(trimmed.bytes / 1048576).toFixed(1)} MB)`);
       warnings.forEach((w) => this.warn(`live-assets: ${w}`));
     },
   };

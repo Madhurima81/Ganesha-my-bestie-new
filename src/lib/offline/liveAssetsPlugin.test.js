@@ -1,7 +1,7 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import { collectLiveAssets, resolvePublicRef, readLiveSceneFiles, filterManifestToOutput } from './liveAssetsPlugin';
+import { collectLiveAssets, resolvePublicRef, readLiveSceneFiles, filterManifestToOutput, dropHeavyTwins, NOT_LIVE_PUBLIC_RE } from './liveAssetsPlugin';
 
 let publicDir;
 const touch = (rel, bytes = 10) => {
@@ -160,5 +160,109 @@ describe('filterManifestToOutput', () => {
     expect(next.totalBytes).toBe(12);
     expect(next.count).toBe(2);
     expect(next.version).not.toBe('old');
+  });
+});
+
+describe('resolvePublicRef with encoded names', () => {
+  test('%20 in the code finds the file with real spaces on disk', () => {
+    touch('audio/ambient/map ambient sound.mp3', 30);
+    expect(resolvePublicRef('/audio/ambient/map%20ambient%20sound.mp3', publicDir, [])).toHaveLength(1);
+  });
+});
+
+describe('dropHeavyTwins', () => {
+  test('drops a png/wav only when it was swept in (not named directly) and its lighter twin is listed', () => {
+    const urls = ['/images/new-explorer-owl.webp', '/images/new-explorer-owl.png', '/audio/ambient/a.mp3', '/audio/ambient/a.wav'];
+    expect(dropHeavyTwins(urls, new Set()).sort()).toEqual(['/audio/ambient/a.wav', '/images/new-explorer-owl.png']);
+  });
+  test('keeps a heavy file the app names directly', () => {
+    const urls = ['/images/x.webp', '/images/x.png'];
+    expect(dropHeavyTwins(urls, new Set(['/images/x.png']))).toEqual([]);
+  });
+  test('keeps a heavy file that has no lighter twin', () => {
+    expect(dropHeavyTwins(['/images/only.png', '/audio/only.wav'], new Set())).toEqual([]);
+  });
+});
+
+describe('trimming in collectLiveAssets', () => {
+  const LIVE = ['src/zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx'];
+  const scene = (code) => ({
+    'assets/Pond-1.js': {
+      type: 'chunk', fileName: 'assets/Pond-1.js', facadeModuleId: '/p/src/zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx',
+      isEntry: false, code, imports: [], dynamicImports: [], viteMetadata: { importedAssets: new Set(), importedCss: new Set() },
+    },
+  });
+
+  test('avatar-style prefix keeps the webp and drops the png fallback; a directly named png stays', () => {
+    touch('images/new-explorer-owl.webp', 11);
+    touch('images/new-explorer-owl.png', 99);
+    touch('images/badge.webp', 11);
+    touch('images/badge.png', 55);
+    const code = 'const a=`/images/new-explorer-${id}.webp`,b="/images/new-explorer-",c="/images/badge.png",d="/images/badge.webp";';
+    const { manifest, trimmed } = collectLiveAssets(scene(code), publicDir, LIVE);
+    const urls = manifest.files.map((f) => f.u);
+    expect(urls).toContain('/images/new-explorer-owl.webp');
+    expect(urls).not.toContain('/images/new-explorer-owl.png');
+    expect(urls).toContain('/images/badge.png'); // named in full, so it stays
+    expect(trimmed.heavyTwins).toBe(1);
+  });
+
+  test('leaves out the big backgrounds of zones that are not live', () => {
+    touch('images/festivalsquare-bg.png', 500);
+    touch('images/festivalsquare-bg.webp', 20);
+    touch('images/cave-of-secrets-background.png', 400);
+    const code = 'const a="/images/festivalsquare-bg.webp",b="/images/festivalsquare-bg.png",c="/images/cave-of-secrets-background.png";';
+    const { manifest, trimmed } = collectLiveAssets(scene(code), publicDir, LIVE);
+    expect(manifest.files.map((f) => f.u).filter((u) => NOT_LIVE_PUBLIC_RE.test(u))).toEqual([]);
+    expect(trimmed.notLive).toBe(3);
+  });
+
+  test('the map ambient mp3 named with %20 is now in the list and the unnamed wav next to it is not', () => {
+    touch('audio/ambient/map ambient sound.mp3', 30);
+    touch('audio/ambient/map ambient sound.wav', 900);
+    const code = 'const a="/audio/ambient/map%20ambient%20sound.mp3",b="/audio/ambient/";';
+    const { manifest } = collectLiveAssets(scene(code), publicDir, LIVE);
+    const urls = manifest.files.map((f) => f.u);
+    expect(urls).toContain('/audio/ambient/map%20ambient%20sound.mp3');
+    expect(urls).not.toContain('/audio/ambient/map%20ambient%20sound.wav');
+  });
+});
+
+describe('files the live code names by bare file name', () => {
+  const LIVE = ['src/zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx'];
+  const scene = (code) => ({
+    'assets/Pond-1.js': {
+      type: 'chunk', fileName: 'assets/Pond-1.js', facadeModuleId: '/p/src/zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx',
+      isEntry: false, code, imports: [], dynamicImports: [], viteMetadata: { importedAssets: new Set(), importedCss: new Set() },
+    },
+  });
+
+  test('a unique file named only by its bare name is included, and its lighter twin does not push it out', () => {
+    touch('audio/sfx/sfx-chime.wav', 400);
+    touch('audio/sfx/sfx-chime.mp3', 40);
+    touch('images/map/tree1.png', 300);
+    touch('images/map/tree1.webp', 30);
+    const code = 'const SFX_DIR="/audio/sfx/",a=SFX_DIR+"sfx-chime.wav",b="tree1.png",c="/images/map/tree1.webp";';
+    const urls = collectLiveAssets(scene(code), publicDir, LIVE).manifest.files.map((f) => f.u);
+    expect(urls).toContain('/audio/sfx/sfx-chime.wav'); // the code asks for the wav
+    expect(urls).toContain('/images/map/tree1.png');
+  });
+
+  test('a file nobody names is still trimmed when it only has a swept-in lighter twin', () => {
+    touch('audio/sfx/other.wav', 400);
+    touch('audio/sfx/other.mp3', 40);
+    const code = 'const SFX_DIR="/audio/sfx/";';
+    const urls = collectLiveAssets(scene(code), publicDir, LIVE).manifest.files.map((f) => f.u);
+    expect(urls).toContain('/audio/sfx/other.mp3');
+    expect(urls).not.toContain('/audio/sfx/other.wav');
+  });
+
+  test('a common name (same file name in many folders) only counts in folders the list already uses', () => {
+    touch('audio/scene-a/opening.wav', 20);
+    touch('audio/scene-b/opening.wav', 20);
+    const code = 'const d="/audio/scene-a/",f="opening.wav";';
+    const urls = collectLiveAssets(scene(code), publicDir, LIVE).manifest.files.map((f) => f.u);
+    expect(urls).toContain('/audio/scene-a/opening.wav');
+    expect(urls).not.toContain('/audio/scene-b/opening.wav');
   });
 });
