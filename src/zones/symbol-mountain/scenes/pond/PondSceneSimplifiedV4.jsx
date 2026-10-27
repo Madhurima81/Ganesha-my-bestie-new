@@ -16,7 +16,6 @@ import OpeningModal from '../../../shared/components/OpeningModal';
 
 // --- NEW MASTER LAYOUT & CONFIG ---
 import GameLayout from '../../../../lib/components/layout/GameLayout';
-import { pondHelpConfig } from './helpConfig';
 // ----------------------------------
 
 // Import scene management components
@@ -1570,7 +1569,6 @@ const PondSceneContent = ({
   return (
     <GameLayout
       zoneId="symbol-mountain"
-      helpConfig={pondHelpConfig}
       sceneState={sceneState}
       onHome={() => onNavigate?.('home')}
       onReplay={() => { pondCompletionSavedRef.current = false; resetPondLocalState(); resetScene(); }}
