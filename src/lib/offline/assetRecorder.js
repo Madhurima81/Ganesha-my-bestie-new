@@ -42,8 +42,8 @@ export function startAssetRecorder() {
   const box = document.createElement('div');
   box.setAttribute('data-asset-recorder', '');
   Object.assign(box.style, {
-    position: 'fixed', left: '8px', bottom: '8px', zIndex: '2147483000', background: 'rgba(40,20,80,0.9)', color: '#fff',
-    font: '700 12px/1.3 Nunito, system-ui, sans-serif', padding: '8px 10px', borderRadius: '12px', maxWidth: '260px',
+    position: 'fixed', left: '50%', top: '8px', transform: 'translateX(-50%)', zIndex: '2147483000', background: 'rgba(40,20,80,0.9)', color: '#fff',
+    font: '700 12px/1.3 Nunito, system-ui, sans-serif', padding: '8px 10px', borderRadius: '12px', maxWidth: '260px', touchAction: 'none',
     display: 'flex', flexDirection: 'column', gap: '6px', boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
   });
   const label = document.createElement('div');
@@ -69,8 +69,31 @@ export function startAssetRecorder() {
     for (const k of Object.keys(record)) delete record[k];
     totalFiles = 0; saveRecord(record); paint();
   });
-  row.append(exportBtn, clearBtn);
+  const foldBtn = button('Hide', () => {
+    const folded = row.style.display !== 'none';
+    row.style.display = folded ? 'none' : 'flex';
+    label.style.display = folded ? 'none' : 'block';
+    foldBtn.textContent = folded ? '●' : 'Hide';
+    box.style.opacity = folded ? '0.55' : '1';
+  });
+  row.append(exportBtn, clearBtn, foldBtn);
   box.append(label, row);
+  // drag the panel out of the way by holding the label or the dot
+  let drag = null;
+  box.addEventListener('pointerdown', (e) => {
+    if (e.target.tagName === 'BUTTON' && e.target !== foldBtn) return;
+    if (e.target === foldBtn && foldBtn.textContent === 'Hide') return;
+    const r = box.getBoundingClientRect();
+    drag = { dx: e.clientX - r.left, dy: e.clientY - r.top, moved: false };
+  });
+  window.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    drag.moved = true;
+    box.style.transform = 'none';
+    box.style.left = `${Math.max(0, e.clientX - drag.dx)}px`;
+    box.style.top = `${Math.max(0, e.clientY - drag.dy)}px`;
+  });
+  window.addEventListener('pointerup', () => { drag = null; });
 
   function paint() {
     const here = record[currentKey] ? Object.keys(record[currentKey]).length : 0;

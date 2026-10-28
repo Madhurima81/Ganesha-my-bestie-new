@@ -10,10 +10,12 @@ import {
   loadManifest, isReadyFor, markReady, downloadAll, pruneObsolete,
 } from '../../offline/precacheLive';
 import { isProd } from '../../offline/env';
+import { recorderIsOn } from '../../offline/assetRecorderCore';
 
 const supported = () => typeof window !== 'undefined' && 'caches' in window && 'serviceWorker' in navigator;
 const skipReason = () => {
   if (!isProd()) return 'dev';
+  if (recorderIsOn()) return 'recording';
   if (!supported()) return 'unsupported';
   if (navigator.connection?.saveData) return 'data-saver';
   if (navigator.onLine === false) return 'offline';

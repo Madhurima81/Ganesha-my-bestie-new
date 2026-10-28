@@ -72,3 +72,9 @@ export function recorderWanted(search, storage = globalThis.localStorage) {
     return storage.getItem('gmb_record_assets') === '1';
   } catch { return flag === '1'; }
 }
+
+// True while the recorder is switched on in this browser. The offline downloader stays quiet then, so the recording
+// shows only what the scenes really fetch, not the whole list being pre-downloaded.
+export function recorderIsOn(storage = globalThis.localStorage) {
+  try { return storage.getItem('gmb_record_assets') === '1'; } catch { return false; }
+}

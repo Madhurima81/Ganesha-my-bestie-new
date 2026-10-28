@@ -8,6 +8,7 @@ import {
   loadManifest, isReadyFor, markReady, downloadAll, pruneObsolete,
 } from '../../offline/precacheLive';
 import { isProd } from '../../offline/env';
+import { recorderIsOn } from '../../offline/assetRecorderCore';
 
 // Screens where a background download is fine: only AFTER setup, when a profile exists. Before that the grown-up
 // sees the visible "Getting Ganesha ready" step in setup (OfflinePrepareStep) and owns the download; starting here
@@ -25,7 +26,7 @@ export default function OfflineReadyManager({ view }) {
   const [retry, setRetry] = useState(0);
 
   useEffect(() => {
-    if (!isProd() || !supported() || !CALM_VIEWS.has(view)) return undefined;
+    if (!isProd() || !supported() || !CALM_VIEWS.has(view) || recorderIsOn()) return undefined;
     if (navigator.connection?.saveData) return undefined; // the family asked the phone to save data
     let cancelled = false;
     let doneTimer = null;
