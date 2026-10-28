@@ -75,6 +75,9 @@ export default defineConfig(({ command }) => ({
         // Hard cap: skip anything over 3 MB in the precache sweep
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         // Serve offline.html when a page navigation fails (no connection)
+        // Links like /?start=parent-gate or /?recordassets=1 are the same page: without this they miss the
+        // precached index.html and get offline.html even when the Wi-Fi is fine.
+        ignoreURLParametersMatching: [/.*/],
         navigateFallback: '/offline.html',
         navigateFallbackDenylist: [/^\/api\//],
         runtimeCaching: [
