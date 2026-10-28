@@ -18,6 +18,8 @@ const HoldMuteButton = ({ position = 'bottom-left', onUnmute }) => {
   const rafRef = useRef(null);
   const startRef = useRef(0);
   const holdingRef = useRef(false);
+  const justMutedRef = useRef(false);
+  const justMutedTimer = useRef(null);
 
   useEffect(() => subscribeVoiceMute(setMuted), []);
 
@@ -28,7 +30,7 @@ const HoldMuteButton = ({ position = 'bottom-left', onUnmute }) => {
     setProgress(0);
   }, []);
 
-  useEffect(() => cancelHold, [cancelHold]);
+  useEffect(() => () => { cancelHold(); clearTimeout(justMutedTimer.current); }, [cancelHold]);
 
   const tick = useCallback(() => {
     if (!holdingRef.current) return;
@@ -37,12 +39,22 @@ const HoldMuteButton = ({ position = 'bottom-left', onUnmute }) => {
     if (p >= 1) {
       cancelHold();
       setVoiceMuted(true);
+      // letting go of the button fires a click; it must not read as the tap that unmutes
+      justMutedRef.current = true;
       return;
     }
     rafRef.current = requestAnimationFrame(tick);
   }, [cancelHold]);
 
+  // the click that follows letting go of a finished hold arrives right after pointerup; drop it, then forget it
+  const handlePointerUp = () => {
+    cancelHold();
+    clearTimeout(justMutedTimer.current);
+    justMutedTimer.current = setTimeout(() => { justMutedRef.current = false; }, 350);
+  };
+
   const handlePointerDown = (e) => {
+    justMutedRef.current = false;
     if (muted) return; // unmute happens on click
     e.currentTarget.setPointerCapture?.(e.pointerId);
     holdingRef.current = true;
@@ -51,6 +63,7 @@ const HoldMuteButton = ({ position = 'bottom-left', onUnmute }) => {
   };
 
   const handleClick = () => {
+    if (justMutedRef.current) { justMutedRef.current = false; return; }
     if (!muted) return; // plain tap while unmuted does nothing
     setVoiceMuted(false);
     onUnmute?.();
@@ -64,7 +77,7 @@ const HoldMuteButton = ({ position = 'bottom-left', onUnmute }) => {
       className={`audio-toggle audio-toggle--${position} ${muted ? 'audio-toggle--off' : 'audio-toggle--on'}`}
       style={{ touchAction: 'none', WebkitTouchCallout: 'none', userSelect: 'none' }}
       onPointerDown={handlePointerDown}
-      onPointerUp={cancelHold}
+      onPointerUp={handlePointerUp}
       onPointerCancel={cancelHold}
       onPointerLeave={cancelHold}
       onClick={handleClick}
