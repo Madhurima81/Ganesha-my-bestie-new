@@ -350,3 +350,12 @@
   scale: 1.2;
   transform-origin: 50% 100%;
 }
+
+/* Wide desktop windows (about 3:2 or wider, not phones): the cow overlapped the nest's lower right corner,
+   so drop the cow picture a little. Image only, like the scale above, so the item's position and tap zone
+   don't move; iPad (4:3) and phones are unchanged. */
+@media (min-aspect-ratio: 3 / 2) and (min-height: 501px) {
+  .beat-player-stage .beat-player-item img[src*="cow"] {
+    translate: 0 12%;
+  }
+}
