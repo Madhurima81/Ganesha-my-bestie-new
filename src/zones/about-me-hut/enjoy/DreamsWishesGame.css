@@ -2570,22 +2570,6 @@ font-weight: 700;
   }
 }
 
-/* "Draw your dream" pad (shared Drawingpad, scoped to this scene). Shorter iPads: it filled and
-   overflowed the screen, so shrink it. Pro: it looked small, so enlarge it. A transform is used
-   (not zoom) because the drawing code maps touches through getBoundingClientRect, which follows
-   transforms. */
-@media (orientation: landscape) and (max-height: 900px) {
-  .dreams-wishes-game .drawing-overlay .simple-drawing-pad {
-    transform: scale(0.8);
-    transform-origin: 50% 50%;
-  }
-}
-@media (orientation: landscape) and (min-height: 901px) {
-  .dreams-wishes-game .drawing-overlay .simple-drawing-pad {
-    transform: scale(1.3);
-    transform-origin: 50% 50%;
-  }
-}
 
 /* "We Both Have Wishes": Continue was cut off at the bottom on all three iPads (the two cards
    took the whole height). Pin Continue to the bottom of the overlay and reserve room for it, so the
@@ -2753,11 +2737,6 @@ font-weight: 700;
     justify-content: stretch;
   }
 
-  /* An iPad rule (max-height: 900px) scales the pad to 0.8, which would shrink every phone control
-     below its target size; the pad is already sized for the phone in Drawingpad.css. */
-  .dreams-wishes-game .drawing-overlay .simple-drawing-pad {
-    transform: none;
-  }
 
   /* --- Dream clouds: canvas fits, Ganesha moves to the lower-left (audio is bottom-right) -- */
   .dreams-wishes-game .dream-screen {
