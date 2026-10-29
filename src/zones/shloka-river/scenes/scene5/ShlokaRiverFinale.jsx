@@ -70,6 +70,8 @@ const SHLOKA_WORDS = [
 ];
 
 const FULL_SHLOKA_WORD_AUDIO = SHLOKA_WORDS.map((word) => `/audio/words/${word.id}.mp3`);
+// Muted: how long each word stays lit while the Shloka plays silently (a clip is about 2.5 s).
+const MUTED_SHLOKA_WORD_MS = 2000;
 
 const FINALE_HINT_VO_KEY = {
   vakratunda: { l2: 'finaleVakratundaHintL2', l3: 'finaleVakratundaHintL3' },
@@ -580,15 +582,23 @@ const ShlokaRiverFinaleContent = ({
   }, [isAudioOn, setVoiceVolume, stopAllVoice, toggleAudio]);
 
   const playFullShloka = useCallback(({ onWordStart, onComplete } = {}) => {
-    if (!isAudioOn) {
-      onComplete?.();
-      return;
-    }
-
     fullShlokaPlaybackTokenRef.current += 1;
     const playbackToken = fullShlokaPlaybackTokenRef.current;
     fullShlokaAudioRef.current?.pause();
     fullShlokaAudioRef.current = null;
+
+    if (!isAudioOn) {
+      // Muted: voice is silent but the show is not skipped. Each word still lights up on a silent timer and
+      // onComplete fires on schedule (DECISIONS 2026-09-29: muted never means instantly done).
+      const stepSilently = (index) => {
+        if (fullShlokaPlaybackTokenRef.current !== playbackToken) return;
+        if (index >= FULL_SHLOKA_WORD_AUDIO.length) { onComplete?.(); return; }
+        onWordStart?.(index);
+        safeSetTimeout(() => stepSilently(index + 1), MUTED_SHLOKA_WORD_MS);
+      };
+      stepSilently(0);
+      return;
+    }
 
     const playWordAtIndex = (index) => {
       if (fullShlokaPlaybackTokenRef.current !== playbackToken) return;
@@ -616,7 +626,7 @@ const ShlokaRiverFinaleContent = ({
     };
 
     playWordAtIndex(0);
-  }, [isAudioOn]);
+  }, [isAudioOn, safeSetTimeout]);
 
   useEffect(() => {
     if (phase !== PHASES.INITIAL) return;
