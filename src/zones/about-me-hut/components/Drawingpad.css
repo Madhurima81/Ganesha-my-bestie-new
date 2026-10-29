@@ -282,81 +282,87 @@
 .dpad-paper.tool-text .dpad-canvas { cursor: text; }
 
 /* ---------- typing on the paper ---------- */
+/* One floating box on the paper: [move handle] [your words, same size as they will be drawn] [delete].
+   It is draggable from anywhere except the typing field, and stays editable until a tool is tapped. */
 
 .dpad-textbox {
   position: absolute;
   z-index: 12;
   box-sizing: border-box;
-  left: min(calc(var(--dpad-x) * 100%), calc(100% - min(92cqw, 600px)));
-  top: min(calc(var(--dpad-y) * 100%), calc(100% - 72px));
-  width: min(92cqw, 600px);
+  left: calc(var(--dpad-x) * 100%);
+  top: calc(var(--dpad-y) * 100%);
+  max-width: calc((1 - var(--dpad-x)) * 100%);
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 4px 4px 0;
-  background: rgba(255, 253, 247, 0.97);
-  border: 3px dashed var(--dpad-coral);
-  border-radius: 20px;
-  box-shadow: 0 8px 20px rgba(60, 30, 10, 0.28);
+  gap: 2px;
+  padding: 0 0 0 4px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 2px dashed var(--dpad-coral);
+  border-radius: 16px;
+  cursor: grab;
+  touch-action: none;
   animation: dpadRise 0.2s ease-out both;
 }
 
+.dpad-textbox:active { cursor: grabbing; }
+
 .dpad-grip {
-  width: 48px;
-  height: 60px;
-  flex-shrink: 0;
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: #B9A590;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  cursor: grab;
-  touch-action: none;
+  width: 36px;
+  height: 44px;
+  flex: none;
+  color: var(--dpad-coral);
 }
 
-.dpad-grip:active { cursor: grabbing; color: var(--dpad-coral); }
+.dpad-grip svg { width: 24px; height: 24px; }
 
-.dpad-textinput {
-  flex: 1;
+/* the box grows with what is typed: a hidden copy of the text sizes the grid cell */
+.dpad-textfit {
+  display: inline-grid;
+  flex: 0 1 auto;
   min-width: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  outline: none;
   font-family: 'Baloo 2', sans-serif;
   font-weight: 700;
   font-size: max(16px, calc(var(--dpad-ts) * 100cqw / 900)); /* 16px floor keeps iOS from zooming */
   line-height: 1.35;
   color: var(--dpad-ink);
+}
+
+.dpad-textfit::after {
+  content: attr(data-value) ' ';
+  grid-area: 1 / 1;
+  visibility: hidden;
+  white-space: pre;
+  overflow: hidden;
+  padding: 0 4px;
+}
+
+.dpad .dpad-textinput,
+.dpad .dpad-textinput:focus {
+  grid-area: 1 / 1;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  font: inherit;
+  color: var(--dpad-ink);
   caret-color: var(--dpad-coral);
+  cursor: text;
   -webkit-user-select: text;
   user-select: text;
 }
 
-.dpad-textbox.is-placed {
-  background: rgba(255, 253, 247, 0.55);
-  border-width: 2px;
-  box-shadow: none;
-  cursor: grab;
-  touch-action: none;
-}
+.dpad-textinput::placeholder { color: #B9A590; font-weight: 600; opacity: 1; }
 
-.dpad-textbox.is-placed:active { cursor: grabbing; }
-
-.dpad-placed-text {
-  display: block;
-  white-space: pre;
-  overflow: hidden;
-  text-overflow: clip;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-.dpad-textinput::placeholder { color: #B9A590; font-weight: 600; }
-
-.dpad-text-ok,
 .dpad-text-no {
   position: relative;
   width: 60px;
@@ -369,21 +375,21 @@
   align-items: center;
   justify-content: center;
   color: #fff;
+  cursor: pointer;
 }
 
-.dpad-text-ok::before,
 .dpad-text-no::before {
   content: '';
   position: absolute;
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
+  background: #B8A38E;
   box-shadow: 0 3px 0 rgba(0, 0, 0, 0.18);
 }
-.dpad-text-ok::before { background: #43A047; }
-.dpad-text-no::before { background: #B8A38E; }
-.dpad-text-ok svg, .dpad-text-no svg { position: relative; width: 24px; height: 24px; }
-.dpad-text-ok:active::before, .dpad-text-no:active::before { transform: scale(0.92); }
+
+.dpad-text-no svg { position: relative; width: 20px; height: 20px; }
+.dpad-text-no:active::before { transform: scale(0.92); }
 
 /* ---------- actions ---------- */
 

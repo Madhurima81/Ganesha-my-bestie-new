@@ -77,6 +77,12 @@ const Icon = ({ name }) => {
           <path d="M6 6l12 12M18 6 6 18" />
         </svg>
       );
+    case 'move':
+      return (
+        <svg {...common} strokeWidth={2.4}>
+          <path d="M12 3v18M3 12h18M12 3 9 6M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3" />
+        </svg>
+      );
     case 'pencil':
       return (
         <svg {...common} fill="currentColor" stroke="none">
@@ -98,6 +104,7 @@ const DrawingPad = ({
   const canvasRef = useRef(null);
   const paperRef = useRef(null);
   const textElRef = useRef(null);
+  const boxRef = useRef(null);
   const drawingRef = useRef(false);
   const pathRef = useRef({ last: null, mid: null });
   const undoRef = useRef([]);
@@ -109,8 +116,8 @@ const DrawingPad = ({
   const [color, setColor] = useState(COLORS[0].hex);
   const [sizeIdx, setSizeIdx] = useState(1);
   const [tool, setTool] = useState('draw'); // 'draw' | 'erase' | 'text'
-  // { x, y, value, placed } in canvas px. `placed` = typed and confirmed, but still floating: it can be
-  // dragged or tapped to edit until the child taps something else, which draws it onto the canvas.
+  // { x, y, value } in canvas px = top-left of the text box. The box floats above the paper (type, drag,
+  // recolour, resize) until the child taps something else, which draws it onto the canvas.
   const [textInput, setTextInput] = useState(null);
   const [counts, setCounts] = useState({ undo: 0, redo: 0 });
   const [showIntro, setShowIntro] = useState(true);
@@ -152,8 +159,8 @@ const DrawingPad = ({
 
   // Focus the text box as soon as it opens.
   useEffect(() => {
-    if (textInput && !textInput.placed && textElRef.current) textElRef.current.focus();
-  }, [textInput === null, textInput?.placed]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (textInput && textElRef.current) textElRef.current.focus();
+  }, [textInput === null]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toCanvas = (p) => {
     const rect = canvasRef.current.getBoundingClientRect();
@@ -161,17 +168,6 @@ const DrawingPad = ({
   };
 
   /* ---------- text ---------- */
-
-  // Typed + confirmed: keep it floating so it can still be moved.
-  const placeText = () => {
-    const t = textRef.current;
-    if (!t) return;
-    if (!t.value.trim()) {
-      setText(null);
-      return;
-    }
-    setText({ ...t, placed: true });
-  };
 
   // Draws the typed line onto the canvas exactly where the box shows it, at the size it shows.
   const commitText = async () => {
@@ -208,37 +204,33 @@ const DrawingPad = ({
     autoSave();
   };
 
-  // Move the text box by its grip. Kept inside the paper so it can never be lost off the edge.
-  const onGripDown = (e) => {
+  // Drag the text box from anywhere except the typing field. Kept inside the paper.
+  const onBoxDown = (e) => {
     if (!e.isPrimary || !textRef.current) return;
+    if (e.target.closest('input, .dpad-text-no')) return; // typing / delete keep their own taps
     e.preventDefault();
     e.currentTarget.setPointerCapture?.(e.pointerId);
-    dragRef.current = { px: e.clientX, py: e.clientY, x: textRef.current.x, y: textRef.current.y, moved: false };
+    dragRef.current = { px: e.clientX, py: e.clientY, x: textRef.current.x, y: textRef.current.y };
   };
 
-  const onGripMove = (e) => {
+  const onBoxMove = (e) => {
     const d = dragRef.current;
-    if (!d || !paperRef.current) return;
+    if (!d || !paperRef.current || !boxRef.current) return;
     e.preventDefault();
-    if (!d.moved && Math.hypot(e.clientX - d.px, e.clientY - d.py) < 6) return;
-    d.moved = true;
     const pr = paperRef.current.getBoundingClientRect();
+    const br = boxRef.current.getBoundingClientRect();
     const k = W / pr.width;
-    const boxW = Math.min(pr.width * 0.92, 600);
-    const maxX = ((pr.width - boxW) / pr.width) * W;
-    const maxY = ((pr.height - 72) / pr.height) * H;
+    const maxX = Math.max(0, W - br.width * k);
+    const maxY = Math.max(0, H - br.height * k);
     const x = Math.min(Math.max(0, d.x + (e.clientX - d.px) * k), maxX);
     const y = Math.min(Math.max(0, d.y + (e.clientY - d.py) * k), maxY);
     setText({ ...textRef.current, x, y });
   };
 
-  const onGripUp = () => {
-    const d = dragRef.current;
+  const onBoxUp = () => {
+    if (!dragRef.current) return;
     dragRef.current = null;
-    if (!d) return;
-    const t = textRef.current;
-    if (t?.placed && !d.moved) setText({ ...t, placed: false }); // a tap on placed text edits it again
-    else if (!t?.placed) textElRef.current?.focus();
+    textElRef.current?.focus();
   };
 
   const openTextAt = async (pt) => {
@@ -315,7 +307,14 @@ const DrawingPad = ({
   };
 
   const pickTool = async (next) => {
-    if (next !== 'text') await commitText();
+    if (next === 'text') {
+      setShowIntro(false);
+      await commitText();
+      setTool('text');
+      setText({ x: W * 0.1, y: H * 0.25, value: '' }); // a box appears at once, ready to type
+      return;
+    }
+    await commitText();
     setTool(next);
   };
 
@@ -434,7 +433,7 @@ const DrawingPad = ({
           <button
             type="button"
             className={`dpad-tool ${tool === 'text' ? 'is-active' : ''}`}
-            onClick={() => { setShowIntro(false); pickTool('text'); }}
+            onClick={() => pickTool('text')}
             aria-label="Write words"
             aria-pressed={tool === 'text'}
           >
@@ -493,60 +492,36 @@ const DrawingPad = ({
 
           {textInput && (
             <div
-              className={`dpad-textbox ${textInput.placed ? 'is-placed' : ''}`}
+              ref={boxRef}
+              className="dpad-textbox"
               style={textStyle}
-              {...(textInput.placed
-                ? { onPointerDown: onGripDown, onPointerMove: onGripMove, onPointerUp: onGripUp, onPointerCancel: onGripUp }
-                : {})}
+              onPointerDown={onBoxDown}
+              onPointerMove={onBoxMove}
+              onPointerUp={onBoxUp}
+              onPointerCancel={onBoxUp}
             >
-              <button
-                type="button"
-                className="dpad-grip"
-                aria-label="Drag to move the words"
-                tabIndex={textInput.placed ? -1 : 0}
-                {...(textInput.placed
-                  ? {}
-                  : { onPointerDown: onGripDown, onPointerMove: onGripMove, onPointerUp: onGripUp, onPointerCancel: onGripUp })}
-              >
-                <svg width="22" height="30" viewBox="0 0 22 30" aria-hidden="true" fill="currentColor">
-                  <circle cx="6" cy="6" r="2.6" /><circle cx="16" cy="6" r="2.6" />
-                  <circle cx="6" cy="15" r="2.6" /><circle cx="16" cy="15" r="2.6" />
-                  <circle cx="6" cy="24" r="2.6" /><circle cx="16" cy="24" r="2.6" />
-                </svg>
-              </button>
-              {textInput.placed ? (
-                <span ref={textElRef} className="dpad-textinput dpad-placed-text">{textInput.value}</span>
-              ) : (
+              <span className="dpad-grip" aria-hidden="true"><Icon name="move" /></span>
+              <div className="dpad-textfit" data-value={textInput.value || 'Type here'}>
                 <input
                   ref={textElRef}
                   className="dpad-textinput"
                   type="text"
                   value={textInput.value}
                   maxLength={28}
-                  placeholder="Type here…"
+                  placeholder="Type here"
+                  aria-label="Your words"
                   enterKeyHint="done"
                   autoComplete="off"
                   autoCorrect="off"
                   spellCheck={false}
                   onChange={(e) => setText({ ...textRef.current, value: e.target.value })}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter') { e.preventDefault(); placeText(); }
+                    if (e.key === 'Enter') { e.preventDefault(); e.currentTarget.blur(); }
                     if (e.key === 'Escape') { e.preventDefault(); setText(null); }
                   }}
                 />
-              )}
-              {!textInput.placed && (
-                <button type="button" className="dpad-text-ok" onClick={placeText} aria-label="Place the words">
-                  <Icon name="check" />
-                </button>
-              )}
-              <button
-                type="button"
-                className="dpad-text-no"
-                onPointerDown={(e) => e.stopPropagation()}
-                onClick={() => setText(null)}
-                aria-label="Delete the words"
-              >
+              </div>
+              <button type="button" className="dpad-text-no" onClick={() => setText(null)} aria-label="Delete the words">
                 <Icon name="close" />
               </button>
             </div>
