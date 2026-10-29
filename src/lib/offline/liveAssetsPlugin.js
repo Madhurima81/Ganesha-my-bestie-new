@@ -13,6 +13,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { applyRecorded } from './recordedFilter.js';
 
 export const DEAD_MODULE_RE = /(meaning cave|festival-square|[\\/]archive[\\/]|[\\/]src[\\/]dev[\\/]|backup|[ _.-]copy|original|Namebirthday)/i;
 const MEDIA_EXT = 'png|jpe?g|webp|svg|gif|mp3|wav|webm|ogg|m4a';
@@ -258,7 +259,29 @@ export default function liveAssetsPlugin() {
     },
     generateBundle(_options, bundle) {
       const liveSceneFiles = readLiveSceneFiles();
-      const { manifest, warnings, liveChunks, deadChunks, trimmed } = collectLiveAssets(bundle, publicDir, liveSceneFiles);
+      const collected = collectLiveAssets(bundle, publicDir, liveSceneFiles);
+      const { warnings, liveChunks, deadChunks, trimmed } = collected;
+      let manifest = collected.manifest;
+      // Pictures: keep only what the asset recorder saw fetched while every scene was played (see recordedFilter.js).
+      const recordedPath = path.resolve('src/lib/offline/recordedAssets.json');
+      if (fs.existsSync(recordedPath)) {
+        const keys = JSON.parse(fs.readFileSync(recordedPath, 'utf8')).keys || [];
+        const assetFiles = Object.keys(bundle).filter((n) => n.startsWith('assets/')).map((n) => {
+          const item = bundle[n];
+          const src = item.type === 'asset' ? item.source : item.code;
+          return { u: '/' + n, s: typeof src === 'string' ? Buffer.byteLength(src) : (src?.byteLength || 0) };
+        });
+        const publicSize = (key) => {
+          const abs = path.join(publicDir, key.replace(/^\//, ''));
+          try { return fs.statSync(abs).isFile() ? fs.statSync(abs).size : 0; } catch { return 0; }
+        };
+        const r = applyRecorded(manifest, keys, { assetFiles, publicSize });
+        manifest = r.manifest;
+        this.info?.(`live-assets.json: kept recorded pictures only; dropped ${r.dropped} (${(r.droppedBytes / 1048576).toFixed(1)} MB), added ${r.added} the import graph missed`);
+        r.notFound.forEach((k) => this.warn(`live-assets: recorded picture not in this build: ${k}`));
+      } else {
+        this.warn('live-assets: src/lib/offline/recordedAssets.json is missing; pictures are not trimmed to the recording');
+      }
       this.emitFile({ type: 'asset', fileName: 'live-assets.json', source: JSON.stringify(manifest) });
       const mb = (manifest.totalBytes / 1048576).toFixed(1);
       this.info?.(`live-assets.json: ${manifest.count} files, ${mb} MB (${liveChunks} live chunks, ${deadChunks} not reached by a live scene or screen; trimmed ${trimmed.notLive} not-live-zone and ${trimmed.heavyTwins} heavy-twin files, ${(trimmed.bytes / 1048576).toFixed(1)} MB)`);
