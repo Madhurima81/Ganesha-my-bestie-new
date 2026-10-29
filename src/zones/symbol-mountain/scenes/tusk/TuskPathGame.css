@@ -465,6 +465,22 @@
 }
 
 /* ===========================================================
+   WIDE DESKTOP — keep the 4:3 stage but fit it to the screen height
+   width:100% + 4:3 makes the box taller than a wide desktop window (a 1835px-wide
+   window gave a ~1370px-tall stage), so the cow and peacock sat below the screen.
+   When the window is wider than 4:3, size the box by height and centre it. Item
+   positions are % of the box, so the layout is the same as on an iPad.
+   =========================================================== */
+@media (min-aspect-ratio: 4 / 3) {
+  .tusk-giving-game {
+    width: auto;
+    height: var(--app-height, 100vh);
+    max-width: 100%;
+    margin: 0 auto;
+  }
+}
+
+/* ===========================================================
    PHONE LANDSCAPE — fill the scene stage instead of forcing 4:3
    The 4:3 box is fine on iPad (4:3 stage) but on a ~2:1 phone stage it is
    taller than the screen, so everything below ~50% height is clipped. Fill the
