@@ -248,6 +248,8 @@ const VO_WAIT_MAX_MS = 4000;                   // was 3200 � allow longer VO
 const POST_VO_GRACE_MS = 600;                  // was 800
 const PLACEMENT_SETTLE_MS = 1200;              // NEW � "look at what you did" beat
 const FINAL_CELEBRATION_VISUAL_DURATION_MS = 12000;
+// The show stays up at least this long even when the closing lines finish at once (voice muted, or a line cancelled).
+const FINAL_CELEBRATION_MIN_MS = 8000;
 
 // Body part drop zone configurations � import from shared config
 const BODY_PART_ZONES = GANESHA_ZONES;
@@ -831,6 +833,7 @@ const SacredAssemblyContent = ({
   }, [isGaneshaSpeaking]);
   const cardVoPlayedForRoundRef = useRef(-1); // tracks which round's card VO has already played
   const finalVoPlayedRef = useRef(false);
+  const finalShowStartedAtRef = useRef(0);
   const openingModalVoPlayedRef = useRef(false);
   const sixSymbolMilestoneVoPlayedRef = useRef(false);
   const wasAudioOnRef = useRef(isAudioOn);
@@ -1605,16 +1608,18 @@ const SacredAssemblyContent = ({
   }, [isReload]);
 
   // FINAL CELEBRATION: play the closing VO while the all-symbols orbs/fireworks
-  // are on screen, keep that visual for one second after VO, then move directly
-  // to the completion modal.
+  // are on screen, keep that visual for one second after VO (and at least
+  // FINAL_CELEBRATION_MIN_MS in all), then move directly to the completion modal.
   useEffect(() => {
     if (showSparkle === 'final-fireworks' && !sceneCompleteVOFinished && !finalVoPlayedRef.current) {
       finalVoPlayedRef.current = true;
+      finalShowStartedAtRef.current = Date.now();
       playSceneVoice('finalYouFoundAll', () => {
         playSceneVoice('finalAlwaysWithYou', () => {
+          const sinceStart = Date.now() - finalShowStartedAtRef.current;
           safeSetTimeout(() => {
             setSceneCompleteVOFinished(true);
-          }, 1000);
+          }, Math.max(1000, FINAL_CELEBRATION_MIN_MS - sinceStart));
         }, { replayOnReturn: false });
       }, { replayOnReturn: false });
       return;
