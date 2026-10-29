@@ -465,18 +465,19 @@
 }
 
 /* ===========================================================
-   WIDE DESKTOP — keep the 4:3 stage but fit it to the screen height
+   WIDE DESKTOP — fill the scene stage like the Eyes/Ears games (and the phone rule below)
    width:100% + 4:3 makes the box taller than a wide desktop window (a 1835px-wide
    window gave a ~1370px-tall stage), so the cow and peacock sat below the screen.
-   When the window is wider than 4:3, size the box by height and centre it. Item
-   positions are % of the box, so the layout is the same as on an iPad.
+   When the window is wider than 4:3, fill the stage instead (background is object-fit
+   cover). Item positions are % of the box, so everything fits on screen.
    =========================================================== */
 @media (min-aspect-ratio: 4 / 3) {
   .tusk-giving-game {
-    width: auto;
-    height: var(--app-height, 100vh);
-    max-width: 100%;
-    margin: 0 auto;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
   }
 }
 
