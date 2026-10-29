@@ -15,7 +15,7 @@ import lotusVa from './assets/images/vakratunda/va-lotus.png';
 import seedImage from './assets/images/mahakaya/seed.png';
 import flowerMa from './assets/images/mahakaya/ma-flower.png';
 import appVakratunda from '../assets/images/apps/app-Vakratunda.png';
-import appMahakaya from '../assets/images/apps/app-mahakaya.png';
+import appMahakaya from '../assets/images/apps/app-mahakaya-opt.webp';
 
 // Phase constants (should match your scene)
 const PHASES = {

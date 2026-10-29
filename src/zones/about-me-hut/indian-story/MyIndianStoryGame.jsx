@@ -24,7 +24,7 @@ import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import StoryProgressHeader from '../components/StoryProgressHeader';
 import AboutMeGaneshaHost from '../components/AboutMeGaneshaHost';
 import bgImage from './assets/images/name_background.webp';
-import babyGaneshaImg from '/images/ganesha-final-new.svg';
+import babyGaneshaImg from '/images/ganesha-final-new-opt.svg';
 import OpeningModal from '../../shared/components/OpeningModal';
 import SceneManager from '../../../lib/components/scenes/SceneManager';
 import storyHouseIcon from './assets/images/house-icon.webp';

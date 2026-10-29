@@ -43,13 +43,13 @@ import ganeshaWithHeadphones from '../assets/images/ganesha_with_headphones.png'
 import smartwatchScreen from '../assets/images/smartwatch-screen.png';
 // With all 8 apps:
 import appVakratunda from '../assets/images/apps/app-Vakratunda.png';
-import appMahakaya from '../assets/images/apps/app-mahakaya.png';
-import appSuryakoti from '../assets/images/apps/app-suryakoti.png';
-import appSamaprabha from '../assets/images/apps/app-samaprabha.png';
-import appNirvighnam from '../assets/images/apps/app-nirvighnam.png';
-import appKurumedeva from '../assets/images/apps/app-kurumedeva.png';
-import appSarvakaryeshu from '../assets/images/apps/app-sarvakaryeshu.png';
-import appSarvada from '../assets/images/apps/app-sarvada.png';
+import appMahakaya from '../assets/images/apps/app-mahakaya-opt.webp';
+import appSuryakoti from '../assets/images/apps/app-suryakoti-opt.webp';
+import appSamaprabha from '../assets/images/apps/app-samaprabha-opt.webp';
+import appNirvighnam from '../assets/images/apps/app-nirvighnam-opt.webp';
+import appKurumedeva from '../assets/images/apps/app-kurumedeva-opt.webp';
+import appSarvakaryeshu from '../assets/images/apps/app-sarvakaryeshu-opt.webp';
+import appSarvada from '../assets/images/apps/app-sarvada-opt.webp';
 
 const PHASES = {
   INITIAL: 'initial',

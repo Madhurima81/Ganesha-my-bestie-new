@@ -76,7 +76,7 @@ const ZONE_FIRST_SCENE_IMAGES = {
     '/images/about-me-hut-bg.webp',
     '/images/hut-bg.webp',
     '/images/zones/about-me-hut/family-tree-icon.webp',
-    '/images/ganesha-final-new.svg',
+    '/images/ganesha-final-new-opt.svg',
   ],
 };
 

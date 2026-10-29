@@ -22,8 +22,8 @@ import decor1Ku from './assets/images/Kurumedeva/decor1-ku.png';
 import decor2Ru from './assets/images/Kurumedeva/decor2-ru.png';
 import decor3Me from './assets/images/Kurumedeva/decor3-me.png';
 import decor4De from './assets/images/Kurumedeva/decor4-de.png';
-import appNirvighnam from '../assets/images/apps/app-nirvighnam.png';
-import appKurumedeva from '../assets/images/apps/app-kurumedeva.png';
+import appNirvighnam from '../assets/images/apps/app-nirvighnam-opt.webp';
+import appKurumedeva from '../assets/images/apps/app-kurumedeva-opt.webp';
 
 // Phase constants (should match your scene)
 const PHASES = {

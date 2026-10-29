@@ -5,19 +5,19 @@ import smartwatchScreen from '../../assets/images/smartwatch-screen.png';
 import appVakratundaGray from '../../assets/images/apps/app-gray-vakratunda.png';
 import appVakratunda from '../../assets/images/apps/app-Vakratunda.png';
 import appMahakayaGray from '../../assets/images/apps/app-gray-mahakaya.png';
-import appMahakaya from '../../assets/images/apps/app-mahakaya.png';
+import appMahakaya from '../../assets/images/apps/app-mahakaya-opt.webp';
 import appKurumedevaGray from '../../assets/images/apps/app-gray-kurumedeva.png';
-import appKurumedeva from '../../assets/images/apps/app-kurumedeva.png';
+import appKurumedeva from '../../assets/images/apps/app-kurumedeva-opt.webp';
 import appNirvighnamGray from '../../assets/images/apps/app-gray-nirvighnam.png';
-import appNirvighnam from '../../assets/images/apps/app-nirvighnam.png';
+import appNirvighnam from '../../assets/images/apps/app-nirvighnam-opt.webp';
 import appSamaprabhaGray from '../../assets/images/apps/app-gray-samaprabha.png';
-import appSamaprabha from '../../assets/images/apps/app-samaprabha.png';
+import appSamaprabha from '../../assets/images/apps/app-samaprabha-opt.webp';
 import appSarvadaGray from '../../assets/images/apps/app-gray-sarvada.png';
-import appSarvada from '../../assets/images/apps/app-sarvada.png';
+import appSarvada from '../../assets/images/apps/app-sarvada-opt.webp';
 import appSarvakaryeshuGray from '../../assets/images/apps/app-gray-sarvakaryeshu.png';
-import appSarvakaryeshu from '../../assets/images/apps/app-sarvakaryeshu.png';
+import appSarvakaryeshu from '../../assets/images/apps/app-sarvakaryeshu-opt.webp';
 import appSuryakotiGray from '../../assets/images/apps/app-gray-suryakoti.png';
-import appSuryakoti from '../../assets/images/apps/app-suryakoti.png';
+import appSuryakoti from '../../assets/images/apps/app-suryakoti-opt.webp';
 
 // Add responsive scaling hook
 const useResponsiveScaling = () => {

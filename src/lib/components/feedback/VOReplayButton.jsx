@@ -65,7 +65,7 @@ export default function VOReplayButton({
     >
             <img
         className="vo-replay-icon"
-        src="/images/icons/replay-icon.png"
+        src="/images/icons/replay-icon-opt.webp"
         alt=""
         aria-hidden="true"
       />

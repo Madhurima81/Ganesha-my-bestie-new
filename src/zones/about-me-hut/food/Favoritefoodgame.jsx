@@ -28,8 +28,8 @@ import OpeningModal from '../../shared/components/OpeningModal';
 
 // --- EXISTING ASSETS ---
 import foodBg from './assets/images/fav_background.webp';
-import babyGaneshaImg from '/images/ganesha-final-new.svg';
-import babyGaneshaSit from '/images/ganesha-final-new.svg';
+import babyGaneshaImg from '/images/ganesha-final-new-opt.svg';
+import babyGaneshaSit from '/images/ganesha-final-new-opt.svg';
 
 // Food images
 import modakImg from './assets/images/food/fav-modak.webp';

@@ -13,11 +13,11 @@ import { getLineCue } from '../../../../lib/config/content/voiceCues';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './MahakayaRescueGame.css';
 
-import raftLogSingle from './assets/images/mahakaya/mahakaya-log-single.png';
+import raftLogSingle from './assets/images/mahakaya/mahakaya-log-single-opt.webp';
 import elephantCalf from './assets/images/mahakaya/elephant-calf.png';
-import peacockSymbolMountain from '../../../symbol-mountain/scenes/tusk/assets/images/peacock-new.png';
-import cowSymbolMountain from '../../../symbol-mountain/scenes/tusk/assets/images/cow-new.png';
-import monkeySymbolMountain from '../../../symbol-mountain/scenes/tusk/assets/images/monkey-new.png';
+import peacockSymbolMountain from '../../../symbol-mountain/scenes/tusk/assets/images/peacock-new-opt.webp';
+import cowSymbolMountain from '../../../symbol-mountain/scenes/tusk/assets/images/cow-new-opt.webp';
+import monkeySymbolMountain from '../../../symbol-mountain/scenes/tusk/assets/images/monkey-new-opt.webp';
 
 const SYLLABLES = ['Ma', 'ha', 'ka', 'ya'];
 const AUDIO = { syllables: ['ma', 'ha', 'ka', 'ya'] };

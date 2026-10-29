@@ -26,8 +26,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './GestureDemo.css';
 
-import touchFinger from './assets/images/gesture-touch-finger.png';
-import pointFinger from './assets/images/gesture-point-finger.png';
+import touchFinger from './assets/images/gesture-touch-finger-opt.webp';
+import pointFinger from './assets/images/gesture-point-finger-opt.webp';
 
 const GESTURE_CONFIGS = {
   drag: {

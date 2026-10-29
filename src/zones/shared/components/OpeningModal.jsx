@@ -45,7 +45,7 @@ const PUBLIC_ICON_MAP = {
   'story-festival': '\u{1F389}',
   home: '\u{1F3E0}',
   heart: '\u{1F49B}',
-  family: '/images/zones/about-me-hut/family-tree-icon.png',
+  family: '/images/zones/about-me-hut/family-tree-icon-opt.webp',
   food: '\u{1F34E}',
   color: '\u{1F3A8}',
   activity: '\u26BD',

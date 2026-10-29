@@ -1,14 +1,14 @@
 import React, { useMemo } from 'react';
 import { GANESHA_ZONES, ZONE_VISUAL_Z_INDEX, ZONE_HITBOX_Z_INDEX } from '../../../ganeshaZones';
-import ganeshaBase from './assets/images/ganesha-base.png';
-import ganeshaEyes from './assets/images/ganesha-eyes.png';
-import ganeshaEar from './assets/images/ganesha-ear.png';
-import ganeshaTrunk from './assets/images/ganesha-trunk.png';
-import ganeshaTusk from './assets/images/ganesha-tusk.png';
-import ganeshaModak from './assets/images/ganesha-modak.png';
-import ganeshaLotus from './assets/images/ganesha-lotus.png';
-import ganeshaBelly from './assets/images/ganesha-belly.png';
-import ganeshaMooshika from './assets/images/ganesha-mooshika.png';
+import ganeshaBase from './assets/images/ganesha-base-opt.webp';
+import ganeshaEyes from './assets/images/ganesha-eyes-opt.webp';
+import ganeshaEar from './assets/images/ganesha-ear-opt.webp';
+import ganeshaTrunk from './assets/images/ganesha-trunk-opt.webp';
+import ganeshaTusk from './assets/images/ganesha-tusk-opt.webp';
+import ganeshaModak from './assets/images/ganesha-modak-opt.webp';
+import ganeshaLotus from './assets/images/ganesha-lotus-opt.webp';
+import ganeshaBelly from './assets/images/ganesha-belly-opt.webp';
+import ganeshaMooshika from './assets/images/ganesha-mooshika-opt.webp';
 
 const ZONE_PARTS = {
   eyes: ganeshaEyes,

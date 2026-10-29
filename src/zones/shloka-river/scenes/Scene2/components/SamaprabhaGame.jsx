@@ -15,10 +15,10 @@ import branchImg from '../assets/images-opt/Samaprabha/reveal-branch-new-opt.web
 import reedsLeavesImg from '../assets/images-opt/Samaprabha/reveal-reeds-leaves-opt.webp';
 import stumpImg from '../assets/images-opt/Samaprabha/reveal-stump-opt.webp';
 import rocksGrassImg from '../assets/images-opt/Samaprabha/reveal-rock-new-opt.webp';
-import shadowBranchImg from '../assets/images/Samaprabha/shadow-branch.png';
-import shadowReedImg from '../assets/images/Samaprabha/shadow-reed.png';
+import shadowBranchImg from '../assets/images/Samaprabha/shadow-branch-opt.webp';
+import shadowReedImg from '../assets/images/Samaprabha/shadow-reed-opt.webp';
 import shadowStumpImg from '../assets/images-opt/Samaprabha/shadow-stump-opt.webp';
-import shadowLeavesImg from '../assets/images/Samaprabha/shadow-leaves.png';
+import shadowLeavesImg from '../assets/images/Samaprabha/shadow-leaves-opt.webp';
 
 const SYLLABLES = ['Sa', 'ma', 'pra', 'bha'];
 const AUDIO = { syllables: ['sa', 'ma', 'pra', 'bha'] };

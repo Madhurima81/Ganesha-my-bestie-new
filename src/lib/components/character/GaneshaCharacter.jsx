@@ -73,7 +73,7 @@ let _svgPromise = null;
 function loadSvgOnce() {
   if (_svgText)    return Promise.resolve(_svgText);
   if (_svgPromise) return _svgPromise;
-  _svgPromise = fetch('/images/ganesha-final-new.svg')
+  _svgPromise = fetch('/images/ganesha-final-new-opt.svg')
     .then((r) => (r.ok ? r.text() : Promise.reject(new Error('ganesha-final-new.svg not found'))))
     .catch(() => fetch('/images/ganesha-final.svg').then(r => r.text()))
     .then(text => { _svgText = text; return text; });

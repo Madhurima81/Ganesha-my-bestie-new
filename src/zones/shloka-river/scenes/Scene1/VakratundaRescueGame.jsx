@@ -12,8 +12,8 @@ import frogSwim from './assets/images/vakratunda/frog-baby.webp';
 import frogHappy from './assets/images/vakratunda/frog-happy.webp';
 import frogFamily from './assets/images/vakratunda/frog-family-from-download.webp';
 import lilypad from './assets/images/vakratunda/lilypad.webp';
-import stoneImg from './assets/images/vakratunda/18.png';
-import logPileImg from './assets/images/vakratunda/19.png';
+import stoneImg from './assets/images/vakratunda/18-opt.webp';
+import logPileImg from './assets/images/vakratunda/19-opt.webp';
 import reedsImg from './assets/images/vakratunda/reeds.webp';
 
 // ---------------------------------------------------------------------------

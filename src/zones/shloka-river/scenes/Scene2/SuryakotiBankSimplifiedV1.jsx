@@ -69,9 +69,9 @@ import ganeshaHeadphones from '../assets/images/ganesha_with_headphones.png';
 import smartwatchBase from '../assets/images/smartwatch-base.png';
 import smartwatchScreen from '../assets/images/smartwatch-screen.png';
 import appVakratunda from '../assets/images/apps/app-Vakratunda.png';
-import appMahakaya from '../assets/images/apps/app-mahakaya.png';
-import appSuryakoti from '../assets/images/apps/app-suryakoti.png';
-import appSamaprabha from '../assets/images/apps/app-samaprabha.png';
+import appMahakaya from '../assets/images/apps/app-mahakaya-opt.webp';
+import appSuryakoti from '../assets/images/apps/app-suryakoti-opt.webp';
+import appSamaprabha from '../assets/images/apps/app-samaprabha-opt.webp';
 import boyNamaste from '../assets/images/boy-namaste.png';
 
 // Rescue mission images

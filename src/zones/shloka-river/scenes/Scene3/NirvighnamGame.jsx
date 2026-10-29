@@ -12,10 +12,10 @@ import sharedSceneBg from './assets/images-opt/saurakoti-bg-opt.webp';
 import turtleSadImg from './assets/images-opt/nirvighnam/nir-turtle-sad-opt.webp';
 import turtleHappyImg from './assets/images-opt/nirvighnam/nir-turtle-happy-opt.webp';
 import nestImg from './assets/images-opt/nirvighnam/nest-opt.webp';
-import stoneImg from './assets/images/nirvighnam/stone.png';
-import branchImg from './assets/images/nirvighnam/branch.png';
-import reedsClosedImg from './assets/images/nirvighnam/reeds-closed.png';
-import reedsOpenImg from './assets/images/nirvighnam/reeds-open.png';
+import stoneImg from './assets/images/nirvighnam/stone-opt.webp';
+import branchImg from './assets/images/nirvighnam/branch-opt.webp';
+import reedsClosedImg from './assets/images/nirvighnam/reeds-closed-opt.webp';
+import reedsOpenImg from './assets/images/nirvighnam/reeds-open-opt.webp';
 import { NIRVIGHNAM_LAYOUT, NIRVIGHNAM_LAYOUT_PHONE } from './scene3LayoutConfig';
 
 const SYLLABLES = ['Nir', 'vigh', 'nam'];

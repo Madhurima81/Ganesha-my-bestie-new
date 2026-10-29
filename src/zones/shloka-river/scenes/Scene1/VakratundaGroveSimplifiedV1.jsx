@@ -47,7 +47,7 @@ import smartwatchScreen from '../assets/images/smartwatch-screen.png';
 import riverBackground from './assets/images/elephant-grove-bg.png';
 import mooshikaCoach from "./assets/images/mooshika-coach.webp";
 import appVakratunda from '../assets/images/apps/app-Vakratunda.png';
-import appMahakaya from '../assets/images/apps/app-mahakaya.png';
+import appMahakaya from '../assets/images/apps/app-mahakaya-opt.webp';
 
 // Mission images
 import vakratundaBefore from './assets/images/vakratunda-before.png';

@@ -11,8 +11,8 @@ import bunnySad from './assets/images/Samaprabha/bunny-sad.png';
 import bunnyHappy from './assets/images/Samaprabha/bunny-happy.png';
 import mangoBubble from './assets/images/Samaprabha/mango-bubble.png';
 import mangoPlate from './assets/images/Samaprabha/mango-plate.png';
-import appSuryakoti from '../assets/images/apps/app-suryakoti.png';
-import appSamaprabha from '../assets/images/apps/app-samaprabha.png';
+import appSuryakoti from '../assets/images/apps/app-suryakoti-opt.webp';
+import appSamaprabha from '../assets/images/apps/app-samaprabha-opt.webp';
 
 // Phase constants (should match your scene)
 const PHASES = {

@@ -160,7 +160,7 @@ const registry = {
   /** Stat card — Sacred Symbols */
   zone_stat_symbols: {
     emoji: '🕉️',
-    src: '/images/icons/symbols-icon.png',
+    src: '/images/icons/symbols-icon-opt.webp',
     alt: 'Sacred Symbols',
   },
 

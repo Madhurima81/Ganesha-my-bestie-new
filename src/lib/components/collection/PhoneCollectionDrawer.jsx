@@ -88,7 +88,7 @@ const PhoneCollectionDrawer = ({
       >
         <img
           className="pcd-button__icon"
-          src="/images/icons/symbol-collection-rosette.png"
+          src="/images/icons/symbol-collection-rosette-opt.webp"
           alt=""
           aria-hidden="true"
         />

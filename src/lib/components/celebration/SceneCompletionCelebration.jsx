@@ -50,7 +50,7 @@ const SceneCompletionCelebration = ({
     ['symbol-mountain', 'shloka-river', 'cave-of-secrets'].includes(resolvedZoneId);
   const finalBadgeConfig = {
     'symbol-mountain': {
-      icon: '/images/icons/symbols-icon.png',
+      icon: '/images/icons/symbols-icon-opt.webp',
       alt: 'Symbol',
       glowClass: 'symbol-final-icon-glow',
     },
@@ -321,7 +321,7 @@ const SceneCompletionCelebration = ({
                   <span className="symbol-sparkle sparkle-3" aria-hidden="true" />
                   <span className="symbol-sparkle sparkle-4" aria-hidden="true" />
                   <img
-                    src={finalBadgeConfig[resolvedZoneId]?.icon || '/images/icons/symbols-icon.png'}
+                    src={finalBadgeConfig[resolvedZoneId]?.icon || '/images/icons/symbols-icon-opt.webp'}
                     alt={finalBadgeConfig[resolvedZoneId]?.alt || 'Symbol'}
                     className="symbol-complete-badge symbol-final-icon"
                   />

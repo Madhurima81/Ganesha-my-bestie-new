@@ -90,8 +90,8 @@ import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya
 import symbolSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
 import symbolSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
 import boyNamaste from '../assets/images/boy-namaste.png';
-import appSuryakoti from '../assets/images/apps/app-suryakoti.png';
-import appSamaprabha from '../assets/images/apps/app-samaprabha.png';
+import appSuryakoti from '../assets/images/apps/app-suryakoti-opt.webp';
+import appSamaprabha from '../assets/images/apps/app-samaprabha-opt.webp';
 
 // Rescue mission images
 import suryakotiBefore from './assets/images/Suryakoti/suryakoti-before.png';
