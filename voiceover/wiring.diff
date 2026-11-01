@@ -1,0 +1,117 @@
+diff -ru a/src/lib/hooks/useGaneshaVoice.js b/src/lib/hooks/useGaneshaVoice.js
+--- a/src/lib/hooks/useGaneshaVoice.js	2026-11-01 06:32:06.851722983 +0000
++++ b/src/lib/hooks/useGaneshaVoice.js	2026-11-01 06:32:26.937028743 +0000
+@@ -14,6 +14,7 @@
+ import { useState, useEffect, useRef, useCallback } from 'react'
+ import { estimateSpeechMs } from './useVoiceGuidance'
+ import { attachSpeechCue, startCueTimer } from '../utils/speechCue'
++import { getVoClipUrl, playVoClip } from '../audio/voClip'
+ 
+ // Voice toggle (see DECISIONS.md 2026-09-29): when off, nothing is spoken,
+ // but each line still "plays" on a silent timer so onEnd fires on schedule.
+@@ -149,6 +150,7 @@
+   // Current line's callback + timing, so mute() can finish it silently on schedule.
+   const activeLineRef = useRef(null)   // { onEnd, at, ms, utterance }
+   const silentTimerRef = useRef(null)  // { id, onEnd }
++  const clipRef = useRef(null)         // in-flight recorded clip (voClip.js), if this line has one
+   // Counts speak() requests; stop()/mute() bump it too, so a pending start-watch retry never re-speaks a
+   // line that was stopped, muted or replaced.
+   const speakGenRef = useRef(0)
+@@ -224,6 +226,7 @@
+     setIsSpeaking(false)
+     activeLineRef.current = null
+     flushSilent()
++    { const prev = clipRef.current; clipRef.current = null; prev?.stop(true) } // replaced line ends like a cancelled utterance
+ 
+     if (isGlobalAudioOff()) {
+       onStart?.()
+@@ -231,6 +234,23 @@
+       runSilent(onEnd, estimateSpeechMs(text))
+       return
+     }
++    // Recorded clip for this exact line (voiceover/script.csv)? Play it. No recording -> fall through, unchanged.
++    const clipUrl = getVoClipUrl(text)
++    if (clipUrl) {
++      if (document.hidden) { onEnd?.(); return }
++      activeLineRef.current = { onEnd, at: Date.now(), ms: estimateSpeechMs(text), utterance: null, clip: true }
++      startCueTimer(text, cue)
++      const clip = playVoClip(clipUrl, {
++        onStart: () => { setIsSpeaking(true); onStart?.() },
++        onEnd: () => {
++          if (clipRef.current === clip) { clipRef.current = null; activeLineRef.current = null }
++          setIsSpeaking(false)
++          onEnd?.()
++        },
++      })
++      clipRef.current = clip
++      return
++    }
+     activeLineRef.current = { onEnd, at: Date.now(), ms: estimateSpeechMs(text), utterance: null }
+ 
+     // 50ms delay after cancel avoids Chrome TTS bug
+@@ -319,6 +339,7 @@
+     window.speechSynthesis?.cancel()
+     setIsSpeaking(false)
+     flushSilent()
++    { const c = clipRef.current; clipRef.current = null; c?.stop(true) }
+   }, [flushSilent])
+ 
+   // ── Mute ─────────────────────────────────────────────────────────────────────
+@@ -338,6 +359,7 @@
+       a.utterance.onerror = null
+     }
+     window.speechSynthesis?.cancel()
++    if (a.clip) { const c = clipRef.current; clipRef.current = null; c?.stop(false) } // silence now; onEnd still fires on schedule below
+     setIsSpeaking(false)
+     runSilent(a.onEnd, a.ms - (Date.now() - a.at))
+   }, [runSilent])
+@@ -374,6 +396,7 @@
+       speakTimerRef.current = null
+     }
+     if (silentTimerRef.current) clearTimeout(silentTimerRef.current.id)
++    { const c = clipRef.current; clipRef.current = null; c?.stop(false) } // scene gone: never fire into it
+     window.speechSynthesis?.cancel()
+   }, [])
+ 
+diff -ru a/src/lib/hooks/useVoiceGuidance.js b/src/lib/hooks/useVoiceGuidance.js
+--- a/src/lib/hooks/useVoiceGuidance.js	2026-11-01 06:32:06.851502615 +0000
++++ b/src/lib/hooks/useVoiceGuidance.js	2026-11-01 06:32:06.884960066 +0000
+@@ -12,6 +12,7 @@
+ } from '../config/content/voiceGuidance';
+ 
+ import { sfx } from '../audio/sfx';
++import { getVoClipUrl } from '../audio/voClip';
+ import { ambience } from '../audio/ambience';
+ import { createSpeechStartWatcher } from '../utils/speechStartWatch';
+ 
+@@ -191,7 +192,10 @@
+     }
+ 
+     const script = getVoiceScript(zoneId, sceneId, key);
+-    const path = getAudioPath(zoneId, sceneId, key);
++    // A recorded clip for this exact line (voiceover/script.csv) rides the existing MP3 branch below.
++    // Skipped when the caller rewrites the text (override / stripped lead-in): that clip would not match.
++    const path = getAudioPath(zoneId, sceneId, key)
++      || (!textOverride && !stripLeadingText ? getVoClipUrl(script?.text) : null);
+     const ttsText = stripLeadingSpeechText(textOverride || script?.text, stripLeadingText);
+     if (!path) {
+       if (ttsText && typeof window !== 'undefined' && window.speechSynthesis && typeof SpeechSynthesisUtterance !== 'undefined') {
+diff -ru a/src/main.jsx b/src/main.jsx
+--- a/src/main.jsx	2026-11-01 06:32:06.849404375 +0000
++++ b/src/main.jsx	2026-11-01 06:32:06.883458175 +0000
+@@ -14,6 +14,7 @@
+ import { initAnalytics } from './lib/services/analytics'
+ import { initErrorMonitoring } from './lib/services/errorMonitoring'
+ import { initAudioService } from './lib/services/AudioService'
++import { primeVoClips } from './lib/audio/voClip'
+ // Side-effect import: attaches the app-wide `beforeinstallprompt` listener immediately,
+ // independent of the onboarding sequence, so return visits (not just first-run
+ // onboarding) can still trigger the PWA install nudge.
+@@ -22,6 +23,7 @@
+ // initAudioService() stays eager - MainWelcomeScreen needs it for its own
+ // sound toggle on the very first screen, so it can't be deferred.
+ initAudioService();      // Preload Howler SFX instances
++primeVoClips() // reads /audio/vo-manifest.json once; no manifest = no recorded clips = nothing changes
+ 
+ // Sentry/PostHog/Supabase (~310KB gzip combined) were previously initialised
+ // here too, before React even rendered - meaning the welcome screen's first

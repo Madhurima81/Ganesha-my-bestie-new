@@ -1,5 +1,10 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-01] - Voiceover script sheet + optional recorded-clip helper (no game logic changed)
+**Touched:** voiceover/ (new: script.csv, generate_script.py, build-manifest.mjs, wiring.diff, README.md), src/lib/audio/voClip.js (new, not imported anywhere yet), src/lib/config/content/voClipMap.generated.js (new), public/audio/vo-manifest.json (new, empty).
+**Changed:** 352-line script sheet across the zones; helper plays /audio/<file>.mp3 only if listed in the manifest, else returns null. Wiring (useGaneshaVoice.speak, useVoiceGuidance.playVoice, main.jsx) is a diff only - NOT applied.
+**Open:** Madhurima to review wiring.diff and decide whether the existing Web Speech fallback stays; confirm Sanskrit spellings flagged SPELLING CHECK (Mahakaay, Kuru Me Deva, Sarva Karyeshu); direct-TTS files listed in the reply need their own wiring.
+
 ## [2026-10-15] - My Indian Story completion voice and journey button
 **Touched:** src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx, src/lib/components/celebration/SceneCompletionCelebration.jsx (commit e3b34569).
 **Changed:** The existing completion screen now says "I loved learning about you!" aloud. Its primary button reads "See My Journey" and saves completion before opening the main map. Added an optional primaryLabel prop to the shared celebration component; a custom-labelled final CTA uses onContinue when supplied. Existing scenes retain their default labels and navigation. The original subtitle, three story icons and secondary actions remain unchanged; no additional Lodge celebration screen was added.

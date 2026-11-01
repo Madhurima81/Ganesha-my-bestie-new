@@ -1,0 +1,353 @@
+﻿file_name,zone,scene,type,exact_text,notes
+hut-family-tree-01.mp3,about-me-hut,family-tree,story,"Let’s meet my family, then make your family tree.",source: voiceGuidance.js[about-me-hut.family-tree.welcome] (+1 more)
+hut-family-tree-02.mp3,about-me-hut,family-tree,instruction,Tap a circle to meet someone in my family.,source: voiceGuidance.js[about-me-hut.family-tree.tapCircle]
+hut-family-tree-03.mp3,about-me-hut,family-tree,feedback,You met everyone in my family.,source: voiceGuidance.js[about-me-hut.family-tree.allPlaced]
+hut-family-tree-04.mp3,about-me-hut,family-tree,story,Now let's make your family tree.,source: voiceGuidance.js[about-me-hut.family-tree.transition]
+hut-family-tree-05.mp3,about-me-hut,family-tree,instruction,Tap the people or pets you want to add.,source: voiceGuidance.js[about-me-hut.family-tree.childStart]
+hut-family-tree-06.mp3,about-me-hut,family-tree,instruction,Your family tree is growing.,source: voiceGuidance.js[about-me-hut.family-tree.childProgressStart] (+3 more)
+hut-family-tree-07.mp3,about-me-hut,family-tree,feedback,These are the people and pets you chose for your family.,source: voiceGuidance.js[about-me-hut.family-tree.childProgressComplete]
+hut-family-tree-08.mp3,about-me-hut,family-tree,story,"And that's me, Ganesha!",PRONOUNCE: Ganesha [ga-NE-sha] | source: family-tree/Familytreegame.jsx:255
+hut-family-tree-09.mp3,about-me-hut,family-tree,story,"This is my father, Shiva.",PRONOUNCE: Shiva [SHI-va] | source: family-tree/Familytreegame.jsx:552
+hut-family-tree-10.mp3,about-me-hut,family-tree,story,"This is my mother, Parvati.",PRONOUNCE: Parvati [PAR-va-ti] | source: family-tree/Familytreegame.jsx:561
+hut-family-tree-11.mp3,about-me-hut,family-tree,story,"This is my brother, Kartikeya.",PRONOUNCE: Kartikeya [kar-ti-KAY-a] | source: family-tree/Familytreegame.jsx:570
+hut-family-tree-12.mp3,about-me-hut,family-tree,story,And that's me!,source: family-tree/Familytreegame.jsx:579
+hut-food-01.mp3,about-me-hut,favorite-food,story,"Let’s find my favorites, then yours.",source: voiceGuidance.js[about-me-hut.favorite-food.opening] (+1 more)
+hut-food-02.mp3,about-me-hut,favorite-food,instruction,Can you guess my favorite food?,source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-03.mp3,about-me-hut,favorite-food,feedback,Yes — I love modak!,PRONOUNCE: modak [MO-dak] | source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-04.mp3,about-me-hut,favorite-food,instruction,Can you guess my favorite color?,source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-05.mp3,about-me-hut,favorite-food,feedback,Yes — red!,source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-06.mp3,about-me-hut,favorite-food,story,What do you think I love doing?,source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-07.mp3,about-me-hut,favorite-food,feedback,Yes — I love to dance!,source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-08.mp3,about-me-hut,favorite-food,story,Who do you think my friend is?,source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-09.mp3,about-me-hut,favorite-food,feedback,Yes — Mooshika!,PRONOUNCE: Mooshika [MOO-shi-ka] | source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-10.mp3,about-me-hut,favorite-food,story,Now I want to know your favorites.,source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-11.mp3,about-me-hut,favorite-food,instruction,Choose your favorite food.,source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-12.mp3,about-me-hut,favorite-food,instruction,Choose your favorite color.,source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-13.mp3,about-me-hut,favorite-food,feedback,Nice choice!,source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-14.mp3,about-me-hut,favorite-food,instruction,Choose something you love to do.,source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-15.mp3,about-me-hut,favorite-food,story,That sounds like fun!,source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-16.mp3,about-me-hut,favorite-food,instruction,Add the name of a friend you care about.,source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-17.mp3,about-me-hut,favorite-food,feedback,Thanks for telling me!,source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-18.mp3,about-me-hut,favorite-food,story,Now we know some things we each enjoy.,source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-19.mp3,about-me-hut,favorite-food,instruction,Look for the sweet I love.,source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-20.mp3,about-me-hut,favorite-food,story,What color is an apple?,source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-21.mp3,about-me-hut,favorite-food,story,What lets me move to music?,source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-food-22.mp3,about-me-hut,favorite-food,instruction,Look for my tiny friend.,source: about-me-hut/food/Favoritefoodgame.jsx:264
+hut-dreams-01.mp3,about-me-hut,dreams-wishes,story,I have a few wishes. Will you help me — then share yours?,source: openingModals.js[about-me-hut.dreams-wishes]
+hut-dreams-02.mp3,about-me-hut,dreams-wishes,story,${cheer} ${completionLine},DYNAMIC: contains runtime variable (name/choice) - cannot be one clip; record without it or record variants | source: about-me-hut/enjoy/ObstacleRemoverGame.jsx:745
+hut-dreams-03.mp3,about-me-hut,dreams-wishes,instruction,Look for actions that help or care for someone.,source: about-me-hut/enjoy/ObstacleRemoverGame.jsx:1216
+hut-dreams-04.mp3,about-me-hut,dreams-wishes,story,My first wish is for more kindness.,source: about-me-hut/enjoy/ObstacleRemoverGame.jsx:271
+hut-dreams-05.mp3,about-me-hut,dreams-wishes,instruction,Tap the kind actions you can spot.,source: about-me-hut/enjoy/ObstacleRemoverGame.jsx:271
+hut-dreams-06.mp3,about-me-hut,dreams-wishes,feedback,You found all the kind choices.,source: about-me-hut/enjoy/ObstacleRemoverGame.jsx:271
+hut-dreams-07.mp3,about-me-hut,dreams-wishes,story,My next wish is for everyone to have enough food.,source: about-me-hut/enjoy/ObstacleRemoverGame.jsx:271
+hut-dreams-08.mp3,about-me-hut,dreams-wishes,instruction,Drag food to each empty plate.,source: about-me-hut/enjoy/ObstacleRemoverGame.jsx:271
+hut-dreams-09.mp3,about-me-hut,dreams-wishes,story,Now every plate has food.,source: about-me-hut/enjoy/ObstacleRemoverGame.jsx:271
+hut-dreams-10.mp3,about-me-hut,dreams-wishes,story,My next wish is for a greener world.,source: about-me-hut/enjoy/ObstacleRemoverGame.jsx:271
+hut-dreams-11.mp3,about-me-hut,dreams-wishes,instruction,Tap the bare spaces to help the garden grow.,source: about-me-hut/enjoy/ObstacleRemoverGame.jsx:271
+hut-dreams-12.mp3,about-me-hut,dreams-wishes,instruction,Look how green it has become.,source: about-me-hut/enjoy/ObstacleRemoverGame.jsx:271
+hut-dreams-13.mp3,about-me-hut,dreams-wishes,story,Now it's your turn to make a wish.,source: about-me-hut/enjoy/ObstacleRemoverGame.jsx:271
+hut-dreams-14.mp3,about-me-hut,dreams-wishes,instruction,Draw something you hope for or dream about.,source: about-me-hut/enjoy/ObstacleRemoverGame.jsx:271
+hut-dreams-15.mp3,about-me-hut,dreams-wishes,instruction,Your dream is hiding behind the clouds. Help me clear them — tap me.,source: about-me-hut/enjoy/ObstacleRemoverGame.jsx:271
+hut-dreams-16.mp3,about-me-hut,dreams-wishes,feedback,There it is — your dream!,source: about-me-hut/enjoy/ObstacleRemoverGame.jsx:271
+hut-dreams-17.mp3,about-me-hut,dreams-wishes,story,Everyone can dream about something different.,source: about-me-hut/enjoy/ObstacleRemoverGame.jsx:271
+hut-dreams-18.mp3,about-me-hut,dreams-wishes,feedback,Great job!,source: about-me-hut/enjoy/ObstacleRemoverGame.jsx:727
+hut-story-01.mp3,about-me-hut,my-indian-story,story,"Let’s explore my India story, then yours.",source: voiceGuidance.js[about-me-hut.my-indian-story.opening] (+1 more)
+hut-story-02.mp3,about-me-hut,my-indian-story,instruction,Move the magnifying glass around the map to find my places.,source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848
+hut-story-03.mp3,about-me-hut,my-indian-story,story,Now choose a place your family feels connected to.,source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848
+hut-story-04.mp3,about-me-hut,my-indian-story,story,This is the place you chose.,source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848
+hut-story-05.mp3,about-me-hut,my-indian-story,story,Which place feels connected to your family?,source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848
+hut-story-06.mp3,about-me-hut,my-indian-story,instruction,Tap play and listen carefully.,source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848
+hut-story-07.mp3,about-me-hut,my-indian-story,story,Which language do you hear?,source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848
+hut-story-08.mp3,about-me-hut,my-indian-story,instruction,Think of the language many shlokas are in.,PRONOUNCE: shlokas [SHLO-kas] | source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848
+hut-shloka-01.mp3,about-me-hut,my-indian-story,shloka,Vakratunda Mahakaya Suryakoti Samaprabha!,"SHLOKA - needs correct pronunciation: Vakratunda [va-kra-TUN-da], Mahakaya [ma-ha-KA-ya], Suryakoti [sur-ya-KO-ti], Samaprabha [sa-ma-PRA-bha] | source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848"
+hut-story-09.mp3,about-me-hut,my-indian-story,feedback,"Yes — that's Sanskrit, a language used in many mantras.","PRONOUNCE: Sanskrit [SAN-skrit], mantras [MAN-tras] | source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848"
+hut-story-10.mp3,about-me-hut,my-indian-story,story,Now choose up to three languages you use or hear.,source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848
+hut-story-11.mp3,about-me-hut,my-indian-story,story,These are the languages you chose.,source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848
+hut-story-12.mp3,about-me-hut,my-indian-story,instruction,Choose the languages that are part of your life.,source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848
+hut-story-13.mp3,about-me-hut,my-indian-story,instruction,Can you find my festival?,source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848
+hut-story-14.mp3,about-me-hut,my-indian-story,instruction,Think of the festival that celebrates Ganesha.,PRONOUNCE: Ganesha [ga-NE-sha] | source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848
+hut-story-15.mp3,about-me-hut,my-indian-story,story,Now choose the festivals your family celebrates.,source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848
+hut-story-16.mp3,about-me-hut,my-indian-story,story,Which celebrations are part of your family?,source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848
+hut-story-17.mp3,about-me-hut,my-indian-story,story,These are the festivals you chose.,source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848
+hut-story-18.mp3,about-me-hut,my-indian-story,story,"Your places, languages, and celebrations can all be part of that connection.",source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848
+hut-story-19.mp3,about-me-hut,my-indian-story,feedback,You found some places connected to my story.,source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848
+hut-story-20.mp3,about-me-hut,my-indian-story,story,I loved learning about you!,source: about-me-hut/indian-story/MyIndianStoryGame.jsx:848
+mountain-modak-01.mp3,symbol-mountain,modak,story,Mooshika has a journey ahead. Let’s help him.,PRONOUNCE: Mooshika [MOO-shi-ka] | source: voiceGuidance.js[symbol-mountain.modak.openingModalPrompt] (+1 more)
+mountain-modak-02.mp3,symbol-mountain,modak,instruction,Mooshika’s thoughts keep jumping around. Press and hold to help him focus.,source: voiceGuidance.js[symbol-mountain.modak.findMooshika]
+mountain-modak-03.mp3,symbol-mountain,modak,story,Mooshika stayed with it and made a little progress.,PRONOUNCE: Mooshika [MOO-shi-ka] | source: voiceGuidance.js[symbol-mountain.modak.mooshikaFound]
+mountain-modak-04.mp3,symbol-mountain,modak,feedback,"I can keep going, one small step at a time.",source: voiceGuidance.js[symbol-mountain.modak.focusPower]
+mountain-modak-05.mp3,symbol-mountain,modak,instruction,You found all six flowers. Tap them to make a garland for Ganesha.,PRONOUNCE: Ganesha [ga-NE-sha] | source: voiceGuidance.js[symbol-mountain.modak.collectStart] (+1 more)
+mountain-modak-06.mp3,symbol-mountain,modak,feedback,"I can learn, keep trying, and find joy.",source: voiceGuidance.js[symbol-mountain.modak.sharingPower]
+mountain-modak-07.mp3,symbol-mountain,modak,instruction,Mooshika has more challenges ahead. Let’s help him keep going.,PRONOUNCE: Mooshika [MOO-shi-ka] | source: voiceGuidance.js[symbol-mountain.modak.bellyStart]
+mountain-modak-08.mp3,symbol-mountain,modak,instruction,Guide Mooshika to the next safe spot.,PRONOUNCE: Mooshika [MOO-shi-ka] | source: voiceGuidance.js[symbol-mountain.modak.bellyIdle] (+1 more)
+mountain-modak-09.mp3,symbol-mountain,modak,feedback,I can have lots of feelings and keep going.,source: voiceGuidance.js[symbol-mountain.modak.bellyPower] (+1 more)
+mountain-modak-10.mp3,symbol-mountain,modak,feedback,You have a kind heart!,existing file: modak-kind-heart-power.mp3 | source: voiceGuidance.js[symbol-mountain.modak.kindHeartPower]
+mountain-modak-11.mp3,symbol-mountain,modak,instruction,You found 3 special symbols! Tap each one to learn their secret!,existing file: modak-symbol-discovery.mp3 | source: voiceGuidance.js[symbol-mountain.modak.symbolDiscovery]
+mountain-modak-12.mp3,symbol-mountain,modak,feedback,"Small steps, big feelings, and lots of trying brought Mooshika to Ganesha.","PRONOUNCE: Mooshika [MOO-shi-ka], Ganesha [ga-NE-sha] | source: voiceGuidance.js[symbol-mountain.modak.sceneComplete]"
+mountain-modak-13.mp3,symbol-mountain,modak,instruction,Two flowers are hiding in the leaves. Swipe them apart.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-14.mp3,symbol-mountain,modak,feedback,There they are! Two flowers.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-15.mp3,symbol-mountain,modak,instruction,Swipe the branches apart.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-16.mp3,symbol-mountain,modak,instruction,Swipe all the way to open the branches.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-17.mp3,symbol-mountain,modak,instruction,Two flowers are too high for Mooshika. Pull the branch down.,PRONOUNCE: Mooshika [MOO-shi-ka] | source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-18.mp3,symbol-mountain,modak,instruction,Pull the branch down and hold it.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-19.mp3,symbol-mountain,modak,instruction,Pull the branch down and keep holding.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-20.mp3,symbol-mountain,modak,feedback,Got them! Two more flowers.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-21.mp3,symbol-mountain,modak,instruction,Pull it downward.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-22.mp3,symbol-mountain,modak,instruction,Pull downward.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-23.mp3,symbol-mountain,modak,instruction,Keep pulling down.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-24.mp3,symbol-mountain,modak,instruction,Try swiping sideways.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-25.mp3,symbol-mountain,modak,instruction,Swipe sideways.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-26.mp3,symbol-mountain,modak,instruction,Swipe a little farther.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-27.mp3,symbol-mountain,modak,instruction,Swipe farther.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-28.mp3,symbol-mountain,modak,instruction,The last two flowers are across the mud. Guide Mooshika from safe spot to safe spot.,long-ish: 16 words | PRONOUNCE: Mooshika [MOO-shi-ka] | source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-29.mp3,symbol-mountain,modak,instruction,Find the glowing safe spot.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-30.mp3,symbol-mountain,modak,feedback,Good jump! Now the next safe spot.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-31.mp3,symbol-mountain,modak,story,Ooh… that’s wobbly.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-32.mp3,symbol-mountain,modak,instruction,Back to the safe spot. Try again.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-33.mp3,symbol-mountain,modak,feedback,You made it! All six flowers.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-34.mp3,symbol-mountain,modak,story,"Mooshika felt upset, sad, nervous, pleased, happy, and excited.",PRONOUNCE: Mooshika [MOO-shi-ka] | source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-35.mp3,symbol-mountain,modak,story,His big belly held all those feelings.,source: symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx:134
+mountain-modak-36.mp3,symbol-mountain,modak,instruction,Tap any flower.,source: symbol-mountain/scenes/modak/GarlandGame3.jsx:61
+mountain-modak-37.mp3,symbol-mountain,modak,instruction,The garland is ready! Drag it to Ganesha.,PRONOUNCE: Ganesha [ga-NE-sha] | source: symbol-mountain/scenes/modak/GarlandGame3.jsx:61
+mountain-modak-38.mp3,symbol-mountain,modak,instruction,Drag the garland to Ganesha.,PRONOUNCE: Ganesha [ga-NE-sha] | source: symbol-mountain/scenes/modak/GarlandGame3.jsx:61
+mountain-modak-39.mp3,symbol-mountain,modak,feedback,"You brought the garland to Ganesha — and look, a sweet Modak!","PRONOUNCE: Ganesha [ga-NE-sha], Modak [MO-dak] | source: symbol-mountain/scenes/modak/GarlandGame3.jsx:61"
+mountain-modak-40.mp3,symbol-mountain,modak,story,One small step at a time.,source: symbol-mountain/scenes/modak/NewModakSceneV7.jsx:1902
+mountain-modak-41.mp3,symbol-mountain,modak,feedback,You held lots of feelings and kept going.,source: symbol-mountain/scenes/modak/NewModakSceneV7.jsx:1902
+mountain-modak-42.mp3,symbol-mountain,modak,feedback,You kept trying and found joy.,source: symbol-mountain/scenes/modak/NewModakSceneV7.jsx:1902
+mountain-modak-43.mp3,symbol-mountain,modak,instruction,Tap the symbols to learn about them.,"same line also used in: pond, symbol, final-scene | source: symbol-mountain/shared/components/SymbolSidebar.jsx:96 (+3 more)"
+mountain-pond-01.mp3,symbol-mountain,pond,story,The lotus needs water to bloom. Let’s help the water reach it.,source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:102
+mountain-pond-02.mp3,symbol-mountain,pond,instruction,The rock is blocking the stream. Press and hold to move it.,source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:102
+mountain-pond-03.mp3,symbol-mountain,pond,instruction,Keep holding.,source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:102
+mountain-pond-04.mp3,symbol-mountain,pond,instruction,The flowers are in the water’s way. Gently move them aside.,source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:102
+mountain-pond-05.mp3,symbol-mountain,pond,story,A little farther.,source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:102
+mountain-pond-06.mp3,symbol-mountain,pond,story,The water reached the lotus.,source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:102
+mountain-pond-07.mp3,symbol-mountain,pond,instruction,Hold the bud to help it bloom.,source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:102
+mountain-pond-08.mp3,symbol-mountain,pond,story,"The lotus bloomed, even in the muddy pond.",source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:102
+mountain-pond-09.mp3,symbol-mountain,pond,feedback,"You used strength, then gentleness, and helped the lotus bloom.",source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:102
+mountain-pond-10.mp3,symbol-mountain,pond,story,The lotus grows through muddy water and still blooms. It reminds us that we can keep growing through difficult things.,long-ish: 20 words | source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:1059
+mountain-pond-11.mp3,symbol-mountain,pond,story,Ganesha's trunk can move something heavy or handle something tiny. It reminds us to know when to use strength and when to be gentle.,TOO LONG: 24 words (>20) - split into 2 clips for ages 5-7 | source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:1059
+mountain-pond-12.mp3,symbol-mountain,pond,feedback,You were strong and gentle.,source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:2220
+mountain-pond-13.mp3,symbol-mountain,pond,feedback,You kept growing through something hard.,source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:2220
+mountain-symbols-01.mp3,symbol-mountain,symbol,story,good listening,source: symbol-mountain/scenes/tusk/EarsSoundMatchGame.jsx:169
+mountain-symbols-02.mp3,symbol-mountain,symbol,instruction,Listen again.,source: symbol-mountain/scenes/tusk/EarsSoundMatchGame.jsx:169
+mountain-symbols-03.mp3,symbol-mountain,symbol,feedback,You listened carefully and found the sounds.,source: symbol-mountain/scenes/tusk/EarsSoundMatchGame.jsx:169
+mountain-symbols-04.mp3,symbol-mountain,symbol,story,Elephant found water.,source: symbol-mountain/scenes/tusk/EarsSoundMatchGame.jsx:169
+mountain-symbols-05.mp3,symbol-mountain,symbol,story,Cow found grass.,source: symbol-mountain/scenes/tusk/EarsSoundMatchGame.jsx:169
+mountain-symbols-06.mp3,symbol-mountain,symbol,instruction,"Monkey is hungry, and Peacock has lost a special feather. Look carefully. Can you find what they need?",long-ish: 18 words | source: symbol-mountain/scenes/tusk/EyesPopUpGame.jsx:173
+mountain-symbols-07.mp3,symbol-mountain,symbol,feedback,You looked closely and found them both!,source: symbol-mountain/scenes/tusk/EyesPopUpGame.jsx:173
+mountain-symbols-08.mp3,symbol-mountain,symbol,story,Feather found! Peacock will be so happy.,source: symbol-mountain/scenes/tusk/EyesPopUpGame.jsx:173
+mountain-symbols-09.mp3,symbol-mountain,symbol,story,Mango found! Monkey is hungry no more.,source: symbol-mountain/scenes/tusk/EyesPopUpGame.jsx:173
+mountain-symbols-10.mp3,symbol-mountain,symbol,story,Now find the feather.,source: symbol-mountain/scenes/tusk/EyesPopUpGame.jsx:173
+mountain-symbols-11.mp3,symbol-mountain,symbol,story,Now find the mango.,source: symbol-mountain/scenes/tusk/EyesPopUpGame.jsx:173
+mountain-symbols-12.mp3,symbol-mountain,symbol,instruction,Look near the bushes. Something is peeking out.,source: symbol-mountain/scenes/tusk/EyesPopUpGame.jsx:173
+mountain-symbols-13.mp3,symbol-mountain,symbol,story,The forest friends need your help. Let’s see what they need.,source: symbol-mountain/scenes/tusk/SymbolMountainSceneV3.jsx:98
+mountain-symbols-14.mp3,symbol-mountain,symbol,instruction,Some things are hiding. Look closely and tap each one you find.,source: symbol-mountain/scenes/tusk/SymbolMountainSceneV3.jsx:98
+mountain-symbols-15.mp3,symbol-mountain,symbol,instruction,Look closely — there's still one hiding.,source: symbol-mountain/scenes/tusk/SymbolMountainSceneV3.jsx:98
+mountain-symbols-16.mp3,symbol-mountain,symbol,instruction,Listen again — where did it come from?,source: symbol-mountain/scenes/tusk/SymbolMountainSceneV3.jsx:98
+mountain-symbols-17.mp3,symbol-mountain,symbol,feedback,"You looked, listened, and used what you had to help.",source: symbol-mountain/scenes/tusk/SymbolMountainSceneV3.jsx:98
+mountain-symbols-18.mp3,symbol-mountain,symbol,feedback,You focused on what mattered.,source: symbol-mountain/scenes/tusk/SymbolMountainSceneV3.jsx:1374
+mountain-symbols-19.mp3,symbol-mountain,symbol,feedback,You listened for what helped.,source: symbol-mountain/scenes/tusk/SymbolMountainSceneV3.jsx:1374
+mountain-symbols-20.mp3,symbol-mountain,symbol,feedback,You used what you had for something important.,source: symbol-mountain/scenes/tusk/SymbolMountainSceneV3.jsx:1374
+mountain-symbols-21.mp3,symbol-mountain,symbol,instruction,"Oh no, the little bird's nest is broken. Bunny wants to rebuild it. Can the broken twig help? Drag it to the nest.",TOO LONG: 23 words (>20) - split into 2 clips for ages 5-7 | source: symbol-mountain/scenes/tusk/tuskNestFlow.json/beats/0/before/audio/voText
+mountain-symbols-22.mp3,symbol-mountain,symbol,instruction,Add the twig to the nest.,source: symbol-mountain/scenes/tusk/tuskNestFlow.json/beats/0/hints/l2VoText
+mountain-symbols-23.mp3,symbol-mountain,symbol,story,What about the short grass?,source: symbol-mountain/scenes/tusk/tuskNestFlow.json/beats/1/before/audio/voText
+mountain-symbols-24.mp3,symbol-mountain,symbol,instruction,Add the grass to the nest.,source: symbol-mountain/scenes/tusk/tuskNestFlow.json/beats/1/hints/l2VoText
+mountain-symbols-25.mp3,symbol-mountain,symbol,story,Can the torn leaf help?,source: symbol-mountain/scenes/tusk/tuskNestFlow.json/beats/2/before/audio/voText
+mountain-symbols-26.mp3,symbol-mountain,symbol,instruction,Add the leaf to the nest.,source: symbol-mountain/scenes/tusk/tuskNestFlow.json/beats/2/hints/l2VoText
+mountain-symbols-27.mp3,symbol-mountain,symbol,story,And the bent feather?,source: symbol-mountain/scenes/tusk/tuskNestFlow.json/beats/3/before/audio/voText
+mountain-symbols-28.mp3,symbol-mountain,symbol,feedback,You did it! All those little things helped rebuild the nest.,source: symbol-mountain/scenes/tusk/tuskNestFlow.json/beats/3/after/audio/voText
+mountain-symbols-29.mp3,symbol-mountain,symbol,instruction,Add the feather to the nest.,source: symbol-mountain/scenes/tusk/tuskNestFlow.json/beats/3/hints/l2VoText
+mountain-final-01.mp3,symbol-mountain,final-scene,feedback,You found all eight symbols. Let’s see what you remember.,source: voiceGuidance.js[symbol-mountain.final-scene.openingModalPrompt]
+mountain-final-02.mp3,symbol-mountain,final-scene,story,Eyes. I can focus on what matters.,source: voiceGuidance.js[symbol-mountain.final-scene.cardEyes]
+mountain-final-03.mp3,symbol-mountain,final-scene,story,Ears. I can listen for what helps me.,source: voiceGuidance.js[symbol-mountain.final-scene.cardEars]
+mountain-final-04.mp3,symbol-mountain,final-scene,story,Trunk. I can be strong and gentle.,source: voiceGuidance.js[symbol-mountain.final-scene.cardTrunk]
+mountain-final-05.mp3,symbol-mountain,final-scene,story,Tusk. I can use what I have for something important.,source: voiceGuidance.js[symbol-mountain.final-scene.cardTusk]
+mountain-final-06.mp3,symbol-mountain,final-scene,story,"Modak. I can learn, keep trying, and find joy.",PRONOUNCE: Modak [MO-dak] | source: voiceGuidance.js[symbol-mountain.final-scene.cardModak]
+mountain-final-07.mp3,symbol-mountain,final-scene,feedback,Lotus. I can keep growing when things are hard.,source: voiceGuidance.js[symbol-mountain.final-scene.cardLotus]
+mountain-final-08.mp3,symbol-mountain,final-scene,story,Big Belly. I can have lots of feelings and keep going.,source: voiceGuidance.js[symbol-mountain.final-scene.cardBelly]
+mountain-final-09.mp3,symbol-mountain,final-scene,story,"Mooshika. I can keep going, one small step at a time.",PRONOUNCE: Mooshika [MOO-shi-ka] | source: voiceGuidance.js[symbol-mountain.final-scene.cardMooshika]
+mountain-final-10.mp3,symbol-mountain,final-scene,instruction,Which part helps you see what matters?,source: voiceGuidance.js[symbol-mountain.final-scene.hintEyes]
+mountain-final-11.mp3,symbol-mountain,final-scene,instruction,Which part helps you listen for what helps?,source: voiceGuidance.js[symbol-mountain.final-scene.hintEars]
+mountain-final-12.mp3,symbol-mountain,final-scene,instruction,Which part can lift something heavy and pick up something tiny?,source: voiceGuidance.js[symbol-mountain.final-scene.hintTrunk]
+mountain-final-13.mp3,symbol-mountain,final-scene,instruction,"Which part can still help, even when it’s broken?",source: voiceGuidance.js[symbol-mountain.final-scene.hintTusk]
+mountain-final-14.mp3,symbol-mountain,final-scene,instruction,Where does Ganesha hold his sweet?,PRONOUNCE: Ganesha [ga-NE-sha] | source: voiceGuidance.js[symbol-mountain.final-scene.hintModak]
+mountain-final-15.mp3,symbol-mountain,final-scene,instruction,Where does the lotus belong with Ganesha?,PRONOUNCE: Ganesha [ga-NE-sha] | source: voiceGuidance.js[symbol-mountain.final-scene.hintLotus]
+mountain-final-16.mp3,symbol-mountain,final-scene,instruction,Which part can hold lots of feelings?,source: voiceGuidance.js[symbol-mountain.final-scene.hintBelly]
+mountain-final-17.mp3,symbol-mountain,final-scene,instruction,Where does Ganesha’s tiny friend belong?,source: voiceGuidance.js[symbol-mountain.final-scene.hintMooshika]
+mountain-final-18.mp3,symbol-mountain,final-scene,instruction,"Look at the symbol, then tap where it belongs.",source: voiceGuidance.js[symbol-mountain.final-scene.onboardingTapRightPart]
+mountain-final-19.mp3,symbol-mountain,final-scene,story,Almost there — six symbols are back with Ganesha.,PRONOUNCE: Ganesha [ga-NE-sha] | source: voiceGuidance.js[symbol-mountain.final-scene.sixSymbolsPlaced]
+mountain-final-20.mp3,symbol-mountain,final-scene,feedback,You remembered all eight symbols and what they mean.,source: voiceGuidance.js[symbol-mountain.final-scene.finalYouFoundAll]
+mountain-final-21.mp3,symbol-mountain,final-scene,story,"Now when you see Ganesha, you can remember their wisdom.",PRONOUNCE: Ganesha [ga-NE-sha] | source: voiceGuidance.js[symbol-mountain.final-scene.finalAlwaysWithYou]
+river-grove-01.mp3,shloka-river,vakratunda-grove,story,Our river friends need a way across. Let’s help.,source: voiceGuidance.js[shloka-river.vakratunda-grove.welcome]
+river-grove-02.mp3,shloka-river,vakratunda-grove,feedback,Round 1 done!,existing file: /audio/voicenew/vakratundachant/vakratunda-round1.mp3 | source: voiceGuidance.js[shloka-river.vakratunda-grove.vakratundaRound1]
+river-grove-03.mp3,shloka-river,vakratunda-grove,feedback,Round 2 done!,existing file: /audio/voicenew/vakratundachant/vakratunda-round2.mp3 | source: voiceGuidance.js[shloka-river.vakratunda-grove.vakratundaRound2]
+river-grove-04.mp3,shloka-river,vakratunda-grove,feedback,Lotus blooming!,existing file: /audio/voicenew/vakratundachant/vakratunda-lotus blooming.mp3 | source: voiceGuidance.js[shloka-river.vakratunda-grove.vakratundaRound3]
+river-grove-05.mp3,shloka-river,vakratunda-grove,feedback,I can change my plan and try another way.,source: voiceGuidance.js[shloka-river.vakratunda-grove.vakratundaPower]
+river-grove-06.mp3,shloka-river,vakratunda-grove,instruction,Mahakaya - start!,PRONOUNCE: Mahakaya [ma-ha-KA-ya] | existing file: /audio/voicenew/vakratundachant/vakratunda-mahakaya - start.mp3 | source: voiceGuidance.js[shloka-river.vakratunda-grove.mahakayaGameStart]
+river-grove-07.mp3,shloka-river,vakratunda-grove,feedback,Mahakaya round 1 done!,PRONOUNCE: Mahakaya [ma-ha-KA-ya] | existing file: /audio/voicenew/vakratundachant/vakratunda-mahakaya round1.mp3 | source: voiceGuidance.js[shloka-river.vakratunda-grove.mahakayaRound1]
+river-grove-08.mp3,shloka-river,vakratunda-grove,feedback,Mahakaya round 2 done!,PRONOUNCE: Mahakaya [ma-ha-KA-ya] | existing file: /audio/voicenew/vakratundachant/vakratunda-mahakaya round2.mp3 | source: voiceGuidance.js[shloka-river.vakratunda-grove.mahakayaRound2]
+river-grove-09.mp3,shloka-river,vakratunda-grove,feedback,Amazing!,existing file: /audio/voicenew/vakratundachant/vakratunda-mahakaya amazing.mp3 | source: voiceGuidance.js[shloka-river.vakratunda-grove.mahakayaRound3]
+river-grove-10.mp3,shloka-river,vakratunda-grove,feedback,I can make space in my heart for others.,source: voiceGuidance.js[shloka-river.vakratunda-grove.mahakayaPower]
+river-grove-11.mp3,shloka-river,vakratunda-grove,instruction,Frog’s way to his family is blocked. Drag Frog to find another way.,source: voiceGuidance.js[shloka-river.vakratunda-grove.scene10_vak_intro]
+river-grove-12.mp3,shloka-river,vakratunda-grove,instruction,That way is blocked. Can you find another way around?,source: voiceGuidance.js[shloka-river.vakratunda-grove.scene10_vak_choose] (+1 more)
+river-grove-13.mp3,shloka-river,vakratunda-grove,feedback,Vakratunda! You found another way and helped Frog reach his family.,PRONOUNCE: Vakratunda [va-kra-TUN-da] | source: voiceGuidance.js[shloka-river.vakratunda-grove.scene10_vak_crossed]
+river-grove-14.mp3,shloka-river,vakratunda-grove,instruction,Try going around it.,source: voiceGuidance.js[shloka-river.vakratunda-grove.scene10_vak_hint_another_way]
+river-grove-15.mp3,shloka-river,vakratunda-grove,instruction,Everyone wants to cross the river. Drag the logs to build a raft.,source: voiceGuidance.js[shloka-river.vakratunda-grove.scene10_maha_intro]
+river-grove-16.mp3,shloka-river,vakratunda-grove,instruction,Drag the log into the water.,source: voiceGuidance.js[shloka-river.vakratunda-grove.scene10_maha_drag_water]
+river-grove-17.mp3,shloka-river,vakratunda-grove,story,Put the log here.,source: voiceGuidance.js[shloka-river.vakratunda-grove.scene10_maha_place_here]
+river-grove-18.mp3,shloka-river,vakratunda-grove,feedback,Mahakaay! You made space so everyone could come along.,"SPELLING CHECK: non-canonical Sanskrit spelling ""Mahakaay"" - confirm correct form with Madhurima before recording | source: voiceGuidance.js[shloka-river.vakratunda-grove.scene10_maha_success]"
+river-grove-19.mp3,shloka-river,vakratunda-grove,instruction,Keep adding logs to the raft.,source: voiceGuidance.js[shloka-river.vakratunda-grove.scene10_maha_keep_adding]
+river-grove-20.mp3,shloka-river,vakratunda-grove,instruction,Drag the next log.,source: voiceGuidance.js[shloka-river.vakratunda-grove.scene10_maha_next_log]
+river-grove-21.mp3,shloka-river,vakratunda-grove,instruction,Keep placing the logs on the raft.,source: voiceGuidance.js[shloka-river.vakratunda-grove.scene10_maha_resume]
+river-grove-22.mp3,shloka-river,vakratunda-grove,feedback,Wonderful!,existing file: /audio/voicenew/vakratundachant/vakratunda-wonderful.wav | source: voiceGuidance.js[shloka-river.vakratunda-grove.chantWordReveal]
+river-grove-23.mp3,shloka-river,vakratunda-grove,story,Mahakaay - great form!,"SPELLING CHECK: non-canonical Sanskrit spelling ""Mahakaay"" - confirm correct form with Madhurima before recording | source: voiceGuidance.js[shloka-river.vakratunda-grove.mahakaya-word-reveal]"
+river-grove-24.mp3,shloka-river,vakratunda-grove,feedback,"You found another way, and made sure everyone could come along.",source: voiceGuidance.js[shloka-river.vakratunda-grove.sceneComplete]
+river-grove-25.mp3,shloka-river,vakratunda-grove,feedback,You changed your plan and found another way.,source: shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx:1394
+river-grove-26.mp3,shloka-river,vakratunda-grove,feedback,You made space for others.,source: shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx:1394
+river-bank-01.mp3,shloka-river,suryakoti-bank,story,The river is dark. Let’s bring back some light.,source: voiceGuidance.js[shloka-river.suryakoti-bank.welcome]
+river-bank-02.mp3,shloka-river,suryakoti-bank,instruction,Rub the glowing spot.,source: voiceGuidance.js[shloka-river.suryakoti-bank.scene11SuryaHint] (+1 more)
+river-bank-03.mp3,shloka-river,suryakoti-bank,instruction,Keep rubbing.,source: voiceGuidance.js[shloka-river.suryakoti-bank.surya_hint_keep]
+river-bank-04.mp3,shloka-river,suryakoti-bank,instruction,Almost there!,source: voiceGuidance.js[shloka-river.suryakoti-bank.surya_hint_almost]
+river-bank-05.mp3,shloka-river,suryakoti-bank,instruction,Keep rubbing to bring back more light.,source: voiceGuidance.js[shloka-river.suryakoti-bank.scene11_surya_keep_rubbing]
+river-bank-06.mp3,shloka-river,suryakoti-bank,instruction,Press and hold on the shadow.,source: voiceGuidance.js[shloka-river.suryakoti-bank.scene11SamaHint]
+river-bank-07.mp3,shloka-river,suryakoti-bank,instruction,Press and hold another part of the shadow.,source: voiceGuidance.js[shloka-river.suryakoti-bank.scene11_sama_find_another]
+river-bank-08.mp3,shloka-river,suryakoti-bank,instruction,Keep pressing and holding to look closely.,source: voiceGuidance.js[shloka-river.suryakoti-bank.scene11_sama_resume]
+river-bank-09.mp3,shloka-river,suryakoti-bank,instruction,Look for another part of the shadow.,source: voiceGuidance.js[shloka-river.suryakoti-bank.scene11_sama_hint_find]
+river-bank-10.mp3,shloka-river,suryakoti-bank,instruction,Keep holding.,source: voiceGuidance.js[shloka-river.suryakoti-bank.scene11_sama_hint_keep]
+river-bank-11.mp3,shloka-river,suryakoti-bank,feedback,Suryakoti! You brought back the light and helped Bunny home.,PRONOUNCE: Suryakoti [sur-ya-KO-ti] | source: voiceGuidance.js[shloka-river.suryakoti-bank.scene11SuryaDone]
+river-bank-12.mp3,shloka-river,suryakoti-bank,feedback,Samaprabha! You looked closely and helped Deer feel safe.,PRONOUNCE: Samaprabha [sa-ma-PRA-bha] | source: voiceGuidance.js[shloka-river.suryakoti-bank.scene11SamaDone]
+river-bank-13.mp3,shloka-river,suryakoti-bank,instruction,Bunny can’t find home. Rub the glow to bring back the light.,source: voiceGuidance.js[shloka-river.suryakoti-bank.suryakotiSetup]
+river-bank-14.mp3,shloka-river,suryakoti-bank,instruction,Deer sees a strange shadow. Press and hold to look closely.,source: voiceGuidance.js[shloka-river.suryakoti-bank.suryakotiClaim]
+river-bank-15.mp3,shloka-river,suryakoti-bank,feedback,You brought back the light and saw what was really there.,source: voiceGuidance.js[shloka-river.suryakoti-bank.sceneComplete]
+river-bank-16.mp3,shloka-river,suryakoti-bank,feedback,You found hope and brought back the light.,source: shloka-river/scenes/Scene2/SuryakotiBankSimplified.jsx:1115
+river-bank-17.mp3,shloka-river,suryakoti-bank,feedback,You looked closely and saw what was really there.,source: shloka-river/scenes/Scene2/SuryakotiBankSimplified.jsx:1115
+river-nirvighnam-01.mp3,shloka-river,nirvighnam-chant,story,The way ahead is tricky. Let’s help our friends through.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.welcome]
+river-nirvighnam-02.mp3,shloka-river,nirvighnam-chant,instruction,Turtle’s way home is blocked. Press and hold the rock to move it.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.scene12NirvHint]
+river-nirvighnam-03.mp3,shloka-river,nirvighnam-chant,instruction,The branch is still blocking the way. Drag it onto the bank.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.nirv_branch_intro]
+river-nirvighnam-04.mp3,shloka-river,nirvighnam-chant,instruction,The reeds are blocking the way. Swipe them apart.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.nirv_reed_intro]
+river-nirvighnam-05.mp3,shloka-river,nirvighnam-chant,instruction,Drag the branch onto the bank.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.nirv_hint_branch] (+1 more)
+river-nirvighnam-06.mp3,shloka-river,nirvighnam-chant,instruction,Swipe the reeds apart.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.nirv_hint_reed] (+1 more)
+river-nirvighnam-07.mp3,shloka-river,nirvighnam-chant,story,Baby Beaver is across the river.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.scene12KuruHint]
+river-nirvighnam-08.mp3,shloka-river,nirvighnam-chant,feedback,You cleared the way and helped Turtle through.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.scene12NirvDone]
+river-nirvighnam-09.mp3,shloka-river,nirvighnam-chant,feedback,Kuru Me Deva! You asked for help and built the bridge.,"SPELLING CHECK: non-canonical Sanskrit spelling ""Kuru Me Deva"" - confirm correct form with Madhurima before recording | source: voiceGuidance.js[shloka-river.nirvighnam-chant.scene12KuruDone]"
+river-nirvighnam-10.mp3,shloka-river,nirvighnam-chant,instruction,The logs are too heavy. Drag the help bubble to someone who can help.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.kuru_ask_elephant]
+river-nirvighnam-11.mp3,shloka-river,nirvighnam-chant,instruction,The rope needs tying. Drag the help bubble to someone who can help.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.kuru_ask_monkey]
+river-nirvighnam-12.mp3,shloka-river,nirvighnam-chant,feedback,Elephant helped put the logs in place.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.kuru_logs_after]
+river-nirvighnam-13.mp3,shloka-river,nirvighnam-chant,feedback,Monkey helped tie the rope.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.kuru_rope_after]
+river-nirvighnam-14.mp3,shloka-river,nirvighnam-chant,instruction,Now drag the planks into place.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.kuru_plank_instruction]
+river-nirvighnam-15.mp3,shloka-river,nirvighnam-chant,feedback,Good. Continue dragging the planks.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.kuru_plank_continue]
+river-nirvighnam-16.mp3,shloka-river,nirvighnam-chant,instruction,Drag the help bubble to someone who can help.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.kuru_hint_ask]
+river-nirvighnam-17.mp3,shloka-river,nirvighnam-chant,instruction,Drag the help bubble to Elephant.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.kuru_hint_elephant]
+river-nirvighnam-18.mp3,shloka-river,nirvighnam-chant,instruction,Drag the help bubble to Monkey.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.kuru_hint_monkey]
+river-nirvighnam-19.mp3,shloka-river,nirvighnam-chant,instruction,Who can help tie the rope?,source: voiceGuidance.js[shloka-river.nirvighnam-chant.kuru_hint_monkey_clue]
+river-nirvighnam-20.mp3,shloka-river,nirvighnam-chant,instruction,Drag a plank toward the bridge.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.kuru_hint_plank_soft]
+river-nirvighnam-21.mp3,shloka-river,nirvighnam-chant,instruction,Drag the plank onto the glowing place.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.kuru_hint_plank_direct]
+river-nirvighnam-22.mp3,shloka-river,nirvighnam-chant,feedback,You cleared the path and asked for help when things got hard.,source: voiceGuidance.js[shloka-river.nirvighnam-chant.sceneComplete]
+river-nirvighnam-23.mp3,shloka-river,nirvighnam-chant,feedback,You solved one thing at a time.,source: shloka-river/scenes/Scene3/NirvighnamChantSimplified.jsx:1061
+river-nirvighnam-24.mp3,shloka-river,nirvighnam-chant,feedback,You asked for help when you needed it.,source: shloka-river/scenes/Scene3/NirvighnamChantSimplified.jsx:1061
+river-sarvakaryeshu-01.mp3,shloka-river,sarvakaryeshu-chant,story,Let’s see where Ganesha is with you today.,PRONOUNCE: Ganesha [ga-NE-sha] | source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.welcome]
+river-sarvakaryeshu-02.mp3,shloka-river,sarvakaryeshu-chant,story,So much to do. Which symbol can help him start small?,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_puzzle]
+river-sarvakaryeshu-03.mp3,shloka-river,sarvakaryeshu-chant,feedback,Mooshika helped him begin with one small thing.,PRONOUNCE: Mooshika [MOO-shi-ka] | source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_puzzle_after]
+river-sarvakaryeshu-04.mp3,shloka-river,sarvakaryeshu-chant,story,So many distractions. Which symbol can help him focus?,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_sports]
+river-sarvakaryeshu-05.mp3,shloka-river,sarvakaryeshu-chant,feedback,The Eyes helped him focus on what mattered.,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_sports_after]
+river-sarvakaryeshu-06.mp3,shloka-river,sarvakaryeshu-chant,story,"Heavy here, gentle there. Which symbol can help?",source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_bike]
+river-sarvakaryeshu-07.mp3,shloka-river,sarvakaryeshu-chant,feedback,"The Trunk helped him use strength, then gentleness.",source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_bike_after]
+river-sarvakaryeshu-08.mp3,shloka-river,sarvakaryeshu-chant,story,The crayon is broken. Which symbol can help?,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_grandma]
+river-sarvakaryeshu-09.mp3,shloka-river,sarvakaryeshu-chant,feedback,The Tusk reminded her that something broken can still help.,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_grandma_after]
+river-sarvakaryeshu-10.mp3,shloka-river,sarvakaryeshu-chant,instruction,Which symbol can help him start small?,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_hint_mooshika_1]
+river-sarvakaryeshu-11.mp3,shloka-river,sarvakaryeshu-chant,instruction,Think of a symbol that reminds us to begin with one small step.,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_hint_mooshika_2]
+river-sarvakaryeshu-12.mp3,shloka-river,sarvakaryeshu-chant,instruction,Remember? Mooshika helps us start small.,PRONOUNCE: Mooshika [MOO-shi-ka] | source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_hint_mooshika_3]
+river-sarvakaryeshu-13.mp3,shloka-river,sarvakaryeshu-chant,instruction,Which symbol helps us be strong and gentle?,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_hint_trunk_1]
+river-sarvakaryeshu-14.mp3,shloka-river,sarvakaryeshu-chant,instruction,Think of a symbol that can be strong and gentle.,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_hint_trunk_2]
+river-sarvakaryeshu-15.mp3,shloka-river,sarvakaryeshu-chant,instruction,Remember? The Trunk can be strong and gentle.,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_hint_trunk_3]
+river-sarvakaryeshu-16.mp3,shloka-river,sarvakaryeshu-chant,instruction,Which symbol can help him focus?,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_hint_eyes_1]
+river-sarvakaryeshu-17.mp3,shloka-river,sarvakaryeshu-chant,instruction,Think of the symbol that helps us notice what matters.,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_hint_eyes_2]
+river-sarvakaryeshu-18.mp3,shloka-river,sarvakaryeshu-chant,instruction,Remember? The Eyes help us focus on what matters.,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_hint_eyes_3]
+river-sarvakaryeshu-19.mp3,shloka-river,sarvakaryeshu-chant,instruction,Which symbol reminds us broken things can still help?,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_hint_tusk_1]
+river-sarvakaryeshu-20.mp3,shloka-river,sarvakaryeshu-chant,instruction,Think of a symbol that shows something broken can still be useful.,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_hint_tusk_2]
+river-sarvakaryeshu-21.mp3,shloka-river,sarvakaryeshu-chant,instruction,"Remember? The Tusk can still help, even when it's broken.",source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13_hint_tusk_3]
+river-sarvakaryeshu-22.mp3,shloka-river,sarvakaryeshu-chant,instruction,Which power would help here? Tap a power. Nice choice. The problem is solved. Let's help another friend.,long-ish: 18 words | source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13SarvaHint]
+river-sarvakaryeshu-23.mp3,shloka-river,sarvakaryeshu-chant,instruction,Choose a power again. You got it. That helped too. One more challenge. Great thinking.,long-ish: 15 words | source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13SarvaDone]
+river-sarvakaryeshu-24.mp3,shloka-river,sarvakaryeshu-chant,instruction,Think of the symbol that helps us listen.,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene14_hint_morning_clue]
+river-sarvakaryeshu-25.mp3,shloka-river,sarvakaryeshu-chant,instruction,Think of the symbol that can hold lots of feelings.,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene14_hint_afternoon_clue]
+river-sarvakaryeshu-26.mp3,shloka-river,sarvakaryeshu-chant,instruction,Think of the sweet that reminds us of joy.,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene14_hint_night_clue]
+river-sarvakaryeshu-27.mp3,shloka-river,sarvakaryeshu-chant,instruction,Look through the picture and find Ganesha's hidden symbol.,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13SarvadaHint]
+river-sarvakaryeshu-28.mp3,shloka-river,sarvakaryeshu-chant,feedback,"Morning, afternoon, and night. Ganesha is with you through the whole day.",PRONOUNCE: Ganesha [ga-NE-sha] | source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene13SarvadaDone]
+river-sarvakaryeshu-29.mp3,shloka-river,sarvakaryeshu-chant,instruction,"Morning, afternoon and night — let’s find Ganesha through your day.",PRONOUNCE: Ganesha [ga-NE-sha] | source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene14_intro]
+river-sarvakaryeshu-30.mp3,shloka-river,sarvakaryeshu-chant,story,Morning can be busy. What can help him listen?,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene14_morning]
+river-sarvakaryeshu-31.mp3,shloka-river,sarvakaryeshu-chant,feedback,The Ears helped him listen.,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene14_morning_after]
+river-sarvakaryeshu-32.mp3,shloka-river,sarvakaryeshu-chant,feedback,Things didn’t go his way. What can help him keep going?,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene14_afternoon]
+river-sarvakaryeshu-33.mp3,shloka-river,sarvakaryeshu-chant,feedback,The Big Belly helped him keep going.,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene14_afternoon_after]
+river-sarvakaryeshu-34.mp3,shloka-river,sarvakaryeshu-chant,story,He kept trying and finished the puzzle. What can remind him of that happy feeling?,long-ish: 15 words | source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene14_night]
+river-sarvakaryeshu-35.mp3,shloka-river,sarvakaryeshu-chant,feedback,The Modak reminded him of joy.,PRONOUNCE: Modak [MO-dak] | source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene14_night_after]
+river-sarvakaryeshu-36.mp3,shloka-river,sarvakaryeshu-chant,instruction,Can you find the hidden symbol?,source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene14_find_symbol]
+river-sarvakaryeshu-37.mp3,shloka-river,sarvakaryeshu-chant,feedback,You found Ganesha through the whole day.,PRONOUNCE: Ganesha [ga-NE-sha] | source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.scene14_success]
+river-sarvakaryeshu-38.mp3,shloka-river,sarvakaryeshu-chant,feedback,"From morning to night, Ganesha was with you.",PRONOUNCE: Ganesha [ga-NE-sha] | source: voiceGuidance.js[shloka-river.sarvakaryeshu-chant.sceneComplete]
+river-sarvakaryeshu-39.mp3,shloka-river,sarvakaryeshu-chant,feedback,You remembered Ganesha in what you did.,PRONOUNCE: Ganesha [ga-NE-sha] | source: shloka-river/scenes/scene4/SarvakaryeshuChantSimplified.jsx:976
+river-sarvakaryeshu-40.mp3,shloka-river,sarvakaryeshu-chant,feedback,You found Ganesha with you through the whole day.,PRONOUNCE: Ganesha [ga-NE-sha] | source: shloka-river/scenes/scene4/SarvakaryeshuChantSimplified.jsx:976
+river-finale-01.mp3,shloka-river,shloka-river-finale,feedback,You found all eight words. Now let’s put them together.,source: voiceGuidance.js[shloka-river.shloka-river-finale.openingModalPrompt]
+river-finale-02.mp3,shloka-river,shloka-river-finale,instruction,Watch the Shloka come alive.,PRONOUNCE: Shloka [SHLO-ka] | source: voiceGuidance.js[shloka-river.shloka-river-finale.arrangeStart]
+river-finale-03.mp3,shloka-river,shloka-river-finale,story,"Now, choose the first symbol boat in the Shloka.",PRONOUNCE: Shloka [SHLO-ka] | source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleChooseFirst]
+river-finale-04.mp3,shloka-river,shloka-river-finale,instruction,Keep putting the word boats in the right order.,source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleResume]
+river-finale-05.mp3,shloka-river,shloka-river-finale,story,"Now, choose the next one.",source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleChooseNext]
+river-finale-06.mp3,shloka-river,shloka-river-finale,instruction,Great! Keep choosing.,source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleKeepChoosing]
+river-finale-07.mp3,shloka-river,shloka-river-finale,feedback,You did it! The whole Shloka is in place.,PRONOUNCE: Shloka [SHLO-ka] | source: voiceGuidance.js[shloka-river.shloka-river-finale.sceneComplete]
+river-finale-08.mp3,shloka-river,shloka-river-finale,story,"Now, let's say it together.",source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleWholeShlokaIntro]
+river-finale-09.mp3,shloka-river,shloka-river-finale,feedback,You remembered the whole Ganesha Shloka. Now you can carry it with you.,"PRONOUNCE: Ganesha [ga-NE-sha], Shloka [SHLO-ka] | source: voiceGuidance.js[shloka-river.shloka-river-finale.finalCelebration]"
+river-finale-10.mp3,shloka-river,shloka-river-finale,story,Which symbol can help you try another way?,source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleVakratundaHintL2]
+river-finale-11.mp3,shloka-river,shloka-river-finale,instruction,Remember Vakratunda.,PRONOUNCE: Vakratunda [va-kra-TUN-da] | source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleVakratundaHintL3]
+river-finale-12.mp3,shloka-river,shloka-river-finale,story,Which symbol reminds you to make space for others?,source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleMahakayaHintL2]
+river-finale-13.mp3,shloka-river,shloka-river-finale,instruction,Remember Mahakaay.,"SPELLING CHECK: non-canonical Sanskrit spelling ""Mahakaay"" - confirm correct form with Madhurima before recording | source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleMahakayaHintL3]"
+river-finale-14.mp3,shloka-river,shloka-river-finale,story,Which symbol can help you find hope inside?,source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleSuryakotiHintL2]
+river-finale-15.mp3,shloka-river,shloka-river-finale,instruction,Remember Suryakoti.,PRONOUNCE: Suryakoti [sur-ya-KO-ti] | source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleSuryakotiHintL3]
+river-finale-16.mp3,shloka-river,shloka-river-finale,story,Which symbol can help you see what is really there?,source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleSamaprabhaHintL2]
+river-finale-17.mp3,shloka-river,shloka-river-finale,instruction,Remember Samaprabha.,PRONOUNCE: Samaprabha [sa-ma-PRA-bha] | source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleSamaprabhaHintL3]
+river-finale-18.mp3,shloka-river,shloka-river-finale,story,Which symbol can help you solve one thing at a time?,source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleNirvighnamHintL2]
+river-finale-19.mp3,shloka-river,shloka-river-finale,instruction,Remember Nirvighnam.,PRONOUNCE: Nirvighnam [nir-VIGH-nam] | source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleNirvighnamHintL3]
+river-finale-20.mp3,shloka-river,shloka-river-finale,story,Which symbol reminds you to ask for help?,source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleKurumedevaHintL2]
+river-finale-21.mp3,shloka-river,shloka-river-finale,instruction,Remember Kuru Me Deva.,"SPELLING CHECK: non-canonical Sanskrit spelling ""Kuru Me Deva"" - confirm correct form with Madhurima before recording | source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleKurumedevaHintL3]"
+river-finale-22.mp3,shloka-river,shloka-river-finale,story,Which symbol reminds you of Ganesha in all you do?,PRONOUNCE: Ganesha [ga-NE-sha] | source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleSarvakaryeshuHintL2]
+river-finale-23.mp3,shloka-river,shloka-river-finale,instruction,Remember Sarva Karyeshu.,"SPELLING CHECK: non-canonical Sanskrit spelling ""Sarva Karyeshu"" - confirm correct form with Madhurima before recording | source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleSarvakaryeshuHintL3]"
+river-finale-24.mp3,shloka-river,shloka-river-finale,story,Which symbol reminds you Ganesha is always with you?,PRONOUNCE: Ganesha [ga-NE-sha] | source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleSarvadaHintL2]
+river-finale-25.mp3,shloka-river,shloka-river-finale,instruction,Remember Sarvada.,PRONOUNCE: Sarvada [sar-VA-da] | source: voiceGuidance.js[shloka-river.shloka-river-finale.finaleSarvadaHintL3]
+river-shloka-01.mp3,shloka-river,shloka-river-finale,shloka,Vakratunda,SHLOKA - needs correct pronunciation: Vakratunda [va-kra-TUN-da] | existing file: /audio/words/vakratunda.mp3 | source: getWordPath() -> /audio/words/vakratunda.mp3
+river-shloka-02.mp3,shloka-river,shloka-river-finale,shloka,Mahakaya,SHLOKA - needs correct pronunciation: Mahakaya [ma-ha-KA-ya] | existing file: /audio/words/mahakaya.mp3 | source: getWordPath() -> /audio/words/mahakaya.mp3
+river-shloka-03.mp3,shloka-river,shloka-river-finale,shloka,Suryakoti,SHLOKA - needs correct pronunciation: Suryakoti [sur-ya-KO-ti] | existing file: /audio/words/suryakoti.mp3 | source: getWordPath() -> /audio/words/suryakoti.mp3
+river-shloka-04.mp3,shloka-river,shloka-river-finale,shloka,Samaprabha,SHLOKA - needs correct pronunciation: Samaprabha [sa-ma-PRA-bha] | existing file: /audio/words/samaprabha.mp3 | source: getWordPath() -> /audio/words/samaprabha.mp3
+river-shloka-05.mp3,shloka-river,shloka-river-finale,shloka,Nirvighnam,SHLOKA - needs correct pronunciation: Nirvighnam [nir-VIGH-nam] | existing file: /audio/words/nirvighnam.mp3 | source: getWordPath() -> /audio/words/nirvighnam.mp3
+river-shloka-06.mp3,shloka-river,shloka-river-finale,shloka,Kurumedeva,SHLOKA - needs correct pronunciation: Kurumedeva [ku-ru-ME-de-va] | existing file: /audio/words/kurumedeva.mp3 | source: getWordPath() -> /audio/words/kurumedeva.mp3
+river-shloka-07.mp3,shloka-river,shloka-river-finale,shloka,Sarvakaryeshu,SHLOKA - needs correct pronunciation: Sarvakaryeshu [sar-va-KAR-ye-shu] | existing file: /audio/words/sarvakaryeshu.mp3 | source: getWordPath() -> /audio/words/sarvakaryeshu.mp3
+river-shloka-08.mp3,shloka-river,shloka-river-finale,shloka,Sarvada,SHLOKA - needs correct pronunciation: Sarvada [sar-VA-da] | existing file: /audio/words/sarvada.mp3 | source: getWordPath() -> /audio/words/sarvada.mp3
+river-shloka-09.mp3,shloka-river,shloka-river-finale,shloka,Vakratunda Mahakaya Suryakoti Samaprabha Nirvighnam Kurumedeva Sarvakaryeshu Sarvada,"SHLOKA - needs correct pronunciation: Vakratunda [va-kra-TUN-da], Mahakaya [ma-ha-KA-ya], Suryakoti [sur-ya-KO-ti], Samaprabha [sa-ma-PRA-bha], Nirvighnam [nir-VIGH-nam], Kurumedeva [ku-ru-ME-de-va], Sarvakaryeshu [sar-va-KAR-ye-shu], Sarvada [sar-VA-da] | source: MyIndianStoryGame.jsx VOICE (verse spoken as 4 words) - full 8-word line"
+cave-vakratunda-01.mp3,cave-of-secrets,vakratunda-mahakaya,feedback,You chanted 'Vakratunda'! It means 'Curved Trunk' - the power to handle any challenge!,OBSOLETE ZONE (not part of product) | PRONOUNCE: 'Vakratunda' [va-kra-TUN-da] | source: meaning cave/scenes/VakratundaMahakaya/CaveSceneFixedV2.jsx:381
+cave-vakratunda-02.mp3,cave-of-secrets,vakratunda-mahakaya,feedback,You chanted 'Mahakaya'! It means 'Great Body' - the power of infinite strength!,OBSOLETE ZONE (not part of product) | PRONOUNCE: 'Mahakaya' [ma-ha-KA-ya] | source: meaning cave/scenes/VakratundaMahakaya/CaveSceneFixedV2.jsx:381
+cave-suryakoti-01.mp3,cave-of-secrets,suryakoti-samaprabha,story,Let's explore my brilliant radiance! ☀️,OBSOLETE ZONE (not part of product) | contains emoji - do not voice the emoji | source: meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4.jsx:122
+cave-suryakoti-02.mp3,cave-of-secrets,suryakoti-samaprabha,story,Discover Ganesha's Divine Light!,OBSOLETE ZONE (not part of product) | source: meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4.jsx:122
+cave-suryakoti-03.mp3,cave-of-secrets,suryakoti-samaprabha,story,2 divine words to master!,"OBSOLETE ZONE (not part of product) | same line also used in: nirvighnam-kurumedeva, sarvakaryeshu-sarvada | source: meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4.jsx:122 (+2 more)"
+cave-suryakoti-04.mp3,cave-of-secrets,suryakoti-samaprabha,story,"First, learn to chant SURYAKOTI to unlock the power of million suns and save animals!",OBSOLETE ZONE (not part of product) | long-ish: 15 words | PRONOUNCE: SURYAKOTI [sur-ya-KO-ti] | source: meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4.jsx:122
+cave-suryakoti-05.mp3,cave-of-secrets,suryakoti-samaprabha,story,Start Learning!,"OBSOLETE ZONE (not part of product) | same line also used in: nirvighnam-kurumedeva, sarvakaryeshu-sarvada | source: meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4.jsx:122 (+2 more)"
+cave-suryakoti-06.mp3,cave-of-secrets,suryakoti-samaprabha,story,Now unlock equal radiance! ✨,OBSOLETE ZONE (not part of product) | contains emoji - do not voice the emoji | source: meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4.jsx:122
+cave-suryakoti-07.mp3,cave-of-secrets,suryakoti-samaprabha,feedback,Wonderful Progress!,OBSOLETE ZONE (not part of product) | source: meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4.jsx:122
+cave-suryakoti-08.mp3,cave-of-secrets,suryakoti-samaprabha,story,Master the balanced light!,OBSOLETE ZONE (not part of product) | source: meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4.jsx:122
+cave-suryakoti-09.mp3,cave-of-secrets,suryakoti-samaprabha,story,Learn to chant SAMAPRABHA to unlock equal radiance power and save animals!,OBSOLETE ZONE (not part of product) | PRONOUNCE: SAMAPRABHA [sa-ma-PRA-bha] | source: meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4.jsx:122
+cave-suryakoti-10.mp3,cave-of-secrets,suryakoti-samaprabha,story,Continue Learning!,OBSOLETE ZONE (not part of product) | source: meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4.jsx:122
+cave-suryakoti-11.mp3,cave-of-secrets,suryakoti-samaprabha,story,"Welcome to the Million Suns Chamber, ${profileName}! Ancient light awaits your collection!",OBSOLETE ZONE (not part of product) | DYNAMIC: contains runtime variable (name/choice) - cannot be one clip; record without it or record variants | source: meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4.jsx:716
+cave-suryakoti-12.mp3,cave-of-secrets,suryakoti-samaprabha,feedback,"Magnificent, ${profileName}! You've mastered Suryakoti - the brilliance of a million suns!",OBSOLETE ZONE (not part of product) | DYNAMIC: contains runtime variable (name/choice) - cannot be one clip; record without it or record variants | PRONOUNCE: Suryakoti [sur-ya-KO-ti] | source: meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4.jsx:716
+cave-suryakoti-13.mp3,cave-of-secrets,suryakoti-samaprabha,instruction,"🌞 Collect the golden suns, ${profileName}! Fill your magical orb with divine light!",OBSOLETE ZONE (not part of product) | DYNAMIC: contains runtime variable (name/choice) - cannot be one clip; record without it or record variants | contains emoji - do not voice the emoji | source: meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4.jsx:716
+cave-suryakoti-14.mp3,cave-of-secrets,suryakoti-samaprabha,instruction,"💖 Share your sunshine, ${profileName}! Drag the suns to heal the sad children's hearts!",OBSOLETE ZONE (not part of product) | DYNAMIC: contains runtime variable (name/choice) - cannot be one clip; record without it or record variants | contains emoji - do not voice the emoji | source: meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4.jsx:716
+cave-suryakoti-15.mp3,cave-of-secrets,suryakoti-samaprabha,feedback,"Wonderful, ${profileName}! You've learned Samaprabha - your inner light that removes all darkness!",OBSOLETE ZONE (not part of product) | DYNAMIC: contains runtime variable (name/choice) - cannot be one clip; record without it or record variants | PRONOUNCE: Samaprabha [sa-ma-PRA-bha] | source: meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4.jsx:716
+cave-nirvighnam-01.mp3,cave-of-secrets,nirvighnam-kurumedeva,story,Let's remove all obstacles! 🛡️,OBSOLETE ZONE (not part of product) | contains emoji - do not voice the emoji | source: meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV5.jsx:326
+cave-nirvighnam-02.mp3,cave-of-secrets,nirvighnam-kurumedeva,story,Learn the Obstacle Remover Chant!,OBSOLETE ZONE (not part of product) | source: meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV5.jsx:326
+cave-nirvighnam-03.mp3,cave-of-secrets,nirvighnam-kurumedeva,story,"First, learn to chant NIRVIGHNAM to unlock obstacle-removing power and save animals!",OBSOLETE ZONE (not part of product) | PRONOUNCE: NIRVIGHNAM [nir-VIGH-nam] | source: meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV5.jsx:326
+cave-nirvighnam-04.mp3,cave-of-secrets,nirvighnam-kurumedeva,story,Now receive my divine blessing! 🙏,OBSOLETE ZONE (not part of product) | contains emoji - do not voice the emoji | source: meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV5.jsx:326
+cave-nirvighnam-05.mp3,cave-of-secrets,nirvighnam-kurumedeva,feedback,Amazing Work!,OBSOLETE ZONE (not part of product) | source: meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV5.jsx:326
+cave-nirvighnam-06.mp3,cave-of-secrets,nirvighnam-kurumedeva,story,Complete the blessing!,OBSOLETE ZONE (not part of product) | source: meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV5.jsx:326
+cave-nirvighnam-07.mp3,cave-of-secrets,nirvighnam-kurumedeva,story,Learn to chant KURUMEDEVA to unlock divine blessing power and save animals!,OBSOLETE ZONE (not part of product) | PRONOUNCE: KURUMEDEVA [ku-ru-ME-de-va] | source: meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV5.jsx:326
+cave-nirvighnam-08.mp3,cave-of-secrets,nirvighnam-kurumedeva,story,Complete Learning!,OBSOLETE ZONE (not part of product) | source: meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV5.jsx:326
+cave-sarvakaryeshu-01.mp3,cave-of-secrets,sarvakaryeshu-sarvada,story,Let's create divine decorations! ✨,OBSOLETE ZONE (not part of product) | contains emoji - do not voice the emoji | source: meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV7.jsx:657
+cave-sarvakaryeshu-02.mp3,cave-of-secrets,sarvakaryeshu-sarvada,instruction,Help Ganesha Bless All Actions!,OBSOLETE ZONE (not part of product) | PRONOUNCE: Ganesha [ga-NE-sha] | source: meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV7.jsx:657
+cave-sarvakaryeshu-03.mp3,cave-of-secrets,sarvakaryeshu-sarvada,story,"First, learn to chant SARVAKARYESHU to unlock divine action power and save animals!",OBSOLETE ZONE (not part of product) | PRONOUNCE: SARVAKARYESHU [sar-va-KAR-ye-shu] | source: meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV7.jsx:657
+cave-sarvakaryeshu-04.mp3,cave-of-secrets,sarvakaryeshu-sarvada,story,One more divine word! 💪,OBSOLETE ZONE (not part of product) | contains emoji - do not voice the emoji | source: meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV7.jsx:657
+cave-sarvakaryeshu-05.mp3,cave-of-secrets,sarvakaryeshu-sarvada,feedback,Great Work!,OBSOLETE ZONE (not part of product) | source: meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV7.jsx:657
+cave-sarvakaryeshu-06.mp3,cave-of-secrets,sarvakaryeshu-sarvada,story,Now unlock eternal blessing!,OBSOLETE ZONE (not part of product) | source: meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV7.jsx:657
+cave-sarvakaryeshu-07.mp3,cave-of-secrets,sarvakaryeshu-sarvada,story,Learn to chant SARVADA to unlock eternal blessing power and save animals!,OBSOLETE ZONE (not part of product) | PRONOUNCE: SARVADA [sar-VA-da] | source: meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV7.jsx:657
