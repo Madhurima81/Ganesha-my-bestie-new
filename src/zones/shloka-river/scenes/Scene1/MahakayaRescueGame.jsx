@@ -648,7 +648,7 @@ export default function MahakayaRescueGame({
     after(8000, finishGame);
 
     playWord?.('mahakaya', () => {
-      playSceneLine?.('scene10_maha_success', finishGame, { stripLeadingText: 'Mahakaay' });
+      playSceneLine?.('scene10_maha_success', finishGame, { stripLeadingText: 'Mahakaya' });
     });
   };
 

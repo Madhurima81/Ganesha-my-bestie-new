@@ -14,6 +14,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { estimateSpeechMs } from './useVoiceGuidance'
 import { attachSpeechCue, startCueTimer } from '../utils/speechCue'
+import { getVoClipUrl, playVoClip, shouldSilenceTts } from '../audio/voClip'
 
 // Voice toggle (see DECISIONS.md 2026-09-29): when off, nothing is spoken,
 // but each line still "plays" on a silent timer so onEnd fires on schedule.
@@ -149,6 +150,7 @@ export const useGaneshaVoice = () => {
   // Current line's callback + timing, so mute() can finish it silently on schedule.
   const activeLineRef = useRef(null)   // { onEnd, at, ms, utterance }
   const silentTimerRef = useRef(null)  // { id, onEnd }
+  const clipRef = useRef(null)         // in-flight recorded clip (voClip.js), if this line has one
   // Counts speak() requests; stop()/mute() bump it too, so a pending start-watch retry never re-speaks a
   // line that was stopped, muted or replaced.
   const speakGenRef = useRef(0)
@@ -224,8 +226,33 @@ export const useGaneshaVoice = () => {
     setIsSpeaking(false)
     activeLineRef.current = null
     flushSilent()
+    { const prev = clipRef.current; clipRef.current = null; prev?.stop(true) } // replaced line ends like a cancelled utterance
 
     if (isGlobalAudioOff()) {
+      onStart?.()
+      startCueTimer(text, cue)
+      runSilent(onEnd, estimateSpeechMs(text))
+      return
+    }
+    // Recorded clip for this exact line (voiceover/script.csv)? Play it. No recording -> fall through, unchanged.
+    const clipUrl = getVoClipUrl(text)
+    if (clipUrl) {
+      if (document.hidden) { onEnd?.(); return }
+      activeLineRef.current = { onEnd, at: Date.now(), ms: estimateSpeechMs(text), utterance: null, clip: true }
+      startCueTimer(text, cue)
+      const clip = playVoClip(clipUrl, {
+        onStart: () => { setIsSpeaking(true); onStart?.() },
+        onEnd: () => {
+          if (clipRef.current === clip) { clipRef.current = null; activeLineRef.current = null }
+          setIsSpeaking(false)
+          onEnd?.()
+        },
+      })
+      clipRef.current = clip
+      return
+    }
+    // Sanskrit / disabled-zone line with no recording: never TTS. Runs silent, callback on schedule (like mute).
+    if (shouldSilenceTts(text)) {
       onStart?.()
       startCueTimer(text, cue)
       runSilent(onEnd, estimateSpeechMs(text))
@@ -319,6 +346,7 @@ export const useGaneshaVoice = () => {
     window.speechSynthesis?.cancel()
     setIsSpeaking(false)
     flushSilent()
+    { const c = clipRef.current; clipRef.current = null; c?.stop(true) }
   }, [flushSilent])
 
   // ── Mute ─────────────────────────────────────────────────────────────────────
@@ -338,6 +366,7 @@ export const useGaneshaVoice = () => {
       a.utterance.onerror = null
     }
     window.speechSynthesis?.cancel()
+    if (a.clip) { const c = clipRef.current; clipRef.current = null; c?.stop(false) } // silence now; onEnd still fires on schedule below
     setIsSpeaking(false)
     runSilent(a.onEnd, a.ms - (Date.now() - a.at))
   }, [runSilent])
@@ -374,6 +403,7 @@ export const useGaneshaVoice = () => {
       speakTimerRef.current = null
     }
     if (silentTimerRef.current) clearTimeout(silentTimerRef.current.id)
+    { const c = clipRef.current; clipRef.current = null; c?.stop(false) } // scene gone: never fire into it
     window.speechSynthesis?.cancel()
   }, [])
 

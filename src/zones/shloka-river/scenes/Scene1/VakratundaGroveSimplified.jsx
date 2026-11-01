@@ -516,7 +516,7 @@ const VakratundaGroveContent = ({
       scene10_maha_next_log: 'Drag the next log.',
       scene10_maha_keep_adding: 'Keep adding logs to the raft.',
       scene10_maha_place_here: 'Put the log here.',
-      scene10_maha_success: 'Mahakaay! You made space so everyone could come along.',
+      scene10_maha_success: 'Mahakaya! You made space so everyone could come along.',
     };
     if (webSpeechMap[key]) {
       speakWebSpeech(stripLeadingSpeechText(webSpeechMap[key], options.stripLeadingText), onEnded, options.onStart, options.cue, key);

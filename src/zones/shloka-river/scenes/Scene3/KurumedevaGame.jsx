@@ -925,7 +925,7 @@ export default function KurumedevaGame({
         playSceneLine('scene12KuruDone', () => {
           successVoDoneRef.current = true;
           completeAfterSuccess();
-        }, { stripLeadingText: 'Kuru Me Deva' });
+        }, { stripLeadingText: 'Kurumedeva' });
       };
       const startWord = () => {
         if (playWord) playWord('kurumedeva', afterWord);

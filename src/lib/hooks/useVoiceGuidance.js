@@ -12,6 +12,7 @@ import {
 } from '../config/content/voiceGuidance';
 
 import { sfx } from '../audio/sfx';
+import { getVoClipUrl, shouldSilenceTts } from '../audio/voClip';
 import { ambience } from '../audio/ambience';
 import { createSpeechStartWatcher } from '../utils/speechStartWatch';
 
@@ -191,8 +192,18 @@ const useVoiceGuidance = (zoneId, sceneId, {
     }
 
     const script = getVoiceScript(zoneId, sceneId, key);
-    const path = getAudioPath(zoneId, sceneId, key);
+    // A recorded clip for this exact line (voiceover/script.csv) rides the existing MP3 branch below.
+    // Skipped when the caller rewrites the text (override / stripped lead-in): that clip would not match.
+    const path = getAudioPath(zoneId, sceneId, key)
+      || (!textOverride && !stripLeadingText ? getVoClipUrl(script?.text) : null);
     const ttsText = stripLeadingSpeechText(textOverride || script?.text, stripLeadingText);
+    if (!path && shouldSilenceTts(ttsText)) {
+      // Sanskrit / disabled-zone line with no recording: never TTS; silent, callback on schedule (like mute).
+      clearSilentTimers();
+      startCueTimer(ttsText, cue);
+      playSilent(ttsText, onEnded);
+      return;
+    }
     if (!path) {
       if (ttsText && typeof window !== 'undefined' && window.speechSynthesis && typeof SpeechSynthesisUtterance !== 'undefined') {
         audioVisibilityCleanupRef.current?.();

@@ -5,6 +5,7 @@ import { getZoneTheme, getProfilePillBtnStyle } from '../../../lib/config/ZoneTh
 import { GANESHA_POSE_ASSETS } from '../../../lib/config/ganeshaUsageSystem';
 import useAppVisibility from '../../../lib/hooks/useAppVisibility';
 import { createSpeechStartWatcher } from '../../../lib/utils/speechStartWatch';
+import { getVoClipUrl, playVoClip, shouldSilenceTts } from '../../../lib/audio/voClip';
 import ProfilePillBtn from '../../../lib/components/shared/ProfilePillBtn';
 import symbolMooshikaIcon from '../../symbol-mountain/shared/images/icons/symbol-mooshika-new.webp';
 import symbolModakIcon from '../../symbol-mountain/shared/images/icons/symbol-modak-new.webp';
@@ -95,9 +96,28 @@ const openingSpeechWatcher =
     ? createSpeechStartWatcher({ speechSynthesis: window.speechSynthesis })
     : null;
 
+// Recorded opening line (voiceover/script.csv), if one exists. Module-level so close/unmount can stop it.
+let openingClip = null;
+const stopOpeningClip = () => {
+  const clip = openingClip;
+  openingClip = null;
+  clip?.stop(false);
+};
+
 const speakOpeningVoiceover = (text, isStillCurrent) => {
   if (typeof window === 'undefined') return false;
-  if (!isGlobalAudioEnabled() || !canUseTimedSpeechHint()) return false;
+  if (!isGlobalAudioEnabled()) return false;
+  // A recording wins over TTS (and, unlike TTS, is not blocked on iOS).
+  const clipUrl = getVoClipUrl(text);
+  if (clipUrl) {
+    if (!isStillCurrent()) return false;
+    stopOpeningClip();
+    const clip = playVoClip(clipUrl, { onEnd: () => { if (openingClip === clip) openingClip = null; } });
+    openingClip = clip;
+    return true;
+  }
+  if (shouldSilenceTts(text)) return false; // Sanskrit with no recording: stay silent, never TTS
+  if (!canUseTimedSpeechHint()) return false;
   if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return false;
   if (!text || !openingSpeechWatcher) return false;
 
@@ -139,6 +159,7 @@ const isOpeningVoActive = () => {
 };
 
 const stopAllOpeningVoAudio = () => {
+  stopOpeningClip();
   if (typeof document !== 'undefined') {
     document.querySelectorAll('audio').forEach((audioEl) => {
       if (audioEl.loop) return;
@@ -336,7 +357,7 @@ const OpeningModal = ({
     }, 300);
     let pollTimer = null;
 
-    return () => { clearTimeout(timer); clearTimeout(pollTimer); };
+    return () => { clearTimeout(timer); clearTimeout(pollTimer); stopOpeningClip(); };
   }, [content.voiceover, hasContent, visible]);
 
   if (!hasContent || !visible) return null;

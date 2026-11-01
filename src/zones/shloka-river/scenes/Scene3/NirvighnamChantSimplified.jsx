@@ -436,7 +436,7 @@ const NirvighnamChantContent = ({
       kuru_hint_monkey_clue: "Who can help tie the rope?",
       kuru_hint_plank_soft: "Drag a plank toward the bridge.",
       kuru_hint_plank_direct: "Drag the plank onto the glowing place.",
-      scene12KuruDone:      "Kuru Me Deva! You asked for help and built the bridge.",
+      scene12KuruDone:      "Kurumedeva! You asked for help and built the bridge.",
       sceneComplete:       "You cleared the path and asked for help when things got hard.",
     };
     if (map[key]) { speakWebSpeech(stripLeadingSpeechText(map[key], options.stripLeadingText), onEnded, options.onStart, options.cue, key); return; }

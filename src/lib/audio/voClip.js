@@ -60,3 +60,20 @@ export function playVoClip(url, { volume = 1, onStart, onEnd } = {}) {
     stop(fireEnd = true) { try { audio.pause(); } catch { /* already gone */ } finish(fireEnd); },
   };
 }
+
+// ── Web Speech policy ────────────────────────────────────────────────────────
+// Web Speech mispronounces Sanskrit, so a line containing a shloka/Sanskrit word is NEVER read by TTS:
+// with no recording it runs silently (on-screen text + SFX, callback on schedule - same as muted).
+// Plain English lines keep TTS until their zone's clips have landed; then add the zone prefix here
+// ('hut' | 'mountain' | 'river') and every line of that zone without a clip goes silent too.
+export const VO_TTS_DISABLED_ZONES = [];
+
+const SANSKRIT_LINE = /\b(vakra\s*tunda|maha\s*kaa?y\w*|surya\s*koti|sama\s*prabha|nir\s*vighnam|kuru\s*me\s*deva|sarva\s*-?\s*kaa?ryeshu|sarvada)\b/i;
+
+/** True when TTS must not read this line (call only AFTER checking getVoClipUrl). */
+export function shouldSilenceTts(text) {
+  if (!text) return false;
+  if (SANSKRIT_LINE.test(text)) return true;
+  const zone = (VO_CLIP_BY_TEXT[normalizeVoText(text)] || '').split('-')[0];
+  return Boolean(zone) && VO_TTS_DISABLED_ZONES.includes(zone);
+}

@@ -83,7 +83,7 @@ export const VOICE_SCRIPTS = {
         text: "Put the log here."
       },
       scene10_maha_success: {
-        text: "Mahakaay! You made space so everyone could come along."
+        text: "Mahakaya! You made space so everyone could come along."
       },
       scene10_maha_keep_adding: {
         text: "Keep adding logs to the raft."
@@ -118,7 +118,7 @@ export const VOICE_SCRIPTS = {
 
       // Mahakaya word reveal
       'mahakaya-word-reveal': {
-        text: "Mahakaay - great form!"
+        text: "Mahakaya - great form!"
       },
 
       // Scene complete
@@ -210,7 +210,7 @@ export const VOICE_SCRIPTS = {
         text: "You cleared the way and helped Turtle through."
       },
       scene12KuruDone: {
-        text: "Kuru Me Deva! You asked for help and built the bridge."
+        text: "Kurumedeva! You asked for help and built the bridge."
       },
 
       // Kurumedeva bridge game (v2 — no more solo try/fail beats)
@@ -411,7 +411,7 @@ export const VOICE_SCRIPTS = {
         text: "Which symbol reminds you to make space for others?"
       },
       finaleMahakayaHintL3: {
-        text: "Remember Mahakaay."
+        text: "Remember Mahakaya."
       },
       finaleSuryakotiHintL2: {
         text: "Which symbol can help you find hope inside?"
@@ -435,13 +435,13 @@ export const VOICE_SCRIPTS = {
         text: "Which symbol reminds you to ask for help?"
       },
       finaleKurumedevaHintL3: {
-        text: "Remember Kuru Me Deva."
+        text: "Remember Kurumedeva."
       },
       finaleSarvakaryeshuHintL2: {
         text: "Which symbol reminds you of Ganesha in all you do?"
       },
       finaleSarvakaryeshuHintL3: {
-        text: "Remember Sarva Karyeshu."
+        text: "Remember Sarvakaryeshu."
       },
       finaleSarvadaHintL2: {
         text: "Which symbol reminds you Ganesha is always with you?"

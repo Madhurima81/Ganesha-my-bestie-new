@@ -599,6 +599,11 @@ Object.keys(localStorage).filter(k => k.includes('final-scene')).map(k => [k, JS
 - **Rules:** a mini-game that resets itself when `isActive` goes false must also refuse to start new work (voice, timers, completion) while inactive. Do not rely on the reset clearing a "started" flag if the effect that reads it can run again before the state is reset. Check `SuryakotiGame.jsx` (phase `hop`) and `NirvighnamGame.jsx`, which use the same `doneAnnouncedRef` / `completionVoStartedRef` pattern, if a word or success line ever plays twice there.
 - **How it was found:** a temporary trace that logged the caller chain of every `speech:requested` (`new Error().stack` in the scene's speak block). Reuse that trick for any "line plays twice" bug.
 
+## 64. Respelling a Sanskrit word in a line silently breaks `stripLeadingText`
+- **Symptom:** after "Mahakaay!" was corrected to "Mahakaya!" in the line text, the strip pattern `Mahakaay` (a prefix match, no end anchor) would have left "a! You made space..." for the voice.
+- **Rule:** `stripLeadingText` must be spelled exactly like the line's first word. When you change a Sanskrit spelling in `voiceGuidance.js` or a scene-local line map, grep `stripLeadingText:` for the old spelling in the same commit. Canonical spellings are the 8 words in CLAUDE.md (joined: Kurumedeva, Sarvakaryeshu), never TTS respellings.
+- **Related:** lines containing a Sanskrit word are never read by Web Speech (`shouldSilenceTts`, lib/audio/voClip.js); with no recording they run silent, callback on schedule, like mute.
+
 ## Before you call a scene "done"
 1. `npm run check:css` — no new clashes. 2. `vite build` passes. 3. The scene's checklist
 (`http://localhost:5173/?unlockall=1`) passes, including Replay and "Continue from the completion modal".

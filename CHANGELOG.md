@@ -1,9 +1,10 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
-## [2026-11-01] - Voiceover script sheet + optional recorded-clip helper (no game logic changed)
-**Touched:** voiceover/ (new: script.csv, generate_script.py, build-manifest.mjs, wiring.diff, README.md), src/lib/audio/voClip.js (new, not imported anywhere yet), src/lib/config/content/voClipMap.generated.js (new), public/audio/vo-manifest.json (new, empty).
-**Changed:** 352-line script sheet across the zones; helper plays /audio/<file>.mp3 only if listed in the manifest, else returns null. Wiring (useGaneshaVoice.speak, useVoiceGuidance.playVoice, main.jsx) is a diff only - NOT applied.
-**Open:** Madhurima to review wiring.diff and decide whether the existing Web Speech fallback stays; confirm Sanskrit spellings flagged SPELLING CHECK (Mahakaay, Kuru Me Deva, Sarva Karyeshu); direct-TTS files listed in the reply need their own wiring.
+## [2026-11-01] - Voiceover: spellings fixed, recorded-clip wiring applied, TTS cut for Sanskrit
+**Touched:** voiceGuidance.js (6 lines), VakratundaGroveSimplified.jsx, NirvighnamChantSimplified.jsx, MahakayaRescueGame.jsx + KurumedevaGame.jsx (stripLeadingText only), useGaneshaVoice.js, useVoiceGuidance.js, OpeningModal.jsx, main.jsx, src/lib/audio/voClip.js (+test), voiceover/ (script.csv now 320 rows, excluded-cave.csv, generator), docs/KNOWN_PITFALLS.md #64.
+**Changed:** Mahakaay/Kuru Me Deva/Sarva Karyeshu -> canonical Mahakaya/Kurumedeva/Sarvakaryeshu. Recorded clip plays if listed in public/audio/vo-manifest.json (empty now). Lines with a Sanskrit word never use Web Speech: silent timer instead. English keeps TTS; zone-by-zone cut via VO_TTS_DISABLED_ZONES in voClip.js.
+**Verified:** vite build OK; jest: new voClip tests pass, 4 suites fail identically before/after (prana try-it-today, BeatPlayerGame, PoseImage, InteractiveElement); headless load of built app: manifest fetched once, 0 page errors. NOT tested: any scene playing a real clip, mute/sidebar/tab-hide with a clip, iPad.
+**Open:** test on a staging preview with real mp3s; direct-TTS files still unwired (Modak FlowerJourney/Garland, Ears/Eyes, BeatPlayerGame/Tusk, 4 Shloka River wrappers); only 5 opening modals have a voiceover line.
 
 ## [2026-10-15] - My Indian Story completion voice and journey button
 **Touched:** src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx, src/lib/components/celebration/SceneCompletionCelebration.jsx (commit e3b34569).
