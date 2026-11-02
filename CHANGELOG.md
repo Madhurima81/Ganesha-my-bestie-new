@@ -1,11 +1,21 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-02 k] - iPad / laptop test results for the 2 November fixes (no code)
+**Tested by Madhurima after the staging builds:**
+- Modak: opening voice line and the "Press and hold" line now play. Working.
+- Ears game sounds: working.
+- Press-and-hold image menu (Save to Photos / Search inside image): gone in the installed Home Screen app. (Seen earlier in the Google app browser; that app is not the target.)
+- Home Screen app has its own storage, separate from the Safari tab: confirmed (setup started again after installing). Added the "Add to Home Screen first" step (entry c).
+- Inner Mandala thin line: STILL shows on iPad in every Symbol Mountain scene when the second symbol flies to its petal; never in Shloka River; not on desktop. Not reproducible at 1180x820 in a local browser. The iOS-only backdrop change (entry i) is untested; if the line stays, revert it and look at symbolToPetal animating left/top.
+- Nirvighnam froze once on the success line (muted run); fine after a reload; cause not found. Safety net added (entry h) and writes `completion:safety-net-fired` to __sceneLog() if it ever acts.
+**Open:** pairing code (docs/PAIRING_CODE_PLAN.md, 4 decisions pending); Festival Square Rangoli CSS needs scoping before that zone goes live; the festival-square-fixes branch is far behind staging (its About Me Hut files equal staging's).
+
 ## [2026-11-02 g] - Festival Square Rangoli: simplified coloring layout (parked zone)
 **Touched:** src/zones/festival-square/Game2-Rangoli/FestivalRangoliGame.jsx, FestivalRangoliGame.css.
 **Changed:** the two Rangoli files from the festival-square-fixes branch (3c9cf241) copied onto staging as they are there: simplified coloring layout, completion sparkles and title removed, plus that branch's earlier Rangoli edits. Staging had not changed these files since the branch split, so nothing was overwritten. Festival Square is parked, not live.
 **NOT verified:** not played. The branch's other Festival Square files (scene reset config, harness, etc.) were not brought over. The new CSS uses generic global class names (.design-card, .rangoli-canvas) that need scoping before the zone goes live.
 
-## [2026-11-02 f] - Vakratunda Rescue: new layout on every screen
+## [2026-11-02 j] - Vakratunda Rescue: new layout on every screen
 **Touched:** src/zones/shloka-river/scenes/Scene1/VakratundaRescueGame.jsx.
 **Changed:** new frog start, family spot, water area and stone / log pile / reeds positions (authored in the Trace Debug editor). Phones no longer override the positions, only the sizes (stone, logs, reeds, frog), so the water area matches on phone, iPad and desktop. The syllable bands still derive from the start and family spots. The edited copy in the main folder was on an older branch and would have reverted the phone code and the ?debug=1 gating, so only the layout numbers were taken.
 **NOT verified:** not played; phone layout not checked.
@@ -16,12 +26,12 @@ Append one entry per work session. Newest on top.
 **Verified:** 5 jest tests; real render on the map (1194x834, mouse held): bubble above the button, never overlapping it, bar filling, "Voice is off" after the hold and still shown after release; parse and build OK.
 **NOT verified:** with a real finger on the iPad (how far the thumb reaches above the 36px button); phone sizes; the bubble over other map elements on smaller screens.
 **Open:** no sound feedback on mute (SFX keeps playing by design); the button measures 36px wide on tablet-size screens in this render, which is under the 60px touch rule unless a larger invisible hit area exists: not checked.
-## [2026-11-02 e] - Inner Mandala: iOS-only backdrop change (experiment for the thin line)
+## [2026-11-02 i] - Inner Mandala: iOS-only backdrop change (experiment for the thin line)
 **Touched:** src/lib/components/celebration/InnerMandala.css.
 **Changed:** a thin dark line shows across the mandala on iPad while the second symbol flies to its petal, in every Symbol Mountain scene and never in Shloka River; not reproducible on desktop (mandala draws cleanly at 1180x820). Guess: WebKit seam from animated children over backdrop-filter. On iOS only (`@supports (-webkit-touch-callout: none)`) the blur is replaced by a slightly darker plain wash. Desktop/Android unchanged.
 **NOT verified:** that it removes the line (iPad only). If it still shows, revert this and look at symbolToPetal animating left/top (will-change left, top) instead.
 
-## [2026-11-02 d] - Nirvighnam: completion safety net
+## [2026-11-02 h] - Nirvighnam: completion safety net
 **Touched:** src/zones/shloka-river/scenes/Scene3/NirvighnamGame.jsx.
 **Changed:** Nirvighnam froze once on the success line (muted run, cause not found; fine after reload). Added a last-resort timer when the swim starts: if the game has not completed about 14.5 s plus the swim time later, it marks swim and success line done and completes the scene once, and logs `completion:safety-net-fired`. Pausable, cancelled by clearTimers; no shared voice or timer code touched.
 **NOT verified:** the freeze itself was not reproduced; the net was only parse-checked, not exercised in the scene.
