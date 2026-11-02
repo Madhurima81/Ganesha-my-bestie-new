@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-02 l] - Drawing pad: placed words can be moved again; lighter text box
+**Touched:** src/zones/about-me-hut/components/Drawingpad.jsx, Drawingpad.css (Favourite Food and Dreams & Wishes both use it).
+**Changed:** typed words used to be painted onto the picture as soon as the child tapped away, so they could not be moved. They now stay a movable layer (drag any time, kept inside the paper) and are drawn into the picture only on save, auto-save and download. Undo moves a word back, a second Undo removes it. Text box restyled lighter: thin soft-coral outline and shadow instead of a dashed border, smaller quieter move icon, delete is a small 28px disc (60px touch area kept).
+**Verified:** local run of the pad with a mouse: place, drag, saved image matches the dragged position, Undo x2. Not tested on iPad with a finger, or inside the two games.
+**Limits:** words in a reopened saved draft are part of the picture (not movable); tapping a placed word does not reopen it for editing; the eraser cannot rub out placed words.
+
 ## [2026-11-02 k] - iPad / laptop test results for the 2 November fixes (no code)
 **Tested by Madhurima after the staging builds:**
 - Modak: opening voice line and the "Press and hold" line now play. Working.

@@ -4,8 +4,8 @@ import './Drawingpad.css';
 
 // Shared "draw it" pad (Favourite Food, Dreams & Wishes).
 // The canvas has a FIXED logical size, so strokes, typed text and the exported PNG always line up no
-// matter how the pad is laid out on screen. Typed text is drawn straight onto the canvas, so Undo,
-// the eraser and the saved image all treat it like any other mark.
+// matter how the pad is laid out on screen. Typed text stays a movable layer above the paper (drag it any
+// time, Undo takes it back) and is drawn into the picture only when it is saved, auto-saved or downloaded.
 const W = 900;
 const H = 600;
 const BRUSH = [4, 10, 20];
@@ -112,6 +112,8 @@ const DrawingPad = ({
   const busyRef = useRef(false); // an undo/redo image is still loading
   const textRef = useRef(null); // mirror of textInput for async handlers
   const dragRef = useRef(null); // { px, py, x, y, moved } while the text box is being moved
+  const placedRef = useRef([]); // mirror of `placed` for async handlers
+  const placedDragRef = useRef(null); // { id, px, py, x, y, pushed } while a placed word is being moved
 
   const [color, setColor] = useState(COLORS[0].hex);
   const [sizeIdx, setSizeIdx] = useState(1);
@@ -119,6 +121,8 @@ const DrawingPad = ({
   // { x, y, value } in canvas px = top-left of the text box. The box floats above the paper (type, drag,
   // recolour, resize) until the child taps something else, which draws it onto the canvas.
   const [textInput, setTextInput] = useState(null);
+  // Words already placed: [{ id, x, y, value, size, color }]; x = left of the text, y = its vertical centre (canvas px).
+  const [placed, setPlaced] = useState([]);
   const [counts, setCounts] = useState({ undo: 0, redo: 0 });
   const [showIntro, setShowIntro] = useState(true);
 
@@ -131,14 +135,39 @@ const DrawingPad = ({
 
   const syncCounts = () => setCounts({ undo: undoRef.current.length, redo: redoRef.current.length });
 
-  const snapshot = () => canvasRef.current.toDataURL('image/png');
+  const setPlacedAll = (list) => {
+    placedRef.current = list;
+    setPlaced(list);
+  };
+
+  // Strokes only (what undo/redo keep), and the full picture (strokes + placed words) for save / auto-save.
+  const canvasShot = () => canvasRef.current.toDataURL('image/png');
+  const stateNow = () => ({ img: canvasShot(), texts: placedRef.current });
+
+  const snapshot = () => {
+    if (!placedRef.current.length) return canvasShot();
+    const out = document.createElement('canvas');
+    out.width = W;
+    out.height = H;
+    const c = out.getContext('2d');
+    c.drawImage(canvasRef.current, 0, 0);
+    placedRef.current.forEach((t) => {
+      c.save();
+      c.font = `700 ${t.size}px ${FONT}`;
+      c.textBaseline = 'middle';
+      c.fillStyle = t.color;
+      c.fillText(t.value, t.x, t.y, Math.max(40, W - t.x - 8));
+      c.restore();
+    });
+    return out.toDataURL('image/png');
+  };
 
   const autoSave = () => {
     if (onAutoSave) onAutoSave(snapshot());
   };
 
   const pushUndo = () => {
-    undoRef.current = [...undoRef.current.slice(-(MAX_UNDO - 1)), snapshot()];
+    undoRef.current = [...undoRef.current.slice(-(MAX_UNDO - 1)), stateNow()];
     redoRef.current = [];
     syncCounts();
   };
@@ -175,18 +204,18 @@ const DrawingPad = ({
     if (!t) return;
     const value = t.value.trim();
     const el = textElRef.current;
-    const paper = paperRef.current;
+    const canvas = canvasRef.current;
     let x = 0;
     let y = 0;
-    if (el && paper) {
-      const pr = paper.getBoundingClientRect();
+    if (el && canvas) {
+      const cr = canvas.getBoundingClientRect();
       const er = el.getBoundingClientRect();
-      const k = W / pr.width;
-      x = (er.left - pr.left) * k;
-      y = (er.top - pr.top) * k + (er.height * k) / 2;
+      const k = W / cr.width;
+      x = (er.left + 4 - cr.left) * k; // 4px = the typing field's side padding
+      y = (er.top - cr.top) * k + (er.height * k) / 2;
     }
     setText(null);
-    if (!value || !el || !paper) return;
+    if (!value || !el || !canvas) return;
 
     const size = TEXT_SIZE[sizeIdx];
     try {
@@ -194,14 +223,43 @@ const DrawingPad = ({
     } catch (err) { /* fall back to the next font */ }
 
     pushUndo();
-    const c = ctx();
-    c.save();
-    c.font = `700 ${size}px ${FONT}`;
-    c.textBaseline = 'middle';
-    c.fillStyle = color;
-    c.fillText(value, x, y, Math.max(40, W - x - 8));
-    c.restore();
+    setPlacedAll([...placedRef.current, { id: `${Date.now()}-${Math.random()}`, x, y, value, size, color }]);
     autoSave();
+  };
+
+  // A word that is already on the paper can be picked up and moved again, any time.
+  const onPlacedDown = (e, t) => {
+    if (!e.isPrimary || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setShowIntro(false);
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    placedDragRef.current = { id: t.id, px: e.clientX, py: e.clientY, x: t.x, y: t.y, pushed: false };
+  };
+
+  const onPlacedMove = (e) => {
+    const d = placedDragRef.current;
+    if (!d || !canvasRef.current) return;
+    e.preventDefault();
+    const cr = canvasRef.current.getBoundingClientRect();
+    const k = W / cr.width;
+    if (!d.pushed) {
+      if (Math.hypot(e.clientX - d.px, e.clientY - d.py) < 4) return; // a tap is not a move
+      pushUndo();
+      d.pushed = true;
+    }
+    const er = e.currentTarget.getBoundingClientRect();
+    const halfH = (er.height * k) / 2;
+    const x = Math.min(Math.max(0, d.x + (e.clientX - d.px) * k), Math.max(0, W - (er.width * k)));
+    const y = Math.min(Math.max(halfH, d.y + (e.clientY - d.py) * k), H - halfH);
+    setPlacedAll(placedRef.current.map((t) => (t.id === d.id ? { ...t, x, y } : t)));
+  };
+
+  const onPlacedUp = () => {
+    const d = placedDragRef.current;
+    if (!d) return;
+    placedDragRef.current = null;
+    if (d.pushed) autoSave();
   };
 
   // Drag the text box from anywhere except the typing field. Kept inside the paper.
@@ -318,7 +376,7 @@ const DrawingPad = ({
     setTool(next);
   };
 
-  const restoreFrom = (url) => {
+  const restoreFrom = (entry) => {
     busyRef.current = true;
     const img = new Image();
     img.onload = () => {
@@ -326,11 +384,12 @@ const DrawingPad = ({
       c.fillStyle = '#ffffff';
       c.fillRect(0, 0, W, H);
       c.drawImage(img, 0, 0, W, H);
+      setPlacedAll(entry.texts || []);
       busyRef.current = false;
       autoSave();
     };
     img.onerror = () => { busyRef.current = false; };
-    img.src = url;
+    img.src = entry.img;
   };
 
   const handleUndo = () => {
@@ -341,7 +400,7 @@ const DrawingPad = ({
     if (busyRef.current || !undoRef.current.length) return;
     const prev = undoRef.current[undoRef.current.length - 1];
     undoRef.current = undoRef.current.slice(0, -1);
-    redoRef.current = [...redoRef.current, snapshot()];
+    redoRef.current = [...redoRef.current, stateNow()];
     syncCounts();
     restoreFrom(prev);
   };
@@ -350,7 +409,7 @@ const DrawingPad = ({
     if (busyRef.current || !redoRef.current.length) return;
     const next = redoRef.current[redoRef.current.length - 1];
     redoRef.current = redoRef.current.slice(0, -1);
-    undoRef.current = [...undoRef.current, snapshot()];
+    undoRef.current = [...undoRef.current, stateNow()];
     syncCounts();
     restoreFrom(next);
   };
@@ -489,6 +548,21 @@ const DrawingPad = ({
             onPointerCancel={endStroke}
             onContextMenu={(e) => e.preventDefault()}
           />
+
+          {placed.map((t) => (
+            <div
+              key={t.id}
+              className="dpad-placed"
+              style={{ '--dpad-x': t.x / W, '--dpad-y': t.y / H, '--dpad-ts': t.size, '--dpad-ink': t.color }}
+              onPointerDown={(e) => onPlacedDown(e, t)}
+              onPointerMove={onPlacedMove}
+              onPointerUp={onPlacedUp}
+              onPointerCancel={onPlacedUp}
+              onContextMenu={(e) => e.preventDefault()}
+            >
+              {t.value}
+            </div>
+          ))}
 
           {textInput && (
             <div
