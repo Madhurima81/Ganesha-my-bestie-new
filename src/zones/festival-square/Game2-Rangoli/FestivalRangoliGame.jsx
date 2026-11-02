@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import OpeningModal from '../../shared/components/OpeningModal.jsx';
 import './FestivalRangoliGame.css';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
@@ -14,13 +14,15 @@ import { getCompletionModal } from "../../../lib/config/content";
 import ganeshaArtist from './assets/images/ganesha-artist.png';
 // In FestivalPianoGame.jsx (or any game inside Game1-piano folder)
 import GamePauseMenu from '../components/GamePauseMenu';
-import HomeButton from '../../../lib/components/ui/HomeButton';
 import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
-import AudioToggle from '../../../lib/components/ui/AudioToggle';
-import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
 import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
 import SceneManager from '../../../lib/components/scenes/SceneManager';
+import GameStateManager from '../../../lib/services/GameStateManager';
+import ProgressManager from '../../../lib/services/ProgressManager';
+import SimpleSceneManager from '../../../lib/services/SimpleSceneManager';
+import useSceneReset from '../../../lib/hooks/useSceneReset';
+import { getSceneResetConfig } from '../../../lib/config/SceneResetConfigs';
 
 // 🎨 DESIGN COMPLETION OVERLAY COMPONENT
 const DesignCompletionOverlay = ({
@@ -28,27 +30,14 @@ const DesignCompletionOverlay = ({
   designName,
   starsEarned,
   onPlayAgain,
-  onCreateAnother
+  onCreateAnother,
+  onFinish
 }) => {
   if (!show) return null;
 
   return (
     <div className="mission-completion-overlay">
-      <div className="completion-sparkles">
-        {Array.from({ length: 20 }).map((_, i) => (
-          <div
-            key={i}
-            className="completion-sparkle"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 2}s`
-            }}
-          >
-            ⭐
-          </div>
-        ))}
-      </div>
+
 
       <div className="completion-card">
         <div
@@ -57,29 +46,30 @@ const DesignCompletionOverlay = ({
         />
 
         <div className="completion-message">
-          <h1 className="completion-title">🎨 Rangoli Complete! 🎨</h1>
+          <h1 className="completion-title">Look at your rangoli!</h1>
           <p className="completion-subtitle">{designName}</p>
 
-          <div className="completion-stars">
-            {Array.from({ length: starsEarned }).map((_, i) => (
-              <span key={i} className="star-earned">⭐</span>
-            ))}
-          </div>
-
           <p className="completion-blessing">
-            "Beautiful artwork, little artist! Your rangoli shines bright!"
+            You made something beautiful.
           </p>
         </div>
 
         <div className="completion-buttons">
+          {onFinish && (
+            <button className="completion-btn rangoliFinishBtn" onClick={onFinish}>
+              <span className="btn-icon">✓</span>
+              <span className="btn-text">Done</span>
+            </button>
+          )}
+
           <button className="completion-btn play-again" onClick={onPlayAgain}>
             <span className="btn-icon">🔄</span>
-            <span className="btn-text">Play Again!</span>
+            <span className="btn-text">Start Over</span>
           </button>
 
           <button className="completion-btn create-another" onClick={onCreateAnother}>
             <span className="btn-icon">🎨</span>
-            <span className="btn-text">Create Another!</span>
+            <span className="btn-text">Make Another</span>
           </button>
         </div>
       </div>
@@ -102,10 +92,10 @@ const PHASES = {
 const RANGOLI_DESIGNS = [
   {
     id: 'lotus',
-    name: 'Sacred Lotus',
+    name: 'Lotus',
     culturalNote: 'The lotus brings prosperity and peace to your home!',
     difficulty: 'Easy',
-    sections: 24,
+    sections: 16,
     description: 'Beautiful blooming lotus pattern'
   },
   {
@@ -113,7 +103,7 @@ const RANGOLI_DESIGNS = [
     name: 'Dancing Peacock',
     culturalNote: 'The peacock dances to welcome good fortune!',
     difficulty: 'Medium',
-    sections: 32,
+    sections: 20,
     description: 'Graceful peacock with flowing feathers'
   },
   {
@@ -121,15 +111,15 @@ const RANGOLI_DESIGNS = [
     name: 'Festival Mandala',
     culturalNote: 'Sacred circles connect us to the universe!',
     difficulty: 'Advanced',
-    sections: 40,
+    sections: 24,
     description: 'Intricate geometric mandala design'
   }
 ];
 
 // Festival color palette - vibrant rangoli colors
 const COLOR_PALETTE = [
-  '#FF6B6B', '#FFD93D', '#FF9A3C', '#FF5677', '#9D65C9', '#6BCB77',
-  '#4D96FF', '#2BCDC1', '#FFB6C1', '#87CEEB', '#DDA0DD', '#F0E68C'
+  '#FF6B6B', '#FFD93D', '#FF9A3C', '#9D65C9',
+  '#6BCB77', '#4D96FF', '#2BCDC1', '#FFB6C1'
 ];
 
 const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete, onNavigate, zoneId, sceneId }) => {
@@ -157,7 +147,15 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
   useEffect(() => { setCurrentPhase(gameState.phase); }, [gameState.phase, setCurrentPhase]);
 
   // Saved progress for each design
-  const [savedDesigns, setSavedDesigns] = useState({});
+  const storageKey = `gmb-rangoli-progress-${typeof localStorage !== 'undefined' ? (localStorage.getItem('activeProfileId') || 'guest') : 'guest'}`;
+  const [savedDesigns, setSavedDesigns] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(storageKey) || '{}'); }
+    catch { return {}; }
+  });
+  const [undoStack, setUndoStack] = useState([]);
+  useEffect(() => {
+    try { localStorage.setItem(storageKey, JSON.stringify(savedDesigns)); } catch (error) { console.warn('Unable to save rangoli', error); }
+  }, [savedDesigns, storageKey]);
 
   // Current coloring state
   const [colors, setColors] = useState({});
@@ -171,6 +169,7 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
   const [ganeshaMessage, setGaneshaMessage] = useState('');
   const [showGaneshaMessage, setShowGaneshaMessage] = useState(false);
   const [showPauseMenu, setShowPauseMenu] = useState(false);
+  const { resetScene } = useSceneReset(sceneActions, 'festival-square', 'game2', getSceneResetConfig('game2'));
   const completionModalContent = getCompletionModal('festival-square', 'game2');
   const completionIcons = ['learn-icon', 'draw-icon', 'design-icon'];
 
@@ -228,16 +227,31 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
     setShowGaneshaMessage(false);
   };
 
-  // Calculate progress from colors
-  const calculateProgress = (colorsObj, totalSections) => {
-    const coloredCount = Object.values(colorsObj).filter(color => color !== 'white').length;
-    return {
-      coloredSections: coloredCount,
-      stars: Math.min(8, Math.floor(coloredCount / (totalSections / 8))),
-      celebrationStarted: coloredCount >= Math.floor(totalSections * 0.4),
-      showDoneButton: coloredCount >= Math.floor(totalSections * 0.4)
-    };
-  };
+  // Colored regions are counted for lightweight progress only (not rewards).
+  const calculateProgress = (colorsObj) => ({
+    coloredSections: Object.values(colorsObj).filter(c => c && c !== 'white').length,
+    stars: 0,
+    celebrationStarted: false,
+    showDoneButton: Object.values(colorsObj).some(c => c && c !== 'white')
+  });
+
+  // Keep the Done affordance and lightweight progress in sync with recoloring/Undo.
+  useEffect(() => {
+    if (gameState.phase !== PHASES.COLORING) return;
+    const progress = calculateProgress(colors);
+    setGameState(prev => (prev.coloredSections === progress.coloredSections &&
+      prev.showDoneButton === progress.showDoneButton) ? prev : ({...prev, ...progress}));
+  }, [colors, gameState.phase]);
+
+  // Persist every edit, including changes made without leaving the screen.
+  useEffect(() => {
+    const id = gameState.selectedDesign?.id;
+    if (id && gameState.phase === PHASES.COLORING && Object.keys(colors).length) {
+      setSavedDesigns(prev => ({ ...prev, [id]: {
+        colors: { ...colors }, progress: calculateProgress(colors)
+      }}));
+    }
+  }, [colors, gameState.phase, gameState.selectedDesign?.id]);
 
   // Save current progress
   const saveCurrentProgress = () => {
@@ -283,6 +297,7 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
       };
     }
 
+    setUndoStack([]);
     setColors(initialColors);
 
     setGameState(prev => ({
@@ -293,30 +308,11 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
       ...progress
     }));
 
-    // Show cultural note
-    setShowCulturalNote({
-      note: design.culturalNote,
-      design: design.name
-    });
-    safeSetTimeout(() => setShowCulturalNote(null), 4000);
   };
 
   const handleDesignSelection = (design) => {
-    const savedProgress = savedDesigns[design.id];
-    const hasProgress = savedProgress && savedProgress.progress.coloredSections > 0;
-
-    // Check if they're selecting the same design they were just working on
-    const isSameAsLastWorked = lastWorkedDesign && lastWorkedDesign.id === design.id;
-
-    if (isSameAsLastWorked && hasProgress) {
-      // Show confirmation modal - they're picking the same design again
-      setPendingDesign(design);
-      setShowDesignConfirmation(true);
-    } else {
-      // Different design or no progress - proceed normally
-      proceedWithDesign(design, false);
-      setLastWorkedDesign(null); // Clear the tracker
-    }
+    // Returning to a saved design resumes without an extra confirmation dialog.
+    proceedWithDesign(design, false);
   };
 
   const proceedWithDesign = (design, startFresh = false) => {
@@ -345,12 +341,6 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
     // Clear the last worked design tracker
     setLastWorkedDesign(null);
 
-    setShowCulturalNote({
-      design: design.name,
-      note: design.culturalNote
-    });
-
-    safeSetTimeout(() => setShowCulturalNote(null), 4000);
   };
 
   // Start over current design (clears only current design)
@@ -365,86 +355,31 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
         return updated;
       });
 
-      // Reinitialize with fresh state
+      setUndoStack([]);
+    // Reinitialize with fresh state
       initializeColoringState(gameState.selectedDesign, true);
     }
   };
 
-  // Handle section coloring
+  // Tap a region to color or recolor it. Pausing and overlays block input.
   const handleSectionClick = (sectionId) => {
-    if (gameState.phase !== PHASES.COLORING || colors[sectionId] !== 'white') return;
-
-    console.log(`Coloring ${sectionId} with ${selectedColor}`);
-
-    // Update colors
-    const newColors = {
-      ...colors,
-      [sectionId]: selectedColor
-    };
-    setColors(newColors);
-
-    // Calculate new progress
-    const newProgress = calculateProgress(newColors, gameState.totalSections);
-
-    // Update game state
-    setGameState(prev => ({
-      ...prev,
-      ...newProgress
-    }));
-
-    // Visual feedback
-    setShowSparkle(sectionId);
-    safeSetTimeout(() => setShowSparkle(null), 800);
-
-    // Trigger celebration when enough sections are colored
-    if (newProgress.celebrationStarted && !gameState.celebrationStarted) {
-      safeSetTimeout(() => triggerGentleCelebration(), 1000);
-    }
-
-    // Check if ALL sections are now colored (100% complete)
-    if (newProgress.coloredSections >= gameState.totalSections) {
-      console.log('🎨 ALL SECTIONS COLORED! Auto-triggering completion modal...');
-
-      // Wait a moment for the last sparkle animation, then show completion
-      safeSetTimeout(() => {
-        const designData = {
-          name: gameState.selectedDesign.name,
-          starsEarned: newProgress.stars
-        };
-
-        setGameState(prev => ({
-          ...prev,
-          showDesignComplete: true,
-          completedDesignData: designData
-        }));
-      }, 1200); // Give time for final sparkle to show
-    }
+    if (gameState.phase !== PHASES.COLORING || showPauseMenu || gameState.showDesignComplete || showSceneCompletion) return;
+    if (colors[sectionId] === selectedColor) return;
+    setUndoStack(prev => [...prev.slice(-49), { ...colors }]);
+    setColors(prev => ({ ...prev, [sectionId]: selectedColor }));
   };
 
-  // Trigger gentle celebration
-  const triggerGentleCelebration = () => {
-    console.log('Starting gentle celebration');
-
-    // Show celebration sparkles
-    setShowSparkle('celebration');
-
-    safeSetTimeout(() => {
-      setShowSparkle(null);
-    }, 3000);
+  const undoLastColor = () => {
+    if (showPauseMenu || !undoStack.length) return;
+    const previous = undoStack[undoStack.length - 1];
+    setUndoStack(prev => prev.slice(0, -1));
+    setColors(previous);
   };
 
   const handleManualCompletion = () => {
-    console.log('Manual completion triggered');
-
-    const designData = {
-      name: gameState.selectedDesign.name,
-      starsEarned: gameState.stars
-    };
-
-    setGameState(prev => ({
-      ...prev,
-      showDesignComplete: true,
-      completedDesignData: designData
+    if (gameState.phase !== PHASES.COLORING || showPauseMenu || !gameState.showDoneButton) return;
+    setGameState(prev => ({ ...prev, showDesignComplete: true,
+      completedDesignData: { name: prev.selectedDesign.name, starsEarned: 0 }
     }));
   };
 
@@ -462,251 +397,48 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
       showDoneButton: false
     });
     setColors({});
-    setSavedDesigns({});
     setSelectedColor('#FF6B6B');
   };
 
-  // Generate rangoli SVG based on design
+  // Distinct simple SVGs with generous editable regions: Lotus 16,
+  // Peacock 20, Mandala 24. Their IDs match the configured region totals.
   const generateRangoliSVG = (design) => {
-    if (design.id === 'lotus') {
-      return (
-        <svg width="100%" height="100%" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-          {/* SVG Texture Patterns */}
-          <defs>
-            <pattern id="sandTexture" patternUnits="userSpaceOnUse" width="8" height="8">
-              <rect width="8" height="8" fill="currentColor" />
-              <circle cx="2" cy="2" r="0.8" fill="rgba(255,255,255,0.3)" />
-              <circle cx="6" cy="6" r="0.5" fill="rgba(255,255,255,0.2)" />
-              <circle cx="4" cy="1" r="0.3" fill="rgba(0,0,0,0.1)" />
-              <circle cx="1" cy="5" r="0.4" fill="rgba(0,0,0,0.08)" />
-            </pattern>
-
-            <filter id="textureFilter">
-              <feTurbulence baseFrequency="0.9" numOctaves="4" result="noise" />
-              <feColorMatrix in="noise" type="saturate" values="0" />
-              <feComponentTransfer>
-                <feFuncA type="discrete" tableValues="0.1 0.15 0.1 0.2" />
-              </feComponentTransfer>
-              <feComposite operator="over" in2="SourceGraphic" />
-            </filter>
-          </defs>
-
-          {/* Outer petals - 8 sections */}
-          {Array.from({ length: 8 }).map((_, i) => {
-            const angle = (i * 45) * Math.PI / 180;
-            const x1 = 150 + 80 * Math.cos(angle);
-            const y1 = 150 + 80 * Math.sin(angle);
-            const sectionColor = colors[`section-${i + 1}`] || 'white';
-
-            return (
-              <g key={`outer-${i}`}>
-                {/* Base color with texture */}
-                <ellipse
-                  cx={x1}
-                  cy={y1}
-                  rx="25"
-                  ry="15"
-                  fill={sectionColor}
-                  stroke="black"
-                  strokeWidth="2"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handleSectionClick(`section-${i + 1}`)}
-                  transform={`rotate(${i * 45} ${x1} ${y1})`}
-                  filter={sectionColor !== 'white' ? 'url(#textureFilter)' : ''}
-                />
-                {/* Highlight overlay for texture */}
-                {sectionColor !== 'white' && (
-                  <ellipse
-                    cx={x1}
-                    cy={y1}
-                    rx="22"
-                    ry="12"
-                    fill="rgba(255,255,255,0.2)"
-                    stroke="none"
-                    style={{ pointerEvents: 'none' }}
-                    transform={`rotate(${i * 45} ${x1} ${y1})`}
-                  />
-                )}
-                {/* Shadow for depth */}
-                {sectionColor !== 'white' && (
-                  <ellipse
-                    cx={x1 + 1}
-                    cy={y1 + 1}
-                    rx="24"
-                    ry="14"
-                    fill="rgba(0,0,0,0.15)"
-                    stroke="none"
-                    style={{ pointerEvents: 'none' }}
-                    transform={`rotate(${i * 45} ${x1 + 1} ${y1 + 1})`}
-                  />
-                )}
-              </g>
-            );
-          })}
-
-          {/* Inner petals - 8 sections */}
-          {Array.from({ length: 8 }).map((_, i) => {
-            const angle = (i * 45 + 22.5) * Math.PI / 180;
-            const x = 150 + 50 * Math.cos(angle);
-            const y = 150 + 50 * Math.sin(angle);
-            const sectionColor = colors[`section-${i + 9}`] || 'white';
-
-            return (
-              <g key={`inner-${i}`}>
-                {/* Shadow */}
-                {sectionColor !== 'white' && (
-                  <ellipse
-                    cx={x + 1}
-                    cy={y + 1}
-                    rx="19"
-                    ry="11"
-                    fill="rgba(0,0,0,0.15)"
-                    stroke="none"
-                    style={{ pointerEvents: 'none' }}
-                    transform={`rotate(${i * 45 + 22.5} ${x + 1} ${y + 1})`}
-                  />
-                )}
-                {/* Base color */}
-                <ellipse
-                  cx={x}
-                  cy={y}
-                  rx="20"
-                  ry="12"
-                  fill={sectionColor}
-                  stroke="black"
-                  strokeWidth="2"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handleSectionClick(`section-${i + 9}`)}
-                  transform={`rotate(${i * 45 + 22.5} ${x} ${y})`}
-                  filter={sectionColor !== 'white' ? 'url(#textureFilter)' : ''}
-                />
-                {/* Highlight */}
-                {sectionColor !== 'white' && (
-                  <ellipse
-                    cx={x}
-                    cy={y}
-                    rx="17"
-                    ry="9"
-                    fill="rgba(255,255,255,0.25)"
-                    stroke="none"
-                    style={{ pointerEvents: 'none' }}
-                    transform={`rotate(${i * 45 + 22.5} ${x} ${y})`}
-                  />
-                )}
-              </g>
-            );
-          })}
-
-          {/* Center circles with enhanced texture */}
-          <g>
-            {/* Outer center shadow */}
-            {colors['section-17'] !== 'white' && (
-              <circle cx="151" cy="151" r="29" fill="rgba(0,0,0,0.2)" stroke="none" style={{ pointerEvents: 'none' }} />
-            )}
-            {/* Outer center */}
-            <circle
-              cx="150"
-              cy="150"
-              r="30"
-              fill={colors['section-17'] || 'white'}
-              stroke="black"
-              strokeWidth="2"
-              style={{ cursor: 'pointer' }}
-              onClick={() => handleSectionClick('section-17')}
-              filter={colors['section-17'] !== 'white' ? 'url(#textureFilter)' : ''}
-            />
-            {/* Outer center highlight */}
-            {colors['section-17'] !== 'white' && (
-              <circle cx="147" cy="147" r="25" fill="rgba(255,255,255,0.3)" stroke="none" style={{ pointerEvents: 'none' }} />
-            )}
-
-            {/* Inner center shadow */}
-            {colors['section-18'] !== 'white' && (
-              <circle cx="151" cy="151" r="19" fill="rgba(0,0,0,0.25)" stroke="none" style={{ pointerEvents: 'none' }} />
-            )}
-            {/* Inner center */}
-            <circle
-              cx="150"
-              cy="150"
-              r="20"
-              fill={colors['section-18'] || 'white'}
-              stroke="black"
-              strokeWidth="2"
-              style={{ cursor: 'pointer' }}
-              onClick={() => handleSectionClick('section-18')}
-              filter={colors['section-18'] !== 'white' ? 'url(#textureFilter)' : ''}
-            />
-            {/* Inner center highlight */}
-            {colors['section-18'] !== 'white' && (
-              <circle cx="147" cy="147" r="15" fill="rgba(255,255,255,0.4)" stroke="none" style={{ pointerEvents: 'none' }} />
-            )}
-          </g>
-
-          {/* Decorative dots with texture */}
-          {Array.from({ length: 6 }).map((_, i) => {
-            const angle = (i * 60) * Math.PI / 180;
-            const x = 150 + 70 * Math.cos(angle);
-            const y = 150 + 70 * Math.sin(angle);
-            const sectionColor = colors[`section-${i + 19}`] || 'white';
-
-            return (
-              <g key={`dot-${i}`}>
-                {/* Dot shadow */}
-                {sectionColor !== 'white' && (
-                  <circle cx={x + 1} cy={y + 1} r="7" fill="rgba(0,0,0,0.2)" stroke="none" style={{ pointerEvents: 'none' }} />
-                )}
-                {/* Dot base */}
-                <circle
-                  cx={x}
-                  cy={y}
-                  r="8"
-                  fill={sectionColor}
-                  stroke="black"
-                  strokeWidth="2"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handleSectionClick(`section-${i + 19}`)}
-                  filter={sectionColor !== 'white' ? 'url(#textureFilter)' : ''}
-                />
-                {/* Dot highlight */}
-                {sectionColor !== 'white' && (
-                  <circle cx={x - 1} cy={y - 1} r="5" fill="rgba(255,255,255,0.4)" stroke="none" style={{ pointerEvents: 'none' }} />
-                )}
-              </g>
-            );
-          })}
-        </svg>
-      );
-    }
-
-    // Simplified designs for peacock and mandala
-    return (
-      <svg width="100%" height="100%" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-        {/* Generic pattern with appropriate number of sections */}
-        {Array.from({ length: design.sections }).map((_, i) => {
-          const angle = (i * (360 / design.sections)) * Math.PI / 180;
-          const radius = 50 + (i % 3) * 25;
-          const x = 150 + radius * Math.cos(angle);
-          const y = 150 + radius * Math.sin(angle);
-
-          return (
-            <circle
-              key={`section-${i}`}
-              cx={x}
-              cy={y}
-              r={8 + (i % 3) * 4}
-              fill={colors[`section-${i + 1}`] || 'white'}
-              stroke="black"
-              strokeWidth="2"
-              style={{ cursor: 'pointer' }}
-              onClick={() => handleSectionClick(`section-${i + 1}`)}
-            />
-          );
-        })}
-
-        {/* Center element */}
-        <circle cx="150" cy="150" r="20" fill={colors['section-center'] || 'white'} stroke="black" strokeWidth="3" style={{ cursor: 'pointer' }} onClick={() => handleSectionClick('section-center')} />
-      </svg>
+    const outline = '#76513F';
+    const petalD = 'M150 150 C128 126 124 91 150 58 C176 91 172 126 150 150 Z';
+    const colorable = (n, d, transform) => (
+      <path key={n} d={d} transform={transform} fill={colors[`section-${n}`] || '#FFFDF8'}
+        stroke={outline} strokeWidth="2.2" strokeLinejoin="round"
+        onClick={() => handleSectionClick(`section-${n}`)}
+        style={{ cursor: 'pointer', touchAction: 'manipulation' }} />
     );
+    const ring = (count, offset, first, scale = 1) => Array.from({ length: count }, (_, i) =>
+      colorable(first + i, petalD, `rotate(${offset + i * 360 / count} 150 150) translate(${150*(1-scale)} ${150*(1-scale)}) scale(${scale})`)
+    );
+    let shapes;
+    if (design.id === 'lotus') {
+      shapes = <>
+        {ring(8, 0, 1, 1.03)}
+        {ring(6, 30, 9, .62)}
+        {colorable(15, 'M150 121 C173 121 179 144 169 160 C155 183 130 177 123 155 C118 139 131 121 150 121 Z')}
+        <circle cx="150" cy="148" r="13" fill={colors['section-16'] || '#FFFDF8'} stroke={outline} strokeWidth="2.2" onClick={() => handleSectionClick('section-16')} style={{cursor:'pointer'}} />
+      </>;
+    } else if (design.id === 'peacock') {
+      shapes = <>
+        {Array.from({length:6},(_,i) => <g key={i} transform={`rotate(${-65+i*26} 150 224)`}>
+          {colorable(i+1,'M150 224 C112 185 108 117 150 55 C192 117 188 185 150 224 Z')}
+          <ellipse cx="150" cy="123" rx="19" ry="26" fill={colors[`section-${i+7}`] || '#FFFDF8'} stroke={outline} strokeWidth="2" onClick={()=>handleSectionClick(`section-${i+7}`)} style={{cursor:'pointer'}} />
+          <ellipse cx="150" cy="123" rx="10" ry="14" fill={colors[`section-${i+13}`] || '#FFFDF8'} stroke={outline} strokeWidth="2" onClick={()=>handleSectionClick(`section-${i+13}`)} style={{cursor:'pointer'}} />
+        </g>)}
+        {colorable(19,'M139 181 Q150 165 161 181 L167 241 Q150 258 133 241 Z')}
+        {colorable(20,'M146 185 C127 170 131 145 147 144 C164 156 163 176 146 185 Z')}
+      </>;
+    } else {
+      shapes = <>{ring(10,0,1,1.04)}{ring(8,22.5,11,.72)}{ring(6,30,19,.40)}</>;
+    }
+    return <svg viewBox="0 0 300 300" width="100%" height="100%" role="group" aria-label={`${design.name} rangoli to color`}>
+      <circle cx="150" cy="150" r="139" fill="#FFF9E6" stroke="#D8AE72" strokeWidth="2" />
+      {shapes}
+    </svg>;
   };
 
   return (
@@ -714,9 +446,7 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
       {/* Background */}
       <div className="rangoli-background" />
 
-      <HomeButton onNavigate={onNavigate} />
-      <ZoneBadgeButton zoneId="festival-square" onBack={() => onNavigate?.('zone-welcome')} />
-      <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
+      <ZoneBadgeButton variant="gameplay" zoneId="festival-square" onBack={() => onNavigate?.('zone-welcome')} />
 
 
       {/* Opening Modal - Replaces Introduction Scene */}
@@ -735,7 +465,7 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
         <div className="design-selection-screen">
           {/* Design Selection Grid */}
           <div className="design-grid">
-            <h2 className="selection-title">Choose Your Rangoli Design</h2>
+            <h2 className="selection-title">Choose a rangoli</h2>
             <div className="design-cards">
               {RANGOLI_DESIGNS.map((design) => {
                 const savedProgress = savedDesigns[design.id];
@@ -745,7 +475,7 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
                   <div
                     key={design.id}
                     className="design-card"
-                    onClick={() => handleDesignSelection(design)}
+                    onClick={() => !showPauseMenu && handleDesignSelection(design)}
                   >
                     <div className="design-preview">
                       <div className={`design-icon design-${design.id}`}>
@@ -757,18 +487,11 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
                     <div className="design-info">
                       <h3 className="design-name">
                         {design.name}
-                        {hasProgress && <span style={{ color: '#FF6B47', marginLeft: '8px' }}>⭐</span>}
+                        {hasProgress && <span className="rangoli-resume-label"> · Continue</span>}
                       </h3>
-                      <p className="design-description">{design.description}</p>
-                      {hasProgress && (
-                        <p style={{ color: '#FF6B47', fontSize: '0.85rem', fontWeight: 'bold' }}>
-                          Progress: {savedProgress.progress.coloredSections}/{design.sections} sections
-                        </p>
-                      )}
-                      <div className="design-stats">
-                        <span className="difficulty">{design.difficulty}</span>
-                        <span className="sections">{design.sections} sections</span>
-                      </div>
+                      
+
+
                     </div>
                   </div>
                 );
@@ -784,11 +507,8 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
           {/* Coloring Interface */}
           <div className="coloring-interface">
             <div className="coloring-header">
-              <h2 className="design-title">Creating: {gameState.selectedDesign?.name}</h2>
-              <div className="progress-info">
-                <div className="stars">⭐ {gameState.stars}</div>
-                <div className="sections">🎨 {gameState.coloredSections}/{gameState.totalSections}</div>
-              </div>
+              <h2 className="design-title">{gameState.selectedDesign?.name}</h2>
+
             </div>
 
             {/* Color Palette */}
@@ -798,6 +518,9 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
                   key={color}
                   className={`color-swatch ${selectedColor === color ? 'selected' : ''}`}
                   style={{ backgroundColor: color }}
+                  aria-label={`Choose color ${color}`}
+                  aria-pressed={selectedColor === color}
+                  disabled={showPauseMenu}
                   onClick={() => setSelectedColor(color)}
                 />
               ))}
@@ -807,55 +530,12 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
             <div className="rangoli-canvas">
               {generateRangoliSVG(gameState.selectedDesign)}
 
-              {/* Sparkle effects */}
-              {showSparkle === 'celebration' && (
-                <div className="celebration-sparkles">
-                  {Array.from({ length: 15 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="celebration-sparkle"
-                      style={{
-                        left: `${Math.random() * 100}%`,
-                        top: `${Math.random() * 100}%`,
-                        animationDelay: `${Math.random() * 2}s`,
-                        backgroundColor: COLOR_PALETTE[Math.floor(Math.random() * COLOR_PALETTE.length)]
-                      }}
-                    />
-                  ))}
-                </div>
-              )}
             </div>
 
-            {/* Action Buttons - Completion is automatic at 100% */}
             <div className="coloring-actions">
-              {/* Modal shows automatically when all sections colored */}
+              <button type="button" className="rangoli-undo" onClick={undoLastColor} disabled={!undoStack.length || showPauseMenu}>↶ Undo</button>
+              <button type="button" className="done-creating-btn" onClick={handleManualCompletion} disabled={!gameState.showDoneButton || showPauseMenu}>I'm Done</button>
             </div>
-
-            {/* Action Buttons 
-            <div className="coloring-actions">
-              <button 
-                className="back-to-selection-btn"
-                onClick={goBackToSelection}
-              >
-                🎨 Choose Different Design
-              </button>
-              
-              <button 
-                className="start-over-btn"
-                onClick={startOverCurrentDesign}
-              >
-                🔄 Start Over
-              </button>
-              
-              {gameState.showDoneButton && (
-                <button 
-                  className="done-creating-btn"
-                  onClick={handleManualCompletion}
-                >
-                  ✨ I'm Done Creating!
-                </button>
-              )}
-            </div>*/}
           </div>
         </div>
       )}
@@ -950,10 +630,23 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
         designName={gameState.completedDesignData?.name}
         starsEarned={gameState.completedDesignData?.starsEarned || 0}
 
+        onFinish={() => {
+          // Completing any one design is the win; "Create Another" stays an optional bonus
+          setGameState(prev => ({
+            ...prev,
+            showDesignComplete: false,
+            completedDesignData: null,
+            completed: true,
+            stars: Math.max(8, prev.stars)
+          }));
+          setShowSceneCompletion(true);
+        }}
+
         onPlayAgain={() => {
           // Replay the SAME design - clear its colors and start fresh
           const currentDesign = gameState.selectedDesign;
 
+          setUndoStack([]);
           setGameState(prev => ({
             ...prev,
             showDesignComplete: false,
@@ -992,6 +685,7 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
             stars: 0,
             showDoneButton: false
           }));
+          setUndoStack([]);
           setColors({});
           setSelectedColor('#FF6B6B');
         }}
@@ -1011,7 +705,7 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
           setLastWorkedDesign(gameState.selectedDesign);
           setGameState(prev => ({ ...prev, phase: PHASES.SELECTION }));
         }}
-        onComplete={() => { setShowPauseMenu(false); handleManualCompletion(); }}
+        onComplete={() => { setShowPauseMenu(false); /* completion remains child-triggered from the canvas */ }}
       />
 
       {/* Festival Square Completion */}
@@ -1084,6 +778,7 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
             }
 
             // Reset to selection screen
+            resetScene();
             resetToSelection();
             setShowSceneCompletion(false);
 
@@ -1109,40 +804,6 @@ const FestivalRangoliContent = ({ sceneState, sceneActions, isReload, onComplete
         />
       )}
 
-      {/* ADD TOCA BOCA NAV HERE */}
-      <TocaBocaNav
-        onHome={() => onNavigate?.('home')}
-        onProgress={() => {
-          // Show progress/cultural celebration if you have it
-          console.log('Show festival progress');
-        }}
-        onHelp={() => console.log('Show help')}
-        onParentMenu={() => console.log('Parent menu')}
-        isAudioOn={isAudioOn}
-        onAudioToggle={toggleAudio}
-        onZonesClick={() => onNavigate?.('zones')}
-        onStartFresh={() => {
-          // Reset ENTIRE game - back to introduction
-          setGameState({
-            phase: PHASES.INTRODUCTION,
-            selectedDesign: null,
-            coloredSections: 0,
-            totalSections: 0,
-            celebrationStarted: false,
-            gameStartTime: Date.now(),
-            stars: 0,
-            completed: false,
-            showDoneButton: false
-          });
-          setSavedDesigns({});
-          setColors({});
-        }}
-        currentProgress={{
-          stars: gameState.stars || 0,
-          completed: gameState.completed ? 1 : 0,
-          total: 1
-        }}
-      />
     </div>
   );
 };

@@ -1,5 +1,10 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-02 g] - Festival Square Rangoli: simplified coloring layout (parked zone)
+**Touched:** src/zones/festival-square/Game2-Rangoli/FestivalRangoliGame.jsx, FestivalRangoliGame.css.
+**Changed:** the two Rangoli files from the festival-square-fixes branch (3c9cf241) copied onto staging as they are there: simplified coloring layout, completion sparkles and title removed, plus that branch's earlier Rangoli edits. Staging had not changed these files since the branch split, so nothing was overwritten. Festival Square is parked, not live.
+**NOT verified:** not played. The branch's other Festival Square files (scene reset config, harness, etc.) were not brought over. The new CSS uses generic global class names (.design-card, .rangoli-canvas) that need scoping before the zone goes live.
+
 ## [2026-11-02 f] - Vakratunda Rescue: new layout on every screen
 **Touched:** src/zones/shloka-river/scenes/Scene1/VakratundaRescueGame.jsx.
 **Changed:** new frog start, family spot, water area and stone / log pile / reeds positions (authored in the Trace Debug editor). Phones no longer override the positions, only the sizes (stone, logs, reeds, frog), so the water area matches on phone, iPad and desktop. The syllable bands still derive from the start and family spots. The edited copy in the main folder was on an older branch and would have reverted the phone code and the ?debug=1 gating, so only the layout numbers were taken.
