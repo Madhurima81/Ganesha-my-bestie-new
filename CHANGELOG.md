@@ -1,11 +1,17 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
-## [2026-11-02 c] - In-app browser banner (parents only)
+## [2026-11-02 d] - In-app browser banner (parents only)
 **Touched:** PwaInstallManager.js (isInAppBrowser, shared IN_APP_UA), InAppBrowserBanner.jsx/.css + test (new), App.jsx.
 **Changed:** inside an in-app browser (Google app, Facebook, Instagram, Line, WeChat; iOS and Android) the first two screens (main welcome, landing) show a dismissible banner: "Open in Safari/Chrome for the best experience", why (progress does not follow the child to the Home Screen app) and how, with Copy link and Got it (remembered in localStorage gmb_inapp_banner_dismissed). Never shown in Safari/Chrome/desktop, in the installed app, or during play. Never blocks.
 **Verified:** 6 jest tests (Google app iPad, Instagram Android, Safari, desktop, installed app, dismiss remembered, copy link); headless render with the Google-app user agent at 1024x670 and 844x390: banner shown, Got it hides it and it stays hidden after reload; with a normal user agent it never appears; it does not cover Begin.
 **NOT verified:** on the real iPad Google app; Android in-app browsers; the wording with a parent.
 **Open:** the Google app's own image menu on press-and-hold cannot be suppressed from the page; the banner steers parents to Safari / the installed app.
+## [2026-11-02 c] - iOS setup: "Add to Home Screen first" step
+**Touched:** src/lib/components/onboarding/InstallFirstStep.jsx (new), src/App.jsx.
+**Changed:** the Home Screen app on iPhone/iPad has its own storage, so a profile made in the Safari tab is not there in the installed app and setup starts again. After the grown-up check, iOS visitors outside the installed app now see an "Add to Home Screen first" card (Share steps from getInstallGuide plus "then open Ganesha from your Home Screen and set up there"), with a "Continue here instead" link to the old flow. Android, desktop and the installed app skip it.
+**Verified:** production build passes.
+**NOT verified:** the card's layout and wording on a real iPad (not opened in a browser).
+**Open:** pairing code to carry a profile across (docs/PAIRING_CODE_PLAN.md, 4 decisions pending).
 
 ## [2026-11-02 b] - Image menu on press-and-hold: scene picture moved off the touched element (Samaprabha, Pond)
 **Touched:** SamaprabhaGame.jsx/.css, PondSceneSimplifiedV4.jsx, PondScene.css, docs/KNOWN_PITFALLS.md (#66 rule 4). Docs also on staging (40de0ff), after merging staging's Pond fixed-stage commit c7304ec.
