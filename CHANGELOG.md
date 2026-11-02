@@ -6,6 +6,16 @@ Append one entry per work session. Newest on top.
 **Verified:** 5 jest tests; real render on the map (1194x834, mouse held): bubble above the button, never overlapping it, bar filling, "Voice is off" after the hold and still shown after release; parse and build OK.
 **NOT verified:** with a real finger on the iPad (how far the thumb reaches above the 36px button); phone sizes; the bubble over other map elements on smaller screens.
 **Open:** no sound feedback on mute (SFX keeps playing by design); the button measures 36px wide on tablet-size screens in this render, which is under the 60px touch rule unless a larger invisible hit area exists: not checked.
+## [2026-11-02 e] - Inner Mandala: iOS-only backdrop change (experiment for the thin line)
+**Touched:** src/lib/components/celebration/InnerMandala.css.
+**Changed:** a thin dark line shows across the mandala on iPad while the second symbol flies to its petal, in every Symbol Mountain scene and never in Shloka River; not reproducible on desktop (mandala draws cleanly at 1180x820). Guess: WebKit seam from animated children over backdrop-filter. On iOS only (`@supports (-webkit-touch-callout: none)`) the blur is replaced by a slightly darker plain wash. Desktop/Android unchanged.
+**NOT verified:** that it removes the line (iPad only). If it still shows, revert this and look at symbolToPetal animating left/top (will-change left, top) instead.
+
+## [2026-11-02 d] - Nirvighnam: completion safety net
+**Touched:** src/zones/shloka-river/scenes/Scene3/NirvighnamGame.jsx.
+**Changed:** Nirvighnam froze once on the success line (muted run, cause not found; fine after reload). Added a last-resort timer when the swim starts: if the game has not completed about 14.5 s plus the swim time later, it marks swim and success line done and completes the scene once, and logs `completion:safety-net-fired`. Pausable, cancelled by clearTimers; no shared voice or timer code touched.
+**NOT verified:** the freeze itself was not reproduced; the net was only parse-checked, not exercised in the scene.
+**Open:** if the log entry ever appears, read __sceneLog() around it to find the lost timer (suspects: swim effect cleanup without re-arm; stopVoice clearing a muted line's silent timer).
 
 ## [2026-11-02 e] - Closing modal: same size as the opening modal on iPads, Home / Play Again stay inside the card
 **Touched:** src/lib/components/celebration/SceneCompletionCelebration.css (scale token + the 1024-1366px landscape card rule).
