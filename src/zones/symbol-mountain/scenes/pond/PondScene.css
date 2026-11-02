@@ -55,18 +55,27 @@
   padding: 0 !important;
   overflow: hidden !important;
   position: relative;
+  /* ONE shared stage. The art, the rock, flowers, pebbles, turtle, lotus, hold zones and hand cues are all
+     placed on a stage that is always the 1024x670 shape the layout was tuned on, scaled to COVER the screen
+     (extra top/bottom or left/right is cropped, like background-size: cover). Positions are % of that
+     stage and sizes are --pond-u (1% of its width), so nothing drifts against the art on a wider or
+     taller screen. (Before, positions were % of the screen but sizes were vw, so the lotus ring, flowers
+     and pebbles slid off their spots on an iPad window.) */
+  --pond-art-w: max(100vw, calc(var(--app-height, 100vh) * 1.5284));
+  --pond-u: calc(var(--pond-art-w) / 100);
 }
 
 .pond-background {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
-  width: 100% !important;
-  height: var(--app-height, 100vh) !important;
+  width: var(--pond-art-w) !important;
+  height: calc(var(--pond-art-w) / 1.5284) !important;
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
-  margin: 0 !important;
+  /* centre the stage on the screen; the container clips whatever hangs over */
+  margin: calc((var(--app-height, 100vh) - var(--pond-art-w) / 1.5284) / 2) 0 0 calc((100vw - var(--pond-art-w)) / 2) !important;
   padding: 0 !important;
   position: relative;
   overflow: hidden;
@@ -742,7 +751,7 @@
    the way, "flowing" = flowers cleared, water reaches the lotus pool. */
 .pond-water-ripples {
   position: absolute;
-  height: clamp(14px, 2.8vw, 26px);
+  height: clamp(14px, calc(2.8 * var(--pond-u)), 26px);
   /* Centers the band on the water's edge instead of hanging below it. */
   transform: translateY(-65%);
   overflow: hidden;
@@ -780,8 +789,8 @@
   position: absolute;
   left: calc(var(--pond-lotus-x, 76.5%) - 3%);
   top: calc(var(--pond-lotus-y, 59.5%) + 7%);
-  width: clamp(60px, 11vw, 120px);
-  height: clamp(24px, 4.4vw, 48px);
+  width: clamp(60px, calc(11 * var(--pond-u)), 120px);
+  height: clamp(24px, calc(4.4 * var(--pond-u)), 48px);
   border-radius: 50%;
   background: radial-gradient(ellipse at center, rgba(141, 101, 57, 0.55), rgba(141, 101, 57, 0.18) 70%, transparent 100%);
   transform: scale(1);
@@ -800,7 +809,7 @@
   position: absolute;
   left: var(--pond-rock-x, 36%);
   top: var(--pond-rock-y, 64%);
-  width: clamp(60px, var(--pond-rock-size, 15vw), 480px);
+  width: clamp(60px, var(--pond-rock-size, calc(15 * var(--pond-u))), 480px);
   height: auto;
   z-index: 20;
   touch-action: none;
@@ -822,7 +831,7 @@
   position: absolute;
   left: var(--pond-rock-hit-x, 35%);
   top: var(--pond-rock-hit-y, 50%);
-  width: clamp(50px, var(--pond-rock-hit-size, 13vw), 360px);
+  width: clamp(50px, var(--pond-rock-hit-size, calc(13 * var(--pond-u))), 360px);
   aspect-ratio: 1 / 1;
   z-index: 24;
   border-radius: 50%;
@@ -877,7 +886,7 @@
   position: absolute;
   left: var(--pond-flowers-x, 55.5%);
   top: var(--pond-flowers-y, 62.5%);
-  width: clamp(60px, var(--pond-flowers-size, 10.5vw), 400px);
+  width: clamp(60px, var(--pond-flowers-size, calc(10.5 * var(--pond-u))), 400px);
   min-width: 60px;
   min-height: 60px;
   aspect-ratio: 1 / 1;
@@ -928,7 +937,7 @@
    element (own --pond-<key>-x/y/size), not nested inside any group. */
 .pond-flower-item {
   position: absolute;
-  width: clamp(30px, 6vw, 90px);
+  width: clamp(30px, calc(6 * var(--pond-u)), 90px);
   height: auto;
   object-fit: contain;
   filter: drop-shadow(0 4px 5px rgba(50, 88, 32, 0.22));
@@ -946,7 +955,7 @@
 
 .pond-pebble-item {
   position: absolute;
-  width: clamp(16px, 3vw, 50px);
+  width: clamp(16px, calc(3 * var(--pond-u)), 50px);
   height: auto;
   filter: drop-shadow(0 4px 4px rgba(60, 45, 70, 0.22));
   z-index: 19;
@@ -954,7 +963,7 @@
 
 .pond-turtle-item {
   position: absolute;
-  width: clamp(60px, 8vw, 160px);
+  width: clamp(60px, calc(8 * var(--pond-u)), 160px);
   height: auto;
   object-fit: contain;
   filter: drop-shadow(0 4px 6px rgba(40, 60, 30, 0.25));
@@ -978,7 +987,7 @@
   position: absolute;
   left: var(--pond-lotus-x, 76.5%);
   top: var(--pond-lotus-y, 59.5%);
-  width: clamp(60px, var(--pond-lotus-size, 8.5vw), 350px);
+  width: clamp(60px, var(--pond-lotus-size, calc(8.5 * var(--pond-u))), 350px);
   min-width: 60px;
   min-height: 70px;
   z-index: 21;
@@ -988,7 +997,7 @@
   position: absolute;
   left: var(--pond-lotus-hit-x, var(--pond-lotus-x, 76.5%));
   top: var(--pond-lotus-hit-y, var(--pond-lotus-y, 59.5%));
-  width: clamp(40px, var(--pond-lotus-hit-size, var(--pond-lotus-size, 8.5vw)), 350px);
+  width: clamp(40px, var(--pond-lotus-hit-size, var(--pond-lotus-size, calc(8.5 * var(--pond-u)))), 350px);
   aspect-ratio: 1 / 1;
   z-index: 24;
   touch-action: none;
