@@ -1098,6 +1098,12 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         hierarchyScale = hierarchyZoneId === ZONE_IDS.RIVER ? 0.84 : 0.92;
         hierarchyOpacity = 0.92;
         hierarchyFilter = 'saturate(0.92)';
+        // Only the current zone is in full colour: the Lodge stays as washed out when it is "next" as when it is
+        // further away (it used to brighten to 92% as soon as Shloka River became current).
+        if (hierarchyZoneId === ZONE_IDS.HUT) {
+          hierarchyOpacity = 0.72;
+          hierarchyFilter = 'saturate(0.82)';
+        }
       } else if (hierarchyState === 'completed') {
         hierarchyScale = 0.94;
         hierarchyOpacity = 0.82;
