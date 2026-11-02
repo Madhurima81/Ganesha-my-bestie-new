@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './GaneshaIntroStory.css';
 import { GANESHA_USAGE_SYSTEM } from '../lib/config/ganeshaUsageSystem';
 
-const AUTO_ADVANCE_PAUSE_MS = 1200;     // breathing room after the voice ends
+const AUTO_ADVANCE_PAUSE_MS = 2500;     // breathing room after the voice ends
 const AUTO_ADVANCE_SILENT_MS = 5500;    // muted / no speech: how long a page stays
 const AUTO_ADVANCE_WATCHDOG_MS = 8000;  // voice never reported its end: advance anyway (+90ms per character)
 

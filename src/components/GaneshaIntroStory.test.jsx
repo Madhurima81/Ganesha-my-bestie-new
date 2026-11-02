@@ -37,9 +37,9 @@ test('turns the page after the voice finishes plus a short pause', () => {
   const { container } = startStory();
   expect(activeDot(container)).toBe(0);
   act(() => { spoken[0].onend(); });
-  act(() => { jest.advanceTimersByTime(1000); });
+  act(() => { jest.advanceTimersByTime(2400); });
   expect(activeDot(container)).toBe(0);                  // still pausing
-  act(() => { jest.advanceTimersByTime(300); });
+  act(() => { jest.advanceTimersByTime(200); });
   expect(activeDot(container)).toBe(1);
 });
 
@@ -66,13 +66,13 @@ test('muted / no voice: page turns after the read-time fallback', () => {
   act(() => { jest.advanceTimersByTime(5000); });
   expect(activeDot(container)).toBe(0);
   act(() => { jest.advanceTimersByTime(1000); });
-  act(() => { jest.advanceTimersByTime(1300); });
+  act(() => { jest.advanceTimersByTime(2500); });
   expect(activeDot(container)).toBe(1);
 });
 
 test('voice that never reports its end: watchdog still turns the page', () => {
   const { container } = startStory();
-  act(() => { jest.advanceTimersByTime(8000 + 45 * 90 + 1500); });
+  act(() => { jest.advanceTimersByTime(8000 + 45 * 90 + 2600); });
   expect(activeDot(container)).toBe(1);
 });
 
@@ -91,7 +91,7 @@ test('last story page leads to the end screen, which never auto-finishes', () =>
   for (let i = 0; i < 5; i += 1) {
     act(() => { jest.advanceTimersByTime(200); });
     act(() => { spoken[spoken.length - 1].onend(); });
-    act(() => { jest.advanceTimersByTime(1300); });
+    act(() => { jest.advanceTimersByTime(2600); });
   }
   expect(screen.getByText("Let's go")).toBeTruthy();
   act(() => { jest.advanceTimersByTime(60000); });
