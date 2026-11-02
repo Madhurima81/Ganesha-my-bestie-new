@@ -16,6 +16,9 @@ import stoneImg from './assets/images/vakratunda/18-opt.webp';
 import logPileImg from './assets/images/vakratunda/19-opt.webp';
 import reedsImg from './assets/images/vakratunda/reeds.webp';
 
+// Trace Debug editor is a dev tool: hidden for children unless the URL has ?debug=1.
+const VAK_DEBUG_UI_ENABLED = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('debug') === '1';
+
 // ---------------------------------------------------------------------------
 // FREE-PATH RESCUE
 // The child drags the frog anywhere through the water and *creates* their own
@@ -1307,254 +1310,256 @@ export default function VakratundaRescueGame({
         />
       )}
 
-      <div
-        className={`vak-debug-panel ${showDebugPanel ? 'is-open' : ''}`}
-        style={{ left: `${debugPanelPosition.x}px`, top: `${debugPanelPosition.y}px` }}
-        onPointerDown={(event) => event.stopPropagation()}
-        onPointerMove={(event) => event.stopPropagation()}
-        onPointerUp={(event) => event.stopPropagation()}
-      >
-        <button
-          type="button"
-          className="vak-debug-toggle"
-          onClick={() => setShowDebugPanel((prev) => !prev)}
+      {VAK_DEBUG_UI_ENABLED && (
+        <div
+          className={`vak-debug-panel ${showDebugPanel ? 'is-open' : ''}`}
+          style={{ left: `${debugPanelPosition.x}px`, top: `${debugPanelPosition.y}px` }}
+          onPointerDown={(event) => event.stopPropagation()}
+          onPointerMove={(event) => event.stopPropagation()}
+          onPointerUp={(event) => event.stopPropagation()}
         >
-          {showDebugPanel ? 'Hide Trace Debug' : 'Trace Debug'}
-        </button>
+          <button
+            type="button"
+            className="vak-debug-toggle"
+            onClick={() => setShowDebugPanel((prev) => !prev)}
+          >
+            {showDebugPanel ? 'Hide Trace Debug' : 'Trace Debug'}
+          </button>
 
-        {showDebugPanel && selectedObstacle && (
-          <div className="vak-debug-body">
-            <div
-              className="vak-debug-drag-handle"
-              onPointerDown={startDebugPanelDrag}
-              onPointerMove={continueDebugPanelDrag}
-              onPointerUp={endDebugPanelDrag}
-              onPointerCancel={endDebugPanelDrag}
-            >
-              Drag Panel
-            </div>
-            <div className="vak-debug-copy-row">
-              <button type="button" className="vak-debug-copy" onClick={copyLayoutJson}>
-                Copy Layout JSON
-              </button>
-              {layoutCopyStatus && <span>{layoutCopyStatus}</span>}
-            </div>
-
-            <div className="vak-debug-section-title">Obstacles</div>
-            <p className="vak-debug-note">
-              Hitbox is the invisible collision area. Keep it close to the object, but tune it for fair touch feedback.
-            </p>
-            <label className="vak-debug-row">
-              <span>Obstacle</span>
-              <select
-                value={selectedObstacle.id}
-                onChange={(event) => setSelectedObstacleId(event.target.value)}
+          {showDebugPanel && selectedObstacle && (
+            <div className="vak-debug-body">
+              <div
+                className="vak-debug-drag-handle"
+                onPointerDown={startDebugPanelDrag}
+                onPointerMove={continueDebugPanelDrag}
+                onPointerUp={endDebugPanelDrag}
+                onPointerCancel={endDebugPanelDrag}
               >
-                {obstacles.map((obstacle) => (
-                  <option key={obstacle.id} value={obstacle.id}>{obstacle.id}</option>
-                ))}
-              </select>
-            </label>
+                Drag Panel
+              </div>
+              <div className="vak-debug-copy-row">
+                <button type="button" className="vak-debug-copy" onClick={copyLayoutJson}>
+                  Copy Layout JSON
+                </button>
+                {layoutCopyStatus && <span>{layoutCopyStatus}</span>}
+              </div>
 
-            <label className="vak-debug-check">
-              <input
-                type="checkbox"
-                checked={showHitboxes}
-                onChange={(event) => setShowHitboxes(event.target.checked)}
-              />
-              <span>Show hitboxes</span>
-            </label>
+              <div className="vak-debug-section-title">Obstacles</div>
+              <p className="vak-debug-note">
+                Hitbox is the invisible collision area. Keep it close to the object, but tune it for fair touch feedback.
+              </p>
+              <label className="vak-debug-row">
+                <span>Obstacle</span>
+                <select
+                  value={selectedObstacle.id}
+                  onChange={(event) => setSelectedObstacleId(event.target.value)}
+                >
+                  {obstacles.map((obstacle) => (
+                    <option key={obstacle.id} value={obstacle.id}>{obstacle.id}</option>
+                  ))}
+                </select>
+              </label>
 
-            {[
-              ['Visual X', 'root', 'l', 0, 100, 0.1],
-              ['Visual Y', 'root', 't', 0, 100, 0.1],
-              ['Visual W', 'root', 'w', 4, 30, 0.1],
-              ['Hit X', 'hit', 'x', 0, 100, 0.1],
-              ['Hit Y', 'hit', 'y', 0, 100, 0.1],
-              ['Hit RX', 'hit', 'rx', 1, 20, 0.1],
-              ['Hit RY', 'hit', 'ry', 1, 20, 0.1],
-            ].map(([label, section, key, min, max, step]) => {
-              const source = section === 'root' ? selectedObstacle : selectedObstacle[section];
-              return (
-                <label key={`${section}-${key}`} className="vak-debug-row">
+              <label className="vak-debug-check">
+                <input
+                  type="checkbox"
+                  checked={showHitboxes}
+                  onChange={(event) => setShowHitboxes(event.target.checked)}
+                />
+                <span>Show hitboxes</span>
+              </label>
+
+              {[
+                ['Visual X', 'root', 'l', 0, 100, 0.1],
+                ['Visual Y', 'root', 't', 0, 100, 0.1],
+                ['Visual W', 'root', 'w', 4, 30, 0.1],
+                ['Hit X', 'hit', 'x', 0, 100, 0.1],
+                ['Hit Y', 'hit', 'y', 0, 100, 0.1],
+                ['Hit RX', 'hit', 'rx', 1, 20, 0.1],
+                ['Hit RY', 'hit', 'ry', 1, 20, 0.1],
+              ].map(([label, section, key, min, max, step]) => {
+                const source = section === 'root' ? selectedObstacle : selectedObstacle[section];
+                return (
+                  <label key={`${section}-${key}`} className="vak-debug-row">
+                    <span>{label}</span>
+                    <input
+                      type="range"
+                      min={min}
+                      max={max}
+                      step={step}
+                      value={source[key]}
+                      onChange={(event) => updateObstacle(selectedObstacle.id, section, key, event.target.value)}
+                    />
+                    <input
+                      type="number"
+                      min={min}
+                      max={max}
+                      step={step}
+                      value={source[key]}
+                      onChange={(event) => updateObstacle(selectedObstacle.id, section, key, event.target.value)}
+                    />
+                  </label>
+                );
+              })}
+
+              <div className="vak-debug-actions">
+                <button
+                  type="button"
+                  className="vak-debug-reset"
+                  onClick={() => setObstacles(cloneObstacles())}
+                >
+                  Reset Obstacles
+                </button>
+              </div>
+
+              <div className="vak-debug-section-title">Frog</div>
+              <p className="vak-debug-note">
+                Drag the frog on the canvas, or use these. X / Y = start &amp; reset spot, W = size.
+              </p>
+              {[
+                ['Frog X', startPos.x, 2, 96, 0.1, (v) => moveStartPos({ x: v })],
+                ['Frog Y', startPos.y, 4, 94, 0.1, (v) => moveStartPos({ y: v })],
+                ['Frog W', frogW, 3, 16, 0.1, (v) => setFrogW(v)],
+              ].map(([label, value, min, max, step, onValue]) => (
+                <label key={label} className="vak-debug-row">
                   <span>{label}</span>
                   <input
                     type="range"
                     min={min}
                     max={max}
                     step={step}
-                    value={source[key]}
-                    onChange={(event) => updateObstacle(selectedObstacle.id, section, key, event.target.value)}
+                    value={value}
+                    onChange={(event) => onValue(Number(event.target.value))}
                   />
                   <input
                     type="number"
                     min={min}
                     max={max}
                     step={step}
-                    value={source[key]}
-                    onChange={(event) => updateObstacle(selectedObstacle.id, section, key, event.target.value)}
+                    value={value}
+                    onChange={(event) => onValue(Number(event.target.value))}
                   />
                 </label>
-              );
-            })}
+              ))}
 
-            <div className="vak-debug-actions">
-              <button
-                type="button"
-                className="vak-debug-reset"
-                onClick={() => setObstacles(cloneObstacles())}
-              >
-                Reset Obstacles
-              </button>
-            </div>
+              <div className="vak-debug-actions">
+                <button
+                  type="button"
+                  className="vak-debug-reset"
+                  onClick={() => { moveStartPos({ ...START_POS }); setFrogW(startFrogW()); }}
+                >
+                  Reset Frog
+                </button>
+              </div>
 
-            <div className="vak-debug-section-title">Frog</div>
-            <p className="vak-debug-note">
-              Drag the frog on the canvas, or use these. X / Y = start &amp; reset spot, W = size.
-            </p>
-            {[
-              ['Frog X', startPos.x, 2, 96, 0.1, (v) => moveStartPos({ x: v })],
-              ['Frog Y', startPos.y, 4, 94, 0.1, (v) => moveStartPos({ y: v })],
-              ['Frog W', frogW, 3, 16, 0.1, (v) => setFrogW(v)],
-            ].map(([label, value, min, max, step, onValue]) => (
-              <label key={label} className="vak-debug-row">
-                <span>{label}</span>
+              <div className="vak-debug-section-title">Frog family</div>
+              <p className="vak-debug-note">
+                Drag the family (or its pad) on the canvas, or use these. W scales the pad too.
+              </p>
+              {[
+                ['Family X', familyPoint.x, 2, 98, 0.1, (v) => setFamilyPoint((p) => ({ ...p, x: v }))],
+                ['Family Y', familyPoint.y, 4, 94, 0.1, (v) => setFamilyPoint((p) => ({ ...p, y: v }))],
+                ['Family W', familyW, 6, 30, 0.1, (v) => setFamilyW(v)],
+              ].map(([label, value, min, max, step, onValue]) => (
+                <label key={label} className="vak-debug-row">
+                  <span>{label}</span>
+                  <input
+                    type="range"
+                    min={min}
+                    max={max}
+                    step={step}
+                    value={value}
+                    onChange={(event) => onValue(Number(event.target.value))}
+                  />
+                  <input
+                    type="number"
+                    min={min}
+                    max={max}
+                    step={step}
+                    value={value}
+                    onChange={(event) => onValue(Number(event.target.value))}
+                  />
+                </label>
+              ))}
+
+              <div className="vak-debug-actions">
+                <button
+                  type="button"
+                  className="vak-debug-reset"
+                  onClick={() => { setFamilyPoint({ x: FAMILY.x, y: FAMILY.y }); setFamilyW(FAMILY.w); }}
+                >
+                  Reset Family
+                </button>
+              </div>
+
+              <div className="vak-debug-section-title">Syllable bands (X %)</div>
+              <p className="vak-debug-note">
+                va / kra / tun light as the frog first passes these X lines. da lights on reaching the family.
+              </p>
+              {bandsX.map((band, index) => (
+                <label key={`band-row-${index}`} className="vak-debug-row">
+                  <span>{SYLLABLES[index]}</span>
+                  <input
+                    type="range"
+                    min={5}
+                    max={90}
+                    step={0.5}
+                    value={band}
+                    onChange={(event) => updateBand(index, event.target.value)}
+                  />
+                  <input
+                    type="number"
+                    min={5}
+                    max={90}
+                    step={0.5}
+                    value={band}
+                    onChange={(event) => updateBand(index, event.target.value)}
+                  />
+                </label>
+              ))}
+
+              <div className="vak-debug-actions">
+                <button
+                  type="button"
+                  className="vak-debug-reset"
+                  onClick={() => setBandsX(computeBandsX(startPos.x, familyPoint.x))}
+                >
+                  Reset Bands
+                </button>
+              </div>
+
+              <div className="vak-debug-section-title">Water area</div>
+              <p className="vak-debug-note">
+                This is the swimmable CHANNEL — the frog can only be dragged inside it, and it routes around the obstacles so they block automatically. Drag a handle to reshape; double-click a handle to delete it (min 3); "Subdivide" doubles the handle count for finer shaping; "Reset Water" restores the seed.
+              </p>
+              <label className="vak-debug-check">
                 <input
-                  type="range"
-                  min={min}
-                  max={max}
-                  step={step}
-                  value={value}
-                  onChange={(event) => onValue(Number(event.target.value))}
+                  type="checkbox"
+                  checked={showWaterArea}
+                  onChange={(event) => setShowWaterArea(event.target.checked)}
                 />
-                <input
-                  type="number"
-                  min={min}
-                  max={max}
-                  step={step}
-                  value={value}
-                  onChange={(event) => onValue(Number(event.target.value))}
-                />
+                <span>Show channel &amp; handles</span>
               </label>
-            ))}
+              <div className="vak-debug-actions">
+                <button type="button" className="vak-debug-reset" onClick={subdivideWater}>
+                  Subdivide ({waterPoly.length})
+                </button>
+                <button
+                  type="button"
+                  className="vak-debug-reset"
+                  onClick={() => { waterPolyRef.current = DEFAULT_WATER_POLY; setWaterPoly(DEFAULT_WATER_POLY); }}
+                >
+                  Reset Water
+                </button>
+              </div>
 
-            <div className="vak-debug-actions">
-              <button
-                type="button"
-                className="vak-debug-reset"
-                onClick={() => { moveStartPos({ ...START_POS }); setFrogW(startFrogW()); }}
-              >
-                Reset Frog
-              </button>
+              <pre className="vak-debug-readout">
+                {JSON.stringify({ obstacles, startPos, frogW, familyPoint, familyW, bandsX, waterPoly }, null, 2)}
+              </pre>
             </div>
-
-            <div className="vak-debug-section-title">Frog family</div>
-            <p className="vak-debug-note">
-              Drag the family (or its pad) on the canvas, or use these. W scales the pad too.
-            </p>
-            {[
-              ['Family X', familyPoint.x, 2, 98, 0.1, (v) => setFamilyPoint((p) => ({ ...p, x: v }))],
-              ['Family Y', familyPoint.y, 4, 94, 0.1, (v) => setFamilyPoint((p) => ({ ...p, y: v }))],
-              ['Family W', familyW, 6, 30, 0.1, (v) => setFamilyW(v)],
-            ].map(([label, value, min, max, step, onValue]) => (
-              <label key={label} className="vak-debug-row">
-                <span>{label}</span>
-                <input
-                  type="range"
-                  min={min}
-                  max={max}
-                  step={step}
-                  value={value}
-                  onChange={(event) => onValue(Number(event.target.value))}
-                />
-                <input
-                  type="number"
-                  min={min}
-                  max={max}
-                  step={step}
-                  value={value}
-                  onChange={(event) => onValue(Number(event.target.value))}
-                />
-              </label>
-            ))}
-
-            <div className="vak-debug-actions">
-              <button
-                type="button"
-                className="vak-debug-reset"
-                onClick={() => { setFamilyPoint({ x: FAMILY.x, y: FAMILY.y }); setFamilyW(FAMILY.w); }}
-              >
-                Reset Family
-              </button>
-            </div>
-
-            <div className="vak-debug-section-title">Syllable bands (X %)</div>
-            <p className="vak-debug-note">
-              va / kra / tun light as the frog first passes these X lines. da lights on reaching the family.
-            </p>
-            {bandsX.map((band, index) => (
-              <label key={`band-row-${index}`} className="vak-debug-row">
-                <span>{SYLLABLES[index]}</span>
-                <input
-                  type="range"
-                  min={5}
-                  max={90}
-                  step={0.5}
-                  value={band}
-                  onChange={(event) => updateBand(index, event.target.value)}
-                />
-                <input
-                  type="number"
-                  min={5}
-                  max={90}
-                  step={0.5}
-                  value={band}
-                  onChange={(event) => updateBand(index, event.target.value)}
-                />
-              </label>
-            ))}
-
-            <div className="vak-debug-actions">
-              <button
-                type="button"
-                className="vak-debug-reset"
-                onClick={() => setBandsX(computeBandsX(startPos.x, familyPoint.x))}
-              >
-                Reset Bands
-              </button>
-            </div>
-
-            <div className="vak-debug-section-title">Water area</div>
-            <p className="vak-debug-note">
-              This is the swimmable CHANNEL — the frog can only be dragged inside it, and it routes around the obstacles so they block automatically. Drag a handle to reshape; double-click a handle to delete it (min 3); "Subdivide" doubles the handle count for finer shaping; "Reset Water" restores the seed.
-            </p>
-            <label className="vak-debug-check">
-              <input
-                type="checkbox"
-                checked={showWaterArea}
-                onChange={(event) => setShowWaterArea(event.target.checked)}
-              />
-              <span>Show channel &amp; handles</span>
-            </label>
-            <div className="vak-debug-actions">
-              <button type="button" className="vak-debug-reset" onClick={subdivideWater}>
-                Subdivide ({waterPoly.length})
-              </button>
-              <button
-                type="button"
-                className="vak-debug-reset"
-                onClick={() => { waterPolyRef.current = DEFAULT_WATER_POLY; setWaterPoly(DEFAULT_WATER_POLY); }}
-              >
-                Reset Water
-              </button>
-            </div>
-
-            <pre className="vak-debug-readout">
-              {JSON.stringify({ obstacles, startPos, frogW, familyPoint, familyW, bandsX, waterPoly }, null, 2)}
-            </pre>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -609,6 +609,12 @@ Object.keys(localStorage).filter(k => k.includes('final-scene')).map(k => [k, JS
 - **Rule:** an avatar id is any `^[a-z0-9-]+$` string (or `{id}`), resolved to `/images/new-explorer-<id>.webp` with a `.png` fallback. Never keep a short allow-list. `CleanMapZone.getAnimalId` is the reference.
 - **Fixed everywhere:** use `getExplorerAvatarId()` from `src/lib/utils/explorerAvatar.js` (food, indian-story, family-tree, obstacle-remover now do). Do not write a local copy.
 
+## 66. Press-and-hold games: the OS image menu steals the hold and the game freezes
+- **Symptom (Samaprabha, iPad Chrome):** pressing and holding the shadow opened "Search inside image / Save to Photos / Copy". The finger lifted into the menu, no `pointerup` ever arrived, the hold stayed "pressed" and the game stuck.
+- **Cause:** the stage background is a CSS `background-image`; Chrome/Safari iOS offer the image menu on long-press of a picture or background. `-webkit-touch-callout: none` alone is not reliable on Chrome iOS, and `preventDefault()` on `pointerdown` does not stop it.
+- **Rules:** (1) any hold/press-and-hold stage uses `useNoLongPressMenu(stageRef)` (cancels the `touchstart` default and `contextmenu`; buttons keep working) plus `-webkit-touch-callout: none` on the stage; (2) every hold must also release on `lostpointercapture`, `pointercancel`, `touchcancel`, window `blur`, `pagehide` and `visibilitychange`, never only on `pointerup`; (3) a hold that depends on a perfect `pointerup` is a bug waiting for an iPad.
+- **Check next:** other hold mechanics, e.g. Pond rock hold (`handleRockHoldStart/End`), Suryakoti, any `HOLD_` constant. Wire the same hook.
+
 ## Before you call a scene "done"
 1. `npm run check:css` — no new clashes. 2. `vite build` passes. 3. The scene's checklist
 (`http://localhost:5173/?unlockall=1`) passes, including Replay and "Continue from the completion modal".

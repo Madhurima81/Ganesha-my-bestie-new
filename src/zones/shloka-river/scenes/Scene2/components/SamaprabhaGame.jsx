@@ -19,6 +19,7 @@ import shadowBranchImg from '../assets/images/Samaprabha/shadow-branch-opt.webp'
 import shadowReedImg from '../assets/images/Samaprabha/shadow-reed-opt.webp';
 import shadowStumpImg from '../assets/images-opt/Samaprabha/shadow-stump-opt.webp';
 import shadowLeavesImg from '../assets/images/Samaprabha/shadow-leaves-opt.webp';
+import useNoLongPressMenu from '../../../../../lib/hooks/useNoLongPressMenu';
 
 const SYLLABLES = ['Sa', 'ma', 'pra', 'bha'];
 const AUDIO = { syllables: ['sa', 'ma', 'pra', 'bha'] };
@@ -641,6 +642,28 @@ export default function SamaprabhaGame({
     if (!clue || !pointInsideClue(point, clue)) cancelHold(true);
   }, [CLUES, cancelHold, getStagePoint]);
 
+  // The OS image menu (or a lost touch) can end the press without a pointerup: release the hold
+  // so the child can simply press again instead of the game freezing. KNOWN_PITFALLS 66.
+  const releaseStuckHold = useCallback(() => {
+    pointerIdRef.current = null;
+    cancelHold(true);
+  }, [cancelHold]);
+
+  useNoLongPressMenu(stageRef, phase === 'play');
+
+  useEffect(() => {
+    window.addEventListener('blur', releaseStuckHold);
+    window.addEventListener('pagehide', releaseStuckHold);
+    window.addEventListener('touchcancel', releaseStuckHold);
+    document.addEventListener('visibilitychange', releaseStuckHold);
+    return () => {
+      window.removeEventListener('blur', releaseStuckHold);
+      window.removeEventListener('pagehide', releaseStuckHold);
+      window.removeEventListener('touchcancel', releaseStuckHold);
+      document.removeEventListener('visibilitychange', releaseStuckHold);
+    };
+  }, [releaseStuckHold]);
+
   const endPointer = useCallback((event) => {
     if (event && pointerIdRef.current !== event.pointerId) return;
 
@@ -1003,6 +1026,7 @@ export default function SamaprabhaGame({
         onPointerMove={handlePointerMove}
         onPointerUp={endPointer}
         onPointerCancel={endPointer}
+        onLostPointerCapture={endPointer}
         onContextMenu={(event) => event.preventDefault()}
       >
         <div className="sama-dusk-wash" />
