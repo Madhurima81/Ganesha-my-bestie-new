@@ -4,12 +4,19 @@
 
 import React, { useState, useEffect } from 'react';
 
-const ANIMAL_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
 const EMOJI_TO_ANIMAL = { '🐵': 'monkey', '🦚': 'peacock', '🐿️': 'squirrel', '🐯': 'tiger' };
 
+// Any of the 20 explorer friends (owl, turtle, fish...) — same rule as CleanMapZone's chip.
+// Do NOT hardcode a short list: ids missing from it fell through to printing the raw id as text ("rt", "OW").
 const getAnimalId = (avatar) => {
-  if (ANIMAL_IDS.includes(avatar)) return avatar;
-  return EMOJI_TO_ANIMAL[avatar] || null;
+  if (!avatar) return null;
+  if (typeof avatar === 'object' && avatar.id) return avatar.id;
+  if (EMOJI_TO_ANIMAL[avatar]) return EMOJI_TO_ANIMAL[avatar];
+  if (typeof avatar === 'string') {
+    const id = avatar.trim().toLowerCase();
+    if (/^[a-z0-9-]+$/.test(id)) return id;
+  }
+  return null;
 };
 
 const ProfileChip = ({ onNavigate, pulseOnce = false }) => {
@@ -90,7 +97,10 @@ const ProfileChip = ({ onNavigate, pulseOnce = false }) => {
             src={`/images/new-explorer-${animalId}.webp`}
             alt={profile.name}
             style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
-            onError={(e) => { e.target.style.display = 'none'; }}
+            onError={(e) => {
+              if (!e.currentTarget.dataset.tried) { e.currentTarget.dataset.tried = '1'; e.currentTarget.src = `/images/new-explorer-${animalId}.png`; }
+              else e.currentTarget.style.display = 'none';
+            }}
           />
         ) : (
           <span style={{ fontSize: 'clamp(28px, 3vw, 42px)' }}>{profile.avatar || '🧒'}</span>

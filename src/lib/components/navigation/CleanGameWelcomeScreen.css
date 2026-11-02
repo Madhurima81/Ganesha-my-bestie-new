@@ -1972,7 +1972,7 @@
      four radial-gradient corner scoops.
      ======================================================== */
 
-  .clean-welcome-overlay--fullscreen .clean-welcome-content {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .clean-welcome-content {
     position: relative;
     box-sizing: border-box;
     width: min(620px, 60vw) !important;
@@ -2020,7 +2020,7 @@
     transform: translateY(-4px);
   }
 
-  .clean-welcome-overlay--fullscreen .welcome-card-lotus {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .welcome-card-lotus {
     display: none !important;
   }
 
@@ -2028,7 +2028,7 @@
      SINGLE CHILD-READABLE FLOW
      ======================================================== */
 
-  .clean-welcome-overlay--fullscreen .welcome-single-layout {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .welcome-single-layout {
     width: 100%;
     min-height: 500px;
     display: flex;
@@ -2043,13 +2043,13 @@
      TITLE
      ======================================================== */
 
-  .clean-welcome-overlay--fullscreen .welcome-single-layout .screen-header {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .welcome-single-layout .screen-header {
     width: 100%;
     padding: 0;
     margin: 0;
   }
 
-  .clean-welcome-overlay--fullscreen .welcome-single-layout .screen-header-title {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .welcome-single-layout .screen-header-title {
     width: 100%;
     margin: 0 0 18px !important;
     font-size: clamp(32px, 3vw, 40px) !important;
@@ -2063,7 +2063,7 @@
      MANDALA
      ======================================================== */
 
-  .clean-welcome-overlay--fullscreen .welcome-single-mandala {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .welcome-single-mandala {
     width: 100%;
     display: flex;
     align-items: center;
@@ -2071,7 +2071,7 @@
     margin: 0;
   }
 
-  .clean-welcome-overlay--fullscreen .profile-mandala-wrapper {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .profile-mandala-wrapper {
     width: 100%;
     display: flex;
     align-items: center;
@@ -2079,25 +2079,25 @@
     margin: 0 !important;
   }
 
-  .clean-welcome-overlay--fullscreen .profile-mandala {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .profile-mandala {
     width: 265px !important;
     height: 265px !important;
     margin: 0 auto !important;
   }
 
-  .clean-welcome-overlay--fullscreen .profile-mandala svg {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .profile-mandala svg {
     width: 100% !important;
     height: 100% !important;
   }
 
-  .clean-welcome-overlay--fullscreen .profile-mandala .mandala-avatar-slot img {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .profile-mandala .mandala-avatar-slot img {
     width: 100% !important;
     height: 100% !important;
     object-fit: contain;
   }
 
-  .clean-welcome-overlay--fullscreen .mandala-hint,
-  .clean-welcome-overlay--fullscreen .mandala-helper-text {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .mandala-hint,
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .mandala-helper-text {
     display: none !important;
   }
 
@@ -2105,7 +2105,7 @@
      HINT
      ======================================================== */
 
-  .clean-welcome-overlay--fullscreen .welcome-single-hint {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .welcome-single-hint {
     margin: 1px 0 13px;
     font-family: 'Nunito', sans-serif;
     font-size: 14px;
@@ -2119,7 +2119,7 @@
      PRIMARY ACTION
      ======================================================== */
 
-  .clean-welcome-overlay--fullscreen .welcome-single-primary {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .welcome-single-primary {
     width: 300px;
     display: flex;
     align-items: center;
@@ -2127,7 +2127,7 @@
     margin: 0;
   }
 
-  .clean-welcome-overlay--fullscreen .welcome-single-primary .primary-btn-unified {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .welcome-single-primary .primary-btn-unified {
     width: 300px !important;
     min-width: 300px !important;
     max-width: 300px !important;
@@ -2141,7 +2141,7 @@
      EXPLORE MAP - QUIET SECONDARY
      ======================================================== */
 
-  .clean-welcome-overlay--fullscreen .welcome-explore-map {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .welcome-explore-map {
     position: relative;
     width: 180px;
     height: 44px;
@@ -2160,7 +2160,7 @@
     cursor: pointer;
   }
 
-  .clean-welcome-overlay--fullscreen .welcome-explore-map::after {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .welcome-explore-map::after {
     content: "";
     position: absolute;
     left: -8px;
@@ -2174,7 +2174,7 @@
      SWITCH EXPLORER - TERTIARY
      ======================================================== */
 
-  .clean-welcome-overlay--fullscreen .welcome-switch-explorer {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .welcome-switch-explorer {
     position: relative;
     min-height: 52px;
     margin-top: auto;
@@ -2192,7 +2192,7 @@
     cursor: pointer;
   }
 
-  .clean-welcome-overlay--fullscreen .welcome-switch-explorer::after {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .welcome-switch-explorer::after {
     content: "";
     position: absolute;
     inset: -4px -8px;

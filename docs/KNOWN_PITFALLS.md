@@ -604,6 +604,11 @@ Object.keys(localStorage).filter(k => k.includes('final-scene')).map(k => [k, JS
 - **Rule:** `stripLeadingText` must be spelled exactly like the line's first word. When you change a Sanskrit spelling in `voiceGuidance.js` or a scene-local line map, grep `stripLeadingText:` for the old spelling in the same commit. Canonical spellings are the 8 words in CLAUDE.md (joined: Kurumedeva, Sarvakaryeshu), never TTS respellings.
 - **Related:** lines containing a Sanskrit word are never read by Web Speech (`shouldSilenceTts`, lib/audio/voClip.js); with no recording they run silent, callback on schedule, like mute.
 
+## 65. Hardcoded 4-animal avatar lists hide the other 16 explorers
+- **Symptom:** profile chip in the zone welcome showed raw text ("rt", "OW") instead of the turtle/owl picture. Only monkey, peacock, squirrel and tiger were recognised.
+- **Rule:** an avatar id is any `^[a-z0-9-]+$` string (or `{id}`), resolved to `/images/new-explorer-<id>.webp` with a `.png` fallback. Never keep a short allow-list. `CleanMapZone.getAnimalId` is the reference.
+- **Still hardcoded (same bug, not yet fixed):** `PROFILE_ANIMAL_IDS` in `about-me-hut/` Favoritefoodgame, MyIndianStoryGame, Familytreegame, ObstacleRemoverGame.
+
 ## Before you call a scene "done"
 1. `npm run check:css` — no new clashes. 2. `vite build` passes. 3. The scene's checklist
 (`http://localhost:5173/?unlockall=1`) passes, including Replay and "Continue from the completion modal".
