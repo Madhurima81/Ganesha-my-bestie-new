@@ -2408,7 +2408,8 @@ const SacredAssemblyContent = ({
               clearAllTimeouts();
               stopGaneshaVoice();
               setShowSceneCompletion(false);
-              onNavigate?.('home');
+              // The map, not the profile page: 'home' from inside a scene opens the profile welcome (App.jsx).
+              onNavigate?.('map');
             }}
             onReplay={() => {
               hardResetSceneState();

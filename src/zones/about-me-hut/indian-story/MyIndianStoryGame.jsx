@@ -2211,7 +2211,8 @@ const handleComplete = () => {
           }}
           onHome={() => {
             SimpleSceneManager.clearCurrentScene();
-            if (onNavigate) onNavigate('home');
+            // the map, not the profile page ('home' from a scene opens the profile welcome)
+            if (onNavigate) onNavigate('map');
           }}
         />
         );

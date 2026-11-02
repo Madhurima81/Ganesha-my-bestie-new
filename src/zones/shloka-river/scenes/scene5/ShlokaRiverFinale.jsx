@@ -1541,7 +1541,7 @@ const ShlokaRiverFinaleContent = ({
             childName={profileName}
             isFinalScene={true}
             onExploreZones={() => onNavigate?.('zones')}
-            onHome={() => onNavigate?.('home')}
+            onHome={() => onNavigate?.('map')} // the map, not the profile page ('home' from a scene opens the profile welcome)
             onReplay={() => {
               setShowSceneCompletion(false);
               setShowOrbsCelebration(false);

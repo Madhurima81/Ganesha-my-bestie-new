@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { playUiTap } from '../../services/AudioService';
+import { isIPad } from '../../services/PwaInstallManager';
 import './DeviceChoiceModal.css';
 
 // White modal that opens over the landing page from "Start Free" / "Begin".
@@ -44,7 +45,16 @@ const DeviceChoiceModal = ({ isOpen, onClose, onContinueHere }) => {
     if (showEmail) window.requestAnimationFrame(() => emailInputRef.current?.focus());
   }, [showEmail]);
 
-  if (!isOpen) return null;
+  // On an iPad there is nothing to choose: "Send to iPad" is for starting on a laptop or phone, so go straight in.
+  const onIPad = isIPad();
+  useEffect(() => {
+    if (!isOpen || !onIPad) return;
+    onClose?.();
+    onContinueHere?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, onIPad]);
+
+  if (!isOpen || onIPad) return null;
 
   const handleContinueHere = () => {
     playUiTap(0.24);

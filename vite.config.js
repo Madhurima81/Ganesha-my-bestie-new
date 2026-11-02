@@ -99,7 +99,10 @@ export default defineConfig(({ command }) => ({
             options: {
               cacheName: 'ganesha-audio',
               expiration: { maxEntries: 300 },
-              cacheableResponse: { statuses: [0, 200] }
+              cacheableResponse: { statuses: [0, 200] },
+              // <audio> asks for byte ranges. The offline download saves whole files, and answering a range
+              // request with a whole 200 breaks playback in Safari (iPad). This answers ranges from the cached file.
+              rangeRequests: true
             }
           },
           // First-time intro story pictures (public/intro-story): cache-first, saved by the offline download.
