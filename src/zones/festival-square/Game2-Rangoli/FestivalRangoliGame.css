@@ -1542,3 +1542,24 @@
   font-family: 'Baloo 2', cursive;
   min-height: 60px;
 }
+
+/* GMB Rangoli simplified layout overrides */
+.design-card { border: 2px solid #E8CC9B; border-radius: 22px; background: #FFF9E6; }
+.design-icon { animation: none; }
+.coloring-screen { padding: clamp(8px, 1.5vw, 20px); }
+.coloring-interface { height: 100%; min-height: 0; gap: 10px; }
+.coloring-header { margin: 0; padding: 7px 15px; background: #FFF9E6; }
+.color-palette { margin: 0; padding: 9px; gap: 10px; background: #FFF9E6; }
+.color-swatch { width: clamp(36px, 4.8vw, 48px); height: clamp(36px, 4.8vw, 48px); border: 2px solid white; }
+.color-swatch.selected { outline: 3px solid #5D2E0F; outline-offset: 2px; transform: none; }
+.rangoli-canvas { min-height: 0; flex: 1 1 auto; padding: 9px; margin: 0; background: #FFF9E6; overflow: hidden; }
+.rangoli-canvas svg { width: 100%; height: 100%; max-height: min(58vh, 540px); }
+.rangoli-canvas svg path, .rangoli-canvas svg circle, .rangoli-canvas svg ellipse { filter: none !important; transition: fill .16s ease; }
+.coloring-actions { display: flex; gap: 12px; justify-content: center; flex-shrink: 0; }
+.rangoli-undo, .done-creating-btn { font-family: 'Baloo 2', cursive; font-size: 1rem; min-width: 130px; min-height: 46px; padding: 9px 20px; border-radius: 999px; cursor: pointer; animation: none; }
+.rangoli-undo { background: #FFF9E6; color: #5D2E0F; border: 2px solid #D5B585; }
+.done-creating-btn { background: #E9A12E; color: #fff; border: 0; box-shadow: 0 4px 0 #B77820; }
+.rangoli-undo:disabled, .done-creating-btn:disabled { opacity: .45; cursor: not-allowed; }
+.completion-sparkles,.completion-stars { display: none; }
+@media (max-width: 600px) { .coloring-interface { gap: 6px; } .color-palette { gap: 6px; padding: 7px; } .color-swatch { width: 36px; height: 36px; } .rangoli-canvas { padding: 5px; } .rangoli-undo, .done-creating-btn { min-width: 0; flex: 1; } }
+@media (max-height: 520px) and (orientation: landscape) { .color-palette { padding: 4px; } .color-swatch { width: 30px; height: 30px; } .coloring-header { padding: 4px 10px; } .rangoli-canvas svg { max-height: 50vh; } }
