@@ -16,6 +16,17 @@
   overscroll-behavior: none;
 }
 
+/* iOS Safari/WebKit only (experiment, 2026-11-02): a thin dark line showed across the mandala on iPad while the
+   second symbol flew to its petal (Symbol Mountain). WebKit can leave seams when animated children sit over a
+   backdrop-filter blur, so on iOS the blur is replaced by a slightly darker plain wash. Desktop/Android keep the blur. */
+@supports (-webkit-touch-callout: none) {
+  .inner-mandala-overlay {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: radial-gradient(circle, rgba(35, 22, 50, 0.62) 30%, rgba(10, 5, 20, 0.9) 100%);
+  }
+}
+
 .inner-mandala-overlay.is-mounted {
   opacity: 1;
 }
