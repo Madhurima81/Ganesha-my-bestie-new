@@ -1,0 +1,47 @@
+/* Feedback bubble for the hold-to-mute button. Sits ABOVE the button so a finger on the button never hides it. */
+.holdMuteBubble {
+  position: absolute;
+  bottom: calc(100% + 14px);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 190px;
+  max-width: min(260px, 70vw);
+  padding: 10px 14px;
+  border-radius: 18px;
+  background: rgba(255, 253, 247, 0.97);
+  border: 2px solid #b49ee8;
+  box-shadow: 0 6px 18px rgba(91, 67, 142, 0.22);
+  pointer-events: none;
+  text-align: left;
+  animation: holdMuteBubbleIn 0.14s ease-out;
+}
+.holdMuteBubble--left { left: 0; }
+.holdMuteBubble--right { right: 0; text-align: right; }
+.holdMuteBubble__text {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: #5b4a8a;
+}
+.holdMuteBubble__text--done { text-align: center; }
+.holdMuteBubble__track {
+  display: block;
+  height: 10px;
+  border-radius: 999px;
+  background: #e6defa;
+  overflow: hidden;
+}
+.holdMuteBubble__fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f7c45b, #f0a73a);
+}
+@keyframes holdMuteBubbleIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) { .holdMuteBubble { animation: none; } }

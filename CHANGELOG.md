@@ -1,5 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-02 f] - Hold-to-mute: feedback bubble above the button (a finger covers the speaker)
+**Touched:** src/lib/components/ui/HoldMuteButton/HoldMuteButton.jsx, HoldMuteButton.css (new), HoldMuteButton.test.jsx (new). Used on the map (CleanMapZone, bottom-left).
+**Changed:** the progress ring and the icon swap were drawn on the button itself, exactly where the finger sits, so a child could not see the mute happening. Now a bubble appears ABOVE the button while holding ("Keep holding to turn voice off" + a filling bar) and, when the hold completes, says "Voice is off" for about 2 s; tapping to unmute says "Voice is on". The ring stays as a backup. Hold time, tap-to-unmute and the "click after letting go must not unmute" guard are unchanged.
+**Verified:** 5 jest tests; real render on the map (1194x834, mouse held): bubble above the button, never overlapping it, bar filling, "Voice is off" after the hold and still shown after release; parse and build OK.
+**NOT verified:** with a real finger on the iPad (how far the thumb reaches above the 36px button); phone sizes; the bubble over other map elements on smaller screens.
+**Open:** no sound feedback on mute (SFX keeps playing by design); the button measures 36px wide on tablet-size screens in this render, which is under the 60px touch rule unless a larger invisible hit area exists: not checked.
+
 ## [2026-11-02 e] - Closing modal: same size as the opening modal on iPads, Home / Play Again stay inside the card
 **Touched:** src/lib/components/celebration/SceneCompletionCelebration.css (scale token + the 1024-1366px landscape card rule).
 **Changed:** (1) On iPads (landscape, 1000px+ wide, up to 900px tall) the closing card was zoomed 0.66 while the opening card is 0.8, so it looked about 17% smaller. `--gmb-completion-short-ipad-modal-scale` is now 0.8, the same as the opening's `--gmb-short-ipad-modal-scale`. This reverses the 2026-10-13 choice to make the closing card "visibly smaller" (0.72, later 0.66), at Madhurima's request after iPad testing. (2) In the 1024-1366px landscape rule the card had `max-height: 88dvh` + `overflow: hidden`; both removed so a two-line title or extra row grows the card instead of pushing Home / Play Again past its edge.

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import '../AudioToggle/AudioToggle.css';
+import './HoldMuteButton.css';
 import { isVoiceMuted, setVoiceMuted, subscribeVoiceMute } from '../../../utils/voiceMute';
 
 const HOLD_MS = 1000;
@@ -20,6 +21,15 @@ const HoldMuteButton = ({ position = 'bottom-left', onUnmute }) => {
   const holdingRef = useRef(false);
   const justMutedRef = useRef(false);
   const justMutedTimer = useRef(null);
+  // A finger covers the button and its ring, so the feedback lives in a bubble ABOVE it:
+  // 'hold' while pressing (with the progress), then 'off' / 'on' for a moment after the change.
+  const [confirm, setConfirm] = useState(null);
+  const confirmTimer = useRef(null);
+  const showConfirm = useCallback((kind) => {
+    setConfirm(kind);
+    clearTimeout(confirmTimer.current);
+    confirmTimer.current = setTimeout(() => setConfirm(null), 2200);
+  }, []);
 
   useEffect(() => subscribeVoiceMute(setMuted), []);
 
@@ -30,7 +40,7 @@ const HoldMuteButton = ({ position = 'bottom-left', onUnmute }) => {
     setProgress(0);
   }, []);
 
-  useEffect(() => () => { cancelHold(); clearTimeout(justMutedTimer.current); }, [cancelHold]);
+  useEffect(() => () => { cancelHold(); clearTimeout(justMutedTimer.current); clearTimeout(confirmTimer.current); }, [cancelHold]);
 
   const tick = useCallback(() => {
     if (!holdingRef.current) return;
@@ -39,12 +49,13 @@ const HoldMuteButton = ({ position = 'bottom-left', onUnmute }) => {
     if (p >= 1) {
       cancelHold();
       setVoiceMuted(true);
+      showConfirm('off');
       // letting go of the button fires a click; it must not read as the tap that unmutes
       justMutedRef.current = true;
       return;
     }
     rafRef.current = requestAnimationFrame(tick);
-  }, [cancelHold]);
+  }, [cancelHold, showConfirm]);
 
   // the click that follows letting go of a finished hold arrives right after pointerup; drop it, then forget it
   const handlePointerUp = () => {
@@ -66,6 +77,7 @@ const HoldMuteButton = ({ position = 'bottom-left', onUnmute }) => {
     if (justMutedRef.current) { justMutedRef.current = false; return; }
     if (!muted) return; // plain tap while unmuted does nothing
     setVoiceMuted(false);
+    showConfirm('on');
     onUnmute?.();
   };
 
@@ -90,6 +102,26 @@ const HoldMuteButton = ({ position = 'bottom-left', onUnmute }) => {
         alt=""
         className="audio-toggle__icon"
       />
+      {(progress > 0 || confirm) && (
+        <span
+          className={`holdMuteBubble holdMuteBubble--${position.includes('right') ? 'right' : 'left'}`}
+          role="status"
+          aria-live="polite"
+        >
+          {progress > 0 && !confirm ? (
+            <>
+              <span className="holdMuteBubble__text">Keep holding to turn voice off</span>
+              <span className="holdMuteBubble__track" aria-hidden="true">
+                <span className="holdMuteBubble__fill" style={{ width: `${Math.round(progress * 100)}%` }} />
+              </span>
+            </>
+          ) : (
+            <span className="holdMuteBubble__text holdMuteBubble__text--done">
+              {confirm === 'on' ? 'Voice is on' : 'Voice is off'}
+            </span>
+          )}
+        </span>
+      )}
       {progress > 0 && (
         <svg
           viewBox="0 0 60 60"
