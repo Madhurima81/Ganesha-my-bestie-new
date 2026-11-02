@@ -1233,6 +1233,8 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 .scroll-card-inner .name-input-wrap {
   position: relative;
   width: min(340px, 100%);
+  margin-left: auto;
+  margin-right: auto;
 }
 .scroll-card-inner .name-input-icon {
   position: absolute;
@@ -1247,9 +1249,10 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 .scroll-card-inner .name-input-wrap .name-input {
   width: 100%;
-  padding-left: 50px;
-  padding-right: 20px;
-  text-align: left;
+  box-sizing: border-box;
+  padding-left: 50px;   /* equal both sides so centred text clears the icon */
+  padding-right: 50px;
+  text-align: center;
 }
 
 .scroll-card-inner .create-step-heading {
