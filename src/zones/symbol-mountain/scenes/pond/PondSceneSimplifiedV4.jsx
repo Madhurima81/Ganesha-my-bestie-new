@@ -84,6 +84,7 @@ import lotusAfter from './assets/images/lotus-after.webp';
 import trunkBefore from './assets/images/trunk-before.webp';
 import trunkAfter from './assets/images/trunk-after.webp';
 import ganeshaCharacter from './assets/images/ganesha-character.webp';
+import useNoLongPressMenu from '../../../../lib/hooks/useNoLongPressMenu';
 
 
 const RESUME_DELAY_MS = 3000;
@@ -1568,6 +1569,30 @@ const PondSceneContent = ({
   const isFinalFireworksView = showSparkle === 'final-fireworks';
 
   // 1. WRAP IN GAMELAYOUT
+  // Press-and-hold (rock, lotus) and reeds drag: block the iPad's "Save to Photos / Search inside
+  // image" menu on the pond background, and let go of any hold if the touch is lost without a
+  // pointerup (menu opened, app hidden). KNOWN_PITFALLS 66.
+  useNoLongPressMenu(pondStageRef);
+  const releaseHoldsRef = useRef(null);
+  releaseHoldsRef.current = () => {
+    if (rockHoldStartRef.current) handleRockHoldEnd();
+    if (holdTimerRef.current) handleLotusHoldEnd();
+    if (reedsDragActive) handleReedsPointerUp();
+  };
+  useEffect(() => {
+    const release = () => releaseHoldsRef.current?.();
+    window.addEventListener('blur', release);
+    window.addEventListener('pagehide', release);
+    window.addEventListener('touchcancel', release);
+    document.addEventListener('visibilitychange', release);
+    return () => {
+      window.removeEventListener('blur', release);
+      window.removeEventListener('pagehide', release);
+      window.removeEventListener('touchcancel', release);
+      document.removeEventListener('visibilitychange', release);
+    };
+  }, []);
+
   return (
     <GameLayout
       zoneId="symbol-mountain"

@@ -2,7 +2,7 @@
 
 /* One top offset for the syllable row on every scene, low enough to clear the zone badge.
    Sarvakaryeshu's .sarva-syllable-anchors use the same token so they stay in step. */
-:root { --syl-row-top: clamp(76px, 12vh, 100px); }
+:root { --syl-row-top: clamp(90px, 15vh, 114px); }
 
 .syl-row {
   position: absolute;
