@@ -125,6 +125,26 @@ export default function ParentDashboard({ onBack, onOpenChildProfile }) {
     }
   }
 
+  // Start the current child over: wipes their game progress, keeps their profile (name, age, avatar).
+  // Lives here (behind the PIN) so a child can never hit it by accident. Was "Start Over" in the welcome popup.
+  const handleResetProgress = () => {
+    if (!profileId) return
+    const who = childName || 'this child'
+    const confirmed = window.confirm(
+      `Reset all of ${who}'s progress? Their stars, petals and finished scenes will be erased. Their profile stays. This cannot be undone.`
+    )
+    if (!confirmed) return
+
+    try {
+      GameStateManager.setActiveProfile?.(profileId)
+      GameStateManager.resetGame()
+      window.alert(`${who}'s progress has been reset. They can begin again from the start.`)
+    } catch (error) {
+      console.error('Failed to reset progress:', error)
+      window.alert('Something went wrong while resetting progress.')
+    }
+  }
+
   const handleDeleteAllData = () => {
     const confirmed = window.confirm(
       'Delete all saved child profiles, progress, parent consent, and dashboard data from this device?'
@@ -417,6 +437,13 @@ export default function ParentDashboard({ onBack, onOpenChildProfile }) {
                 sublabel={childAge ? `${name} · Age ${childAge}` : name}
                 action={onOpenChildProfile}
                 actionLabel="Open"
+              />
+              <SettingRow
+                label="Reset progress"
+                sublabel={`Start ${name} over from the beginning. The profile stays.`}
+                action={handleResetProgress}
+                actionLabel="Reset"
+                danger
               />
             </div>
 
