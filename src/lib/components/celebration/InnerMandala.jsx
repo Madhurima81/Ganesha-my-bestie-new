@@ -98,6 +98,20 @@ export default function InnerMandala({
   const closedRef = useRef(false);
   const onEarnedPetalRevealRef = useRef(onEarnedPetalReveal);
   const interactive = typeof onPetalClick === 'function';
+
+  // While the overlay is open nothing behind it should scroll. On iPad a scroll indicator (a thin line) showed
+  // through the blur once the symbols animated; locking the page keeps it from drawing.
+  useEffect(() => {
+    if (!showAsOverlay) return undefined;
+    const bodyOverflow = document.body.style.overflow;
+    const htmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = bodyOverflow;
+      document.documentElement.style.overflow = htmlOverflow;
+    };
+  }, [showAsOverlay]);
   const earnedPetals = Array.isArray(justEarnedPetals)
     ? justEarnedPetals
     : justEarnedPetal
