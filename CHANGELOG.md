@@ -1,5 +1,10 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-02 f] - Vakratunda Rescue: new layout on every screen
+**Touched:** src/zones/shloka-river/scenes/Scene1/VakratundaRescueGame.jsx.
+**Changed:** new frog start, family spot, water area and stone / log pile / reeds positions (authored in the Trace Debug editor). Phones no longer override the positions, only the sizes (stone, logs, reeds, frog), so the water area matches on phone, iPad and desktop. The syllable bands still derive from the start and family spots. The edited copy in the main folder was on an older branch and would have reverted the phone code and the ?debug=1 gating, so only the layout numbers were taken.
+**NOT verified:** not played; phone layout not checked.
+
 ## [2026-11-02 f] - Hold-to-mute: feedback bubble above the button (a finger covers the speaker)
 **Touched:** src/lib/components/ui/HoldMuteButton/HoldMuteButton.jsx, HoldMuteButton.css (new), HoldMuteButton.test.jsx (new). Used on the map (CleanMapZone, bottom-left).
 **Changed:** the progress ring and the icon swap were drawn on the button itself, exactly where the finger sits, so a child could not see the mute happening. Now a bubble appears ABOVE the button while holding ("Keep holding to turn voice off" + a filling bar) and, when the hold completes, says "Voice is off" for about 2 s; tapping to unmute says "Voice is on". The ring stays as a backup. Hold time, tap-to-unmute and the "click after letting go must not unmute" guard are unchanged.
