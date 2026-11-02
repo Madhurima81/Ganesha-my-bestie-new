@@ -137,39 +137,10 @@
   transform: scale(0.94);
 }
 
-.storyReplayVo {
-  position: absolute;
-  right: 31px;
-  bottom: 94px;
-  width: 42px;
-  height: 42px;
-  z-index: 4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.76);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  cursor: pointer;
-  transition: transform 160ms ease;
-}
-
-.storyReplayVo:active {
-  transform: scale(0.92);
-}
-
-.storyReplayVoIcon {
-  width: 20px;
-  height: 20px;
-  display: block;
-  pointer-events: none;
-}
-
 .storySkip {
   position: absolute;
   top: 22px;
-  right: 22px;
+  left: 22px;
   z-index: 5;
   font-family: "Baloo 2", sans-serif;
   font-size: 16px;
@@ -291,20 +262,13 @@
     height: 54px;
   }
 
-  .storyReplayVo {
-    right: 22px;
-    bottom: 84px;
-    width: 40px;
-    height: 40px;
-  }
-
   .gis-dots {
     top: 18px;
   }
 
   .storySkip {
     top: 14px;
-    right: 14px;
+    left: 14px;
     font-size: 14px;
     padding: 8px 14px;
   }
@@ -393,7 +357,7 @@
    (matters in installed/fullscreen PWA; no-op in a normal browser tab). */
 .storySkip {
   top: max(22px, calc(env(safe-area-inset-top, 0px) + 10px));
-  right: max(22px, calc(env(safe-area-inset-right, 0px) + 10px));
+  left: max(22px, calc(env(safe-area-inset-left, 0px) + 10px));
 }
 
 .gis-dots {
@@ -417,11 +381,6 @@
   bottom: max(34px, calc(env(safe-area-inset-bottom, 0px) + 16px));
 }
 
-.storyReplayVo {
-  right: max(31px, calc(env(safe-area-inset-right, 0px) + 19px));
-  bottom: max(94px, calc(env(safe-area-inset-bottom, 0px) + 82px));
-}
-
 .storyEnd {
   padding-bottom: env(safe-area-inset-bottom, 0px);
   box-sizing: border-box;
@@ -430,7 +389,7 @@
 @media (max-width: 700px) {
   .storySkip {
     top: max(14px, calc(env(safe-area-inset-top, 0px) + 6px));
-    right: max(14px, calc(env(safe-area-inset-right, 0px) + 6px));
+    left: max(14px, calc(env(safe-area-inset-left, 0px) + 6px));
   }
 
   .gis-dots {
@@ -452,24 +411,6 @@
 
   .storyBeginButton {
     bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 12px));
-  }
-
-  .storyReplayVo {
-    right: max(22px, calc(env(safe-area-inset-right, 0px) + 14px));
-    bottom: max(84px, calc(env(safe-area-inset-bottom, 0px) + 72px));
-  }
-}
-
-/* ============================================================
-   INTRO STORY - SHORT LANDSCAPE PHONE (740x360-class)
-   The max-width: 700px rules above never fire on these phones.
-   Same story composition; 60px child-sized controls.
-   ============================================================ */
-@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
-  .gis-overlay,
-  .gis-stage {
-    width: 100vw;
-    height: var(--app-height, 100dvh);
   }
 
   .gis-stage {
@@ -506,23 +447,9 @@
     left: max(12px, calc(env(safe-area-inset-left, 0px) + 8px));
   }
 
-  .storyReplayVo {
-    width: 42px;
-    height: 42px;
-    right: max(21px, calc(env(safe-area-inset-right, 0px) + 17px));
-    bottom: max(88px, calc(env(safe-area-inset-bottom, 0px) + 82px));
-  }
-
-  .storyReplayVo::after {
-    content: "";
-    position: absolute;
-    inset: -9px;
-    border-radius: 50%;
-  }
-
   .storySkip {
     top: max(10px, calc(env(safe-area-inset-top, 0px) + 6px));
-    right: max(10px, calc(env(safe-area-inset-right, 0px) + 6px));
+    left: max(10px, calc(env(safe-area-inset-left, 0px) + 6px));
     padding: 7px 13px;
     font-size: 14px;
   }

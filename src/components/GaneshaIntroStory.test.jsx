@@ -78,7 +78,7 @@ test('voice that never reports its end: watchdog still turns the page', () => {
 
 test('replaying by hand keeps the child on that page', () => {
   const { container } = startStory();
-  fireEvent.click(screen.getByLabelText('Hear this page again'));
+  fireEvent.click(screen.getByLabelText('Replay voice'));
   act(() => { jest.advanceTimersByTime(30000); });
   expect(activeDot(container)).toBe(0);
 });

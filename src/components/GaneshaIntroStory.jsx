@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './GaneshaIntroStory.css';
+import VOReplayButton from '../lib/components/feedback/VOReplayButton';
 import { GANESHA_USAGE_SYSTEM } from '../lib/config/ganeshaUsageSystem';
 
 const AUTO_ADVANCE_PAUSE_MS = 2500;     // breathing room after the voice ends
@@ -322,19 +323,11 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
                   />
                 )}
 
-                <button
-                  type="button"
-                  className="storyReplayVo"
-                  onClick={handleReplayVo}
-                  aria-label="Hear this page again"
-                >
-                  <img
-                    src="/images/icons/icon-sound-on.svg"
-                    alt=""
-                    className="storyReplayVoIcon"
-                    draggable={false}
-                  />
-                </button>
+                <VOReplayButton
+                  variant="gameplay"
+                  onReplay={handleReplayVo}
+                  disabled={localStorage.getItem('ganesha_audio_enabled') === 'false'}
+                />
 
                 <button type="button" className="storyNextArrow" onClick={handleNext} aria-label="Next page" />
               </>
