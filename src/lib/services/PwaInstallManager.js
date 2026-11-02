@@ -37,6 +37,15 @@ export function isAndroid() {
   return /Android/i.test(navigator.userAgent || '');
 }
 
+// Apps that open links in their own embedded viewer (the Google app, Facebook, Instagram, Line, WeChat).
+// Their storage is separate from Safari/Chrome and the installed app, and they usually cannot install.
+const IN_APP_UA = /GSA\/|FBAN|FBAV|FB_IAB|Instagram|Line\/|MicroMessenger/;
+
+export function isInAppBrowser() {
+  if (typeof navigator === 'undefined') return false;
+  return IN_APP_UA.test(navigator.userAgent || '');
+}
+
 // Coarse OS + browser sniff, only for choosing which "Add to Home Screen"
 // walkthrough to show. Never used for feature gating.
 export function detectPlatform() {
@@ -50,7 +59,7 @@ export function detectPlatform() {
     else if (/EdgiOS/.test(ua)) browser = 'edge';
     // The Google app (GSA) and chat/social apps open links in their own viewer, which usually has no
     // Add to Home Screen; the parent has to open the page in Safari first.
-    else if (/GSA\/|FBAN|FBAV|Instagram|Line\/|MicroMessenger/.test(ua)) browser = 'inapp';
+    else if (IN_APP_UA.test(ua)) browser = 'inapp';
     else browser = 'safari'; // any other iOS browser uses the Safari-style share sheet
   } else if (os === 'android') {
     if (/SamsungBrowser/.test(ua)) browser = 'samsung';

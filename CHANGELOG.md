@@ -1,5 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-02 c] - In-app browser banner (parents only)
+**Touched:** PwaInstallManager.js (isInAppBrowser, shared IN_APP_UA), InAppBrowserBanner.jsx/.css + test (new), App.jsx.
+**Changed:** inside an in-app browser (Google app, Facebook, Instagram, Line, WeChat; iOS and Android) the first two screens (main welcome, landing) show a dismissible banner: "Open in Safari/Chrome for the best experience", why (progress does not follow the child to the Home Screen app) and how, with Copy link and Got it (remembered in localStorage gmb_inapp_banner_dismissed). Never shown in Safari/Chrome/desktop, in the installed app, or during play. Never blocks.
+**Verified:** 6 jest tests (Google app iPad, Instagram Android, Safari, desktop, installed app, dismiss remembered, copy link); headless render with the Google-app user agent at 1024x670 and 844x390: banner shown, Got it hides it and it stays hidden after reload; with a normal user agent it never appears; it does not cover Begin.
+**NOT verified:** on the real iPad Google app; Android in-app browsers; the wording with a parent.
+**Open:** the Google app's own image menu on press-and-hold cannot be suppressed from the page; the banner steers parents to Safari / the installed app.
+
 ## [2026-11-02 b] - Image menu on press-and-hold: scene picture moved off the touched element (Samaprabha, Pond)
 **Touched:** SamaprabhaGame.jsx/.css, PondSceneSimplifiedV4.jsx, PondScene.css, docs/KNOWN_PITFALLS.md (#66 rule 4). Docs also on staging (40de0ff), after merging staging's Pond fixed-stage commit c7304ec.
 **Changed:** the iPad still opened "Search inside image / Save to Google Photos" on press-and-hold after the first fix. Cause: the stage the finger presses (shadow pieces and hit zones are pointer-events none or plain divs) carried the scene picture as its own CSS background-image, and that browser menu does not honour -webkit-touch-callout or cancelled touchstart. Samaprabha and the Pond now draw the picture on a separate untouchable layer (.sama-bg-layer, .pond-bg-overlay--base, z-index -1, pointer-events none) behind everything. useNoLongPressMenu, callout CSS and release-on-lost-touch stay as defence in depth.

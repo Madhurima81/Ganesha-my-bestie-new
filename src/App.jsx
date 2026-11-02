@@ -46,6 +46,7 @@ import {
   clearZoneReturnFocus,
 } from './lib/utils/zoneNavigationState';
 import { isStandalone } from './lib/services/PwaInstallManager';
+import InAppBrowserBanner from './lib/components/onboarding/InAppBrowserBanner';
 import OfflineReadyManager from './lib/components/offline/OfflineReadyManager';
 
 const AVATAR_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
@@ -1625,6 +1626,9 @@ chants: result?.chants || result?.chantedVerses || {},
           />
         </div>
       )}
+
+      {/* Parent nudge, in-app browsers only, first screens only (never during play) */}
+      {(currentView === 'main-welcome' || currentView === 'landing') && <InAppBrowserBanner />}
 
       {currentView === 'landing' && (
         <div className="view-transition">
