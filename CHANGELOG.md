@@ -6,6 +6,10 @@ Append one entry per work session. Newest on top.
 **Verified:** rendered the map at 1194x834 for a fresh child and for a child with Symbol Mountain finished (real ProgressManager data): fresh = river pieces washed, Lodge/Festival/Treehouse unchanged, Modak full; finished = Shloka River back to no filter (full), Modak at the "completed" look, Lodge at "next".
 **NOT verified:** on the iPad; the phone-landscape map (its Ganesha position `PHONE_MAP_OVERLAYS.ganeshaSymbol` 39%/49% was left alone); a device that saved its own map layout through Edit Map keeps its own Ganesha position (localStorage gmb_map_zone_art), only the defaults changed.
 **Also (same session, at Madhurima's request):** Lambodara Lodge is now washed out (72% opacity, saturate 0.82) when it is the *next* zone too, i.e. while Shloka River is current (it was 92% there), so only the current zone is ever in full colour. Verified with real progress data: Shloka River full, Modak at the completed look, Lodge 72%.
+## [2026-11-02 f] - Vakratunda Rescue: new layout on every screen
+**Touched:** src/zones/shloka-river/scenes/Scene1/VakratundaRescueGame.jsx.
+**Changed:** new frog start, family spot, water area and stone / log pile / reeds positions (authored in the Trace Debug editor). Phones no longer override the positions, only the sizes (stone, logs, reeds, frog), so the water area matches on phone, iPad and desktop. The syllable bands still derive from the start and family spots. The edited copy in the main folder was on an older branch and would have reverted the phone code and the ?debug=1 gating, so only the layout numbers were taken.
+**NOT verified:** not played; phone layout not checked.
 
 ## [2026-11-02 f] - Hold-to-mute: feedback bubble above the button (a finger covers the speaker)
 **Touched:** src/lib/components/ui/HoldMuteButton/HoldMuteButton.jsx, HoldMuteButton.css (new), HoldMuteButton.test.jsx (new). Used on the map (CleanMapZone, bottom-left).

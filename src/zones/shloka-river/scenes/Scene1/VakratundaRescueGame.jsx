@@ -31,7 +31,7 @@ const VAK_DEBUG_UI_ENABLED = typeof window !== 'undefined' && new URLSearchParam
 const SYLLABLES = ['va', 'kra', 'tun', 'da'];
 const AUDIO = { syllables: ['va', 'kra', 'tun', 'da'] };
 
-const START_POS = { x: 24.1, y: 64 };
+const START_POS = { x: 9.501689672470093, y: 62.62557544647315 };
 const FROG_W = 6;
 // Phone landscape only (same query the rest of the app uses): small frog a touch
 // bigger, reeds/logs smaller so the frog reads first. iPad/desktop keep the base values.
@@ -40,7 +40,7 @@ const isPhone = () => typeof window !== 'undefined' && !!window.matchMedia?.(PHO
 const PHONE_FROG_W = 6.4;
 const startFrogW = () => (isPhone() ? PHONE_FROG_W : FROG_W);
 const REUNION_FROG_W = 5.4;
-const FAMILY = { x: 91.08, y: 52.71, w: 14 };
+const FAMILY = { x: 87.36276030540466, y: 46.07546870319988, w: 14 };
 
 const FAMILY_WIN_RADIUS = 12;   // how close counts as "reached the family"
 const PAD_PLACE_BEAT_MS = 450;  // lily-pad 'place' sound (~200ms) + a gap, then the syllable speaks alone
@@ -69,15 +69,15 @@ const STUCK_L3_MS = 12000;       // -> shimmer + short arc toward the opening
 // live in the Trace Debug panel ("Water area") — drag handles, double-click
 // to delete one, "Subdivide" to add resolution, "Reset Water" for this seed.
 const DEFAULT_WATER_POLY = [
-  { x: 16.68, y: 64.51 }, { x: 21.76, y: 65.48 }, { x: 27.14, y: 64.79 }, { x: 32.42, y: 66.87 },
-  { x: 37.5, y: 69.37 }, { x: 42.28, y: 69.51 }, { x: 42.98, y: 60.21 }, { x: 45.07, y: 55.62 },
-  { x: 49.05, y: 52.29 }, { x: 55.33, y: 53.26 }, { x: 60.21, y: 57.85 }, { x: 66.38, y: 63.54 },
-  { x: 68.28, y: 70.62 }, { x: 66.48, y: 83.95 }, { x: 87.31, y: 85.74 }, { x: 94.82, y: 71.15 },
-  { x: 98.18, y: 51.46 }, { x: 88.1, y: 47.43 }, { x: 80.23, y: 51.04 }, { x: 74.25, y: 52.36 },
-  { x: 68.72, y: 52.83 }, { x: 63.68, y: 51.04 }, { x: 59.62, y: 48.43 }, { x: 55.57, y: 46.91 },
-  { x: 53.93, y: 39.24 }, { x: 51.44, y: 39.45 }, { x: 49.95, y: 45.49 }, { x: 45.77, y: 46.88 },
-  { x: 39.09, y: 48.27 }, { x: 33.66, y: 49.38 }, { x: 23.85, y: 43.82 }, { x: 22.76, y: 33.69 },
-  { x: 15.59, y: 34.11 }, { x: 6.82, y: 33.69 }, { x: 3.34, y: 58.54 }, { x: 9.71, y: 61.32 },
+  { x: 16.68, y: 64.51 }, { x: 21.76, y: 65.48 }, { x: 27.14, y: 64.79 }, { x: 30.26, y: 59.6 },
+  { x: 33.17, y: 53.7 }, { x: 38.62, y: 47.66 }, { x: 43.11, y: 45.93 }, { x: 46.36, y: 49.1 },
+  { x: 49.05, y: 52.29 }, { x: 52.88, y: 57.59 }, { x: 55.87, y: 63.63 }, { x: 55.43, y: 69.68 },
+  { x: 54.19, y: 80.18 }, { x: 63.96, y: 85.22 }, { x: 79.53, y: 95.15 }, { x: 94.82, y: 71.15 },
+  { x: 98.18, y: 51.46 }, { x: 88.1, y: 47.43 }, { x: 80.23, y: 51.04 }, { x: 74.61, y: 54.57 },
+  { x: 67.39, y: 56.01 }, { x: 62.99, y: 53.7 }, { x: 59.03, y: 53.7 }, { x: 55.16, y: 47.95 },
+  { x: 53.93, y: 39.24 }, { x: 50.85, y: 39.89 }, { x: 48.04, y: 37.3 }, { x: 45.13, y: 33.84 },
+  { x: 39.06, y: 34.27 }, { x: 33.34, y: 42.77 }, { x: 23.85, y: 43.82 }, { x: 18.39, y: 44.92 },
+  { x: 12.58, y: 40.61 }, { x: 6.82, y: 33.69 }, { x: 3.34, y: 58.54 }, { x: 9.71, y: 61.32 },
 ];
 
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
@@ -211,50 +211,51 @@ const DEFAULT_OBSTACLES = [
   {
     id: 'stone',
     img: stoneImg,
-    l: 36.01,
-    t: 34.11,
+    l: 24.01815950870514,
+    t: 27.654497920514675,
     w: 30,
     z: 7,
     cls: 'vak-obstacle--stone',
-    hit: { x: 36.61, y: 35.11, rx: 14, ry: 12.5 },
+    hit: { x: 24.61815950870514, y: 28.654497920514675, rx: 14, ry: 12.5 },
   },
   {
     id: 'logpile',
     img: logPileImg,
-    l: 69.07,
-    t: 39.24,
+    l: 67.12767481803894,
+    t: 38.304123558556306,
     w: 30,
     z: 7,
     cls: 'vak-obstacle--logpile',
-    hit: { x: 69.07, y: 39.24, rx: 14, ry: 12.5 },
+    hit: { x: 67.12767481803894, y: 38.304123558556306, rx: 14, ry: 12.5 },
   },
   {
     id: 'reeds',
     img: reedsImg,
-    l: 52.24,
-    t: 67.29,
+    l: 42.2297328710556,
+    t: 62.91339618329423,
     w: 20,
     z: 12,   // above the dropped lily pads (z 11) so pads sit BEHIND the reeds
     cls: 'vak-obstacle--reeds',
-    hit: { x: 52.24, y: 67.29, rx: 7.5, ry: 12 },
+    hit: { x: 42.2297328710556, y: 62.91339618329423, rx: 7.5, ry: 12 },
   },
   {
     id: 'reeds2',
     img: reedsImg,
-    l: 59.81,
-    t: 71.73,
+    l: 47.77238368988037,
+    t: 68.09429132138578,
     w: 17,
     z: 12,
     cls: 'vak-obstacle--reeds',
-    hit: { x: 59.81, y: 70.73, rx: 6.5, ry: 11 },
+    hit: { x: 47.77238368988037, y: 67.09429132138578, rx: 6.5, ry: 11 },
   },
 ];
 
+// Phone landscape: sizes only. Positions follow DEFAULT_OBSTACLES so the water area matches on every screen.
 const PHONE_OBSTACLES = {
-  stone: { l: 36.45, t: 26.97, w: 26.6, hit: { x: 37.05, y: 27.97, rx: 12.4, ry: 11.1 } },
+  stone: { w: 26.6, hit: { rx: 12.4, ry: 11.1 } },
   logpile: { w: 26.6, hit: { rx: 12.35, ry: 11.1 } },
-  reeds: { l: 53.59, t: 77.26, w: 15.3, hit: { x: 53.59, y: 77.26, rx: 5.8, ry: 9.2 } },
-  reeds2: { l: 47.04, t: 77.65, w: 13.05, hit: { x: 47.04, y: 76.65, rx: 5, ry: 8.5 } },
+  reeds: { w: 15.3, hit: { rx: 5.8, ry: 9.2 } },
+  reeds2: { w: 13.05, hit: { rx: 5, ry: 8.5 } },
 };
 
 function cloneObstacles() {
