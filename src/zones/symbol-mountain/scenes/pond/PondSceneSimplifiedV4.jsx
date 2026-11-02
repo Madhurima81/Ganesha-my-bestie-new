@@ -142,6 +142,8 @@ const WATER_TO_REEDS_MS = 900;
 const WATER_TO_POND_MS = 1100;
 const POND_OVERLAY_MID = null;
 const POND_OVERLAY_FRONT = '';
+// Layout editor panel (the "Layout" button) is a dev tool: hidden for children unless the URL has ?debug=1.
+const POND_LAYOUT_UI_ENABLED = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('debug') === '1';
 const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
 // =============================================================
 
@@ -1789,103 +1791,105 @@ const PondSceneContent = ({
                 </div>
               )}
 
-              <div
-                className="pond-layout-panel"
-                aria-label="Pond layout controls"
-                style={layoutPanelPos ? { top: layoutPanelPos.y, left: layoutPanelPos.x, right: 'auto' } : undefined}
-              >
+              {POND_LAYOUT_UI_ENABLED && (
                 <div
-                  className="pond-layout-panel__drag-handle"
-                  onPointerDown={handleLayoutDragStart}
-                  onPointerMove={handleLayoutDragMove}
-                  onPointerUp={handleLayoutDragEnd}
-                  onPointerCancel={handleLayoutDragEnd}
-                  title="Drag to move"
+                  className="pond-layout-panel"
+                  aria-label="Pond layout controls"
+                  style={layoutPanelPos ? { top: layoutPanelPos.y, left: layoutPanelPos.x, right: 'auto' } : undefined}
                 >
-                  ⠿
-                </div>
-                <button type="button" onClick={() => setLayoutOpen((open) => !open)}>
-                  {layoutOpen ? 'Hide layout' : 'Layout'}
-                </button>
-                {layoutOpen && (
-                  <div className="pond-layout-panel__body">
-                    <p style={{ margin: 0, fontWeight: 400, fontSize: 11 }}>
-                      Drag any element directly on the scene to place it — the fields below are for fine-tuning.
-                    </p>
-                    <label>Element
-                      <select value={layoutKey} onChange={(e) => setLayoutKey(e.target.value)}>
-                        <optgroup label="Main">
-                          <option value="rock">Rock</option>
-                          <option value="rockHit">Rock hit-zone (invisible)</option>
-                          <option value="flowers">Reeds hit-zone (invisible)</option>
-                          <option value="lotus">Lotus</option>
-                          <option value="lotusHit">Lotus hit-zone (invisible)</option>
-                          <option value="reflection">Reflection</option>
-                          <option value="water">Water</option>
-                          <option value="streamOverlay">Stream overlay</option>
-                        </optgroup>
-                        <optgroup label="Group">
-                          <option value="cluster">Flowers + pebbles (all 8 together)</option>
-                        </optgroup>
-                        <optgroup label="Flowers (independent)">
-                          <option value="flower1">Flower 1</option>
-                          <option value="flower2">Flower 2</option>
-                          <option value="flower3">Flower 3</option>
-                          <option value="flower4">Flower 4</option>
-                        </optgroup>
-                        <optgroup label="Pebbles (independent)">
-                          <option value="pebble1">Pebble 1</option>
-                          <option value="pebble2">Pebble 2</option>
-                          <option value="pebble3">Pebble 3</option>
-                          <option value="pebble4">Pebble 4</option>
-                        </optgroup>
-                        <optgroup label="Other">
-                          <option value="turtle">Sad turtle</option>
-                        </optgroup>
-                        <optgroup label="Hand cues">
-                          <option value="reedsCueFrom">Reeds hand start</option>
-                          <option value="reedsCueToIntro">Reeds hand end (intro)</option>
-                          <option value="reedsCueToL3">Reeds hand end (strong hint)</option>
-                          <option value="reedsCueToL2">Reeds hand end (soft hint)</option>
-                          <option value="lotusCue">Lotus hand hold point</option>
-                          <option value="rockCue">Rock hand hold point</option>
-                        </optgroup>
-                      </select>
-                    </label>
-                    {(layoutKey.endsWith('Cue') || layoutKey.startsWith('reedsCue') ? ['x', 'y'] : ['x', 'y', 'size']).map((field) => (
-                      <label key={field}>{field.toUpperCase()}
-                        <input type="range" min="0" max="100" step="0.5" value={activeLayout[field]} onChange={(e) => updatePondLayout(field, e.target.value)} />
-                        <input type="number" min="0" max="100" step="0.5" value={activeLayout[field]} onChange={(e) => updatePondLayout(field, e.target.value)} />
-                      </label>
-                    ))}
-                    <button type="button" onClick={() => setPondLayout(DEFAULT_POND_LAYOUT)}>Reset</button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const json = JSON.stringify(pondLayout, null, 2);
-                        if (navigator.clipboard?.writeText) {
-                          navigator.clipboard.writeText(json)
-                            .then(() => setLayoutCopyMsg('Copied!'))
-                            .catch(() => setLayoutCopyMsg('Copy failed — see textarea below'));
-                        } else {
-                          setLayoutCopyMsg('Copy from textarea below');
-                        }
-                        safeSetTimeout(() => setLayoutCopyMsg(''), 2500);
-                      }}
-                    >
-                      Copy layout JSON
-                    </button>
-                    {layoutCopyMsg && <span style={{ fontSize: 11 }}>{layoutCopyMsg}</span>}
-                    <textarea
-                      readOnly
-                      value={JSON.stringify(pondLayout, null, 2)}
-                      onFocus={(e) => e.target.select()}
-                      rows={3}
-                      style={{ width: '100%', fontFamily: 'monospace', fontSize: 11 }}
-                    />
+                  <div
+                    className="pond-layout-panel__drag-handle"
+                    onPointerDown={handleLayoutDragStart}
+                    onPointerMove={handleLayoutDragMove}
+                    onPointerUp={handleLayoutDragEnd}
+                    onPointerCancel={handleLayoutDragEnd}
+                    title="Drag to move"
+                  >
+                    ⠿
                   </div>
-                )}
-              </div>
+                  <button type="button" onClick={() => setLayoutOpen((open) => !open)}>
+                    {layoutOpen ? 'Hide layout' : 'Layout'}
+                  </button>
+                  {layoutOpen && (
+                    <div className="pond-layout-panel__body">
+                      <p style={{ margin: 0, fontWeight: 400, fontSize: 11 }}>
+                        Drag any element directly on the scene to place it — the fields below are for fine-tuning.
+                      </p>
+                      <label>Element
+                        <select value={layoutKey} onChange={(e) => setLayoutKey(e.target.value)}>
+                          <optgroup label="Main">
+                            <option value="rock">Rock</option>
+                            <option value="rockHit">Rock hit-zone (invisible)</option>
+                            <option value="flowers">Reeds hit-zone (invisible)</option>
+                            <option value="lotus">Lotus</option>
+                            <option value="lotusHit">Lotus hit-zone (invisible)</option>
+                            <option value="reflection">Reflection</option>
+                            <option value="water">Water</option>
+                            <option value="streamOverlay">Stream overlay</option>
+                          </optgroup>
+                          <optgroup label="Group">
+                            <option value="cluster">Flowers + pebbles (all 8 together)</option>
+                          </optgroup>
+                          <optgroup label="Flowers (independent)">
+                            <option value="flower1">Flower 1</option>
+                            <option value="flower2">Flower 2</option>
+                            <option value="flower3">Flower 3</option>
+                            <option value="flower4">Flower 4</option>
+                          </optgroup>
+                          <optgroup label="Pebbles (independent)">
+                            <option value="pebble1">Pebble 1</option>
+                            <option value="pebble2">Pebble 2</option>
+                            <option value="pebble3">Pebble 3</option>
+                            <option value="pebble4">Pebble 4</option>
+                          </optgroup>
+                          <optgroup label="Other">
+                            <option value="turtle">Sad turtle</option>
+                          </optgroup>
+                          <optgroup label="Hand cues">
+                            <option value="reedsCueFrom">Reeds hand start</option>
+                            <option value="reedsCueToIntro">Reeds hand end (intro)</option>
+                            <option value="reedsCueToL3">Reeds hand end (strong hint)</option>
+                            <option value="reedsCueToL2">Reeds hand end (soft hint)</option>
+                            <option value="lotusCue">Lotus hand hold point</option>
+                            <option value="rockCue">Rock hand hold point</option>
+                          </optgroup>
+                        </select>
+                      </label>
+                      {(layoutKey.endsWith('Cue') || layoutKey.startsWith('reedsCue') ? ['x', 'y'] : ['x', 'y', 'size']).map((field) => (
+                        <label key={field}>{field.toUpperCase()}
+                          <input type="range" min="0" max="100" step="0.5" value={activeLayout[field]} onChange={(e) => updatePondLayout(field, e.target.value)} />
+                          <input type="number" min="0" max="100" step="0.5" value={activeLayout[field]} onChange={(e) => updatePondLayout(field, e.target.value)} />
+                        </label>
+                      ))}
+                      <button type="button" onClick={() => setPondLayout(DEFAULT_POND_LAYOUT)}>Reset</button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const json = JSON.stringify(pondLayout, null, 2);
+                          if (navigator.clipboard?.writeText) {
+                            navigator.clipboard.writeText(json)
+                              .then(() => setLayoutCopyMsg('Copied!'))
+                              .catch(() => setLayoutCopyMsg('Copy failed — see textarea below'));
+                          } else {
+                            setLayoutCopyMsg('Copy from textarea below');
+                          }
+                          safeSetTimeout(() => setLayoutCopyMsg(''), 2500);
+                        }}
+                      >
+                        Copy layout JSON
+                      </button>
+                      {layoutCopyMsg && <span style={{ fontSize: 11 }}>{layoutCopyMsg}</span>}
+                      <textarea
+                        readOnly
+                        value={JSON.stringify(pondLayout, null, 2)}
+                        onFocus={(e) => e.target.select()}
+                        rows={3}
+                        style={{ width: '100%', fontFamily: 'monospace', fontSize: 11 }}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Layout debug only: the hand cue points have no element of their own, so show a
                   draggable dot for each (the label says which one) to place the hand by eye. */}
