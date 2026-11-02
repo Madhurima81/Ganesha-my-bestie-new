@@ -1,5 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-02 c] - iOS setup: "Add to Home Screen first" step
+**Touched:** src/lib/components/onboarding/InstallFirstStep.jsx (new), src/App.jsx.
+**Changed:** the Home Screen app on iPhone/iPad has its own storage, so a profile made in the Safari tab is not there in the installed app and setup starts again. After the grown-up check, iOS visitors outside the installed app now see an "Add to Home Screen first" card (Share steps from getInstallGuide plus "then open Ganesha from your Home Screen and set up there"), with a "Continue here instead" link to the old flow. Android, desktop and the installed app skip it.
+**Verified:** production build passes.
+**NOT verified:** the card's layout and wording on a real iPad (not opened in a browser).
+**Open:** pairing code to carry a profile across (docs/PAIRING_CODE_PLAN.md, 4 decisions pending).
+
 ## [2026-11-02 b] - Image menu on press-and-hold: scene picture moved off the touched element (Samaprabha, Pond)
 **Touched:** SamaprabhaGame.jsx/.css, PondSceneSimplifiedV4.jsx, PondScene.css, docs/KNOWN_PITFALLS.md (#66 rule 4). Docs also on staging (40de0ff), after merging staging's Pond fixed-stage commit c7304ec.
 **Changed:** the iPad still opened "Search inside image / Save to Google Photos" on press-and-hold after the first fix. Cause: the stage the finger presses (shadow pieces and hit zones are pointer-events none or plain divs) carried the scene picture as its own CSS background-image, and that browser menu does not honour -webkit-touch-callout or cancelled touchstart. Samaprabha and the Pond now draw the picture on a separate untouchable layer (.sama-bg-layer, .pond-bg-overlay--base, z-index -1, pointer-events none) behind everything. useNoLongPressMenu, callout CSS and release-on-lost-touch stay as defence in depth.

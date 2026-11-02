@@ -20,6 +20,7 @@ const MainWelcomeScreen  = lazy(() => import('./lib/components/navigation/MainWe
 const GaneshaIntroStory  = lazy(() => import('./components/GaneshaIntroStory'));
 const ParentGate         = lazy(() => import('./lib/components/onboarding/ParentGate'));
 const SignInScreen       = lazy(() => import('./lib/components/onboarding/SignInScreen'));
+const InstallFirstStep  = lazy(() => import('./lib/components/onboarding/InstallFirstStep'));
 import { GANESHA_USAGE_SYSTEM } from './lib/config/ganeshaUsageSystem';
 
 const CleanGameWelcomeScreen = lazy(() => import('./lib/components/navigation/CleanGameWelcomeScreen'));
@@ -45,7 +46,7 @@ import {
   setZoneReturnFocus,
   clearZoneReturnFocus,
 } from './lib/utils/zoneNavigationState';
-import { isStandalone } from './lib/services/PwaInstallManager';
+import { isStandalone, isIOS } from './lib/services/PwaInstallManager';
 import OfflineReadyManager from './lib/components/offline/OfflineReadyManager';
 
 const AVATAR_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
@@ -1646,9 +1647,15 @@ chants: result?.chants || result?.chantedVerses || {},
       {currentView === 'parent-gate' && (
         <div className="view-transition">
           <ParentGate
-            onComplete={() => setCurrentView('sign-in')}
+            onComplete={() => setCurrentView(isIOS() && !isStandalone() ? 'install-first' : 'sign-in')}
             onBackToWelcome={() => setCurrentView('main-welcome')}
           />
+        </div>
+      )}
+
+      {currentView === 'install-first' && (
+        <div className="view-transition">
+          <InstallFirstStep onContinue={() => setCurrentView('sign-in')} />
         </div>
       )}
 
@@ -2021,7 +2028,7 @@ if (tempData.playAgainRequested) {
       )}
       
       {/* Fallback view */}
-      {!['loading', 'error', 'main-welcome', 'landing', 'parent-gate', 'sign-in', 'profile-welcome', 'profile-create', 'profile-selector', 'handoff', 'map', 'zone-welcome', 'scene', 'parent-dashboard', 'twg'].includes(currentView) && (
+      {!['loading', 'error', 'main-welcome', 'landing', 'parent-gate', 'install-first', 'sign-in', 'profile-welcome', 'profile-create', 'profile-selector', 'handoff', 'map', 'zone-welcome', 'scene', 'parent-dashboard', 'twg'].includes(currentView) && (
         <div className="unknown-view-error">
           <h2>Error: Unknown view state</h2>
           <p>Current view: {currentView}</p>
