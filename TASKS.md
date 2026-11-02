@@ -283,6 +283,7 @@ Before every task, Claude Code must:
 - [x] T71 · Parent Dashboard (PIN): Settings > Child > "Reset progress" (active child only, profile kept). 2 tests pass. [ ] Clean up: the old Start Over confirm dialog in CleanGameWelcomeScreen.jsx is dead code. [ ] Decide whether a full reset should also replay the intro story.
 - [x] T72 · Shared syllable row `--syl-row-top` clamp(90px, 15vh, 114px) so it clears the zone badge (Samaprabha, Suryakoti, Sarvakaryeshu, Sarvada). Not checked on an iPad.
 - [ ] T73 · OPEN from the iPad test (2026-11-02): stray dark line over the Inner Mandala petals; Pond rock jumps + green smear at the left edge; "Add to Home Screen" Done button overlaps the card bottom; "Send to iPad" label on iPad; fix the repo jest setup (identity-obj-proxy missing) so `npm test` runs.
+- [x] T74 · Closing modal size = opening modal size on iPads (scale 0.66 -> 0.8) and the card grows instead of clipping (no max-height / overflow hidden), so Home / Play Again cannot fall outside. Rendered at 5 iPad sizes; real iPad (Safari + installed app) not checked; the "outside" symptom was not reproducible in Chromium. All closing modals share this CSS: check one per zone.
 
 ---
 

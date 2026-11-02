@@ -1,7 +1,9 @@
 /* Global scene-completion modal scale (applies to all scenes) */
 :root {
   --celebration-modal-scale: 1;
-  --gmb-completion-short-ipad-modal-scale: 0.66;
+  /* Same as the opening card (--gmb-short-ipad-modal-scale in OpeningModal.css) so the two modals match on the
+     iPad. Was 0.72 then 0.66 ("visibly smaller"); changed 2026-11-02 after the iPad showed it smaller than the opening. */
+  --gmb-completion-short-ipad-modal-scale: 0.8;
 }
 
 /* SceneCompletionCelebration.css - UNIQUE CLASS NAMES TO PREVENT CONFLICTS */
@@ -1226,10 +1228,12 @@ transition:
     flex: 0 0 52%;
     max-width: 560px;
     min-height: auto;
-    max-height: 88dvh;
+    /* No max-height / overflow clip: a two-line title or a third row must GROW the card, never push
+       Home / Play Again past its edge (seen on the iPad). The card is far shorter than the screen at zoom 0.8. */
+    max-height: none;
     padding: clamp(42px, 5.4%, 58px) clamp(32px, 4.6%, 48px) clamp(34px, 4.6%, 44px);
     border-radius: 0;
-    overflow: hidden;
+    overflow: visible;
   }
 
   /* Match OpeningModal iPad-landscape icon sizing */

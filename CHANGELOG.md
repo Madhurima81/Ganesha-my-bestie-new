@@ -1,5 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-02 e] - Closing modal: same size as the opening modal on iPads, Home / Play Again stay inside the card
+**Touched:** src/lib/components/celebration/SceneCompletionCelebration.css (scale token + the 1024-1366px landscape card rule).
+**Changed:** (1) On iPads (landscape, 1000px+ wide, up to 900px tall) the closing card was zoomed 0.66 while the opening card is 0.8, so it looked about 17% smaller. `--gmb-completion-short-ipad-modal-scale` is now 0.8, the same as the opening's `--gmb-short-ipad-modal-scale`. This reverses the 2026-10-13 choice to make the closing card "visibly smaller" (0.72, later 0.66), at Madhurima's request after iPad testing. (2) In the 1024-1366px landscape rule the card had `max-height: 88dvh` + `overflow: hidden`; both removed so a two-line title or extra row grows the card instead of pushing Home / Play Again past its edge.
+**Verified:** headless render of the closing preview (?game=cel-sm) with a two-line title at 1194x834, 1180x820, 1024x768, 1133x744 and 1366x1024: Home / Play Again inside the card every time; side by side with the Pond opening modal at 1194x834 the two cards are the same width.
+**NOT verified:** on the real iPad in Safari and the installed app (Chromium here, not WebKit). I could NOT reproduce Home / Play Again outside the card on the old CSS in Chromium (they stayed inside); the clip/zoom/max-height combination is the suspect, so the card now simply grows. If it still happens on the iPad, send a screenshot with the scene name. Not checked: Pro 13 and phone sizes beyond the existing rules (unchanged by this edit).
+**Open:** other scenes' closing modals share this CSS, so every scene's closing card is now larger on 1000-1366px iPads: eyeball a Symbol Mountain, a Shloka River and an About Me Hut one.
+
 ## [2026-11-02 d] - In-app browser banner (parents only)
 **Touched:** PwaInstallManager.js (isInAppBrowser, shared IN_APP_UA), InAppBrowserBanner.jsx/.css + test (new), App.jsx.
 **Changed:** inside an in-app browser (Google app, Facebook, Instagram, Line, WeChat; iOS and Android) the first two screens (main welcome, landing) show a dismissible banner: "Open in Safari/Chrome for the best experience", why (progress does not follow the child to the Home Screen app) and how, with Copy link and Got it (remembered in localStorage gmb_inapp_banner_dismissed). Never shown in Safari/Chrome/desktop, in the installed app, or during play. Never blocks.
