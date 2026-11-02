@@ -61,6 +61,7 @@ import familyIconImg from './assets/images/family-icon.webp';
 import heartIconImg from './assets/images/heart-icon.webp';
 import purpleHeartIconImg from './assets/images/purple-heart.svg';
 import homeIconImg from './assets/images/house-icon.webp';
+import { getExplorerAvatarId } from '../../../lib/utils/explorerAvatar';
 
 // ?hitzones paints the real tap zones. Valid: inside the round circle only.
 // Invalid: the label under it and the square corners around it.
@@ -242,10 +243,7 @@ const FamilyTreeGameContent = ({
  const activeProfile = GameStateManager.getCurrentProfile?.() || null;
  const profileDisplayName = (activeProfile?.name || 'Friend').trim();
  const rawProfileAvatar = activeProfile?.avatar;
- const PROFILE_ANIMAL_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
- // Legacy emoji-to-animal map removed; profile avatars are now stored as animal IDs directly.
- const PROFILE_EMOJI_TO_ANIMAL = {};
- const profileAnimalId = PROFILE_ANIMAL_IDS.includes(rawProfileAvatar)? rawProfileAvatar: (PROFILE_EMOJI_TO_ANIMAL[rawProfileAvatar] || null);
+ const profileAnimalId = getExplorerAvatarId(rawProfileAvatar);
  const profileAvatarImage = profileAnimalId? `/images/new-explorer-${profileAnimalId}.webp`: null;
  const profileAvatar = (typeof rawProfileAvatar === 'string' && rawProfileAvatar.trim().length <= 2)
 ? rawProfileAvatar

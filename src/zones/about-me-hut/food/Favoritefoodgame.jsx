@@ -95,6 +95,7 @@ import usePauseAwareTimeout from '../../../lib/hooks/usePauseAwareTimeout';
 import useResumeCountdown from '../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
 import SceneStallPrompt from '../../../lib/components/feedback/SceneStallPrompt';
+import { getExplorerAvatarId } from '../../../lib/utils/explorerAvatar';
 
 // ?hitzones outlines the real tap box of every button in the scene.
 const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
@@ -317,17 +318,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const activeProfile = GameStateManager.getCurrentProfile?.() || null;
   const profileDisplayName = (activeProfile?.name || sceneState.childFriendName || 'You').trim();
   const rawProfileAvatar = activeProfile?.avatar;
-  const profileEmojiToAnimal = {
-    '🐵': 'monkey',
-    '🦚': 'peacock',
-    '🐿️': 'squirrel',
-    '🐯': 'tiger'
-  };
-  const PROFILE_ANIMAL_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
-  const PROFILE_EMOJI_TO_ANIMAL = { '🐵': 'monkey', '🦚': 'peacock', '🐿️': 'squirrel', '🐯': 'tiger' };
-  const profileAnimalId = PROFILE_ANIMAL_IDS.includes(rawProfileAvatar)
-    ? rawProfileAvatar
-    : ((profileEmojiToAnimal[rawProfileAvatar] || PROFILE_EMOJI_TO_ANIMAL[rawProfileAvatar]) || null);
+  const profileAnimalId = getExplorerAvatarId(rawProfileAvatar);
   const profileAvatarImage = profileAnimalId ? `/images/new-explorer-${profileAnimalId}.webp` : null;
   const profileAvatar = (typeof rawProfileAvatar === 'string' && rawProfileAvatar.trim().length <= 2)
     ? rawProfileAvatar

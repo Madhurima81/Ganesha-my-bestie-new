@@ -79,6 +79,7 @@ import durga_pujaIcon from './assets/images/festivals/durgapuja.webp';
 import dussehra_Icon from './assets/images/festivals/dussehra.webp';
 import rakhi_Icon from './assets/images/festivals/rakhi.webp';
 import modakImage from './assets/images/festivals/modak.webp';
+import { getExplorerAvatarId } from '../../../lib/utils/explorerAvatar';
 
 // ?hitzones outlines the real tap box of every button in the scene.
 const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
@@ -873,9 +874,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const storyStorageKey = getStoryStorageKey(activeProfileId);
   const profileDisplayName = (activeProfile?.name || childName || 'Friend').trim();
   const rawProfileAvatar = activeProfile?.avatar;
-  const PROFILE_ANIMAL_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
-  const PROFILE_EMOJI_TO_ANIMAL = { '🐵': 'monkey', '🦚': 'peacock', '🐿️': 'squirrel', '🐯': 'tiger' };
-  const profileAnimalId = PROFILE_ANIMAL_IDS.includes(rawProfileAvatar) ? rawProfileAvatar : (PROFILE_EMOJI_TO_ANIMAL[rawProfileAvatar] || null);
+  const profileAnimalId = getExplorerAvatarId(rawProfileAvatar);
   const profileAvatarImage = profileAnimalId ? `/images/new-explorer-${profileAnimalId}.webp` : null;
   const profileAvatar = (typeof rawProfileAvatar === 'string' && rawProfileAvatar.trim().length <= 2)
     ? rawProfileAvatar

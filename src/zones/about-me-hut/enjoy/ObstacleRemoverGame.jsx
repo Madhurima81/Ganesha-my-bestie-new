@@ -92,6 +92,7 @@ import cloudImg from './assets/images/cloud-opt.webp';
 import kindnessHeaderIcon from './assets/images/story-header/kindness-icon.webp';
 import sharingHeaderIcon from './assets/images/story-header/sharing-icon.webp';
 import natureHeaderIcon from './assets/images/story-header/nature-icon.webp';
+import { getExplorerAvatarId } from '../../../lib/utils/explorerAvatar';
 
 // ?hitzones outlines the real tap box of every tappable thing in the scene.
 // Same condition as the phone block in DreamsWishesGame.css.
@@ -307,10 +308,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   // Profile Display
   const activeProfile = GameStateManager.getCurrentProfile?.() || null;
   const profileDisplayName = (activeProfile?.name || 'Friend').trim();
-  const PROFILE_ANIMAL_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
-  const PROFILE_EMOJI_TO_ANIMAL = { '🐵': 'monkey', '🦚': 'peacock', '🐿️': 'squirrel', '🐯': 'tiger' };
   const rawAvatar = activeProfile?.avatar;
-  const profileAnimalId = PROFILE_ANIMAL_IDS.includes(rawAvatar) ? rawAvatar : (PROFILE_EMOJI_TO_ANIMAL[rawAvatar] || null);
+  const profileAnimalId = getExplorerAvatarId(rawAvatar);
   const profileAvatarImage = profileAnimalId ? `/images/new-explorer-${profileAnimalId}.webp` : null;
   const profileAvatar = (typeof rawAvatar === 'string' && rawAvatar.trim().length <= 2)
     ? rawAvatar
