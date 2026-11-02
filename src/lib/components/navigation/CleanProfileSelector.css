@@ -2342,6 +2342,29 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   }
 }
 
+/* ============================================================
+   NAME / AGE — spacing rhythm on the organic card (tablet / desktop)
+   heading -> subtitle tight, subtitle -> field breathing, field -> arrow close.
+   Scoped to .create-flow-screen so Pick Friend / All Set are untouched, and to
+   min-height 501px so the short-landscape phone overrides below keep winning.
+   ============================================================ */
+@media (orientation: landscape) and (min-height: 501px) {
+  .create-flow-screen .scroll-card-inner {
+    padding-top: 164px; /* was 146: sits the block lower in the card, less dead space at the bottom */
+  }
+}
+@media (min-height: 501px) {
+  .create-flow-screen .scroll-card-inner .create-step-heading {
+    margin-bottom: 10px;
+  }
+  .create-flow-screen .scroll-card-inner .create-step-subheading {
+    margin-bottom: 18px;
+  }
+  .create-flow-screen .scroll-card-inner .arrow-btn {
+    margin-top: 18px;
+  }
+}
+
 /* Name / Age / All Set share one card size (Age is the tallest, so it sets the height) */
 @media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
   .create-flow-screen .scroll-card,
