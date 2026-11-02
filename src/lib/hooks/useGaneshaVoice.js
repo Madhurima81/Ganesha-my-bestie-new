@@ -15,6 +15,9 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { estimateSpeechMs } from './useVoiceGuidance'
 import { attachSpeechCue, startCueTimer } from '../utils/speechCue'
 import { getVoClipUrl, playVoClip, shouldSilenceTts } from '../audio/voClip'
+import {
+  pickGaneshaVoice, AGE_SETTINGS, MOMENT_ADJUSTMENTS, STYLE_ADJUSTMENTS, phoneticize, addNaturalPauses, getAgeTier,
+} from '../audio/ganeshaVoiceProfile'
 
 // Voice toggle (see DECISIONS.md 2026-09-29): when off, nothing is spoken,
 // but each line still "plays" on a silent timer so onEnd fires on schedule.
@@ -26,119 +29,6 @@ const isGlobalAudioOff = () => {
   }
 }
 
-// ─── Male Voice Priority List ─────────────────────────────────────────────────
-// First match wins. Rishi first — Indian English, handles names naturally.
-const MALE_VOICE_WISHLIST = [
-  'Rishi',                    // iOS — Indian English male ✅ BEST for GMB
-  'Daniel',                   // iOS UK — warm, distinguished ✅
-  'Arthur',                   // iOS UK — gentle, warm ✅
-  'Gordon',                   // iOS UK — deep, friendly ✅
-  'Reed',                     // iOS US — warm American male ✅
-  'Aaron',                    // iOS US — friendly male ✅
-  'Fred',                     // iOS/Mac — classic warm male ✅
-  'Google UK English Male',
-  'Google US English Male',
-  'Microsoft David',          // Windows — warm male ✅
-  'Microsoft Mark',           // Windows — decent fallback
-]
-
-// ─── Age-Adaptive Base Settings ──────────────────────────────────────────────
-// Lower pitch + slower rate = warm, wise, unhurried Ganesha energy
-const AGE_SETTINGS = {
-  young: { rate: 0.92, pitch: 1.02 }, // 5–7  → warm storytelling
-  mid:   { rate: 0.95, pitch: 0.98 }, // 8–10 → natural friendly guide
-  older: { rate: 0.98, pitch: 0.95 }, // 11–12 → calm but confident
-}
-
-// ─── Moment Adjustments ───────────────────────────────────────────────────────
-const MOMENT_ADJUSTMENTS = {
-  greeting:      { rate: +0.03, pitch: +0.05 },
-  gratitude:     { rate: +0.00, pitch: +0.05 },
-  dare:          { rate: -0.02, pitch: +0.02 },
-  celebration:   { rate: +0.07, pitch: +0.07 },
-  story:         { rate: -0.01, pitch: +0.03 },
-  coregulation:  { rate: -0.05, pitch: +0.00 },
-  shloka:        { rate: -0.04, pitch: -0.01 },
-  encouragement: { rate: +0.02, pitch: +0.05 },
-  closing:       { rate: -0.03, pitch: +0.02 },
-  thinking:      { rate: -0.01, pitch: +0.00 },
-  default:       { rate:  0.00, pitch:  0.00 },
-}
-
-// Optional style layer on top of age + moment tuning.
-// 'ganesha' keeps the current warm/deep profile.
-// 'child' makes delivery lighter and more playful for testing.
-const STYLE_ADJUSTMENTS = {
-  ganesha: { rate: 0.00, pitch: 0.00, volume: 0.65 },
-  child:   { rate: 0.08, pitch: 0.16, volume: 0.75 },
-}
-
-// ─── Phonetic Map ─────────────────────────────────────────────────────────────
-// Rewrites Indian names + Sanskrit words into sounds an American/UK voice
-// can pronounce correctly. Used when Rishi is not available.
-// Rule: spell the word the way it sounds in English — no hyphens (TTS reads
-// them as "dash"), no caps for stress (TTS ignores them).
-const PHONETIC_MAP = {
-  // App character names
-  'Ganesha':        'Guh naysha',
-  'Ganesh':         'Guh naish',
-  'Mooshika':       'Moo shika',
-
-  // Sanskrit shloka words
-  'Vakratunda':     'Vukra toonda',
-  'Mahakaya':       'Maha kaaya',
-  'Suryakoti':      'Soorya kotee',
-  'Samaprabha':     'Saama prabha',
-  'Nirvighnam':     'Neer vignum',
-  'Kurumedeva':     'Kuru may dayva',
-  'Sarvakaryeshu':  'Sarva karyayshu',
-  'Sarvada':        'Sarvaada',
-
-  // Festival / cultural words
-  'Modak':          'Moduk',
-  'Chaturthi':      'Chuh toorthee',
-  'Shloka':         'Shloka',        // most voices handle this fine
-  'Rangoli':        'Ran golee',
-  'Mandap':         'Mundup',
-
-  // Common NRI child names (add more as needed)
-  'Arjun':          'Arjoon',
-  'Ishaan':         'Eeshaan',
-  'Aditya':         'Uditya',
-  'Kavya':          'Kuvya',
-  'Shreya':         'Shraya',
-  'Ananya':         'Ununyaa',
-  'Rohan':          'Rohan',         // fine as-is
-  'Priya':          'Preeya',
-  'Diya':           'Deeya',
-  'Riya':           'Reeya',
-}
-
-// Only apply phonetic map when Rishi is NOT the active voice.
-// Rishi handles Indian words natively — don't corrupt them.
-const phoneticize = (text, skipPhonetics) => {
-  if (skipPhonetics) return text
-  let result = text
-  for (const [word, phonetic] of Object.entries(PHONETIC_MAP)) {
-    // Case-insensitive whole-word replace
-    result = result.replace(new RegExp(`\\b${word}\\b`, 'gi'), phonetic)
-  }
-  return result
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-const addNaturalPauses = (text) =>
-  text
-    .replace(/\n\n/g, '  ')
-    .replace(/\.\.\./g, '... ')
-    .replace(/ — /g, ', ')
-    .replace(/\? /g, '?  ')
-
-const getAgeTier = (age) => {
-  if (age <= 7)  return 'young'
-  if (age <= 10) return 'mid'
-  return 'older'
-}
 
 // ─── Main Hook ────────────────────────────────────────────────────────────────
 export const useGaneshaVoice = () => {
@@ -180,12 +70,7 @@ export const useGaneshaVoice = () => {
     const loadVoices = () => {
       const voices = window.speechSynthesis?.getVoices() || []
       if (voices.length === 0) return
-      let picked = null
-      for (const name of MALE_VOICE_WISHLIST) {
-        picked = voices.find(v => v.name.includes(name))
-        if (picked) break
-      }
-      voiceRef.current = picked || null
+      voiceRef.current = pickGaneshaVoice(voices)
       setVoicesLoaded(true)
     }
     loadVoices() // try sync first (Firefox loads immediately)

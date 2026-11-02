@@ -6,6 +6,7 @@ import { GANESHA_POSE_ASSETS } from '../../../lib/config/ganeshaUsageSystem';
 import useAppVisibility from '../../../lib/hooks/useAppVisibility';
 import { createSpeechStartWatcher } from '../../../lib/utils/speechStartWatch';
 import { getVoClipUrl, playVoClip, shouldSilenceTts } from '../../../lib/audio/voClip';
+import { getGaneshaVoice, applyGaneshaVoice, prepareGaneshaText } from '../../../lib/audio/ganeshaVoiceProfile';
 import ProfilePillBtn from '../../../lib/components/shared/ProfilePillBtn';
 import symbolMooshikaIcon from '../../symbol-mountain/shared/images/icons/symbol-mooshika-new.webp';
 import symbolModakIcon from '../../symbol-mountain/shared/images/icons/symbol-modak-new.webp';
@@ -125,10 +126,10 @@ const speakOpeningVoiceover = (text, isStillCurrent) => {
     openingSpeechWatcher.speak({
       isStillCurrent,
       buildUtterance: () => {
-        const utterance = new window.SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-IN';
-        utterance.rate = 0.95;
-        utterance.pitch = 1;
+        // Same Ganesha voice as the scenes (see ganeshaVoiceProfile.js).
+        const ganeshaVoice = getGaneshaVoice();
+        const utterance = new window.SpeechSynthesisUtterance(prepareGaneshaText(text, ganeshaVoice));
+        applyGaneshaVoice(utterance, ganeshaVoice);
         utterance.volume = 1;
         return utterance;
       },

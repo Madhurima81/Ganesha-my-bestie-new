@@ -13,6 +13,7 @@ import {
 
 import { sfx } from '../audio/sfx';
 import { getVoClipUrl, shouldSilenceTts } from '../audio/voClip';
+import { getGaneshaVoice, applyGaneshaVoice, prepareGaneshaText } from '../audio/ganeshaVoiceProfile';
 import { ambience } from '../audio/ambience';
 import { createSpeechStartWatcher } from '../utils/speechStartWatch';
 
@@ -227,12 +228,13 @@ const useVoiceGuidance = (zoneId, sceneId, {
 
         const utterance = ttsStartWatcherRef.current?.speak({
           buildUtterance: () => {
-            const nextUtterance = new SpeechSynthesisUtterance(ttsText);
-            nextUtterance.lang = 'en-IN';
-            nextUtterance.rate = 0.95;
-            nextUtterance.pitch = 1;
+            // Same voice, rate and pitch as the Ganesha voice in the later games, so a child hears one voice.
+            const ganeshaVoice = getGaneshaVoice();
+            const spokenText = prepareGaneshaText(ttsText, ganeshaVoice);
+            const nextUtterance = new SpeechSynthesisUtterance(spokenText);
+            applyGaneshaVoice(nextUtterance, ganeshaVoice);
             nextUtterance.volume = voiceVolumeRef.current;
-            attachSpeechCue(nextUtterance, ttsText, cue);
+            attachSpeechCue(nextUtterance, spokenText, cue);
             let callbackFired = false;
             const fireCallback = () => {
               if (callbackFired) return;
