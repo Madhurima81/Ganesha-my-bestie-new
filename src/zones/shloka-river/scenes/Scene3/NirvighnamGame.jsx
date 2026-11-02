@@ -5,6 +5,7 @@ import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
 import useWarmSanskritAudio from '../../../../lib/hooks/useWarmSanskritAudio';
 import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
 import { getLineCue } from '../../../../lib/config/content/voiceCues';
+import { logSceneEvent } from '../../../../lib/utils/sceneEventLog';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './NirvighnamGame.css';
 
@@ -245,6 +246,7 @@ export default function NirvighnamGame({
   const rockProgressRef = useRef(null);
   const transitionTimerRef = useRef(null);
   const voFallbackRef = useRef(null);
+  const completionNetRef = useRef(null); // last-resort finish if the swim/success timers are ever lost
   const debugPanelDragRef = useRef(null);
   const phaseRef = useRef('play');
   const doneAnnouncedRef = useRef(false);
@@ -314,6 +316,10 @@ export default function NirvighnamGame({
     if (voFallbackRef.current) {
       cancelPausable(voFallbackRef.current);
       voFallbackRef.current = null;
+    }
+    if (completionNetRef.current) {
+      cancelPausable(completionNetRef.current);
+      completionNetRef.current = null;
     }
     if (sylEndFallbackRef.current) {
       cancelPausable(sylEndFallbackRef.current);
@@ -845,6 +851,25 @@ export default function NirvighnamGame({
     const timers = [];
 
     setIsSwimming(true);
+
+    // Safety net. The swim hops, the success-line fallback and the completion step are separate timers; the
+    // hops are cancelled when this effect's inputs change and this effect never re-arms them (doneAnnouncedRef),
+    // and a silent (muted) line's timer can be cleared by any stopVoice. If any of that ever happens the child
+    // is stuck on the success line. Kept in a ref so the effect cleanup does not cancel it; clearTimers does.
+    // Pausable, so the sidebar can't finish the game behind the panel. Runs once, logs when it had to act.
+    const netMs = swimPath.length * 580 + 550 + 10000 + 4000;
+    completionNetRef.current = pausableAfter(netMs, () => {
+      completionNetRef.current = null;
+      if (completionScheduledRef.current) return;
+      logSceneEvent('nirvighnam', 'completion:safety-net-fired', {
+        swimDone: swimDoneRef.current, successVoDone: successVoDoneRef.current,
+      });
+      swimDoneRef.current = true;
+      successVoDoneRef.current = true;
+      setIsSwimming(false);
+      setPhase('done');
+      completeAfterSuccess();
+    });
 
     // Don't start the word/ending line yet — wait for the final "nam" syllable
     // to finish (its playSyllable onEnded sets lastSyllableDoneRef). Guard with

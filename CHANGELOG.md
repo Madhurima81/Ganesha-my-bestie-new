@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-02 d] - Nirvighnam: completion safety net
+**Touched:** src/zones/shloka-river/scenes/Scene3/NirvighnamGame.jsx.
+**Changed:** Nirvighnam froze once on the success line (muted run, cause not found; fine after reload). Added a last-resort timer when the swim starts: if the game has not completed about 14.5 s plus the swim time later, it marks swim and success line done and completes the scene once, and logs `completion:safety-net-fired`. Pausable, cancelled by clearTimers; no shared voice or timer code touched.
+**NOT verified:** the freeze itself was not reproduced; the net was only parse-checked, not exercised in the scene.
+**Open:** if the log entry ever appears, read __sceneLog() around it to find the lost timer (suspects: swim effect cleanup without re-arm; stopVoice clearing a muted line's silent timer).
+
 ## [2026-11-02 e] - Closing modal: same size as the opening modal on iPads, Home / Play Again stay inside the card
 **Touched:** src/lib/components/celebration/SceneCompletionCelebration.css (scale token + the 1024-1366px landscape card rule).
 **Changed:** (1) On iPads (landscape, 1000px+ wide, up to 900px tall) the closing card was zoomed 0.66 while the opening card is 0.8, so it looked about 17% smaller. `--gmb-completion-short-ipad-modal-scale` is now 0.8, the same as the opening's `--gmb-short-ipad-modal-scale`. This reverses the 2026-10-13 choice to make the closing card "visibly smaller" (0.72, later 0.66), at Madhurima's request after iPad testing. (2) In the 1024-1366px landscape rule the card had `max-height: 88dvh` + `overflow: hidden`; both removed so a two-line title or extra row grows the card instead of pushing Home / Play Again past its edge.
