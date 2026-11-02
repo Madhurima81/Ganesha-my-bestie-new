@@ -1610,7 +1610,6 @@ const PondSceneContent = ({
               ref={pondStageRef}
               className="pond-background"
               style={{
-                backgroundImage: `url(${pondBgFixed})`,
                 '--pond-rock-x': `${pondLayout.rock.x}%`,
                 '--pond-rock-y': `${pondLayout.rock.y}%`,
                 '--pond-rock-size': `calc(${pondLayout.rock.size} * var(--pond-u))`,
@@ -1668,6 +1667,10 @@ const PondSceneContent = ({
               onPointerCancelCapture={layoutOpen ? endElementDrag : undefined}
               onContextMenu={(e) => e.preventDefault()}
             >
+              {/* Scene picture on its own untouchable layer, not on the element the finger presses and
+                  holds (rock / lotus): browsers offer "Save to Photos / Search inside image" for whatever
+                  picture is under the finger. KNOWN_PITFALLS 66. */}
+              <div className="pond-bg-overlay pond-bg-overlay--base" style={{ backgroundImage: `url(${pondBgFixed})` }} aria-hidden="true" />
               {!isCompletionView && !isFinalFireworksView && (
                 <>
               {POND_OVERLAY_MID ? (

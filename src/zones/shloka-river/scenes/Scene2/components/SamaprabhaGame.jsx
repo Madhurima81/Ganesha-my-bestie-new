@@ -1021,7 +1021,6 @@ export default function SamaprabhaGame({
       <div
         ref={stageRef}
         className={`sama-stage is-${phase}`}
-        style={{ backgroundImage: `url(${bgImg})` }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={endPointer}
@@ -1029,6 +1028,10 @@ export default function SamaprabhaGame({
         onLostPointerCapture={endPointer}
         onContextMenu={(event) => event.preventDefault()}
       >
+        {/* The scene picture lives on its own untouchable layer, NOT on the stage the finger presses:
+            a browser's "Save to Photos / Search inside image" menu offers itself for whatever picture is
+            under the finger. KNOWN_PITFALLS 66. */}
+        <div className="sama-bg-layer" style={{ backgroundImage: `url(${bgImg})` }} aria-hidden="true" />
         <div className="sama-dusk-wash" />
 
         {/* Dev aid: add ?hitzones to the URL to see every clue's hold zone (active one solid). */}

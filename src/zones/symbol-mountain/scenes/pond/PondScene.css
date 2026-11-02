@@ -92,6 +92,15 @@
   pointer-events: none;
 }
 
+/* The pond picture itself. z-index -1 stays inside .pond-background (position:relative + z-index:1 = own
+   stacking context) so it sits behind every sprite; pointer-events none from .pond-bg-overlay. */
+.pond-bg-overlay--base {
+  z-index: -1;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 .pond-bg-overlay--mid {
   z-index: 6;
 }

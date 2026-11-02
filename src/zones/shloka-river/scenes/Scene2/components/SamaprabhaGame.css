@@ -27,6 +27,20 @@
   -webkit-touch-callout: none;
 }
 
+/* Scene picture: separate, untouchable layer behind everything (see KNOWN_PITFALLS 66). */
+.sama-bg-layer {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 .sama-dusk-wash {
   position: absolute;
   inset: 0;
