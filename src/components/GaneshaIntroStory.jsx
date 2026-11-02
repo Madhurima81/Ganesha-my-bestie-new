@@ -2,6 +2,10 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './GaneshaIntroStory.css';
 import { GANESHA_USAGE_SYSTEM } from '../lib/config/ganeshaUsageSystem';
 
+const AUTO_ADVANCE_PAUSE_MS = 1200;     // breathing room after the voice ends
+const AUTO_ADVANCE_SILENT_MS = 5500;    // muted / no speech: how long a page stays
+const AUTO_ADVANCE_WATCHDOG_MS = 8000;  // voice never reported its end: advance anyway (+90ms per character)
+
 const GaneshaIntroStory = ({ profileId, onComplete }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showVideoIntro, setShowVideoIntro] = useState(true);
@@ -10,6 +14,10 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
   const videoIntroRef = useRef(null);
   const speechTimerRef = useRef(null);
   const hasSpeechGestureRef = useRef(false);
+  // Bumped for every new voice line: a finished-callback from an older (cancelled/replaced) line is ignored.
+  const speakTokenRef = useRef(0);
+  // Page the child replayed by hand: auto-advance leaves it alone (they are in control now).
+  const replayedSlideRef = useRef(-1);
 
   const slides = useMemo(
     () => [
@@ -77,7 +85,8 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
     }
   };
 
-  const speakSlide = useCallback((slideIndex) => {
+  // onDone fires only when THIS line really finished (not when it was cancelled or replaced).
+  const speakSlide = useCallback((slideIndex, onDone) => {
     const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
 
     if (audioEnabled === 'false') return false;
@@ -99,6 +108,16 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
       utterance.voice = preferredVoice;
     }
 
+    const token = ++speakTokenRef.current;
+    utterance.onend = () => {
+      if (token === speakTokenRef.current) onDone?.();
+    };
+    utterance.onerror = (e) => {
+      if (token !== speakTokenRef.current) return;
+      if (e?.error === 'interrupted' || e?.error === 'canceled') return;
+      onDone?.();
+    };
+
     utterance.rate = 0.9;
     utterance.pitch = 1;
     utterance.volume = 1;
@@ -116,11 +135,33 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
     const slide = slides[currentSlide];
     if (!slide) return undefined;
 
+    // Auto-advance: after this page's voice finishes, pause briefly, then turn the page.
+    // The end screen never auto-advances (the child taps "Let's go"). Manual taps still work any time.
+    let cancelled = false;
+    let advanced = false;
+    const timers = [];
+    const advance = () => {
+      if (cancelled || advanced || slide.endScreen || replayedSlideRef.current === currentSlide) return;
+      advanced = true;
+      timers.push(setTimeout(() => {
+        if (!cancelled) setCurrentSlide((prev) => Math.min(prev + 1, slides.length - 1));
+      }, AUTO_ADVANCE_PAUSE_MS));
+    };
+
     speechTimerRef.current = setTimeout(() => {
-      speakSlide(currentSlide);
+      const started = speakSlide(currentSlide, advance);
+      if (slide.endScreen) return;
+      // No voice (muted / Web Speech missing) -> read-time fallback. Voice that never reports
+      // its end (iOS sometimes) -> watchdog sized to the line length.
+      const fallbackMs = started
+        ? AUTO_ADVANCE_WATCHDOG_MS + (slide.vo?.length || 0) * 90
+        : AUTO_ADVANCE_SILENT_MS;
+      timers.push(setTimeout(advance, fallbackMs));
     }, 150);
 
     return () => {
+      cancelled = true;
+      timers.forEach(clearTimeout);
       if (speechTimerRef.current) {
         clearTimeout(speechTimerRef.current);
         speechTimerRef.current = null;
@@ -173,6 +214,7 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
   };
 
   const handleReplayVo = () => {
+    replayedSlideRef.current = currentSlide;
     unlockSpeechFromGesture();
     speakSlide(currentSlide);
   };
