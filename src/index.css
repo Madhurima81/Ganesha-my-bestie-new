@@ -35,6 +35,25 @@ body {
   /* Removed background-color and flex centering */
 }
 
+/* Kids' app, not a web page: a long-press must never open iOS "Save to Photos / Copy",
+   drag a picture, or highlight text. Inputs stay selectable; add .allow-select for copyable text. */
+html, body {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+img, svg, canvas, video, picture {
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+input, textarea, [contenteditable="true"], .allow-select, .allow-select * {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+
 h1 {
   font-size: 2em;
   text-align: center;
