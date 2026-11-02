@@ -273,8 +273,16 @@ Before every task, Claude Code must:
   were lost to a concurrent edit on that file and are NOT included — see CHANGELOG entry's
   "Open" section; only its unrelated L1-pulse-cap CSS fix survived. Device-tested via the
   in-app harness and live browser checks only; no real-device pass yet.
-
-
+- [x] T64 · Zone profile popup = same layout as the login welcome (CleanGameWelcomeScreen modal branch removed; fullscreen CSS applies to the modal). Start Over removed from the popup. Not checked on a real iPad or phone. T49's list of buttons (Home / Switch Explorer / Start Over) is out of date because of this; re-check T49 against the new layout.
+- [x] T65 · Explorer avatar helper `getExplorerAvatarId` (src/lib/utils/explorerAvatar.js): ProfileChip + Favoritefoodgame, MyIndianStoryGame, Familytreegame, ObstacleRemoverGame now show all 20 explorers (KNOWN_PITFALLS #65). Not checked on device with an owl/turtle profile.
+- [x] T66 · Long-press block app-wide (index.css: touch-callout, user-select, image drag; inputs stay selectable). Not confirmed on Chrome for iOS.
+- [~] T67 · Press-and-hold games frozen by the OS image menu (KNOWN_PITFALLS #66): `useNoLongPressMenu` + release-on-lost-touch wired into Samaprabha and the Pond (rock, lotus, reeds). Hook unit-tested (3). Not tested on an iPad. Other hold mechanics (search `HOLD_`, `onPointerDown` + timer) not yet wired.
+- [x] T68 · Dev panels behind ?debug=1: Pond "Layout" and Vakratunda "Trace Debug". [ ] Unify the other panels (debugTusk, debugModak, ...) under ?debug=1 (offered, not done).
+- [x] T69 · Name + Age steps: centred name field/text, rebalanced spacing, block 18px lower (landscape only). Portrait stays the rotate overlay (DECISIONS). Rendered headless at 3 sizes; not checked on an iPad.
+- [x] T70 · Ganesha intro story: auto-advance after the voice line ends (2.5 s pause; muted 5.5 s; 8 s watchdog), shared VOReplayButton top-right, Skip top-left. 7 tests pass. Not checked with a real iPad voice. Decision in DECISIONS.md.
+- [x] T71 · Parent Dashboard (PIN): Settings > Child > "Reset progress" (active child only, profile kept). 2 tests pass. [ ] Clean up: the old Start Over confirm dialog in CleanGameWelcomeScreen.jsx is dead code. [ ] Decide whether a full reset should also replay the intro story.
+- [x] T72 · Shared syllable row `--syl-row-top` clamp(90px, 15vh, 114px) so it clears the zone badge (Samaprabha, Suryakoti, Sarvakaryeshu, Sarvada). Not checked on an iPad.
+- [ ] T73 · OPEN from the iPad test (2026-11-02): stray dark line over the Inner Mandala petals; Pond rock jumps + green smear at the left edge; "Add to Home Screen" Done button overlaps the card bottom; "Send to iPad" label on iPad; fix the repo jest setup (identity-obj-proxy missing) so `npm test` runs.
 
 ---
 

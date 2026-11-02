@@ -11,6 +11,16 @@ left as-is rather than filled in with unverified data.
 
 ---
 
+**2026-11-02 note:** Hold/touch-loss handling changed in two scenes, and nothing else here was
+re-scanned. Press-and-hold now releases on window blur, pagehide, touchcancel, visibilitychange and
+(Samaprabha) lostpointercapture, so a hold cannot stay "pressed" after the app is hidden or the OS image
+menu steals the touch (KNOWN_PITFALLS #66). Scene 02 Pond (rock hold, lotus hold, reeds drag) and the
+Samaprabha game inside Scene 11 Suryakoti Bank. Status boxes below are NOT changed: this covers holds only,
+not audio/animation pause or progress save, and it is not tested on a device. Non-scene flows changed the
+same day (intro story auto-advance, zone profile popup, Parent Dashboard reset) are in CHANGELOG 2026-11-02.
+
+---
+
 ## How to generate this file
 
 Run this in Claude Code for each scene:
@@ -97,6 +107,7 @@ User has not interacted for X seconds.
 **Tab Switch**
 - Status: [✔️ ] EXISTS  [ ] PARTIAL  [ ] MISSING
 - Notes: Need to check after vo
+- 2026-11-02: rock/lotus holds and the reeds drag also end on blur/pagehide/visibilitychange/touchcancel (PondSceneSimplifiedV4 releaseHoldsRef). Holds only; not device-tested.
 
 **Continue / Resume**
 - Status: [✔️ ] EXISTS  [ ] PARTIAL  [ ] MISSING
@@ -230,7 +241,7 @@ invisible-hitbox-priority bug. Not yet committed. See CHANGELOG 2026-09-22.
 **Phases found in JSX:**
 - [ ]
 
-**Tab Switch** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
+**Tab Switch** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes: not scanned. 2026-11-02: the Samaprabha clue hold (inside this scene) releases on blur/pagehide/visibilitychange/touchcancel/lostpointercapture (SamaprabhaGame.jsx releaseStuckHold); holds only, not device-tested.
 **Continue / Resume** — Status: [x] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes: Both games (canvas rub, clue holds) are single beats and restart on Continue by design. Final card checkpoint `finalCardCollected` added; verified on a production build: Continue goes straight to the completion screen, no repeat card.
 **Idle Hints** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
 
