@@ -118,6 +118,8 @@ const writeMapFlag = (key) => {
 const getZoneStartedKey = (profileId, zoneId) => `gmb_zone_started_${profileId}_${zoneId}`;
 const getMapUnlockSeenKey = (profileId, zoneId) => `gmb_map_unlock_seen_${profileId}_${zoneId}`;
 
+const RIVER_ART_IDS = new Set(['shlokaStream', 'shlokaWaterfall', 'shlokaBridge']);
+
 const ZONE_ART_TO_ZONE_ID = {
   symbol: ZONE_IDS.SYMBOL,
   river: ZONE_IDS.RIVER,
@@ -493,8 +495,8 @@ const MAP_OVERLAY_DEFAULTS = {
     label: 'Ganesha Modak',
     kind: 'image',
     src: GANESHA_POSE_ASSETS.standPoint,
-    left: 31,
-    top: 50,
+    left: 29,
+    top: 45,
     w: 8,
     h: 10,
   },
@@ -707,7 +709,7 @@ const MAP_ZONE_ORDER = [
 ];
 
 const MAP_GANESHA_ZONE_POS = {
-  'symbol-mountain': { left: '31%', top: '50%' },
+  'symbol-mountain': { left: '29%', top: '45%' },
   'cave-of-secrets': { left: '48%', top: '42%' },
   'shloka-river': { left: '66%', top: '44%' },
   'festival-square': { left: '69%', top: '67%' },
@@ -1112,6 +1114,20 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         hierarchyFilter = 'saturate(0.55)';
       }
 
+    }
+
+    // Shloka River's three pieces (river, waterfall, bridge) are not in ZONE_ART_TO_ZONE_ID (no scale change:
+    // their art is big). Until it is the current zone, dim them the same way as the Lodge: only the current
+    // zone is in full colour.
+    if (RIVER_ART_IDS.has(id)) {
+      const riverFocus =
+        currentMapZoneId === ZONE_IDS.RIVER || getZoneState(ZONE_IDS.RIVER, zoneProgress) === 'completed';
+      if (!riverFocus) {
+        // A wash (less colour, a little lighter), NOT transparency: opacity would let the bush painted into the
+        // map background show through the river.
+        hierarchyOpacity = 1;
+        hierarchyFilter = 'saturate(0.5) brightness(1.12)';
+      }
     }
 
     if (hierarchyScale !== 1) transforms.push(`scale(${hierarchyScale})`);

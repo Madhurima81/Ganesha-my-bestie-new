@@ -1,5 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-02 g] - Map first visit: only Modak Mountain in full colour; Shloka River washed out; Ganesha closer to Modak
+**Touched:** src/pages/CleanMapZone.jsx.
+**Changed:** (1) Shloka River's three pieces (river, waterfall, bridge) were not part of the map's colour hierarchy (ZONE_ART_TO_ZONE_ID has only `river`, which has no art), so they were always full colour while the label was dim. They now get `saturate(0.5) brightness(1.12)` (no transparency, no scale change) until Shloka River is the current or a completed zone, so on the first visit only Modak Mountain is in full colour. A first try with opacity 0.72 (like the Lodge) let a bush painted into the map background show through the river, hence the filter. (2) Ganesha's first-visit spot moved from 31%/50% to 29%/45% (ganeshaSymbol overlay default and MAP_GANESHA_ZONE_POS), right under Modak's door.
+**Verified:** rendered the map at 1194x834 for a fresh child and for a child with Symbol Mountain finished (real ProgressManager data): fresh = river pieces washed, Lodge/Festival/Treehouse unchanged, Modak full; finished = Shloka River back to no filter (full), Modak at the "completed" look, Lodge at "next".
+**NOT verified:** on the iPad; the phone-landscape map (its Ganesha position `PHONE_MAP_OVERLAYS.ganeshaSymbol` 39%/49% was left alone); a device that saved its own map layout through Edit Map keeps its own Ganesha position (localStorage gmb_map_zone_art), only the defaults changed.
+**Open:** "Lambodara Lodge" is the *next* zone while Shloka River is current: unchanged (92% opacity). Say if the "next" zone should also be washed out.
+
 ## [2026-11-02 f] - Hold-to-mute: feedback bubble above the button (a finger covers the speaker)
 **Touched:** src/lib/components/ui/HoldMuteButton/HoldMuteButton.jsx, HoldMuteButton.css (new), HoldMuteButton.test.jsx (new). Used on the map (CleanMapZone, bottom-left).
 **Changed:** the progress ring and the icon swap were drawn on the button itself, exactly where the finger sits, so a child could not see the mute happening. Now a bubble appears ABOVE the button while holding ("Keep holding to turn voice off" + a filling bar) and, when the hold completes, says "Voice is off" for about 2 s; tapping to unmute says "Voice is on". The ring stays as a backup. Hold time, tap-to-unmute and the "click after letting go must not unmute" guard are unchanged.
