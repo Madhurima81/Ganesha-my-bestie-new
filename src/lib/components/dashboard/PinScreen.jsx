@@ -8,14 +8,15 @@ import { isPinSet, setPin, verifyPin } from '../../utils/dashboardData'
 // Same keypad look as the login "Grown-ups only" gate (ParentGate): .pg-keypad / .pg-key
 import '../onboarding/ParentGate.css'
 
+// Purple UI, same family as the login "Grown-ups only" gate (no brown). Key names kept from the old palette.
 const C = {
-  saffron:    '#FF9933',
-  deepOrange: '#FF5722',
-  gold:       '#FFD700',
-  brown:      '#5D2E0F',
-  softBrown:  '#8B4513',
-  cream:      '#FFF8E7',
-  lightCream: '#FFF3E0',
+  saffron:    '#B99AEC',
+  deepOrange: '#9B7DD8',   // filled PIN dot
+  gold:       '#C9B8F0',
+  brown:      '#5B4A8A',   // title text
+  softBrown:  '#8872B8',   // subtitle, empty dot outline, "for parents only"
+  cream:      '#F7F2FD',   // page background (soft lavender)
+  lightCream: '#EFE7FB',
   red:        '#D32F2F',
 }
 
@@ -212,8 +213,8 @@ export default function PinScreen({ onSuccess }) {
           className="pin-screen__subtitle"
           style={{
             fontFamily: 'Nunito, sans-serif',
-            color: C.softBrown, fontSize: '0.88rem',
-            marginBottom: '1.5rem', opacity: 0.7,
+            color: '#6D5A99', fontSize: '0.88rem',
+            marginBottom: '1.5rem',
           }}
         >
           {step === 'create'  ? 'Choose a 4-digit PIN'           :
