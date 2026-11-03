@@ -63,9 +63,11 @@ const CV = {
   red:        '#C62828',
 }
 
-export default function ParentDashboard({ onBack, onOpenChildProfile }) {
-  const [unlocked, setUnlocked] = useState(false)
-  const [activeTab, setActiveTab] = useState('forParents')
+// initialUnlocked / initialTab: coming BACK from a screen the parent opened from here (Settings > Child profile):
+// they already entered the PIN a moment ago, so reopen straight on that tab. App only passes them on that return path.
+export default function ParentDashboard({ onBack, onOpenChildProfile, initialUnlocked = false, initialTab = 'forParents' }) {
+  const [unlocked, setUnlocked] = useState(!!initialUnlocked)
+  const [activeTab, setActiveTab] = useState(initialTab || 'forParents')
 
   const [childName, setChildName] = useState('')
   const [childAge, setChildAge] = useState(null)

@@ -441,6 +441,17 @@ const previousViewRef = useRef('loading');
 const dareOpenTimerRef = useRef(null);
 const sceneJustCompletedRef = useRef(false);
 
+// Parent Dashboard > Settings > Child profile opens the profile picker; this lets that screen offer "back to Settings"
+// and reopen the dashboard on Settings without asking for the PIN again. Both reset as soon as the parent goes anywhere else.
+const [profilePickerFromDashboard, setProfilePickerFromDashboard] = useState(false);
+const [resumeDashboardSettings, setResumeDashboardSettings] = useState(false);
+useEffect(() => {
+  if (currentView !== 'profile-selector' && currentView !== 'parent-dashboard') {
+    setProfilePickerFromDashboard(false);
+    setResumeDashboardSettings(false);
+  }
+}, [currentView]);
+
 // Active scene = the unfinished scene the child actually entered, by ANY route
 // (Zone Welcome buttons, Next Adventure, resume). Zone Welcome reads it to decide
 // what to feature. Completion / finished-session exits clear it elsewhere.
@@ -1677,7 +1688,12 @@ chants: result?.chants || result?.chantedVerses || {},
           <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 'var(--app-height, 100vh)', backgroundColor: '#FAF6EE' }}>Loading...</div>}>
             <ParentDashboard
               onBack={() => setCurrentView('profile-welcome')}
-              onOpenChildProfile={() => setCurrentView('profile-selector')}
+              onOpenChildProfile={() => {
+                setProfilePickerFromDashboard(true);
+                setCurrentView('profile-selector');
+              }}
+              initialUnlocked={resumeDashboardSettings}
+              initialTab={resumeDashboardSettings ? 'settings' : 'forParents'}
             />
           </Suspense>
         </div>
@@ -1707,6 +1723,11 @@ chants: result?.chants || result?.chantedVerses || {},
               setCurrentView('profile-welcome');  // go to dashboard, not map
             }}
             onBackToMap={() => setCurrentView('map')}
+            // Opened from Parent Dashboard > Settings: the parent can return there (already unlocked)
+            onBackToParent={profilePickerFromDashboard ? () => {
+              setResumeDashboardSettings(true);
+              setCurrentView('parent-dashboard');
+            } : undefined}
           />
         </div>
       )}

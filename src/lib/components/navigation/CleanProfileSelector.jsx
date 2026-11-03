@@ -15,6 +15,8 @@ import './CleanProfileSelector.css';
 const CleanProfileSelector = ({
   onProfileSelect,
   onBackToMap,
+  // Opened from Parent Dashboard > Settings > Child profile: a way back to Settings (shown instead of "Map")
+  onBackToParent,
   profiles: initialProfiles,
   forceCreate = false,
   // Installed-PWA relaunch: the parent already captured name + age in the
@@ -649,7 +651,20 @@ const CleanProfileSelector = ({
 
         {!showCreateProfile && (
           <>
-            {onBackToMap && (
+            {onBackToParent ? (
+              <button
+                type="button"
+                className="profile-map-back-btn"
+                onClick={() => {
+                  playUiTap(0.22);
+                  onBackToParent();
+                }}
+                aria-label="Back to parent settings"
+              >
+                <span aria-hidden="true">&larr;</span>
+                <span>Settings</span>
+              </button>
+            ) : onBackToMap && (
               <button
                 type="button"
                 className="profile-map-back-btn"

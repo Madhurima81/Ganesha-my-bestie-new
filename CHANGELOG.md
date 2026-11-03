@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-03 h] - Parent Dashboard: Child profile picker has a way back to Settings
+**Touched:** App.jsx, ParentDashboard.jsx, CleanProfileSelector.jsx, ParentDashboardResume.test.jsx (new).
+**Changed:** Madhurima: Settings > Child profile opened the profile picker whose only exit was "Map", so a parent could not return to Settings. When opened from the dashboard the picker now shows "← Settings" (instead of Map) and returns to the dashboard on the Settings tab, already unlocked (no PIN again). The map-chip path is unchanged (still Map).
+**Verified:** 5 dashboard tests pass; Playwright walk on the real app (desktop browser, not iPad): PIN, Settings, Child profile, picker shows Settings, back without PIN, Settings tab, no page errors.
+**Open:** not checked on the iPad.
+
 ## [2026-11-03 g] - My Indian Story closing modal: no "Home" link
 **Touched:** SceneCompletionCelebration.jsx, SceneCompletionCelebration.sharedShell.test.jsx.
 **Changed:** Madhurima: "In Indian story home doesn't make sense". In that scene the big button "See My Journey" goes to the map, while the quiet "Home" link went to the About Me Hut zone welcome (onExploreZones -> 'zone-welcome'), so it was neither the home page nor the map. On the shared card a FINAL scene now never shows the quiet Home link, only "Play Again" (this also covers Sacred Assembly and the Shloka River Finale, which already had none). Non-final scenes keep "Home".

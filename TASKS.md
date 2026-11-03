@@ -470,3 +470,4 @@ that this section still exists for whenever this zone is picked back up.)
 **About Me Hut**
 - Scenes 1-4: Opening/Completion/Audio/Home/Badge wired
 
+- [x] T84 · Parent Dashboard > Settings > Child profile: the profile picker now has a "← Settings" button that returns to the Settings tab without asking for the PIN again. Desktop-verified only.
