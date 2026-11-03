@@ -2291,6 +2291,7 @@ const PondSceneContent = ({
             {/* Scene Completion */}
             {isCompletionView && !showMandala && (
               <SceneCompletionCelebration
+                sharedShell
                 show={isCompletionView}
                 zoneId={zoneId}
                 sceneName="Find a Way to the Lotus"

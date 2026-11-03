@@ -1398,6 +1398,7 @@ const SymbolMountainSceneContent = ({
 
             {isCompletionView && !showMandala && (
               <SceneCompletionCelebration
+                sharedShell
                 show={isCompletionView}
                 sceneName="Ganesha's Eyes, Ears & Tusk"
                 completionTitle={completionModalContent?.title}
@@ -1414,15 +1415,15 @@ const SymbolMountainSceneContent = ({
                 }}
                 symbolData={{
                   eyes: {
-                    title: "Eyes â€” Ganesha's Wise Vision!",
-                    description: "Ganesha's eyes see everything clearly â€” the big picture and the tiny details. They remind us to look carefully before we act!"
+                    title: "Eyes — Ganesha's Wise Vision!",
+                    description: "Ganesha's eyes see everything clearly — the big picture and the tiny details. They remind us to look carefully before we act!"
                   },
                   ears: {
-                    title: "Ears â€” Ganesha's Super Listeners!",
+                    title: "Ears — Ganesha's Super Listeners!",
                     description: "Ganesha's big ears hear every word. They remind us to listen with our whole heart and learn from everything around us."
                   },
                   tusk: {
-                    title: "Tusk â€” Ganesha's Writing Tool!",
+                    title: "Tusk — Ganesha's Writing Tool!",
                     description: "You used what was there to help rebuild the nest."
                   }
                 }}
