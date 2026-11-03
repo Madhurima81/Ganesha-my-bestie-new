@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-03 l] - Map: phone Ganesha no longer covers the Lodge label
+**Touched:** CleanMapZone.jsx.
+**Changed:** Rendered stage 1, 2, 3 on phone (844x390) and stage 3 on iPad (1194x834). On phone, when the Lodge is active, Ganesha stood on top of the "Lambodara Lodge" label. Moved the phone Ganesha spot (ganeshaHut 32/67 -> 25/77), so he stands left of the Lodge below the label. iPad unchanged.
+**Verified:** Playwright renders; desktop browser only.
+**Open:** not pushed to staging yet; not seen on a real iPhone/iPad.
+
 ## [2026-11-03 k] - Map: next-locked fade + quieter labels, no lock badge
 **Touched:** CleanMapZone.jsx, CleanMapZone.css.
 **Changed:** Per Madhurima's map brief. Next-locked art (Lodge, and the river's 3 pieces): saturate(0.65) brightness(1.08); Lodge also opacity 0.78; the river uses the wash only (opacity stays 1 so no bush shows through). Future-locked Lodge fainter: opacity 0.6, saturate(0.55). Next-locked label: opacity 0.48, desaturated, no shadow. Completed label: opacity 0.55, no shadow. Art transitions 450ms. Removed the lock badge (brief: no locks on the map).

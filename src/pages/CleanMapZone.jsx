@@ -329,7 +329,7 @@ const PHONE_MAP_OVERLAYS = {
   treehouseLabel:   { left: 70, top: 70 },
   ganeshaSymbol:    { left: 39, top: 49 },
   ganeshaRiver:     { left: 70, top: 43 },
-  ganeshaHut:       { left: 32, top: 67 },
+  ganeshaHut:       { left: 25, top: 77 },
   ganeshaFestival:  { left: 75, top: 58 },
   ganeshaTreehouse: { left: 68, top: 68 },
   ganeshaAllDone:   { left: 50, top: 78 },
