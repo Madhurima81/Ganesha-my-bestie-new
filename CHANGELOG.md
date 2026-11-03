@@ -1,5 +1,10 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-03 i] - Map: Madhurima's editor layout applied (river moved, 2 props removed)
+**Touched:** CleanMapZone.jsx.
+**Changed:** Applied the exported map-editor layout: Shloka River stream/waterfall/bridge moved (51.9/62.1, 58.9/16.8, 55.7/49.6); removed props grass-39 and flower2-67.
+**Open:** river tap area, label and Ganesha/Mushika overlays not yet compared against the moved art; not rendered or checked on iPad; staging not updated.
+
 ## [2026-11-03 h] - Parent Dashboard: Child profile picker has a way back to Settings
 **Touched:** App.jsx, ParentDashboard.jsx, CleanProfileSelector.jsx, ParentDashboardResume.test.jsx (new).
 **Changed:** Madhurima: Settings > Child profile opened the profile picker whose only exit was "Map", so a parent could not return to Settings. When opened from the dashboard the picker now shows "← Settings" (instead of Map) and returns to the dashboard on the Settings tab, already unlocked (no PIN again). The map-chip path is unchanged (still Map).

@@ -399,10 +399,8 @@ const MAP_PROPS = [
   { id: 'flower1-34', type: 'flower1', src: '/images/map/flower1.webp', left: 81.8, top: 87.1, w: 3, flip: false },
   { id: 'flower1-35', type: 'flower1', src: '/images/map/flower1.webp', left: 76.6, top: 72.7, w: 3, flip: false },
   { id: 'flower1-36', type: 'flower1', src: '/images/map/flower1.webp', left: 72.3, top: 43.3, w: 4, flip: false },
-  { id: 'grass-39', type: 'grass', src: '/images/map/grass.webp', left: 55, top: 40, w: 3, flip: true },
   { id: 'tree1-55', type: 'tree1', src: '/images/map/tree1.webp', left: 49.4, top: 39.9, w: 4, flip: false },
   { id: 'flower1-66', type: 'flower1', src: '/images/map/flower1.webp', left: 45, top: 48, w: 5, flip: false },
-  { id: 'flower2-67', type: 'flower2', src: '/images/map/flower2.webp', left: 48.2, top: 52.6, w: 5, flip: false },
 ];
 
 const MAP_PROPS_STORAGE_KEY = 'gmb_map_props';
@@ -740,19 +738,19 @@ const MAP_ZONE_ART_DEFAULTS = {
   shlokaStream: {
     id: 'shlokaStream', label: 'Shloka River — River',
     src: '/images/map/shloka-stream-opt.webp',
-    left: 52.2, top: 64.6, w: 25, h: 79,
+    left: 51.9, top: 62.1, w: 25, h: 79,
     centered: true, flip: false, rotate: 10, opacity: 1
   },
   shlokaWaterfall: {
     id: 'shlokaWaterfall', label: 'Shloka River — Waterfall',
     src: '/images/map/shloka-waterfall-opt.webp',
-    left: 63.6, top: 23.4, w: 19, h: 24,
+    left: 58.9, top: 16.8, w: 19, h: 24,
     centered: true, flip: false, rotate: 0, opacity: 1
   },
   shlokaBridge: {
     id: 'shlokaBridge', label: 'Shloka River — Bridge',
     src: '/images/map/shloka-bridge-opt.webp',
-    left: 59.7, top: 51.1, w: 13, h: 15,
+    left: 55.7, top: 49.6, w: 13, h: 15,
     centered: true, flip: false, rotate: 2, opacity: 1
   },
   cave: {
