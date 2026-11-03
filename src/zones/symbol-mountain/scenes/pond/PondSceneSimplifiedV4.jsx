@@ -306,9 +306,9 @@ const PondSceneContent = ({
   const DEFAULT_POND_LAYOUT = {
     rock: { x: 32, y: 58, size: 20.5 },
     rockHit: { x: 35.6, y: 58.5, size: 13.6 },
-    flowers: { x: 49.8, y: 63.4, size: 9 },
+    flowers: { x: 49.4, y: 63, size: 9 },
     lotus: { x: 62, y: 58.5, size: 8.5 },
-    lotusHit: { x: 61.9, y: 57, size: 7 },
+    lotusHit: { x: 63.1, y: 57.3, size: 7 },
     reflection: { x: 76, y: 66, size: 20 },
     water: { x: 0, y: 67.8, size: 78 },
     streamOverlay: { x: 0.2, y: 44.1, size: 81 },
@@ -330,8 +330,8 @@ const PondSceneContent = ({
     reedsCueFrom: { x: 51.1, y: 65.8, size: 0 },
     reedsCueToIntro: { x: 60.5, y: 66.5, size: 0 },
     reedsCueToL3: { x: 60.5, y: 66.6, size: 0 },
-    reedsCueToL2: { x: 60.5, y: 66.7, size: 0 },
-    lotusCue: { x: 64.9, y: 62.8, size: 0 },
+    reedsCueToL2: { x: 58.4, y: 66.2, size: 0 },
+    lotusCue: { x: 65.1, y: 62.8, size: 0 },
     rockCue: { x: 42.5, y: 68.9, size: 0 },
   };
   const [pondLayout, setPondLayout] = useState(DEFAULT_POND_LAYOUT);

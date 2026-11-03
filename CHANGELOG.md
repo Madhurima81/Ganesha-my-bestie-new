@@ -1,5 +1,10 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-03] - Pond: lotus ring and cues placed on the bud (editor values)
+**Touched:** src/zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx (DEFAULT_POND_LAYOUT only).
+**Changed:** the lotus hold ring sat left of and above the bud on iPad. Values set with the Pond Layout editor (?debug=1) and checked on the local server: lotus hold zone 61.9,57 -> 63.1,57.3 (ring, glow and hold area follow it); flower group 49.8,63.4 -> 49.4,63; lotus hand cue 64.9,62.8 -> 65.1,62.8; reeds cue level 2 60.5,66.7 -> 58.4,66.2.
+**NOT verified:** on the iPad itself. Set by eye, so a small nudge may still be needed.
+
 ## [2026-11-03 k] - Map: next-locked fade + quieter labels, no lock badge
 **Touched:** CleanMapZone.jsx, CleanMapZone.css.
 **Changed:** Per Madhurima's map brief. Next-locked art (Lodge, and the river's 3 pieces): saturate(0.65) brightness(1.08); Lodge also opacity 0.78; the river uses the wash only (opacity stays 1 so no bush shows through). Future-locked Lodge fainter: opacity 0.6, saturate(0.55). Next-locked label: opacity 0.48, desaturated, no shadow. Completed label: opacity 0.55, no shadow. Art transitions 450ms. Removed the lock badge (brief: no locks on the map).
