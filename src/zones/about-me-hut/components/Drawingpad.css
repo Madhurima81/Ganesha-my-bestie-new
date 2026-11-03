@@ -294,11 +294,12 @@
   max-width: calc((1 - var(--dpad-x)) * 100%);
   display: flex;
   align-items: center;
-  gap: 2px;
-  padding: 0 0 0 4px;
-  background: rgba(255, 255, 255, 0.78);
-  border: 2px dashed var(--dpad-coral);
-  border-radius: 16px;
+  gap: 0;
+  padding: 0 0 0 2px;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1.5px solid rgba(255, 107, 107, 0.55);
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(78, 47, 31, 0.12);
   cursor: grab;
   touch-action: none;
   animation: dpadRise 0.2s ease-out both;
@@ -310,13 +311,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 44px;
+  width: 30px;
+  height: 40px;
   flex: none;
   color: var(--dpad-coral);
+  opacity: 0.6;
 }
 
-.dpad-grip svg { width: 24px; height: 24px; }
+.dpad-grip svg { width: 18px; height: 18px; stroke-width: 2; }
 
 /* the box grows with what is typed: a hidden copy of the text sizes the grid cell */
 .dpad-textfit {
@@ -363,6 +365,38 @@
 
 .dpad-textinput::placeholder { color: #B9A590; font-weight: 600; opacity: 1; }
 
+/* A word already placed on the paper: same look as typed, still draggable. The padding and negative margin
+   only enlarge the touch area; they do not move the text. */
+.dpad-placed {
+  position: absolute;
+  z-index: 11;
+  left: calc(var(--dpad-x) * 100%);
+  top: calc(var(--dpad-y) * 100%);
+  transform: translateY(-50%);
+  box-sizing: content-box;
+  margin: -14px -12px;
+  padding: 14px 12px;
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 700;
+  font-size: calc(var(--dpad-ts) * 100cqw / 900);
+  line-height: 1.35;
+  white-space: pre;
+  color: var(--dpad-ink);
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.dpad-placed:active {
+  cursor: grabbing;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 0 0 1.5px rgba(255, 107, 107, 0.45);
+}
+
+/* Small, quiet delete: the visible disc is 28px but the button keeps a 60px touch area. */
 .dpad-text-no {
   position: relative;
   width: 60px;
@@ -374,22 +408,23 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: #8B6F5C;
   cursor: pointer;
 }
 
 .dpad-text-no::before {
   content: '';
   position: absolute;
-  width: 40px;
-  height: 40px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background: #B8A38E;
-  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.18);
+  background: rgba(255, 248, 236, 0.95);
+  border: 1.5px solid rgba(201, 154, 107, 0.6);
+  transition: transform 0.12s ease;
 }
 
-.dpad-text-no svg { position: relative; width: 20px; height: 20px; }
-.dpad-text-no:active::before { transform: scale(0.92); }
+.dpad-text-no svg { position: relative; width: 14px; height: 14px; stroke-width: 2.4; }
+.dpad-text-no:active::before { transform: scale(0.9); }
 
 /* ---------- actions ---------- */
 

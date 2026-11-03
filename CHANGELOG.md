@@ -8,29 +8,51 @@ Append one entry per work session. Newest on top.
 **NOT verified:** on the real iPad; the Enter-PIN (returning) and wrong-PIN states (same code path, not rendered); the Settings > Change PIN flow.
 **Open:** the keys are 44px high on iPad (same as the login gate), under the 60px touch rule; the gate has always been 44px, so both are unchanged in that respect. Say if both should grow.
 
-## [2026-11-02 g] - Map first visit: only Modak Mountain in full colour; Shloka River washed out; Ganesha closer to Modak
+## [2026-11-02 m] - Map first visit: only Modak Mountain in full colour; Shloka River washed out; Ganesha closer to Modak
 **Touched:** src/pages/CleanMapZone.jsx.
 **Changed:** (1) Shloka River's three pieces (river, waterfall, bridge) were not part of the map's colour hierarchy (ZONE_ART_TO_ZONE_ID has only `river`, which has no art), so they were always full colour while the label was dim. They now get `saturate(0.5) brightness(1.12)` (no transparency, no scale change) until Shloka River is the current or a completed zone, so on the first visit only Modak Mountain is in full colour. A first try with opacity 0.72 (like the Lodge) let a bush painted into the map background show through the river, hence the filter. (2) Ganesha's first-visit spot moved from 31%/50% to 29%/45% (ganeshaSymbol overlay default and MAP_GANESHA_ZONE_POS), right under Modak's door.
 **Verified:** rendered the map at 1194x834 for a fresh child and for a child with Symbol Mountain finished (real ProgressManager data): fresh = river pieces washed, Lodge/Festival/Treehouse unchanged, Modak full; finished = Shloka River back to no filter (full), Modak at the "completed" look, Lodge at "next".
 **NOT verified:** on the iPad; the phone-landscape map (its Ganesha position `PHONE_MAP_OVERLAYS.ganeshaSymbol` 39%/49% was left alone); a device that saved its own map layout through Edit Map keeps its own Ganesha position (localStorage gmb_map_zone_art), only the defaults changed.
 **Also (same session, at Madhurima's request):** Lambodara Lodge is now washed out (72% opacity, saturate 0.82) when it is the *next* zone too, i.e. while Shloka River is current (it was 92% there), so only the current zone is ever in full colour. Verified with real progress data: Shloka River full, Modak at the completed look, Lodge 72%.
 ## [2026-11-02 f] - Vakratunda Rescue: new layout on every screen
+## [2026-11-02 l] - Drawing pad: placed words can be moved again; lighter text box
+**Touched:** src/zones/about-me-hut/components/Drawingpad.jsx, Drawingpad.css (Favourite Food and Dreams & Wishes both use it).
+**Changed:** typed words used to be painted onto the picture as soon as the child tapped away, so they could not be moved. They now stay a movable layer (drag any time, kept inside the paper) and are drawn into the picture only on save, auto-save and download. Undo moves a word back, a second Undo removes it. Text box restyled lighter: thin soft-coral outline and shadow instead of a dashed border, smaller quieter move icon, delete is a small 28px disc (60px touch area kept).
+**Verified:** local run of the pad with a mouse: place, drag, saved image matches the dragged position, Undo x2. Not tested on iPad with a finger, or inside the two games.
+**Limits:** words in a reopened saved draft are part of the picture (not movable); tapping a placed word does not reopen it for editing; the eraser cannot rub out placed words.
+
+## [2026-11-02 k] - iPad / laptop test results for the 2 November fixes (no code)
+**Tested by Madhurima after the staging builds:**
+- Modak: opening voice line and the "Press and hold" line now play. Working.
+- Ears game sounds: working.
+- Press-and-hold image menu (Save to Photos / Search inside image): gone in the installed Home Screen app. (Seen earlier in the Google app browser; that app is not the target.)
+- Home Screen app has its own storage, separate from the Safari tab: confirmed (setup started again after installing). Added the "Add to Home Screen first" step (entry c).
+- Inner Mandala thin line: STILL shows on iPad in every Symbol Mountain scene when the second symbol flies to its petal; never in Shloka River; not on desktop. Not reproducible at 1180x820 in a local browser. The iOS-only backdrop change (entry i) is untested; if the line stays, revert it and look at symbolToPetal animating left/top.
+- Nirvighnam froze once on the success line (muted run); fine after a reload; cause not found. Safety net added (entry h) and writes `completion:safety-net-fired` to __sceneLog() if it ever acts.
+**Open:** pairing code (docs/PAIRING_CODE_PLAN.md, 4 decisions pending); Festival Square Rangoli CSS needs scoping before that zone goes live; the festival-square-fixes branch is far behind staging (its About Me Hut files equal staging's).
+
+## [2026-11-02 g] - Festival Square Rangoli: simplified coloring layout (parked zone)
+**Touched:** src/zones/festival-square/Game2-Rangoli/FestivalRangoliGame.jsx, FestivalRangoliGame.css.
+**Changed:** the two Rangoli files from the festival-square-fixes branch (3c9cf241) copied onto staging as they are there: simplified coloring layout, completion sparkles and title removed, plus that branch's earlier Rangoli edits. Staging had not changed these files since the branch split, so nothing was overwritten. Festival Square is parked, not live.
+**NOT verified:** not played. The branch's other Festival Square files (scene reset config, harness, etc.) were not brought over. The new CSS uses generic global class names (.design-card, .rangoli-canvas) that need scoping before the zone goes live.
+
+## [2026-11-02 j] - Vakratunda Rescue: new layout on every screen
 **Touched:** src/zones/shloka-river/scenes/Scene1/VakratundaRescueGame.jsx.
 **Changed:** new frog start, family spot, water area and stone / log pile / reeds positions (authored in the Trace Debug editor). Phones no longer override the positions, only the sizes (stone, logs, reeds, frog), so the water area matches on phone, iPad and desktop. The syllable bands still derive from the start and family spots. The edited copy in the main folder was on an older branch and would have reverted the phone code and the ?debug=1 gating, so only the layout numbers were taken.
 **NOT verified:** not played; phone layout not checked.
 
-## [2026-11-02 f] - Hold-to-mute: feedback bubble above the button (a finger covers the speaker)
+## [2026-11-02 n] - Hold-to-mute: feedback bubble above the button (a finger covers the speaker)
 **Touched:** src/lib/components/ui/HoldMuteButton/HoldMuteButton.jsx, HoldMuteButton.css (new), HoldMuteButton.test.jsx (new). Used on the map (CleanMapZone, bottom-left).
 **Changed:** the progress ring and the icon swap were drawn on the button itself, exactly where the finger sits, so a child could not see the mute happening. Now a bubble appears ABOVE the button while holding ("Keep holding to turn voice off" + a filling bar) and, when the hold completes, says "Voice is off" for about 2 s; tapping to unmute says "Voice is on". The ring stays as a backup. Hold time, tap-to-unmute and the "click after letting go must not unmute" guard are unchanged.
 **Verified:** 5 jest tests; real render on the map (1194x834, mouse held): bubble above the button, never overlapping it, bar filling, "Voice is off" after the hold and still shown after release; parse and build OK.
 **NOT verified:** with a real finger on the iPad (how far the thumb reaches above the 36px button); phone sizes; the bubble over other map elements on smaller screens.
 **Open:** no sound feedback on mute (SFX keeps playing by design); the button measures 36px wide on tablet-size screens in this render, which is under the 60px touch rule unless a larger invisible hit area exists: not checked.
-## [2026-11-02 e] - Inner Mandala: iOS-only backdrop change (experiment for the thin line)
+## [2026-11-02 i] - Inner Mandala: iOS-only backdrop change (experiment for the thin line)
 **Touched:** src/lib/components/celebration/InnerMandala.css.
 **Changed:** a thin dark line shows across the mandala on iPad while the second symbol flies to its petal, in every Symbol Mountain scene and never in Shloka River; not reproducible on desktop (mandala draws cleanly at 1180x820). Guess: WebKit seam from animated children over backdrop-filter. On iOS only (`@supports (-webkit-touch-callout: none)`) the blur is replaced by a slightly darker plain wash. Desktop/Android unchanged.
 **NOT verified:** that it removes the line (iPad only). If it still shows, revert this and look at symbolToPetal animating left/top (will-change left, top) instead.
 
-## [2026-11-02 d] - Nirvighnam: completion safety net
+## [2026-11-02 h] - Nirvighnam: completion safety net
 **Touched:** src/zones/shloka-river/scenes/Scene3/NirvighnamGame.jsx.
 **Changed:** Nirvighnam froze once on the success line (muted run, cause not found; fine after reload). Added a last-resort timer when the swim starts: if the game has not completed about 14.5 s plus the swim time later, it marks swim and success line done and completes the scene once, and logs `completion:safety-net-fired`. Pausable, cancelled by clearTimers; no shared voice or timer code touched.
 **NOT verified:** the freeze itself was not reproduced; the net was only parse-checked, not exercised in the scene.
@@ -63,7 +85,7 @@ Append one entry per work session. Newest on top.
 **NOT verified:** the menu actually stops on the iPad (cannot run the Google-app or Chrome iOS browser here). Not pushed to staging yet. If it still opens: test the same hold in Safari and in the installed Home Screen app. The family flow is the installed app, and a third-party in-app browser may not be fixable from the page.
 **Open:** other hold mechanics (search HOLD_) not yet checked; other scenes that put the scene picture as a CSS background on the pressed element.
 
-## [2026-11-02] - iPad test round 2: welcome popup, avatars, long-press menu, stuck holds, dev buttons, name/age spacing, story auto-advance, Parent Dashboard reset
+## [2026-11-02 a] - iPad test round 2: welcome popup, avatars, long-press menu, stuck holds, dev buttons, name/age spacing, story auto-advance, Parent Dashboard reset
 **Touched:** CleanGameWelcomeScreen.jsx/.css, ProfileChip.jsx, src/lib/utils/explorerAvatar.js (new), Favoritefoodgame.jsx, MyIndianStoryGame.jsx, Familytreegame.jsx, ObstacleRemoverGame.jsx, index.css, src/lib/hooks/useNoLongPressMenu.js (+ test, new), SamaprabhaGame.jsx/.css, PondSceneSimplifiedV4.jsx, PondScene.css, VakratundaRescueGame.jsx, CleanProfileSelector.css, SyllableHighlight.css, GaneshaIntroStory.jsx/.css (+ test, new), ParentDashboard.jsx (+ ParentDashboardReset.test.jsx, new), docs/KNOWN_PITFALLS.md (#65, #66), DECISIONS.md. Branch claude/ipad-bugs-i8dueg, merged into staging (fast-forward, 3c5be50).
 **Changed:**
 - Zone profile popup (profile chip in a zone welcome) now uses the same layout as the login welcome ("Tap a petal to see your powers.", Continue Adventure, Explore Map, Switch Explorer). The old modal-only layout (Home, "Not X? Switch Explorer", Start Over) is gone; the fullscreen CSS rules now apply to the modal too. Start Over is no longer reachable from the popup.
