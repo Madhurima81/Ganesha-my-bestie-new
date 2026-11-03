@@ -1926,6 +1926,7 @@ const NewModakSceneMVPContent = ({
             {/* SCENE COMPLETION */}
             {isCompletionView && (
               <SceneCompletionCelebration
+                sharedShell
                 show={isCompletionView}
                 zoneId={zoneId}
                 sceneName="Keep Going, Mooshika!"

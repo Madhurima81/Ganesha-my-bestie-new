@@ -1,0 +1,51 @@
+/* Extras the CLOSING modal needs on top of the opening card (OpeningModal.css). Prefixed game-modal-*. */
+
+/* Line under the primary button (name of the next adventure) */
+.game-modal-subtext {
+  margin: 8px 0 0;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(13px, 1.5vw, 16px);
+  color: var(--modal-text-secondary, #6b574a);
+  text-align: center;
+}
+
+/* Two quiet text links: Home • Play Again */
+.game-modal-ghost-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 16px;
+  width: 100%;
+  margin-top: 12px;
+}
+.game-modal-ghost-btn {
+  min-height: 44px;
+  padding: 0 10px;
+  background: transparent;
+  border: none;
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(15px, 1.6vw, 17px);
+  font-weight: 700;
+  color: #8b6a4a;
+  opacity: 0.88;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.game-modal-ghost-btn:active { opacity: 0.7; transform: scale(0.96); }
+.game-modal-ghost-sep { color: #8b6a4a; opacity: 0.7; font-size: 14px; line-height: 1; }
+
+/* Trophy icons in the closing modal: pop in one by one; tappable ones show what they mean */
+.game-modal-icon-item--pop { animation: gameModalIconPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.game-modal-icon-item--tappable { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.game-modal-icon-item--tappable:active { transform: scale(0.94); }
+@keyframes gameModalIconPop {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) { .game-modal-icon-item--pop { animation: none; } }
+
+/* Closing exit animation hooks (the backdrop fades; the card lifts a little) */
+.game-modal-card.exiting { opacity: 0; transform: translateY(-12px); transition: opacity 0.6s ease, transform 0.6s ease; }

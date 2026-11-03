@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './OpeningModal.css';
 import { getOpeningModal } from '../../../lib/config/content';
-import { getZoneTheme, getProfilePillBtnStyle } from '../../../lib/config/ZoneThemes';
+import { getProfilePillBtnStyle } from '../../../lib/config/ZoneThemes';
 import { GANESHA_POSE_ASSETS } from '../../../lib/config/ganeshaUsageSystem';
 import useAppVisibility from '../../../lib/hooks/useAppVisibility';
 import { createSpeechStartWatcher } from '../../../lib/utils/speechStartWatch';
 import { getVoClipUrl, playVoClip, shouldSilenceTts } from '../../../lib/audio/voClip';
 import { getGaneshaVoice, applyGaneshaVoice, prepareGaneshaText } from '../../../lib/audio/ganeshaVoiceProfile';
 import ProfilePillBtn from '../../../lib/components/shared/ProfilePillBtn';
+import ModalShell, { getModalThemeVars } from './ModalShell';
 import symbolMooshikaIcon from '../../symbol-mountain/shared/images/icons/symbol-mooshika-new.webp';
 import symbolModakIcon from '../../symbol-mountain/shared/images/icons/symbol-modak-new.webp';
 import symbolBellyIcon from '../../symbol-mountain/shared/images/icons/symbol-belly-new-opt.webp';
@@ -219,7 +220,6 @@ const OpeningModal = ({
   const hasContent = Boolean(content.title || content.description);
   const visible = typeof isOpen === 'boolean' ? isOpen : internalOpen;
   visibleRef.current = visible;
-  const theme = zoneId ? getZoneTheme(zoneId) : {};
 
   const clearCtaHintTimers = useCallback(() => {
     if (voMonitorTimerRef.current) {
@@ -367,84 +367,52 @@ const OpeningModal = ({
   const openingGaneshaAsset = GANESHA_POSE_ASSETS.standPoint;
 
   return (
-    <div
-      className="game-modal-overlay"
-      style={{
-        '--modal-card-bg': theme.parentBg,
-        '--modal-text-primary': theme.textPrimary,
-        '--modal-btn-bg': theme.buttonModalOpeningBg || theme.buttonActiveBg,
-        '--modal-btn-shadow': theme.glowColor,
-        '--modal-btn-border': theme.buttonBorder || 'transparent',
-        '--modal-btn-bg-hover':
-          theme.buttonModalOpeningBg || theme.buttonHoverBg || theme.buttonActiveBg,
-        '--modal-btn-text': '#FFFFFF',
-        '--modal-scene-bg': overlayBgImage ? `url(${overlayBgImage})` : 'none',
-      }}
-    >
-      <div className="game-modal-content">
-        <div className="game-modal-character">
-          <img
-            className="game-modal-ganesha"
-            src={openingGaneshaAsset}
-            alt="Ganesha"
-            style={{
-              width: 'min(520px, 100%)',
-              height: 'auto',
-              aspectRatio: '1 / 1',
-              flexShrink: 1,
-            }}
-          />
-        </div>
-        <div className="game-modal-card">
-          <span className="game-modal-lotus-top" aria-hidden="true" />
-          <h1 className="game-modal-title">{content.title}</h1>
-          <p className="game-modal-subtitle">{content.description}</p>
+    <ModalShell
+      style={getModalThemeVars(zoneId, overlayBgImage)}
+      character={{ src: openingGaneshaAsset, alt: 'Ganesha' }}
+      title={content.title}
+      subtitle={content.description}
+      icons={content.icons?.map((iconKey, index) => {
+        const iconValue = PUBLIC_ICON_MAP[iconKey] || iconKey;
+        const label = content.iconLabels?.[index] || iconKey;
 
-          <div className="game-modal-icons">
-            {content.icons?.map((iconKey, index) => {
-              const iconValue = PUBLIC_ICON_MAP[iconKey] || iconKey;
-              const label = content.iconLabels?.[index] || iconKey;
-
-              return (
-                <div className="game-modal-icon-item" key={`${iconKey}-${index}`}>
-                  <div className="game-modal-icon-circle">
-                    {typeof iconValue === 'string' && iconValue.length < 4 ? (
-                      <span>{iconValue}</span>
-                    ) : typeof iconValue === 'string' &&
-                      (iconValue.startsWith('http') || iconValue.startsWith('/')) ? (
-                      <img src={iconValue} alt={label} />
-                    ) : (
-                      <span>{FALLBACK_SPARKLE}</span>
-                    )}
-                  </div>
-                  <span className="game-modal-icon-label">{label}</span>
-                </div>
-              );
-            })}
+        return (
+          <div className="game-modal-icon-item" key={`${iconKey}-${index}`}>
+            <div className="game-modal-icon-circle">
+              {typeof iconValue === 'string' && iconValue.length < 4 ? (
+                <span>{iconValue}</span>
+              ) : typeof iconValue === 'string' &&
+                (iconValue.startsWith('http') || iconValue.startsWith('/')) ? (
+                <img src={iconValue} alt={label} />
+              ) : (
+                <span>{FALLBACK_SPARKLE}</span>
+              )}
+            </div>
+            <span className="game-modal-icon-label">{label}</span>
           </div>
-
-          {showButton && (
-            <>
-              <ProfilePillBtn
-                label={content.buttonText || "Let's Explore"}
-                onClick={() => {
-                  hintTriggeredRef.current = true;
-                  clearCtaHintTimers();
-                  setShowIdleCtaHint(false);
-                  stopAllOpeningVoAudio();
-                  if (typeof isOpen !== 'boolean') setInternalOpen(false);
-                  onStart?.();
-                }}
-                size="lg"
-                fullWidth={false}
-                className={`reveal opening-modal-cta ${showIdleCtaHint ? 'cta-idle-prompt' : ''}`}
-                style={getProfilePillBtnStyle(zoneId)}
-              />
-            </>
-          )}
-        </div>
-      </div>
-    </div>
+        );
+      })}
+    >
+      {showButton && (
+        <>
+          <ProfilePillBtn
+            label={content.buttonText || "Let's Explore"}
+            onClick={() => {
+              hintTriggeredRef.current = true;
+              clearCtaHintTimers();
+              setShowIdleCtaHint(false);
+              stopAllOpeningVoAudio();
+              if (typeof isOpen !== 'boolean') setInternalOpen(false);
+              onStart?.();
+            }}
+            size="lg"
+            fullWidth={false}
+            className={`reveal opening-modal-cta ${showIdleCtaHint ? 'cta-idle-prompt' : ''}`}
+            style={getProfilePillBtnStyle(zoneId)}
+          />
+        </>
+      )}
+    </ModalShell>
   );
 };
 

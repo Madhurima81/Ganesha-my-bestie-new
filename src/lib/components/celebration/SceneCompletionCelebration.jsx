@@ -9,6 +9,7 @@ import { preparePose, usePreloadPoses } from '../animation/PoseImage';
 import ProfilePillBtn from '../shared/ProfilePillBtn';
 import { getProfilePillBtnStyle } from '../../config/ZoneThemes';
 import { sfx } from '../../audio/sfx';
+import ModalShell, { ModalGhostLinks, getModalThemeVars } from '../../../zones/shared/components/ModalShell';
 
 const SceneCompletionCelebration = ({
   show = false,
@@ -37,7 +38,10 @@ const SceneCompletionCelebration = ({
   appImages = {},
   // App trophy row props (containerType="apps")
   appData = {}, // { appId: { title, description, syllables, color } }
-  savedRecordings = {}
+  savedRecordings = {},
+  // Closing modal drawn with the SAME card as the opening modal (title, subtitle, trophy icons, one button, 2 ghost links).
+  // Opt-in per scene while it is proven (Modak first); other layouts fall back to the classic card.
+  sharedShell = false
 }) => {
   const [symbolsInContainer, setSymbolsInContainer] = useState([]);
   const [selectedSymbol, setSelectedSymbol] = useState(null); // for symbol popup
@@ -201,11 +205,96 @@ const SceneCompletionCelebration = ({
     }, 700);
   };
   const handleExplore = onExploreZones || onBackToMap;
+
+  // The primary button: next adventure (or Home on a final scene). Shared by the classic and the shared-card layout.
+  const handlePrimaryClick = () => {
+    if (isFinalScene) {
+      handleContinueWithAnimation(() => handleAction((primaryLabel && onContinue) || onHome || onContinue || handleExplore, false, true));
+      return;
+    }
+    const currentZone = resolvedZoneId || GameStateManager.currentZone || 'symbol-mountain';
+    const nextSceneInfo = GameStateManager.getNextScene(currentZone, sceneId);
+    if (nextSceneInfo) {
+      GameStateManager.clearSceneState(nextSceneInfo.zone, nextSceneInfo.scene);
+    }
+    handleContinueWithAnimation(() => handleAction(onContinue, false, true));
+  };
   const cleanedSubtitle = (completionSubtitle || `${sceneName} is glowing because of you!`)
     .replace(/\s*Wonderful work, little friend\.?/i, '')
     .trim();
 
+  // Symbol popup - when tapping a trophy symbol (shared by both layouts)
+  const symbolPopup = selectedSymbol && symbolData[selectedSymbol] && (
+        <div className="ganesha-popup-overlay" onClick={() => setSelectedSymbol(null)} style={{ zIndex: 9999 }}>
+          <div className="ganesha-popup-content" onClick={(e) => e.stopPropagation()}>
+            <button className="ganesha-popup-close-btn" onClick={() => setSelectedSymbol(null)}>×</button>
+            <div className="ganesha-popup-img-container">
+              {symbolImages[selectedSymbol] && (
+                <img src={symbolImages[selectedSymbol]} alt={selectedSymbol} className="ganesha-popup-custom-img" />
+              )}
+            </div>
+            <h2 className="ganesha-popup-title">{symbolData[selectedSymbol].title}</h2>
+            <p className="ganesha-popup-description">{symbolData[selectedSymbol].description}</p>
+            <button className="ganesha-popup-continue-btn" onClick={() => setSelectedSymbol(null)}>Got it!</button>
+          </div>
+        </div>);
+
   if (!show) return null;
+
+  const useSharedShell =
+    sharedShell && !badgeImage && !isZoneFinalCompletionBadge && !primaryAction &&
+    containerType === 'backpack' && discoveredSymbols.length > 0;
+
+  if (useSharedShell) {
+    return (
+      <div className={`celebration-backdrop${isExiting ? ' exiting' : ''}`}>
+        <ModalShell
+          withOverlay={false}
+          style={getModalThemeVars(resolvedZoneId)}
+          cardClassName={isExiting ? 'exiting' : ''}
+          character={{ src: GANESHA_POSE_ASSETS.sitModak, alt: 'Ganesha' }}
+          title={completionTitle || '\u{1F31F} You Did It!'}
+          subtitle={cleanedSubtitle}
+          icons={symbolsInContainer.map((symbol, index) => {
+            const tappable = !!symbolData[symbol];
+            return (
+              <div
+                key={symbol}
+                className={`game-modal-icon-item game-modal-icon-item--pop${tappable ? ' game-modal-icon-item--tappable' : ''}`}
+                style={{ animationDelay: `${index * 0.2}s` }}
+                onClick={tappable ? () => setSelectedSymbol(symbol) : undefined}
+                role={tappable ? 'button' : undefined}
+                tabIndex={tappable ? 0 : undefined}
+              >
+                <div className="game-modal-icon-circle">
+                  {symbolImages[symbol]
+                    ? <img src={symbolImages[symbol]} alt={symbol} />
+                    : <span>{'\u2B50'}</span>}
+                </div>
+                <span className="game-modal-icon-label">{symbol.charAt(0).toUpperCase() + symbol.slice(1)}</span>
+              </div>
+            );
+          })}
+        >
+          <ProfilePillBtn
+            onClick={handlePrimaryClick}
+            label={primaryLabel || (isFinalScene ? 'Home' : 'Next Adventure')}
+            size="lg"
+            fullWidth={false}
+            style={getProfilePillBtnStyle(resolvedZoneId)}
+          />
+          {!isFinalScene && nextSceneName && <p className="game-modal-subtext">{nextSceneName}</p>}
+          <ModalGhostLinks
+            links={[
+              { label: 'Home', onClick: () => handleAction(handleExplore) },
+              { label: 'Play Again', onClick: () => handleAction(onReplay, true) },
+            ]}
+          />
+        </ModalShell>
+        {symbolPopup}
+      </div>
+    );
+  }
 
   return (
     <div className={`celebration-backdrop${isExiting ? ' exiting' : ''}`}>
@@ -356,18 +445,7 @@ const SceneCompletionCelebration = ({
                 {!primaryAction && (
                   <div className="primary-action-container">
                     <ProfilePillBtn
-                      onClick={() => {
-                        if (isFinalScene) {
-                          handleContinueWithAnimation(() => handleAction((primaryLabel && onContinue) || onHome || onContinue || handleExplore, false, true));
-                          return;
-                        }
-                        const currentZone = resolvedZoneId || GameStateManager.currentZone || 'symbol-mountain';
-                        const nextSceneInfo = GameStateManager.getNextScene(currentZone, sceneId);
-                        if (nextSceneInfo) {
-                          GameStateManager.clearSceneState(nextSceneInfo.zone, nextSceneInfo.scene);
-                        }
-                        handleContinueWithAnimation(() => handleAction(onContinue, false, true));
-                      }}
+                      onClick={handlePrimaryClick}
                       label={primaryLabel || (isFinalScene ? 'Home' : 'Next Adventure')}
                       size="md"
                       fullWidth={true}
@@ -447,22 +525,7 @@ const SceneCompletionCelebration = ({
       </div>
       {/* End Main Container */}
 
-      {/* Symbol popup - when tapping backpack symbols */}
-      {selectedSymbol && symbolData[selectedSymbol] && (
-        <div className="ganesha-popup-overlay" onClick={() => setSelectedSymbol(null)} style={{ zIndex: 9999 }}>
-          <div className="ganesha-popup-content" onClick={(e) => e.stopPropagation()}>
-            <button className="ganesha-popup-close-btn" onClick={() => setSelectedSymbol(null)}>×</button>
-            <div className="ganesha-popup-img-container">
-              {symbolImages[selectedSymbol] && (
-                <img src={symbolImages[selectedSymbol]} alt={selectedSymbol} className="ganesha-popup-custom-img" />
-              )}
-            </div>
-            <h2 className="ganesha-popup-title">{symbolData[selectedSymbol].title}</h2>
-            <p className="ganesha-popup-description">{symbolData[selectedSymbol].description}</p>
-            <button className="ganesha-popup-continue-btn" onClick={() => setSelectedSymbol(null)}>Got it!</button>
-          </div>
-        </div>
-      )}
+      {symbolPopup}
 
       {/* App recorder popup - when tapping app icons (containerType="apps") */}
       {selectedApp && appData[selectedApp] && (

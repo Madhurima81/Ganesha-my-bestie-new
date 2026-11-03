@@ -12,6 +12,7 @@ export default function CelebrationPreview({ zoneId = 'symbol-mountain' }) {
   return (
     <div style={{ position: 'absolute', inset: 0 }}>
       <SceneCompletionCelebration
+        sharedShell={!isRiver /* Modak (Symbol Mountain) uses the shared card; Shloka River still classic */}
         show
         zoneId={zoneId}
         sceneId={isRiver ? 'vakratunda-grove' : 'modak'}
