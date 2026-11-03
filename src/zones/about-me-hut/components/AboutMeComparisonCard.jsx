@@ -39,10 +39,15 @@ function ComparisonItem({ item }) {
 function ComparisonColumn({ column }) {
   return (
     <div className={`aboutme-comparison-column ${column?.className || ''}`.trim()} style={column?.style}>
-      {column?.header ? <div className="aboutme-comparison-column-header">{column.header}</div> : null}
-      {column?.title ? <div className="aboutme-comparison-column-title">{column.title}</div> : null}
+      {/* Avatar beside the heading, same on all four About Me compare screens */}
+      {column?.header || column?.title ? (
+        <div className="aboutme-comparison-column-head">
+          {column?.header ? <div className="aboutme-comparison-column-header">{column.header}</div> : null}
+          {column?.title ? <div className="aboutme-comparison-column-title">{column.title}</div> : null}
+        </div>
+      ) : null}
 
-      <div className="aboutme-comparison-items-grid">
+      <div className={`aboutme-comparison-items-grid ${column?.gridClass || ''}`.trim()}>
         {(column?.items || []).map((item, index) => (
           <ComparisonItem key={item?.id || `${column?.title || 'column'}-${index}`} item={item} />
         ))}

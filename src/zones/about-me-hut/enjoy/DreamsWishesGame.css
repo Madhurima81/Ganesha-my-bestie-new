@@ -2865,3 +2865,28 @@ font-weight: 700;
     font-size: 1rem;
   }
 }
+
+/* "We Both Have Wishes" now uses the shared AboutMeComparisonCard frame: the drawing box sets the
+   height of the right card. The picture is taken out of the flow so its own pixel size can never
+   push the card past Continue. (The old .friendship-* rules above are no longer rendered.) */
+.dreams-wishes-game .aboutme-comparison-overlay .dream-display-box {
+  position: relative;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: calc(var(--u, 8px) * 24);
+  box-sizing: border-box;
+  padding: 0;
+  border-width: 3px;
+  overflow: hidden;
+}
+.dreams-wishes-game .aboutme-comparison-overlay .dream-thumbnail {
+  position: absolute;
+  inset: calc(var(--u, 8px) * 1);
+  width: calc(100% - var(--u, 8px) * 2);
+  height: calc(100% - var(--u, 8px) * 2);
+  object-fit: contain;
+}
+.dreams-wishes-game .aboutme-comparison-overlay .aboutme-comparison-items-grid.is-single .aboutme-comparison-item {
+  align-items: stretch;
+  justify-content: stretch;
+}
