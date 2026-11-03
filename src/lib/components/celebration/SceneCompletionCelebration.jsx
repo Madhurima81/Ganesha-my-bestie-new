@@ -251,7 +251,8 @@ const SceneCompletionCelebration = ({
         <ModalShell
           withOverlay={false}
           style={getModalThemeVars(resolvedZoneId)}
-          cardClassName={isExiting ? 'exiting' : ''}
+          cardClassName={`game-modal-card--closing${isExiting ? ' exiting' : ''}`}
+          fitTitle
           character={{ src: GANESHA_POSE_ASSETS.sitModak, alt: 'Ganesha' }}
           title={completionTitle || '\u{1F31F} You Did It!'}
           subtitle={cleanedSubtitle}

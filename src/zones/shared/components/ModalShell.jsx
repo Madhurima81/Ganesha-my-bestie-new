@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import './OpeningModal.css';   // the card, title, icons and Ganesha styles live here: ONE source for both modals
 import './ModalShell.css';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
@@ -24,6 +24,30 @@ export const getModalThemeVars = (zoneId, overlayBgImage = '') => {
   };
 };
 
+// Keep a title on ONE line: shrink its font (never below MIN) until it fits the card; if it still does not
+// fit at MIN, let it wrap rather than clip. Runs again when the window resizes and when the fonts finish loading.
+const MIN_TITLE_PX = 20;
+function useFitTitleOnOneLine(ref, enabled, dep) {
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!enabled || !el) return undefined;
+    const fit = () => {
+      el.style.removeProperty('font-size');
+      el.style.whiteSpace = 'nowrap';
+      let size = parseFloat(getComputedStyle(el).fontSize) || 36;
+      while (el.scrollWidth > el.clientWidth + 1 && size > MIN_TITLE_PX) {
+        size -= 1;
+        el.style.setProperty('font-size', `${size}px`, 'important'); // the base rule uses !important
+      }
+      if (el.scrollWidth > el.clientWidth + 1) el.style.whiteSpace = 'normal';
+    };
+    fit();
+    window.addEventListener('resize', fit);
+    document.fonts?.ready?.then(fit);
+    return () => window.removeEventListener('resize', fit);
+  }, [ref, enabled, dep]);
+}
+
 const ModalShell = ({
   withOverlay = true,
   style,                 // CSS variables (getModalThemeVars) on the outermost element
@@ -33,8 +57,11 @@ const ModalShell = ({
   icons,                 // ReactNode(s) for the .game-modal-icons row
   contentClassName = '',
   cardClassName = '',
+  fitTitle = false,      // closing modal: keep the title on one line
   children,              // below the icons: primary button, subtext, ghost links
 }) => {
+  const titleRef = useRef(null);
+  useFitTitleOnOneLine(titleRef, fitTitle, title);
   const content = (
     <div className={`game-modal-content ${contentClassName}`.trim()} style={withOverlay ? undefined : style}>
       <div className="game-modal-character">
@@ -52,7 +79,7 @@ const ModalShell = ({
       </div>
       <div className={`game-modal-card ${cardClassName}`.trim()}>
         <span className="game-modal-lotus-top" aria-hidden="true" />
-        <h1 className="game-modal-title">{title}</h1>
+        <h1 className="game-modal-title" ref={titleRef}>{title}</h1>
         <p className="game-modal-subtitle">{subtitle}</p>
         <div className="game-modal-icons">{icons}</div>
         {children}

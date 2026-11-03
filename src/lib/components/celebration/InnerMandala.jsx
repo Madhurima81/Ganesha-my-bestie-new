@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import './InnerMandala.css';
+import { installTapProbe } from '../../utils/tapProbe';
 
 // Geometry from mandala-latest-plain.svg (Inkscape export, viewBox 0 0 14.816666 14.816667)
 // Two rings only: OUTER = 8 shloka words, MIDDLE = 8 symbols. Inner daisy removed.
@@ -98,6 +99,12 @@ export default function InnerMandala({
   const closedRef = useRef(false);
   const onEarnedPetalRevealRef = useRef(onEarnedPetalReveal);
   const interactive = typeof onPetalClick === 'function';
+
+  // Debug only (?debug=1): list the elements under a tap, to trace the stray iPad line. No effect otherwise.
+  useEffect(() => {
+    if (!showAsOverlay) return undefined;
+    return installTapProbe();
+  }, [showAsOverlay]);
 
   // While the overlay is open nothing behind it should scroll. On iPad a scroll indicator (a thin line) showed
   // through the blur once the symbols animated; locking the page keeps it from drawing.

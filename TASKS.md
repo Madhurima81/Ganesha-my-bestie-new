@@ -290,6 +290,8 @@ Before every task, Claude Code must:
 - [x] T78 · (list item 7) Map first visit: Shloka River river/waterfall/bridge washed out until it is the current zone (only Modak in full colour); Ganesha moved closer to Modak (29%/45%). The Lodge is also washed out when it is the next zone. Rendered for fresh and Symbol-Mountain-done children; not checked on the iPad or phone landscape (phone Ganesha position unchanged).
 - [x] T79 · Parent PIN screen keypad = login gate keypad (squished before), Clear key added, dots centred. Rendered on iPad and phone landscape; not tested on the iPad. Keys are 44px high like the gate (under the 60px rule): decide if both should grow.
 - [~] T80 · One modal card for opening + closing (`ModalShell`). DONE: shared card, OpeningModal refactored with zero pixel change, Modak, Pond and Symbol closing modals use it (tappable trophies, 2 ghost links kept; garbled dashes in Symbol's popup titles fixed). TO DO: switch the 5 Shloka River scenes, the 4 About Me Hut scenes, and Sacred Assembly (badge variant needs the shell to support a badge) one at a time; test Play Again in each; try on the iPad first.
+- [x] T81 · Closing modal title stays on one line (font shrinks to fit, floor 20px) and the card has more room under Home / Play Again. Rendered at 4 sizes with the real title and a 46-character one; not checked on the iPad. Shorter wording for the longest closing titles still needs Madhurima's approval.
+- [ ] T82 · Inner Mandala stray line (iPad only; moves left/top/right; a tap on it makes it vanish). Scroll lock and blur removal did not fix it. Debug aid added: `?debug=1` + tap on the line lists the elements under the finger; needs a screenshot from the iPad.
 
 ---
 
