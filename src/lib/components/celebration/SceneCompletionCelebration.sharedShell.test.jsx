@@ -117,10 +117,10 @@ test('a zone badge image or a custom primary action keeps the classic card', asy
   expect(b.container.querySelector('.celebration-card')).not.toBeNull();
 });
 
-test('a final scene with its own button label (My Indian Story) keeps the Home link', async () => {
+test('a final scene with its own button label (My Indian Story) has no Home link, only Play Again', async () => {
   const p = base({ isFinalScene: true, primaryLabel: 'See My Journey', zoneId: 'about-me-hut' }); await open(p);
   expect(screen.getByText('See My Journey')).toBeTruthy();
-  expect(screen.getByText('Home')).toBeTruthy();
+  expect(screen.queryByText('Home')).toBeNull();
   expect(screen.getByText('Play Again')).toBeTruthy();
 });
 

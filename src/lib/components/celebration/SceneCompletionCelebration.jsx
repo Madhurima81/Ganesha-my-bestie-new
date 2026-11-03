@@ -311,8 +311,9 @@ const SceneCompletionCelebration = ({
           {!isFinalScene && nextSceneName && <p className="game-modal-subtext">{nextSceneName}</p>}
           <ModalGhostLinks
             links={[
-              // when the big button already says Home (a final scene with no custom label) do not repeat it as a quiet link
-              ...(isFinalScene && !primaryLabel ? [] : [{ label: 'Home', onClick: () => handleAction(handleExplore) }]),
+              // a final scene's big button already leaves the scene (Home, or "See My Journey" in My Indian Story):
+              // a second "Home" link would repeat it or lead somewhere else under the same name
+              ...(isFinalScene ? [] : [{ label: 'Home', onClick: () => handleAction(handleExplore) }]),
               { label: 'Play Again', onClick: () => handleAction(onReplay, true) },
             ]}
           />
