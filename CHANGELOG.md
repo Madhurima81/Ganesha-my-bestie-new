@@ -1,5 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-03 k] - Map: next-locked fade + quieter labels, no lock badge
+**Touched:** CleanMapZone.jsx, CleanMapZone.css.
+**Changed:** Per Madhurima's map brief. Next-locked art (Lodge, and the river's 3 pieces): saturate(0.65) brightness(1.08); Lodge also opacity 0.78; the river uses the wash only (opacity stays 1 so no bush shows through). Future-locked Lodge fainter: opacity 0.6, saturate(0.55). Next-locked label: opacity 0.48, desaturated, no shadow. Completed label: opacity 0.55, no shadow. Art transitions 450ms. Removed the lock badge (brief: no locks on the map).
+**Kept on purpose:** locked taps still play the gentle "not yet" buzz and label pulse (the JS guard stays), instead of pointer-events none.
+**Verified:** Playwright renders at 1194x834 for stage 1 (Modak active) and stage 2 (Shloka River active). Desktop browser only.
+**Open:** stage 3 (Lodge active) and phone size not re-rendered; completed-zone glow not changed (Modak completed art is 0.82 with no glow in the render).
+
 ## [2026-11-03 j] - Map: Shloka River tap area follows the moved waterfall
 **Touched:** CleanMapZone.css.
 **Changed:** After the river art moved, the tap oval still sat about 5% right and 7% below the waterfall. Moved it onto the waterfall/rocks (tablet top 4% left 51.5%; phone top 6% left 53.5%). Label and Ganesha were already close enough and are unchanged.

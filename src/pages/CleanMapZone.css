@@ -1021,8 +1021,8 @@
 
   /* Hierarchy labels, phone sizes */
   .label.map-label-current   { font-size: clamp(17px, 5dvh, 19px) !important; padding: 5px 15px; opacity: 1; box-shadow: 0 3px 8px rgba(80, 50, 150, 0.22); }
-  .label.map-label-next      { font-size: clamp(13px, 3.9dvh, 15px) !important; padding: 4px 11px; opacity: 0.72; box-shadow: 0 2px 5px rgba(80, 50, 150, 0.10); }
-  .label.map-label-completed { font-size: clamp(13px, 3.9dvh, 15px) !important; padding: 4px 11px; }
+  .label.map-label-next      { font-size: clamp(13px, 3.9dvh, 15px) !important; padding: 4px 11px; opacity: 0.48; filter: saturate(0.65); box-shadow: none; }
+  .label.map-label-completed { font-size: clamp(13px, 3.9dvh, 15px) !important; padding: 4px 11px; opacity: 0.55; box-shadow: none; }
   .label.map-label-later,
   .hut-label.map-label-later { font-size: clamp(12px, 3.5dvh, 14px) !important; padding: 4px 10px; opacity: 0.68; }
   .festival-label,
@@ -1329,20 +1329,22 @@
 }
 
 .label.map-label-next {
-  opacity: 0.72;
+  opacity: 0.48;
+  filter: saturate(0.65);
+  transition: opacity 450ms ease, filter 450ms ease;
   padding: clamp(5px, 0.55vw, 7px) clamp(13px, 1.25vw, 18px);
   font-size: clamp(17px, 1.85vw, 27px) !important;
   background: rgba(105, 79, 182, 0.58);
-  box-shadow: 0 3px 8px rgba(80, 50, 150, 0.12);
+  box-shadow: none;
   text-shadow: none;
 }
 
 .label.map-label-completed {
-  opacity: 0.72;
+  opacity: 0.55;
   padding: clamp(5px, 0.55vw, 7px) clamp(12px, 1.2vw, 18px);
   font-size: clamp(16px, 1.65vw, 24px) !important;
   background: rgba(117, 95, 174, 0.62);
-  box-shadow: 0 2px 6px rgba(80, 50, 150, 0.10);
+  box-shadow: none;
   text-shadow: none;
 }
 

@@ -1099,18 +1099,19 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         // Only the current zone is in full colour: the Lodge stays as washed out when it is "next" as when it is
         // further away (it used to brighten to 92% as soon as Shloka River became current).
         if (hierarchyZoneId === ZONE_IDS.HUT) {
-          hierarchyOpacity = 0.72;
-          hierarchyFilter = 'saturate(0.82)';
+          // Next locked: one treatment only (same look the river gets), no extra overlay.
+          hierarchyOpacity = 0.78;
+          hierarchyFilter = 'saturate(0.65) brightness(1.08)';
         }
       } else if (hierarchyState === 'completed') {
         hierarchyScale = 0.94;
         hierarchyOpacity = 0.82;
         hierarchyFilter = 'saturate(0.9) brightness(1)';
       } else if (hierarchyZoneId === ZONE_IDS.HUT) {
-        // Zone 3 — a real destination, just not reached yet
+        // Zone 3 as a FUTURE locked zone: fainter than "next locked" (0.78 / saturate 0.65)
         hierarchyScale = 0.92;
-        hierarchyOpacity = 0.72;
-        hierarchyFilter = 'saturate(0.82)';
+        hierarchyOpacity = 0.6;
+        hierarchyFilter = 'saturate(0.55) brightness(1.06)';
       } else {
         // Lotus Square / Tusk Treehouse — WIP, atmospheric landmarks only
         hierarchyScale = 0.88;
@@ -1130,7 +1131,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         // A wash (less colour, a little lighter), NOT transparency: opacity would let the bush painted into the
         // map background show through the river.
         hierarchyOpacity = 1;
-        hierarchyFilter = 'saturate(0.5) brightness(1.12)';
+        hierarchyFilter = 'saturate(0.65) brightness(1.08)';
       }
     }
 
@@ -1144,7 +1145,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       transform: transforms.length ? transforms.join(' ') : 'none',
       opacity: hierarchyOpacity,
       filter: hierarchyFilter,
-      transition: 'opacity 320ms ease, filter 320ms ease, transform 320ms ease',
+      transition: 'opacity 450ms ease, filter 450ms ease, transform 450ms ease',
       ...extra
     };
   };
@@ -1678,19 +1679,6 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         const isLaterRealZone = zone.id === ZONE_IDS.HUT && !isCurrentMapZone && !isNextMapZone && !isCompletedMapZone;
         const shouldShowZoneLabel = isCurrentMapZone || isNextMapZone || isCompletedMapZone || isLaterRealZone;
 
-        const lockArtId = isLaterRealZone && state === 'locked'
-          ? Object.keys(ZONE_ART_TO_ZONE_ID).find((k) => ZONE_ART_TO_ZONE_ID[k] === zone.id)
-          : null;
-        const lockArt = lockArtId
-          ? { ...zoneArtItems[lockArtId], ...(isPhoneLandscape ? PHONE_MAP_ZONE_ART[lockArtId] : {}) }
-          : null;
-        const lockBadgeStyle = lockArt
-          ? {
-              left: `${lockArt.centered ? lockArt.left : lockArt.left + lockArt.w / 2}%`,
-              top: `${lockArt.centered ? lockArt.top : lockArt.top + lockArt.h / 2}%`,
-            }
-          : null;
-
         return (
           <div key={zone.id} className={`zone-group ${state === 'completed' ? 'zone-complete' : ''}`}>
             {/* Tap area */}
@@ -1700,10 +1688,6 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
               aria-disabled={isDisabled}
             />
 
-            {/* Lock badge on the later real zone only; WIP zones are "coming later", not locked */}
-            {lockBadgeStyle && (
-              <span className="zone-lock-badge" aria-hidden="true" style={lockBadgeStyle}>🔒</span>
-            )}
 
             {/* Label */}
             {shouldShowZoneLabel && (
