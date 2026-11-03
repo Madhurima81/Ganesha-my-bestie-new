@@ -1096,6 +1096,7 @@ const NirvighnamChantContent = ({
             )}
 
             <SceneCompletionCelebration
+              sharedShell
               show={showSceneCompletion && !showMandala}
               zoneId={zoneId}
               sceneName="Clear the Way Together!"

@@ -1520,6 +1520,7 @@ const ShlokaRiverFinaleContent = ({
           )}
 
           <SceneCompletionCelebration
+            sharedShell
             show={showSceneCompletion}
             zoneId={zoneId}
             sceneName="Build the Shloka!"

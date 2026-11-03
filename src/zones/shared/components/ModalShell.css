@@ -58,3 +58,7 @@
   }
   .game-modal-card--closing .game-modal-ghost-row { margin-top: 8px; }
 }
+
+/* Zone-final badge picture (Symbol Mountain / Shloka River finale) in the icon slot of the closing card */
+.game-modal-badge-holder { display: flex; justify-content: center; width: 100%; }
+.game-modal-badge-holder .symbol-complete-badge-wrap { margin: 2px 0 12px; }

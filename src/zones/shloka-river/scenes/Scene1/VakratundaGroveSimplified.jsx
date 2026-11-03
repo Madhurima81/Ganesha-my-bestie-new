@@ -1418,6 +1418,7 @@ const VakratundaGroveContent = ({
             </>
             </div>
             <SceneCompletionCelebration
+              sharedShell
               show={showSceneCompletion && !showMandala}
               zoneId={zoneId}
               sceneName="Make Way for Everyone"

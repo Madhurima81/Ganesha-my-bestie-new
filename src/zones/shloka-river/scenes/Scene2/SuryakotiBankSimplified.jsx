@@ -1157,6 +1157,7 @@ const SuryakotiBankContent = ({
             )}
 
             <SceneCompletionCelebration
+              sharedShell
               show={showSceneCompletion && !showMandala}
               zoneId={zoneId}
               sceneName="Bring Back the Light!"

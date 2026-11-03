@@ -1019,6 +1019,7 @@ const SarvakaryeshuChantContent = ({
             )}
 
             <SceneCompletionCelebration
+              sharedShell
               show={showSceneCompletion && !showMandala}
               zoneId={zoneId}
               sceneName="Ganesha All Day"

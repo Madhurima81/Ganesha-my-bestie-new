@@ -241,9 +241,12 @@ const SceneCompletionCelebration = ({
 
   if (!show) return null;
 
+  // The shared card covers two layouts: trophy icons (symbols found) or the zone-final badge picture.
+  // Anything else (badgeImage, a custom primary action, recorder trophies) keeps the classic card.
+  const sharedHasTrophies = containerType === 'backpack' && discoveredSymbols.length > 0;
+  const sharedHasZoneBadge = isZoneFinalCompletionBadge && !sharedHasTrophies;
   const useSharedShell =
-    sharedShell && !badgeImage && !isZoneFinalCompletionBadge && !primaryAction &&
-    containerType === 'backpack' && discoveredSymbols.length > 0;
+    sharedShell && !badgeImage && !primaryAction && (sharedHasTrophies || sharedHasZoneBadge);
 
   if (useSharedShell) {
     return (
@@ -256,7 +259,26 @@ const SceneCompletionCelebration = ({
           character={{ src: GANESHA_POSE_ASSETS.sitModak, alt: 'Ganesha' }}
           title={completionTitle || '\u{1F31F} You Did It!'}
           subtitle={cleanedSubtitle}
-          icons={symbolsInContainer.map((symbol, index) => {
+          icons={sharedHasZoneBadge ? (
+            <div className="game-modal-badge-holder">
+              <div className="symbol-complete-badge-wrap">
+                <div
+                  className={`symbol-complete-glow ${finalBadgeConfig[resolvedZoneId]?.glowClass || 'symbol-final-icon-glow'}`}
+                  aria-hidden="true"
+                />
+                <span className="symbol-sparkle sparkle-1" aria-hidden="true" />
+                <span className="symbol-sparkle sparkle-2" aria-hidden="true" />
+                <span className="symbol-sparkle sparkle-3" aria-hidden="true" />
+                <span className="symbol-sparkle sparkle-4" aria-hidden="true" />
+                <img
+                  src={finalBadgeConfig[resolvedZoneId]?.icon || '/images/icons/symbols-icon-opt.webp'}
+                  alt={finalBadgeConfig[resolvedZoneId]?.alt || 'Symbol'}
+                  className="symbol-complete-badge symbol-final-icon"
+                />
+              </div>
+            </div>
+          ) : (
+          symbolsInContainer.map((symbol, index) => {
             const tappable = !!symbolData[symbol];
             return (
               <div
@@ -275,7 +297,8 @@ const SceneCompletionCelebration = ({
                 <span className="game-modal-icon-label">{symbol.charAt(0).toUpperCase() + symbol.slice(1)}</span>
               </div>
             );
-          })}
+          })
+          )}
         >
           <ProfilePillBtn
             onClick={handlePrimaryClick}
@@ -287,7 +310,8 @@ const SceneCompletionCelebration = ({
           {!isFinalScene && nextSceneName && <p className="game-modal-subtext">{nextSceneName}</p>}
           <ModalGhostLinks
             links={[
-              { label: 'Home', onClick: () => handleAction(handleExplore) },
+              // a final scene's big button already says Home: do not repeat it as a quiet link
+              ...(isFinalScene ? [] : [{ label: 'Home', onClick: () => handleAction(handleExplore) }]),
               { label: 'Play Again', onClick: () => handleAction(onReplay, true) },
             ]}
           />

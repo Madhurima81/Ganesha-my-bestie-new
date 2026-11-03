@@ -89,8 +89,30 @@ test('tapping a trophy with info opens its popup; "Got it!" closes it; trophies 
   expect(screen.queryByText('Ganesha loves modak.')).toBeNull();
 });
 
-test('a final scene shows Home as the main button and no next-scene line', async () => {
-  const p = base({ isFinalScene: true, nextSceneName: 'Whatever' }); await open(p);
+test('a final scene shows Home as the main button, no next-scene line and no duplicate Home link', async () => {
+  const p = base({ isFinalScene: true, nextSceneName: 'Whatever', zoneId: 'symbol-mountain' }); await open(p);
   expect(screen.queryByText('Whatever')).toBeNull();
-  expect(screen.getAllByText('Home').length).toBeGreaterThanOrEqual(2); // main button + quiet link
+  expect(screen.getAllByText('Home').length).toBe(1);
+  expect(screen.getByText('Play Again')).toBeTruthy();
+});
+
+test('the zone-final scene (no trophies) shows the zone badge on the shared card', async () => {
+  const p = base({ isFinalScene: true, zoneId: 'shloka-river', discoveredSymbols: [], symbolImages: {}, symbolData: {}, completionTitle: 'The Shloka River Is Complete!' });
+  const { container } = await open(p);
+  expect(container.querySelector('.game-modal-card')).not.toBeNull();
+  expect(container.querySelector('.celebration-card')).toBeNull();
+  expect(container.querySelector('.symbol-complete-badge')).not.toBeNull();
+  expect(container.querySelectorAll('.game-modal-icon-item').length).toBe(0);
+  fireEvent.click(screen.getByText('Home'));
+  act(() => { jest.advanceTimersByTime(800); });
+  expect(p.onComplete).toHaveBeenCalledTimes(1);
+  expect(p.onContinue).toHaveBeenCalledTimes(1); // no onHome passed here, so the final Home button falls back to onContinue
+});
+
+test('a zone badge image or a custom primary action keeps the classic card', async () => {
+  const a = await open(base({ badgeImage: '/badge.png' }));
+  expect(a.container.querySelector('.celebration-card')).not.toBeNull();
+  a.unmount();
+  const b = await open(base({ primaryAction: { text: 'Do it', onClick: () => {} } }));
+  expect(b.container.querySelector('.celebration-card')).not.toBeNull();
 });
