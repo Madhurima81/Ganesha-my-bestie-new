@@ -2393,6 +2393,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {sceneState.showingCompletionScreen && (
         <div className="dreams-completion-overlay-tint">
           <SceneCompletionCelebration
+            sharedShell
             show={sceneState.showingCompletionScreen}
             zoneId="about-me-hut"
             sceneId="dreams-wishes"

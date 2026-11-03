@@ -80,9 +80,9 @@ test('Next Adventure: exit animation, then complete + continue exactly once (dou
 });
 
 test('tapping a trophy with info opens its popup; "Got it!" closes it; trophies without info do nothing', async () => {
-  await open(base());
-  fireEvent.click(screen.getByText('Mooshika')); // no info
-  expect(screen.queryByText('Ganesha loves modak.')).toBeNull();
+  const { container } = await open(base());
+  expect(screen.queryByText('Mooshika')).toBeNull(); // no info = no name label, nothing to open
+  expect(container.querySelectorAll('.game-modal-icon-item--tappable').length).toBe(1);
   fireEvent.click(screen.getByText('Modak'));
   expect(screen.getByText('Ganesha loves modak.')).toBeTruthy();
   fireEvent.click(screen.getByText('Got it!'));
@@ -115,4 +115,18 @@ test('a zone badge image or a custom primary action keeps the classic card', asy
   a.unmount();
   const b = await open(base({ primaryAction: { text: 'Do it', onClick: () => {} } }));
   expect(b.container.querySelector('.celebration-card')).not.toBeNull();
+});
+
+test('a final scene with its own button label (My Indian Story) keeps the Home link', async () => {
+  const p = base({ isFinalScene: true, primaryLabel: 'See My Journey', zoneId: 'about-me-hut' }); await open(p);
+  expect(screen.getByText('See My Journey')).toBeTruthy();
+  expect(screen.getByText('Home')).toBeTruthy();
+  expect(screen.getByText('Play Again')).toBeTruthy();
+});
+
+test('icon keys without info show only the picture (About Me style): no "Wish-heart" labels', async () => {
+  const { container } = await open(base({ zoneId: 'about-me-hut', discoveredSymbols: ['wish-heart', 'wish-star'], symbolImages: { 'wish-heart': '/a.webp', 'wish-star': '/b.webp' }, symbolData: {} }));
+  expect(container.querySelectorAll('.game-modal-icon-item').length).toBe(2);
+  expect(container.querySelectorAll('.game-modal-icon-label').length).toBe(0);
+  expect(screen.queryByText('Wish-heart')).toBeNull();
 });

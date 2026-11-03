@@ -6103,3 +6103,14 @@
   padding: calc(var(--u, 8px) * 1.1) calc(var(--u, 8px) * 4) !important;
   font-size: max(16px, calc(var(--u, 8px) * 2)) !important;
 }
+
+/* Ganesha-tree Continue = the SAME pill as the Continue in the "Your Turn!" modal between the two trees
+   (.continue-btn-simple). The tree button used its own iPad-landscape size rules (a smaller font in a narrower, taller
+   pill, and a different size on the Pro 13); these !important values copy the modal button's effective size, and the
+   extra class makes them win over the older !important rules. Position (absolute, bottom) is untouched. */
+.tree-done-btn.profile-cta-btn-unified.profile-cta-btn-md {
+  font-size: clamp(0.9rem, 1.6vw, 1.1rem) !important;
+  padding: 10px 28px !important;
+  min-width: clamp(120px, 18vw, 180px) !important;
+  min-height: 60px !important;
+}

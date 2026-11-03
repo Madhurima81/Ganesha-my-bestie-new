@@ -2031,6 +2031,7 @@ if (window.matchMedia(PHONE_LANDSCAPE_QUERY).matches) setFamilyTrayOpen(true);
  {/* Completion Modal */}
  {sceneState.showingCompletionScreen && (
  <SceneCompletionCelebration
+ sharedShell
  show={sceneState.showingCompletionScreen}
  zoneId="about-me-hut"
  sceneName="Our Families"

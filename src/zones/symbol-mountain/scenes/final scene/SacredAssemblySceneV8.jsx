@@ -2372,6 +2372,7 @@ const SacredAssemblyContent = ({
 
           {/* Scene Completion */}
           <SceneCompletionCelebration
+            sharedShell
             show={showSceneCompletion}
             sceneName="Ganesha's Symbol Challenge"
             completionTitle={completionModalContent?.title}

@@ -294,7 +294,8 @@ const SceneCompletionCelebration = ({
                     ? <img src={symbolImages[symbol]} alt={symbol} />
                     : <span>{'\u2B50'}</span>}
                 </div>
-                <span className="game-modal-icon-label">{symbol.charAt(0).toUpperCase() + symbol.slice(1)}</span>
+                {/* a name only when the symbol has info to show (as in the classic card): keys like "wish-heart" are not names */}
+                {tappable && <span className="game-modal-icon-label">{symbol.charAt(0).toUpperCase() + symbol.slice(1)}</span>}
               </div>
             );
           })
@@ -310,8 +311,8 @@ const SceneCompletionCelebration = ({
           {!isFinalScene && nextSceneName && <p className="game-modal-subtext">{nextSceneName}</p>}
           <ModalGhostLinks
             links={[
-              // a final scene's big button already says Home: do not repeat it as a quiet link
-              ...(isFinalScene ? [] : [{ label: 'Home', onClick: () => handleAction(handleExplore) }]),
+              // when the big button already says Home (a final scene with no custom label) do not repeat it as a quiet link
+              ...(isFinalScene && !primaryLabel ? [] : [{ label: 'Home', onClick: () => handleAction(handleExplore) }]),
               { label: 'Play Again', onClick: () => handleAction(onReplay, true) },
             ]}
           />

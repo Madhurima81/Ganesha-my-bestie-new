@@ -2676,6 +2676,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Completion Screen */}
       {sceneState.showingCompletionScreen && (
         <SceneCompletionCelebration
+          sharedShell
           show={sceneState.showingCompletionScreen}
           zoneId="about-me-hut"
           sceneId="favorite-food"

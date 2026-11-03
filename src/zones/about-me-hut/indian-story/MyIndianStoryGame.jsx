@@ -2096,6 +2096,7 @@ const handleComplete = () => {
 
         return (
         <SceneCompletionCelebration
+          sharedShell
           show={phase === STEPS.COMPLETE}
           zoneId="about-me-hut"
           sceneName="My Indian Story"
