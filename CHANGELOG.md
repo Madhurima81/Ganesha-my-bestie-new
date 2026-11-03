@@ -1,5 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-03] - Parent PIN screen: same keypad as the login "Grown-ups only" gate; dots centred
+**Touched:** src/lib/components/dashboard/PinScreen.jsx.
+**Changed:** the Parent PIN keypad had no fixed width and shrank to its digits (about 37px wide by 60px tall on the iPad, so it looked squished). It now uses the login gate's `.pg-keypad` / `.pg-key` styles (ParentGate.css): 240px grid, wide rounded keys, same order (1-9, then Clear, 0, backspace). Added a Clear key (empties the PIN being typed or confirmed). The four PIN dots were not centred (they sat about 60px left of the title); they now are. The short-landscape phone rules for the PIN screen are unchanged.
+**Verified:** rendered on a temporary preview page at 1194x834 and 844x390: keypad 240px wide with 75x44px keys on the iPad size, dots, title and keypad share one centre line; typed a PIN, used Clear, created and confirmed it (success fired); phone landscape fits.
+**NOT verified:** on the real iPad; the Enter-PIN (returning) and wrong-PIN states (same code path, not rendered); the Settings > Change PIN flow.
+**Open:** the keys are 44px high on iPad (same as the login gate), under the 60px touch rule; the gate has always been 44px, so both are unchanged in that respect. Say if both should grow.
+
 ## [2026-11-02 g] - Map first visit: only Modak Mountain in full colour; Shloka River washed out; Ganesha closer to Modak
 **Touched:** src/pages/CleanMapZone.jsx.
 **Changed:** (1) Shloka River's three pieces (river, waterfall, bridge) were not part of the map's colour hierarchy (ZONE_ART_TO_ZONE_ID has only `river`, which has no art), so they were always full colour while the label was dim. They now get `saturate(0.5) brightness(1.12)` (no transparency, no scale change) until Shloka River is the current or a completed zone, so on the first visit only Modak Mountain is in full colour. A first try with opacity 0.72 (like the Lodge) let a bush painted into the map background show through the river, hence the filter. (2) Ganesha's first-visit spot moved from 31%/50% to 29%/45% (ganeshaSymbol overlay default and MAP_GANESHA_ZONE_POS), right under Modak's door.

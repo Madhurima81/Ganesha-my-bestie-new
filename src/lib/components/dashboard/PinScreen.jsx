@@ -5,6 +5,8 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { isPinSet, setPin, verifyPin } from '../../utils/dashboardData'
+// Same keypad look as the login "Grown-ups only" gate (ParentGate): .pg-keypad / .pg-key
+import '../onboarding/ParentGate.css'
 
 const C = {
   saffron:    '#FF9933',
@@ -83,6 +85,12 @@ export default function PinScreen({ onSuccess }) {
     else                     setPin_(p => p.slice(0, -1))
   }
 
+  const handleClear = () => {
+    setError('')
+    if (step === 'confirm') setConfirm('')
+    else                     setPin_('')
+  }
+
   // Hardware keyboard: 0-9 (top row or number pad) = a digit, Backspace/Delete = remove one. Goes through
   // the same handlers as the on-screen keypad (read via a ref so the listener is added once). Ignored
   // with Ctrl/Cmd/Alt held and while typing in a text field.
@@ -106,7 +114,8 @@ export default function PinScreen({ onSuccess }) {
   }, [])
 
   const currentInput = step === 'confirm' ? confirm : pin
-  const digits       = [1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, '⌫']
+  // Same keys and order as the login gate: 1-9, then Clear, 0, backspace
+  const keys         = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'clear', '0', 'back']
 
   return (
     <div
@@ -216,7 +225,7 @@ export default function PinScreen({ onSuccess }) {
         <div
           className="pin-screen__dots"
           style={{
-            display: 'flex', gap: '0.8rem',
+            display: 'flex', gap: '0.8rem', justifyContent: 'center',
             marginBottom: '1.5rem',
             animation: shake ? 'shake 0.5s ease' : 'none',
           }}
@@ -262,39 +271,21 @@ export default function PinScreen({ onSuccess }) {
         </p>
       </div>
 
-      {/* Numpad */}
-      <div
-        className="pin-screen__keypad"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '0.7rem', maxWidth: 240,
-        }}
-      >
-        {digits.map((d, i) => (
+      {/* Numpad: same look as the login gate keypad */}
+      <div className="pg-keypad pin-screen__keypad">
+        {keys.map((key) => (
           <button
-            key={i}
-            className="pin-screen__key"
+            key={key}
+            type="button"
+            className="pg-key pin-screen__key"
             onClick={() => {
-              if (d === '⌫')    handleDelete()
-              else if (d !== '') handleDigit(String(d))
+              if (key === 'back')       handleDelete()
+              else if (key === 'clear') handleClear()
+              else                      handleDigit(key)
             }}
-            disabled={d === ''}
-            style={{
-              height: 60, borderRadius: 14,
-              border: `2px solid ${
-                d === '' ? 'transparent' : C.gold}`,
-              background: d === '' ? 'transparent'
-                : d === '⌫' ? C.lightCream : 'white',
-              fontFamily: 'Baloo 2, cursive',
-              fontSize: '1.3rem', fontWeight: 700,
-              color: C.brown,
-              cursor: d === '' ? 'default' : 'pointer',
-              boxShadow: d === '' ? 'none'
-                : '0 2px 8px rgba(139,69,19,0.1)',
-            }}
+            aria-label={key === 'back' ? 'Delete' : key === 'clear' ? 'Clear' : key}
           >
-            {d}
+            {key === 'clear' ? 'Clear' : key === 'back' ? '⌫' : key}
           </button>
         ))}
       </div>

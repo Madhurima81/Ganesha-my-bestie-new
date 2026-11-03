@@ -288,6 +288,7 @@ Before every task, Claude Code must:
 - [~] T76 · (list item 9) Fresh game: opening modal voice not playing in the Modak scene. PARKED by Madhurima 2026-11-02. Finding: `OpeningModal` never uses text-to-speech on iPad/iPhone (`canUseTimedSpeechHint` blocks iOS) and `public/audio/vo-manifest.json` has no recorded clips, so every opening modal is silent on iPad by design until recordings exist. Options when picked up: allow iOS TTS for the opening line (voice would be the iPad default, not Ganesha's) or fill the manifest. Speech priming in a user tap already happens in handleStartAdventure / handleContinue / handleNewGame.
 - [x] T77 · (list item 15) Hold-to-mute feedback: bubble above the button ("Keep holding..." + bar, then "Voice is off" / "Voice is on") so a finger no longer hides it. 5 tests + real render; not tested with a finger on the iPad. Check the 60px touch target of the button itself.
 - [x] T78 · (list item 7) Map first visit: Shloka River river/waterfall/bridge washed out until it is the current zone (only Modak in full colour); Ganesha moved closer to Modak (29%/45%). The Lodge is also washed out when it is the next zone. Rendered for fresh and Symbol-Mountain-done children; not checked on the iPad or phone landscape (phone Ganesha position unchanged).
+- [x] T79 · Parent PIN screen keypad = login gate keypad (squished before), Clear key added, dots centred. Rendered on iPad and phone landscape; not tested on the iPad. Keys are 44px high like the gate (under the 60px rule): decide if both should grow.
 
 ---
 
