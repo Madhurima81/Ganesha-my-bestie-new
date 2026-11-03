@@ -1158,99 +1158,12 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); animation: popIn 0.6s ease-out; min-width: 300px;
 }
 
-/* ========================================= */
-/* ABOUTME COMPARISON CARD — SCENE 20 OVERRIDES */
-/* 4 items (2×2 grid) instead of default 3-col  */
-/* ========================================= */
-.favorite-food-game .aboutme-comparison-items-grid {
-  grid-template-columns: 1fr 1fr;
-}
-.favorite-food-game .aboutme-comparison-grid {
-  /* was translateY(44px), which pushed the cards over the Continue button */
-  transform: none;
-  gap: 14px;
-}
-.favorite-food-game .aboutme-comparison-title {
-  margin-top: 0;
-  margin-bottom: clamp(6px, 1.2vh, 12px);
-  font-size: clamp(1.6rem, 4.6vh, 2.4rem);
-}
-.favorite-food-game .aboutme-comparison-column {
-  min-height: auto;
-  max-width: clamp(320px, 40vw, 440px);
-  padding: clamp(10px, 1.8vh, 16px) 18px;
-  gap: clamp(6px, 1.2vh, 10px);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  background: #f7f3ea;
-}
-.favorite-food-game .aboutme-comparison-column-header {
-  min-height: 0;
-  margin-bottom: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.favorite-food-game .aboutme-comparison-column-title {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 600;
-  text-transform: none;
-  letter-spacing: 0;
-}
-.favorite-food-game .aboutme-comparison-item {
-  min-height: clamp(78px, 13vh, 104px);
-  padding: 8px 10px;
-  border-radius: 14px;
-}
-.favorite-food-game .aboutme-comparison-item-text {
-  font-size: clamp(0.9rem, 2.2vh, 1.05rem);
-  line-height: 1.28;
-}
-.favorite-food-game .aboutme-comparison-item-label {
-  font-size: 12px;
-  opacity: 0.6;
-  letter-spacing: 0.7px;
-}
-.favorite-food-game .aboutme-comparison-items-grid {
-  margin-top: 8px;
-}
-.favorite-food-game .aboutme-comparison-item-media,
-.favorite-food-game .aboutme-comparison-item-img {
-  width: 32px;
-  height: 32px;
-}
-
-/* Child BEST FRIEND icon is visually smaller in source asset, so normalize it */
+/* Compare screen ("We're Friends Now!") uses the shared frame in AboutMeComparisonCard.css.
+   Only Food-specific tweak: the child's BEST FRIEND icon is smaller in its source asset. */
 .favorite-food-game .aboutme-comparison-item.aboutme-best-friend-item .aboutme-comparison-item-media,
 .favorite-food-game .aboutme-comparison-item.aboutme-best-friend-item .aboutme-comparison-item-img {
-  width: 42px;
-  height: 42px;
-}
-.favorite-food-game .aboutme-comparison-continue-btn {
-  margin-top: clamp(4px, 1vh, 10px);
-  margin-bottom: max(clamp(12px, 2.5vh, 24px), env(safe-area-inset-bottom));
-  border-radius: 22px;
-  padding: 12px 32px;
-  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 18px;
-  box-shadow:
-    0 4px 0 rgba(0,0,0,0.12),
-    0 8px 18px rgba(0,0,0,0.12);
-  animation: none;
-}
-
-.favorite-food-game .aboutme-comparison-continue-btn:hover {
-  box-shadow:
-    0 4px 0 rgba(0,0,0,0.12),
-    0 8px 18px rgba(0,0,0,0.12);
-}
-.favorite-food-game .aboutme-comparison-item:first-child {
-  grid-column: auto;
-}
-.favorite-food-game .aboutme-comparison-item.is-wide {
-  grid-column: 1 / -1;
+  width: calc(var(--u, 8px) * 4.6);
+  height: calc(var(--u, 8px) * 4.6);
 }
 .food-comparison-typed {
   font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -1930,15 +1843,6 @@
   bottom: 6%;
 }
 
-/* Friends comparison: group title + cards + Continue and centre the group
-   vertically, so the button sits right under the cards instead of far below. */
-.favorite-food-game .aboutme-comparison-overlay {
-  justify-content: center;
-}
-.favorite-food-game .aboutme-comparison-grid {
-  flex: 0 1 auto;
-}
-
 /* "My own" card: the 8th choice on the child Food and Activity screens.
    A cream circle with a dashed outline and a brown plus (drawn in CSS, no
    emoji). Same footprint as the picture on the other cards. Only the circle
@@ -2122,11 +2026,6 @@
     zoom: 1.25;
   }
   .favorite-food-game .child-completion-object {
-    zoom: 1.3;
-  }
-  .favorite-food-game .aboutme-comparison-title,
-  .favorite-food-game .aboutme-comparison-grid,
-  .favorite-food-game .aboutme-comparison-continue-btn {
     zoom: 1.3;
   }
 }
@@ -2333,59 +2232,10 @@
     font-size: 0.9rem;
   }
 
-  /* ---- "We're Friends Now!" comparison: two short columns + Continue, no scroll ---- */
-  .favorite-food-game .aboutme-comparison-grid {
-    width: min(94vw, 820px);
-    flex: 0 0 auto;
-    margin-bottom: 0;
-    gap: 8px;
-  }
-  /* Avatar + name side by side (stacked it was ~90px of header per column) */
-  .favorite-food-game .aboutme-comparison-column-header { min-height: 44px; }
-  .favorite-food-game .aboutme-comparison-avatar-header {
-    flex-direction: row;
-    gap: 10px;
-  }
-  .favorite-food-game .aboutme-comparison-avatar {
-    width: 40px;
-    height: 40px;
-  }
-  .favorite-food-game .aboutme-comparison-avatar.is-fallback { border-width: 2px; }
-  .favorite-food-game .aboutme-comparison-avatar-name { font-size: 1rem; }
-  .favorite-food-game .aboutme-comparison-title {
-    margin: 0 0 4px;
-    font-size: clamp(1.25rem, 3vw, 1.6rem);
-  }
-  .favorite-food-game .aboutme-comparison-column {
-    min-width: 0;
-    max-width: none;
-    padding: 8px;
-    gap: 5px;
-    border-radius: 16px;
-  }
-  .favorite-food-game .aboutme-comparison-items-grid { margin-top: 0; gap: 6px; }
-  .favorite-food-game .aboutme-comparison-item {
-    min-height: 66px;
-    padding: 5px 6px;
-    border-radius: 12px;
-  }
-  .favorite-food-game .aboutme-comparison-item-media,
-  .favorite-food-game .aboutme-comparison-item-img { width: 28px; height: 28px; }
-  .favorite-food-game .aboutme-comparison-item.aboutme-best-friend-item .aboutme-comparison-item-media,
-  .favorite-food-game .aboutme-comparison-item.aboutme-best-friend-item .aboutme-comparison-item-img {
-    width: 34px;
-    height: 34px;
-  }
-  .favorite-food-game .aboutme-comparison-item-label { font-size: 11px; letter-spacing: 0.4px; }
-  .favorite-food-game .aboutme-comparison-item-text,
+  /* ---- "We're Friends Now!": the shared frame scales with --u; keep Continue a 60px touch target ---- */
+  .favorite-food-game .aboutme-comparison-continue-btn { min-height: 60px; }
   .favorite-food-game .food-comparison-typed {
     font-size: clamp(0.78rem, 1.7vw, 0.9rem);
     line-height: 1.12;
-  }
-  .favorite-food-game .aboutme-comparison-continue-btn {
-    min-height: 60px;
-    margin: 6px 0 0;
-    padding: 8px 24px;
-    font-size: 1rem;
   }
 }

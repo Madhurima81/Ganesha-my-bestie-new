@@ -33,6 +33,7 @@ import useResumeCountdown from '../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
 import SceneStallPrompt from '../../../lib/components/feedback/SceneStallPrompt';
 import AboutMeSparkle from '../components/AboutMeSparkle';
+import AboutMeComparisonCard from '../components/AboutMeComparisonCard';
 import DiscoveryFlight from '../components/DiscoveryFlight';
 import Wish2PlateDropGame from './components/Wish2PlateDropGame';
 
@@ -2295,98 +2296,58 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       {/* Comparison Card */}
       {sceneState.gamePhase === 'comparison-card' && !sceneState.showingCompletionScreen && (
-        <div className="friendship-overlay">
-          {/* Subtle background sparkles */}
-          <AboutMeSparkle preset="linger" />
-          <h1 className="friendship-title">We Both Have Wishes</h1>
-          <p className="friendship-subtitle">Everyone can dream about something different.</p>
-          <div className="friendship-grid">
-            <div className="friend-column ganesha-card">
-              <div className="dream-card-header">
-              <img src={babyGaneshaSit} alt="Ganesha" className="column-header-image" />
-              <div className="column-label">My Wishes</div>
+        <AboutMeComparisonCard
+          title="We Both Have Wishes"
+          subtitle="Everyone can dream about something different."
+          onContinue={() => {
+            playChime();
+            SimpleSceneManager.clearCurrentScene();
+            sceneActions.updateState({ showingCompletionScreen: true, completed: true });
+          }}
+          leftColumn={{
+            header: (
+              <div className="aboutme-comparison-avatar is-plain">
+                <img src={babyGaneshaSit} alt="Ganesha" />
               </div>
-              <div className="friend-items-grid">
-                <div className="friend-item">
-                  <div className="friend-item-label">Wish 1</div>
-                  <img src={kindnessHeaderIcon} alt="Kindness wish" className="friend-item-img" />
-                  <div className="friend-item-text">Happiness</div>
-                </div>
-                <div className="friend-item">
-                  <div className="friend-item-label">Wish 2</div>
-                  <img src={sharingHeaderIcon} alt="Sharing wish" className="friend-item-img" />
-                  <div className="friend-item-text">Sharing</div>
-                </div>
-                <div className="friend-item">
-                  <div className="friend-item-label">Wish 3</div>
-                  <img src={natureHeaderIcon} alt="Nature wish" className="friend-item-img" />
-                  <div className="friend-item-text">Green World</div>
-                </div>
+            ),
+            title: 'My Wishes',
+            gridClass: 'is-two-up',
+            items: [
+              { id: 'w1', label: 'WISH 1', imageSrc: kindnessHeaderIcon, imageAlt: 'Kindness wish', text: 'Happiness' },
+              { id: 'w2', label: 'WISH 2', imageSrc: sharingHeaderIcon, imageAlt: 'Sharing wish', text: 'Sharing' },
+              { id: 'w3', label: 'WISH 3', imageSrc: natureHeaderIcon, imageAlt: 'Nature wish', text: 'Green World' }
+            ]
+          }}
+          rightColumn={{
+            header: (
+              <div className={`aboutme-comparison-avatar${(activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? '' : ' is-fallback'}`}>
+                {activeProfile?.icon ? (
+                  <img src={activeProfile.icon} alt="Profile" />
+                ) : activeProfile?.profileIcon ? (
+                  <img src={activeProfile.profileIcon} alt="Profile" />
+                ) : profileAvatarImage ? (
+                  <img src={profileAvatarImage} alt={profileDisplayName} />
+                ) : (
+                  profileAvatar
+                )}
               </div>
-              {/*
-              <div className="wishes-list">
-                <div className="wish-item"><span className="wish-icon">😊</span> Happiness ✓</div>
-                <div className="wish-item"><span className="wish-icon">🤝</span> Sharing ✓</div>
-                <div className="wish-item"><span className="wish-icon">🌳</span> Earth ✓</div>
-              </div>
-              */}
-            </div>
-            <div className="friend-column you-card">
-              <div className="dream-card-header">
-              {activeProfile?.icon ? (
-                <img
-                  src={activeProfile.icon}
-                  alt="Profile"
-                  className="dream-comparison-avatar"
-                  style={{ width: 'clamp(55px, 7vw, 80px)', height: 'clamp(55px, 7vw, 80px)', borderRadius: '50%', objectFit: 'cover', marginBottom: 0, boxShadow: '0 5px 15px rgba(0,0,0,0.2)' }}
-                />
-              ) : profileAvatarImage ? (
-                <img
-                  src={profileAvatarImage}
-                  alt={profileDisplayName}
-                  className="dream-comparison-avatar"
-                  style={{ width: 'clamp(55px, 7vw, 80px)', height: 'clamp(55px, 7vw, 80px)', borderRadius: '50%', objectFit: 'cover', marginBottom: 0, boxShadow: '0 5px 15px rgba(0,0,0,0.2)', border: '4px solid white' }}
-                />
-              ) : (
-                <div
-                  className="dream-comparison-avatar"
-                  style={{
-                    width: 'clamp(55px, 7vw, 80px)',
-                    height: 'clamp(55px, 7vw, 80px)',
-                    borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #4ECDC4, #44A08D)',
-                    border: '4px solid white',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontFamily: "'Baloo 2', cursive",
-                    fontSize: 'clamp(28px, 3.6vw, 40px)',
-                    color: 'white',
-                    boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
-                    marginBottom: 0,
-                  }}
-                >
-                  {profileAvatar}
-                </div>
-              )}
-              <div className="column-label">{profileDisplayName}'s Dream</div>
-              </div>
-              <div className="dream-display-box">
-                {sceneState.childDreamDrawing ? <img src={sceneState.childDreamDrawing} alt="Dream" className="dream-thumbnail" /> : "Loading..."}
-              </div>
-            </div>
-          </div>
-          <button
-            onClick={() => {
-              playChime();
-              SimpleSceneManager.clearCurrentScene();
-              sceneActions.updateState({ showingCompletionScreen: true, completed: true });
-            }}
-            className="continue-btn-simple done-btn-pulse dreams-brown-cta"
-          >
-            Continue
-          </button>
-        </div>
+            ),
+            title: `${profileDisplayName}'s Dream`,
+            gridClass: 'is-single',
+            items: [
+              {
+                id: 'dream',
+                custom: (
+                  <div className="dream-display-box">
+                    {sceneState.childDreamDrawing
+                      ? <img src={sceneState.childDreamDrawing} alt="Dream" className="dream-thumbnail" />
+                      : 'Loading...'}
+                  </div>
+                )
+              }
+            ]
+          }}
+        />
       )}
 
       {/* Ending */}
