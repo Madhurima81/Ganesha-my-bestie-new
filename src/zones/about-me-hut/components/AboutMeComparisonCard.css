@@ -241,59 +241,6 @@
   box-shadow: 0 2px 6px rgba(0,0,0,0.10);
 }
 
-/* Reusable large sizing profile used by Family Tree / Story cards */
-.aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-grid {
-  gap: 22px;
-}
-
-.aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-column {
-  min-width: 380px;
-  max-width: 520px;
-  padding: clamp(12px, 2vh, 24px);
-}
-
-.aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-items-grid {
-  gap: 14px;
-}
-
-.aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-item {
-  min-height: clamp(72px, 13vh, 140px);
-}
-
-.aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-item-media {
-  width: clamp(40px, 6.5vh, 70px);
-  height: clamp(40px, 6.5vh, 70px);
-}
-
-.aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-item-img {
-  width: clamp(40px, 6.5vh, 70px);
-  height: clamp(40px, 6.5vh, 70px);
-}
-
-.aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-title {
-  font-size: 2rem;
-  margin-bottom: 24px;
-}
-
-.aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-continue-btn {
-  margin-top: 24px;
-  margin-bottom: 18px;
-  border-radius: 28px;
-  padding: 14px 38px;
-  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 1.4rem;
-  box-shadow:
-    0 4px 0 rgba(0,0,0,0.12),
-    0 8px 18px rgba(0,0,0,0.12);
-  animation: aboutmeFamilyContinuePulse 3.5s ease-in-out infinite;
-}
-
-.aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-continue-btn:hover {
-  box-shadow:
-    0 4px 0 rgba(0,0,0,0.12),
-    0 8px 18px rgba(0,0,0,0.12);
-}
-
 @media (orientation: portrait) and (max-width: 1024px) {
   .aboutme-comparison-overlay {
     padding: 14px 16px 10px;
@@ -318,54 +265,8 @@
   }
 }
 
-/* Indian Story final compare: keep the story cards high enough for the CTA. */
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-grid {
-  transform: none;
-  flex: 0 1 auto;
-  margin-top: clamp(28px, 7vh, 78px);
-  margin-bottom: clamp(10px, 1.6vh, 18px);
-}
-
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-column {
-  padding: 16px 18px 18px;
-}
-
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item {
-  min-height: clamp(72px, 11vh, 112px);
-  padding: 10px 8px 12px;
-}
-
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item-media,
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item-img {
-  width: clamp(32px, 5vh, 52px);
-  height: clamp(32px, 5vh, 52px);
-}
-
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-continue-btn {
-  margin-top: clamp(8px, 1.4vh, 14px);
-  margin-bottom: clamp(10px, 1.8vh, 18px);
-}
-
-@keyframes aboutmeFamilyContinuePulse {
-  0%,
-  100% {
-    box-shadow:
-      0 4px 0 rgba(0,0,0,0.12),
-      0 8px 18px rgba(0,0,0,0.12);
-  }
-  50% {
-    box-shadow:
-      0 4px 0 rgba(0,0,0,0.12),
-      0 10px 22px rgba(0,0,0,0.15);
-  }
-}
-
 @media (max-width: 1200px) {
   .aboutme-comparison-column {
-    min-width: 320px;
-  }
-
-  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-column {
     min-width: 320px;
   }
 }
@@ -389,27 +290,6 @@
     max-width: 92vw;
   }
 
-  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-grid {
-    gap: 18px;
-  }
-
-  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-column {
-    min-width: min(92vw, 560px);
-    max-width: 92vw;
-    padding: 30px 28px 26px;
-  }
-
-  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-title {
-    font-size: clamp(2rem, 4.2vw, 4.3rem);
-  }
-
-  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-continue-btn {
-    margin-top: 12px;
-    margin-bottom: 8px;
-    font-size: 16px;
-    padding: 12px 32px;
-  }
-
   .aboutme-comparison-continue-btn {
     margin-top: 12px;
     margin-bottom: 8px;
@@ -426,16 +306,14 @@
   }
 
   /* Kill the transforms that push content off-screen */
-  .aboutme-comparison-grid,
-  .aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-grid {
+  .aboutme-comparison-grid {
     transform: none;
     gap: clamp(12px, 1.8vw, 18px);
     margin-bottom: clamp(8px, 1.5vh, 14px);
   }
 
   /* Shrink columns + items so everything fits */
-  .aboutme-comparison-column,
-  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-column {
+  .aboutme-comparison-column {
     min-width: 320px;
     padding: clamp(12px, 1.8vh, 18px) 16px;
     gap: 6px;
@@ -444,18 +322,12 @@
   .aboutme-comparison-column-title  { font-size: clamp(1rem, 1.6vh, 1.4rem); }
 
   .aboutme-comparison-items-grid { gap: clamp(6px, 1vh, 10px); }
-  .aboutme-comparison-item,
-  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-item,
-  .aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item {
+  .aboutme-comparison-item {
     min-height: clamp(72px, 11vh, 100px);
     padding: 6px;
   }
   .aboutme-comparison-item-media,
-  .aboutme-comparison-item-img,
-  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-item-media,
-  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-item-img,
-  .aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item-media,
-  .aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item-img {
+  .aboutme-comparison-item-img {
     width: clamp(36px, 5.5vh, 52px);
     height: clamp(36px, 5.5vh, 52px);
   }
@@ -466,8 +338,7 @@
   .aboutme-comparison-subtitle { font-size: clamp(0.8rem, 1.4vh, 1rem);   margin-bottom: 4px; }
 
   /* Continue — pin to bottom, always visible */
-  .aboutme-comparison-continue-btn,
-  .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-continue-btn {
+  .aboutme-comparison-continue-btn {
     margin-top: clamp(6px, 1.2vh, 12px);
     margin-bottom: 4px;
     padding: clamp(10px, 1.5vh, 14px) clamp(30px, 5vw, 42px);
@@ -477,64 +348,130 @@
   }
 }
 
-/* Indian Story final compare: one size unit (--u, set on .mis-wrapper) so the whole card
-   scales together on every iPad. Kept last so it wins over the landscape media block above. */
-.aboutme-comparison-overlay.aboutme-comparison--story-connect {
+/* THE compare frame for all four About Me games (Family Tree, Food, Dreams, Indian Story).
+   One size unit (--u) scales the whole card on every iPad. Kept last so it wins over the media
+   blocks above. To resize: extend these tokens, never add px !important. */
+.aboutme-comparison-overlay {
   padding: calc(var(--u, 8px) * 1) calc(var(--u, 8px) * 2);
 }
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-title {
+.aboutme-comparison-overlay .aboutme-comparison-title {
   font-size: calc(var(--u, 8px) * 3.2);
   margin: 0 0 calc(var(--u, 8px) * 0.3);
 }
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-subtitle {
+.aboutme-comparison-overlay .aboutme-comparison-subtitle {
   font-size: max(13px, calc(var(--u, 8px) * 1.5));
   margin: 0;
 }
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-grid {
+.aboutme-comparison-overlay .aboutme-comparison-grid {
   max-width: calc(var(--u, 8px) * 100);
   gap: calc(var(--u, 8px) * 2);
   margin-top: calc(var(--u, 8px) * 1.5);
   margin-bottom: calc(var(--u, 8px) * 1);
 }
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-column {
+.aboutme-comparison-overlay .aboutme-comparison-column {
   flex: 1 1 0;
   min-width: 0;
   max-width: calc(var(--u, 8px) * 46);
   padding: calc(var(--u, 8px) * 1.4);
   gap: calc(var(--u, 8px) * 0.5);
 }
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-column-header {
+.aboutme-comparison-overlay .aboutme-comparison-column-header {
   min-height: calc(var(--u, 8px) * 7);
 }
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-avatar {
+.aboutme-comparison-overlay .aboutme-comparison-avatar {
   width: calc(var(--u, 8px) * 7);
   height: calc(var(--u, 8px) * 7);
 }
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-column-title {
+.aboutme-comparison-overlay .aboutme-comparison-column-title {
   font-size: calc(var(--u, 8px) * 2.2);
 }
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-items-grid {
+.aboutme-comparison-overlay .aboutme-comparison-items-grid {
   gap: calc(var(--u, 8px) * 0.8);
 }
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item {
+.aboutme-comparison-overlay .aboutme-comparison-item {
   min-height: calc(var(--u, 8px) * 7.5);
   padding: calc(var(--u, 8px) * 0.6);
   gap: calc(var(--u, 8px) * 0.3);
 }
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item-label {
+.aboutme-comparison-overlay .aboutme-comparison-item-label {
   font-size: max(11px, calc(var(--u, 8px) * 1.15));
 }
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item-media,
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item-img {
+.aboutme-comparison-overlay .aboutme-comparison-item-media,
+.aboutme-comparison-overlay .aboutme-comparison-item-img {
   width: calc(var(--u, 8px) * 3.6);
   height: calc(var(--u, 8px) * 3.6);
 }
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item-text {
+.aboutme-comparison-overlay .aboutme-comparison-item-text {
   font-size: max(12px, calc(var(--u, 8px) * 1.4));
 }
-.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-continue-btn {
+.aboutme-comparison-overlay .aboutme-comparison-continue-btn {
   margin-top: calc(var(--u, 8px) * 1.2);
   margin-bottom: calc(var(--u, 8px) * 0.5);
   padding: calc(var(--u, 8px) * 1.1) calc(var(--u, 8px) * 4);
   font-size: max(16px, calc(var(--u, 8px) * 2));
+}
+
+/* Same size unit the Indian Story and Family Tree screens use (smaller of 1vw and 1.45% of the
+   app height). Defined here so every compare screen scales the same without its parent. */
+.aboutme-comparison-overlay {
+  --u: min(1vw, calc(var(--app-height, 100vh) * 0.0145));
+}
+
+/* Avatar BESIDE the heading (saves height, same on all four screens). */
+.aboutme-comparison-column-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u, 8px) * 1.2);
+}
+.aboutme-comparison-column-head .aboutme-comparison-column-header {
+  width: auto;
+  flex-shrink: 0;
+}
+.aboutme-comparison-column-head .aboutme-comparison-column-title {
+  text-align: left;
+}
+
+/* Two-up tile grid (Food 2x2, Dreams wishes): no full-width first tile. */
+.aboutme-comparison-items-grid.is-two-up {
+  grid-template-columns: 1fr 1fr;
+}
+.aboutme-comparison-items-grid.is-two-up .aboutme-comparison-item:first-child {
+  grid-column: auto;
+}
+.aboutme-comparison-items-grid.is-two-up .aboutme-comparison-item.is-wide {
+  grid-column: 1 / -1;
+}
+
+/* Free-form tile: a drawing or a picture that fills the card with no tile chrome
+   (Dreams drawing, Family tree). Takes the free height of the card. */
+.aboutme-comparison-items-grid.is-single {
+  grid-template-columns: 1fr;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.aboutme-comparison-items-grid.is-single .aboutme-comparison-item {
+  grid-column: 1 / -1;
+  min-height: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+.aboutme-comparison-column > .is-single { width: 100%; }
+
+/* One vertical rhythm for all four screens: title, subtitle, cards and Continue form one group
+   centred in the screen, so Continue sits right under the cards (not stranded at the bottom). */
+.aboutme-comparison-overlay {
+  justify-content: center;
+  box-sizing: border-box;
+}
+.aboutme-comparison-overlay .aboutme-comparison-grid {
+  flex: 0 1 auto;
+  align-content: center;
+}
+
+/* Touch-first: Continue is always a 60px target on every compare screen. */
+.aboutme-comparison-overlay .aboutme-comparison-continue-btn {
+  min-height: 60px;
 }

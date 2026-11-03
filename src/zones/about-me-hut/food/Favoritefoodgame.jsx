@@ -2548,15 +2548,15 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {sceneState.gamePhase === 'comparison-card' && !sceneState.showingCompletionScreen && (
         <AboutMeComparisonCard
           title="We're Friends Now!"
+          subtitle="We can like different things and still be friends."
           leftColumn={{
             header: (
-              <div className="aboutme-comparison-avatar-header">
-                <div className="aboutme-comparison-avatar is-plain">
-                  <img src={babyGaneshaSit} alt="Ganesha" />
-                </div>
-                <span className="aboutme-comparison-avatar-name">Ganesha</span>
+              <div className="aboutme-comparison-avatar is-plain">
+                <img src={babyGaneshaSit} alt="Ganesha" />
               </div>
             ),
+            title: 'Ganesha',
+            gridClass: 'is-two-up',
             items: [
               { id: 'g-food', label: 'FOOD', imageSrc: modakImg, imageAlt: 'Modak', text: 'Modak' },
               { id: 'g-color', label: 'COLOR', imageSrc: redImg, imageAlt: 'Red', text: 'Red' },
@@ -2566,7 +2566,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           }}
           rightColumn={{
             header: (
-              <div className="aboutme-comparison-avatar-header">
                 <div className={`aboutme-comparison-avatar${(activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? '' : ' is-fallback'}`}>
                   {activeProfile?.icon ? (
                     <img src={activeProfile.icon} alt="Profile" />
@@ -2578,9 +2577,9 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                     profileAvatar
                   )}
                 </div>
-                <span className="aboutme-comparison-avatar-name">{profileDisplayName}</span>
-              </div>
             ),
+            title: profileDisplayName,
+            gridClass: 'is-two-up',
             items: [
               {
                 id: 'c-food',

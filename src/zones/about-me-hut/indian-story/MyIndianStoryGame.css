@@ -1461,25 +1461,8 @@
     font-size: 0.8rem;
     line-height: 1.1;
   }
-  /* avatar + "<name>'s Story" on one line (stacked they cost ~45px per column) */
-  .mis-wrapper .aboutme-comparison--story-connect .aboutme-comparison-column {
-    padding: 6px 8px;
-    gap: 4px 10px;
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: center;
-    justify-content: center;
-  }
-  .mis-wrapper .aboutme-comparison--story-connect .aboutme-comparison-column-header {
-    grid-column: 1;
-    width: auto;
-    min-height: 0;
-  }
-  .mis-wrapper .aboutme-comparison--story-connect .aboutme-comparison-column-title {
-    grid-column: 2;
-    text-align: left;
-  }
-  .mis-wrapper .aboutme-comparison--story-connect .aboutme-comparison-items-grid { grid-column: 1 / -1; }
+  /* avatar sits beside the heading in the shared frame; only tighten the column here */
+  .mis-wrapper .aboutme-comparison--story-connect .aboutme-comparison-column { padding: 6px 8px; gap: 4px; }
   .mis-wrapper .aboutme-comparison--story-connect .aboutme-comparison-avatar { width: 34px; height: 34px; }
   .mis-wrapper .aboutme-comparison--story-connect .aboutme-comparison-item { min-height: 0; padding: 4px 8px; }
   .mis-wrapper .aboutme-comparison--story-connect .aboutme-comparison-continue-btn {

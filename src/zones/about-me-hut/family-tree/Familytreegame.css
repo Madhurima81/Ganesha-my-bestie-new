@@ -6036,3 +6036,70 @@
     padding: 14px 38px !important;
   }
 }
+
+/* ==========================================================================
+   COMPARE FRAME ALIGNMENT ("Our Families!") — same title, subtitle, card, avatar and
+   rhythm as the shared AboutMeComparisonCard (Food, Dreams, Indian Story). Only the OUTER frame
+   follows the shared tokens (--u); the tree artwork inside the cards keeps its own tuned
+   layout. Kept last. The !important is only to win over the older !important rules above;
+   when those are cleaned up, drop it.
+   ========================================================================== */
+.family-tree-game .side-by-side-screen {
+  justify-content: center;
+  box-sizing: border-box;
+  padding: calc(var(--u, 8px) * 1) calc(var(--u, 8px) * 2);
+}
+.family-tree-game .side-by-side-screen .reveal-title {
+  font-size: calc(var(--u, 8px) * 3.2) !important;
+  margin: 0 0 calc(var(--u, 8px) * 0.3) !important;
+  transform: none !important;
+  scale: none;
+}
+.family-tree-game .side-by-side-screen .reveal-subtitle {
+  font-size: max(13px, calc(var(--u, 8px) * 1.5)) !important;
+  margin: 0 0 calc(var(--u, 8px) * 1.5) !important;
+  transform: none !important;
+}
+.family-tree-game .side-by-side-screen .two-trees-container {
+  gap: calc(var(--u, 8px) * 2) !important;
+  max-width: calc(var(--u, 8px) * 100);
+  margin-bottom: calc(var(--u, 8px) * 1);
+  transform: none !important;
+  flex-wrap: nowrap;
+}
+@media (min-height: 501px) {
+  /* tablets: cards + Continue form one centred group; short phones keep their own tuned fill */
+  .family-tree-game .side-by-side-screen .two-trees-container { flex: 0 1 auto !important; }
+}
+.family-tree-game .side-by-side-screen .tree-column {
+  flex: 1 1 0;
+  min-width: 0 !important;
+  max-width: calc(var(--u, 8px) * 46) !important;
+  padding: calc(var(--u, 8px) * 1.4) !important;
+  border-radius: 20px;
+  box-shadow: 0 6px 18px rgba(120, 90, 20, 0.12), inset 0 0 0 2px rgba(255, 255, 255, 0.6);
+}
+.family-tree-game .side-by-side-screen .tree-column:hover {
+  transform: none;
+}
+.family-tree-game .side-by-side-screen .tree-card-header {
+  gap: calc(var(--u, 8px) * 1.2);
+}
+.family-tree-game .side-by-side-screen .tree-heading {
+  font-size: calc(var(--u, 8px) * 2.2) !important;
+  margin: 0;
+}
+.family-tree-game .side-by-side-screen .tree-card-avatar,
+.family-tree-game .side-by-side-screen .tree-card-avatar--ganesha {
+  width: calc(var(--u, 8px) * 7);
+  height: calc(var(--u, 8px) * 7);
+}
+.family-tree-game .side-by-side-screen .action-buttons {
+  margin: calc(var(--u, 8px) * 1.2) 0 calc(var(--u, 8px) * 0.5) !important;
+  transform: none !important;
+}
+.family-tree-game .side-by-side-screen .family-tree-end-game-btn {
+  min-height: 60px;
+  padding: calc(var(--u, 8px) * 1.1) calc(var(--u, 8px) * 4) !important;
+  font-size: max(16px, calc(var(--u, 8px) * 2)) !important;
+}
