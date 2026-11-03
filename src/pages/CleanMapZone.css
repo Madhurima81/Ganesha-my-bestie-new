@@ -451,8 +451,8 @@
 }
 
 .shloka-river {
-  top: 15%;
-  left: 59.5%;
+  top: 4%;
+  left: 51.5%;
   right: auto;
   width: 16%;
   height: 24%;
@@ -1016,7 +1016,7 @@
 
   /* Touch areas stay much larger than labels/art. */
   .shloka-mountain  { top: 23%; left: 23.5%; width: 13%; height: 22%; }
-  .shloka-river     { top: 19.5%; left: 64.5%; right: auto; width: 12%; height: 20%; }
+  .shloka-river     { top: 6%; left: 53.5%; right: auto; width: 12%; height: 20%; }
   .about-hut        { top: 62%; left: 32%; width: 11%; height: 17%; }
 
   /* Hierarchy labels, phone sizes */

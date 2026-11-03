@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-03 j] - Map: Shloka River tap area follows the moved waterfall
+**Touched:** CleanMapZone.css.
+**Changed:** After the river art moved, the tap oval still sat about 5% right and 7% below the waterfall. Moved it onto the waterfall/rocks (tablet top 4% left 51.5%; phone top 6% left 53.5%). Label and Ganesha were already close enough and are unchanged.
+**Verified:** Playwright renders at 1194x834 and 844x390 with tap areas outlined; no bush visible through the river. Desktop browser only, not iPad.
+**Open:** Lotus Square and Tusk Treehouse tap areas overlap each other (both locked, existing); the river art itself is still not restricted to the waterfall for taps beyond this oval (the art is pointer-events none, so only the oval responds).
+
 ## [2026-11-03 i] - Map: Madhurima's editor layout applied (river moved, 2 props removed)
 **Touched:** CleanMapZone.jsx.
 **Changed:** Applied the exported map-editor layout: Shloka River stream/waterfall/bridge moved (51.9/62.1, 58.9/16.8, 55.7/49.6); removed props grass-39 and flower2-67.
