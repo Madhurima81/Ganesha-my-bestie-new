@@ -122,7 +122,7 @@ const RIVER_ART_IDS = new Set(['shlokaStream', 'shlokaWaterfall', 'shlokaBridge'
 
 const ZONE_ART_TO_ZONE_ID = {
   symbol: ZONE_IDS.SYMBOL,
-  river: ZONE_IDS.RIVER,
+  shlokaWaterfall: ZONE_IDS.RIVER, // only the waterfall fades; stream + bridge stay colourful
   hut: ZONE_IDS.HUT,
   festival: ZONE_IDS.FESTIVAL,
   treehouse: ZONE_IDS.TREEHOUSE,
@@ -738,13 +738,13 @@ const MAP_ZONE_ART_DEFAULTS = {
   shlokaStream: {
     id: 'shlokaStream', label: 'Shloka River — River',
     src: '/images/map/shloka-stream-opt.webp',
-    left: 51.9, top: 62.1, w: 25, h: 79,
-    centered: true, flip: false, rotate: 10, opacity: 1
+    left: 57.3, top: 69.8, w: 30, h: 75.2,
+    centered: true, flip: false, rotate: 0, opacity: 1
   },
   shlokaWaterfall: {
     id: 'shlokaWaterfall', label: 'Shloka River — Waterfall',
     src: '/images/map/shloka-waterfall-opt.webp',
-    left: 58.9, top: 16.8, w: 19, h: 24,
+    left: 57.3, top: 22.3, w: 30, h: 19.8,
     centered: true, flip: false, rotate: 0, opacity: 1
   },
   shlokaBridge: {
@@ -1054,15 +1054,19 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     }
   }, [zoneArtItems]);
 
-  const currentMapZoneId =
-    PRIMARY_MAP_JOURNEY.find(
-      (zoneId) => isZoneUnlocked(zoneId, zoneProgress) && !isZoneDone(zoneProgress, zoneId)
-    ) ||
-    [...PRIMARY_MAP_JOURNEY].reverse().find((zoneId) => isZoneDone(zoneProgress, zoneId)) ||
-    ZONE_IDS.SYMBOL;
+  const allJourneyZonesComplete =
+    progressLoaded &&
+    PLAYABLE_JOURNEY_ZONE_IDS.every((zoneId) => isZoneDone(zoneProgress, zoneId));
+
+  // All three done -> no active destination (no halo / current label).
+  const currentMapZoneId = allJourneyZonesComplete
+    ? null
+    : PRIMARY_MAP_JOURNEY.find(
+        (zoneId) => isZoneUnlocked(zoneId, zoneProgress) && !isZoneDone(zoneProgress, zoneId)
+      ) || ZONE_IDS.SYMBOL;
   const currentJourneyIndex = PRIMARY_MAP_JOURNEY.indexOf(currentMapZoneId);
   const nextMapZoneId =
-    currentJourneyIndex >= 0 && currentJourneyIndex < PRIMARY_MAP_JOURNEY.length - 1
+    currentMapZoneId && currentJourneyIndex < PRIMARY_MAP_JOURNEY.length - 1
       ? PRIMARY_MAP_JOURNEY[currentJourneyIndex + 1]
       : null;
 
@@ -1088,30 +1092,23 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     if (hierarchyZoneId) {
       const hierarchyState = getZoneState(hierarchyZoneId, zoneProgress);
       if (hierarchyZoneId === currentMapZoneId) {
-        hierarchyScale = 1.10;
+        hierarchyScale = 1.04;
         hierarchyOpacity = 1;
-        hierarchyFilter = 'saturate(1)';
-      } else if (hierarchyZoneId === nextMapZoneId) {
-        // River artwork is intrinsically much larger, so shrink it more while "next"
-        hierarchyScale = hierarchyZoneId === ZONE_IDS.RIVER ? 0.84 : 0.92;
-        hierarchyOpacity = 0.92;
-        hierarchyFilter = 'saturate(0.92)';
-        // Only the current zone is in full colour: the Lodge stays as washed out when it is "next" as when it is
-        // further away (it used to brighten to 92% as soon as Shloka River became current).
-        if (hierarchyZoneId === ZONE_IDS.HUT) {
-          // Next locked: one treatment only (same look the river gets), no extra overlay.
-          hierarchyOpacity = 0.78;
-          hierarchyFilter = 'saturate(0.65) brightness(1.08)';
-        }
+        hierarchyFilter = 'none';
       } else if (hierarchyState === 'completed') {
-        hierarchyScale = 0.94;
-        hierarchyOpacity = 0.82;
-        hierarchyFilter = 'saturate(0.9) brightness(1)';
+        // Completed art returns to full colour; label + tick mark it as done
+        hierarchyScale = 1;
+        hierarchyOpacity = 1;
+        hierarchyFilter = 'none';
+      } else if (hierarchyZoneId === nextMapZoneId) {
+        hierarchyScale = hierarchyZoneId === ZONE_IDS.RIVER ? 0.92 : 0.96;
+        hierarchyOpacity = 0.78;
+        hierarchyFilter = 'saturate(0.72) brightness(1.05)';
       } else if (hierarchyZoneId === ZONE_IDS.HUT) {
         // Zone 3 as a FUTURE locked zone: fainter than "next locked" (0.78 / saturate 0.65)
         hierarchyScale = 0.92;
-        hierarchyOpacity = 0.6;
-        hierarchyFilter = 'saturate(0.55) brightness(1.06)';
+        hierarchyOpacity = 0.55;
+        hierarchyFilter = 'saturate(0.65)';
       } else {
         // Lotus Square / Tusk Treehouse — WIP, atmospheric landmarks only
         hierarchyScale = 0.88;
@@ -1149,6 +1146,13 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       ...extra
     };
   };
+
+  const ACTIVE_FOCUS_ART = {
+    [ZONE_IDS.SYMBOL]: 'symbol',
+    [ZONE_IDS.RIVER]: 'shlokaWaterfall',
+    [ZONE_IDS.HUT]: 'hut',
+  };
+  const activeFocusArtId = currentMapZoneId ? ACTIVE_FOCUS_ART[currentMapZoneId] : null;
 
   const responsiveOverlayItems = isPhoneLandscape
     ? Object.fromEntries(
@@ -1397,14 +1401,14 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     setShowJourneyCelebration(true);
     playUnlockChime('master', !isSfxOn());
     speakMapVoEvents([{
-      text: 'What a wonderful journey! You explored Modak Mountain, chanted at Shloka River, and shared your story at Lambodara Lodge. I loved exploring with you!',
+      text: "Look how much we've explored together!",
       delay: 500,
     }]);
   }, [journeyComplete]);
 
   useEffect(() => {
     if (!showJourneyCelebration) return;
-    const timer = setTimeout(() => setShowJourneyCelebration(false), 12000);
+    const timer = setTimeout(() => setShowJourneyCelebration(false), 3800);
     return () => clearTimeout(timer);
   }, [showJourneyCelebration]);
 
@@ -1465,6 +1469,9 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   };
 
   const handleZoneClick = (zone, state) => {
+    // Locked / future / unlocking destinations: silent, no sound or pulse.
+    if (state === 'locked' || state === 'coming-soon' || state === 'unlocking') return;
+
     if (zone.id === ZONE_IDS.SYMBOL) {
       setFirstMapTapDone(true);
       try {
@@ -1479,13 +1486,6 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     // Play zone click SFX (locked = buzz, active = bright tone)
     playZoneClickSfx(state, !isSfxOn());
 
-    // Locked or future destinations: not tappable, no feedback.
-    if (state === 'locked' || state === 'coming-soon') {
-      return;
-    }
-
-    if (state === 'unlocking') return;
-
     navigateToZone(zone, state);
   };
 
@@ -1495,7 +1495,9 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     <div className="map-container morning">
 
 
+      {/* [voice mute removed 2026-11-04] voice is always on (use device volume); uncomment to restore.
       <HoldMuteButton position="bottom-left" />
+      */}
 
       {/* Background image */}
       <img
@@ -1503,6 +1505,13 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         alt="Map"
         className="map-bg-img"
       />
+      {progressLoaded && activeFocusArtId && zoneArtItems[activeFocusArtId] && (
+        <div
+          className="map-active-zone-focus"
+          style={getZoneArtStyle(activeFocusArtId, { opacity: 1, filter: 'none' })}
+          aria-hidden="true"
+        />
+      )}
       {showFirstMapGuide && (
         <img
           src="/images/map/modakmtn-shell.webp"
@@ -1529,7 +1538,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         }}
         style={getZoneArtStyle('symbol', { pointerEvents: 'none' })}
       />
-      {['shlokaStream', 'shlokaWaterfall', 'shlokaBridge'].map((id) => (
+      {['shlokaStream', 'shlokaWaterfall'].map((id) => (
         <img
           key={id}
           src={zoneArtItems[id].src}
@@ -1668,7 +1677,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         const baseState = getZoneState(zone.id, zoneProgress);
         const unlockIntensity = unlockingZones[zone.id];
         const state = unlockIntensity ? 'unlocking' : baseState;
-        const isDisabled = state === 'locked' || state === 'unlocking';
+        const isDisabled = state === 'locked' || state === 'unlocking' || state === 'coming-soon';
         const unlockClass = unlockIntensity === 'master' ? 'zone-unlock-master' : '';
         const labelState = state === 'unlocking' ? 'active' : state;
         const isSymbolMountainZone = zone.id === 'symbol-mountain';
@@ -1688,7 +1697,6 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
               aria-disabled={isDisabled}
             />
 
-
             {/* Label */}
             {shouldShowZoneLabel && (
               <div
@@ -1705,7 +1713,8 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
                 ].filter(Boolean).join(' ')}
                 onClick={() => handleZoneClick(zone, state)}
                 role="button"
-                tabIndex={0}
+                tabIndex={isDisabled ? -1 : 0}
+                aria-disabled={isDisabled}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
