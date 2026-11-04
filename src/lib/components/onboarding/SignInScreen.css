@@ -14,6 +14,15 @@
   flex-shrink: 0;
 }
 
+.si-msg {
+  margin: 0;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #b3402f;
+  max-width: 32ch;
+}
+
 .si-legal {
   margin: 6px 0 0;
   font-family: 'Nunito', sans-serif;
