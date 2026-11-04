@@ -77,6 +77,7 @@ export default function ParentDashboard({ onBack, onOpenChildProfile, initialUnl
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
   const [showAbout, setShowAbout] = useState(false)
+  const [showLegal, setShowLegal] = useState(null) // 'terms' | 'copyright'
   const [soundSettings, setSoundSettings] = useState(readSoundSettings)
 
   // Home mute button flips the same flag: keep the Voice switch in step.
@@ -223,6 +224,10 @@ export default function ParentDashboard({ onBack, onOpenChildProfile, initialUnl
 
   if (showAbout) {
     return <AboutScreen onBack={() => setShowAbout(false)} />
+  }
+
+  if (showLegal) {
+    return <LegalScreen kind={showLegal} onBack={() => setShowLegal(null)} />
   }
 
   const name = childName || 'Your child'
@@ -425,12 +430,6 @@ export default function ParentDashboard({ onBack, onOpenChildProfile, initialUnl
               marginBottom: '1.2rem',
             }}>
               <SoundToggleRow
-                label="Voice & pronunciation"
-                sublabel="Stories, hints & Sanskrit sounds"
-                checked={soundSettings.voice}
-                onChange={() => toggleSoundSetting('voice')}
-              />
-              <SoundToggleRow
                 label="Sound effects"
                 sublabel="Taps, movement & feedback"
                 checked={soundSettings.sfx}
@@ -447,21 +446,12 @@ export default function ParentDashboard({ onBack, onOpenChildProfile, initialUnl
 
             <SettingsSectionLabel>Explorers</SettingsSectionLabel>
             <ExplorerManager onChanged={refreshActiveChild} />
-
-            <SettingsSectionLabel>Child</SettingsSectionLabel>
             <div style={{ marginBottom: '1.2rem' }}>
               <SettingRow
-                label="Child profile"
-                sublabel={childAge ? `${name} · Age ${childAge}` : name}
+                label="Switch explorer"
+                sublabel={`Playing now: ${name}`}
                 action={onOpenChildProfile}
-                actionLabel="Open"
-              />
-              <SettingRow
-                label="Reset progress"
-                sublabel={`Start ${name} over from the beginning. The profile stays.`}
-                action={handleResetProgress}
-                actionLabel="Reset"
-                danger
+                actionLabel="Switch"
               />
             </div>
 
@@ -492,22 +482,34 @@ export default function ParentDashboard({ onBack, onOpenChildProfile, initialUnl
               />
             </div>
 
-            <SettingsSectionLabel>Privacy</SettingsSectionLabel>
-            <div>
+            <SettingsSectionLabel>Danger zone</SettingsSectionLabel>
+            <div style={{ marginBottom: '1.4rem' }}>
               <SettingRow
-                label="Privacy"
-                sublabel="Review what this local-only version stores on this device"
-                action={() => setShowPrivacyPolicy(true)}
-                actionLabel="Open"
+                label="Reset progress"
+                sublabel={`Start ${name} over from the beginning. The profile stays.`}
+                action={handleResetProgress}
+                actionLabel="Reset"
+                danger
               />
               <SettingRow
                 label="Delete all data"
-                sublabel="Remove profiles, progress, consent, and parent data from this device"
+                sublabel="Remove all explorers, progress and settings from this device"
                 action={handleDeleteAllData}
                 actionLabel="Delete"
                 danger
               />
             </div>
+
+            <p className="pd-legal-footer" style={{
+              fontFamily: 'Nunito, sans-serif', fontSize: '0.8rem',
+              color: '#6B6B6B', textAlign: 'center', margin: '0 0 1rem',
+            }}>
+              <button type="button" className="pd-legal-link" onClick={() => setShowLegal('terms')}>Terms and conditions</button>
+              {', '}
+              <button type="button" className="pd-legal-link" onClick={() => setShowPrivacyPolicy(true)}>Privacy policy</button>
+              {' and '}
+              <button type="button" className="pd-legal-link" onClick={() => setShowLegal('copyright')}>Copyright</button>
+            </p>
           </div>
         )}
 
@@ -563,7 +565,7 @@ function SettingRow({ label, sublabel, action, actionLabel, danger }) {
         <p style={{
           fontFamily: 'Nunito, sans-serif',
           fontSize: '0.78rem', color: CV.softBrown,
-          margin: 0, opacity: 0.6,
+          margin: 0,
         }}>
           {sublabel}
         </p>
@@ -608,7 +610,6 @@ function SoundToggleRow({ label, sublabel, checked, onChange, last }) {
           fontFamily: 'Nunito, sans-serif',
           fontSize: '0.76rem',
           color: CV.softBrown,
-          opacity: 0.7,
           margin: '0.15rem 0 0',
         }}>
           {sublabel}
@@ -741,7 +742,7 @@ const SUPPORT_EMAIL = '[SUPPORT EMAIL]'
 const HELP_ITEMS = [
   {
     title: 'Audio not working',
-    body: "Open Settings → Sound and make sure Voice, Sound effects, and Ambience are turned on. Also check that your device isn't muted or in silent mode.",
+    body: "Open Settings → Sound and make sure Sound effects and Ambience are turned on. Also check that your device isn't muted or in silent mode.",
   },
   {
     title: 'Game not responding',
@@ -777,6 +778,29 @@ function HelpScreen({ onBack }) {
             {item.body}
           </p>
         </div>
+      ))}
+    </SimplePage>
+  )
+}
+
+// DRAFT copy (2026-11-04) — plain-language placeholder, to be reviewed by Madhurima / legal before release.
+function LegalScreen({ kind, onBack }) {
+  const isTerms = kind === 'terms'
+  const body = isTerms
+    ? [
+        'Ganesha My Bestie is made for children to enjoy with a grown-up nearby.',
+        'You may use the app for your own family, at home. Please do not copy, resell or share the app, its stories, pictures or recordings.',
+        'This beta version stores your explorers and progress only on this device. You can delete everything any time in Settings > Danger zone.',
+        'We may improve or change the app as we go. Questions? Contact us at ' + SUPPORT_EMAIL + '.',
+      ]
+    : [
+        '\u00A9 2026 Ganesha My Bestie. All rights reserved.',
+        'The stories, artwork, music, voice recordings and Sanskrit pronunciations in this app belong to Ganesha My Bestie and may not be copied or reused without permission.',
+      ]
+  return (
+    <SimplePage title={isTerms ? 'Terms and conditions' : 'Copyright'} onBack={onBack}>
+      {body.map((t) => (
+        <p key={t} style={{ fontSize: '0.92rem', color: CV.brown, lineHeight: 1.7, margin: '0 0 0.9rem' }}>{t}</p>
       ))}
     </SimplePage>
   )

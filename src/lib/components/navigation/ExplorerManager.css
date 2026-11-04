@@ -56,16 +56,14 @@
   font-family: 'Nunito', sans-serif;
   font-size: 0.74rem;
   color: #8B4513;
-  opacity: 0.65;
 }
 
 .pdex-hint,
 .pdex-empty {
   margin: 2px 0 0 0.2rem;
   font-family: 'Nunito', sans-serif;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   color: #8B4513;
-  opacity: 0.6;
 }
 
 /* ---------- Edit Explorer card ---------- */
@@ -182,7 +180,7 @@
   line-height: 1.05;
 }
 
-.pdex-age-label { font-size: 0.7rem; color: #8B4513; opacity: 0.65; }
+.pdex-age-label { font-size: 0.7rem; color: #8B4513; }
 .pdex-age-number { font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 1.5rem; color: #5D2E0F; }
 
 .pdex-avatar-grid {
@@ -216,7 +214,6 @@
   font-weight: 800;
   letter-spacing: 0.04em;
   color: #8B4513;
-  opacity: 0.7;
 }
 
 .pdex-name-wrap { position: relative; margin-bottom: 14px; }

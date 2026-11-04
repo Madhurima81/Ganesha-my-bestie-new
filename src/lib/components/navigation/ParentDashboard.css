@@ -83,3 +83,17 @@
   .pd-setting-row { padding: 0.72rem 0.8rem; margin-bottom: 0.5rem; }
   .pd-setting-action { min-height: 44px; padding-left: 0.85rem !important; padding-right: 0.85rem !important; }
 }
+
+/* Settings footer: "Terms and conditions and Copyright" as words you can tap */
+.pd-legal-link {
+  min-height: 48px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-weight: 700;
+  color: #6B6B6B;
+  text-decoration: underline;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
