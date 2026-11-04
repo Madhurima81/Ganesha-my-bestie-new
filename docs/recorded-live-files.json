@@ -1,0 +1,3605 @@
+{
+ "scenes": {
+  "Modak": {
+   "own": [
+    {
+     "u": "/assets/fj-bush-open-new-I-nPQIeV.webp",
+     "bytes": 120152
+    },
+    {
+     "u": "/assets/fj-bush-closed-new-zWSEH7Fl.webp",
+     "bytes": 103822
+    },
+    {
+     "u": "/assets/fj-garland-complete-D1cs48dI.webp",
+     "bytes": 102516
+    },
+    {
+     "u": "/assets/fj-tree-new-Dgmc7GKM.webp",
+     "bytes": 95490
+    },
+    {
+     "u": "/assets/fj-branch-new-BkFXnnyo.webp",
+     "bytes": 83204
+    },
+    {
+     "u": "/assets/ganesha-game3-new-CzH52eeY.webp",
+     "bytes": 76804
+    },
+    {
+     "u": "/assets/fj-marsh-clump-033AU42q.webp",
+     "bytes": 65140
+    },
+    {
+     "u": "/assets/fj-garland-empty-BlOigi35.webp",
+     "bytes": 64666
+    },
+    {
+     "u": "/assets/mooshika-turned-game2-BvTk8h2L.webp",
+     "bytes": 63690
+    },
+    {
+     "u": "/assets/fj-mud-plain-DG7Uox2F.webp",
+     "bytes": 58136
+    },
+    {
+     "u": "/assets/fj-flower-cream-CqM3AYQS.webp",
+     "bytes": 41614
+    },
+    {
+     "u": "/assets/journey-berry-B1ygAO2q.webp",
+     "bytes": 37630
+    },
+    {
+     "u": "/assets/modak-fj-bg-6O21mAve.webp",
+     "bytes": 30206
+    },
+    {
+     "u": "/assets/fj-flower-coral-DwWsR59n.webp",
+     "bytes": 28356
+    },
+    {
+     "u": "/assets/journey-acorn-Vmo-Cx55.webp",
+     "bytes": 25484
+    },
+    {
+     "u": "/assets/journey-feather-jqHMKC5P.webp",
+     "bytes": 23096
+    },
+    {
+     "u": "/assets/emotion-excited-game3-opt-CwHzx-X6.webp",
+     "bytes": 14818
+    },
+    {
+     "u": "/assets/emotion-pleased-game3-opt-C9yk_ZjN.webp",
+     "bytes": 13406
+    },
+    {
+     "u": "/assets/emotion-angry-game3-opt-BqhvFOiu.webp",
+     "bytes": 13262
+    },
+    {
+     "u": "/assets/emotion-happy-game3-opt-CWHiyNrF.webp",
+     "bytes": 11746
+    },
+    {
+     "u": "/assets/emotion-worried-game3-opt-CQO-VbA0.webp",
+     "bytes": 11556
+    },
+    {
+     "u": "/assets/emotion-sad-game3-opt-ui_99x96.webp",
+     "bytes": 9638
+    }
+   ],
+   "ownRecordedOnly": [
+    {
+     "u": "/assets/trunk-pond-bg-new-DoLgVWn-.webp",
+     "bytes": 102726
+    }
+   ],
+   "shared": [
+    {
+     "u": "/audio/music/bg-ambient.mp3",
+     "bytes": 2550861
+    },
+    {
+     "u": "/images/ganesha-poses/sit-modak.webp",
+     "bytes": 63850
+    },
+    {
+     "u": "/images/ganesha-poses/sit-hi.webp",
+     "bytes": 58414
+    },
+    {
+     "u": "/images/modakmtn-bg.webp",
+     "bytes": 29796
+    },
+    {
+     "u": "/assets/symbol-lotus-new-opt-C-FJU0-Y.webp",
+     "bytes": 22598
+    },
+    {
+     "u": "/assets/symbol-eyes-new-C0gnqOX1.webp",
+     "bytes": 22186
+    },
+    {
+     "u": "/assets/symbol-mooshika-new-v9laY71u.webp",
+     "bytes": 18680
+    },
+    {
+     "u": "/assets/symbol-trunk-new-opt-BZgNCNpa.webp",
+     "bytes": 18528
+    },
+    {
+     "u": "/assets/symbol-ears-new-opt-BTNGAdTG.webp",
+     "bytes": 17098
+    },
+    {
+     "u": "/images/icons/symbol-collection-rosette.png",
+     "bytes": 16508
+    },
+    {
+     "u": "/assets/symbol-belly-new-opt-CYnzk-Lo.webp",
+     "bytes": 16396
+    },
+    {
+     "u": "/assets/symbol-modak-new-DipM3nD_.webp",
+     "bytes": 13014
+    },
+    {
+     "u": "/images/hand-thumbsup.svg",
+     "bytes": 12862
+    },
+    {
+     "u": "/assets/broken-tusk-symbol-CFiziyPm.webp",
+     "bytes": 12434
+    },
+    {
+     "u": "/images/icons/replay-icon.png",
+     "bytes": 9093
+    },
+    {
+     "u": "/images/zone-badge/icon-symbolmtn.webp",
+     "bytes": 536
+    }
+   ],
+   "otherScene": [],
+   "unclear": []
+  },
+  "Pond": {
+   "own": [
+    {
+     "u": "/assets/pond-flower-2_DxmLAt.webp",
+     "bytes": 125664
+    },
+    {
+     "u": "/assets/pond-turtle-sad-BCoN1KO5.webp",
+     "bytes": 119392
+    },
+    {
+     "u": "/assets/pond-stream-overlay-BNWPCKUK.webp",
+     "bytes": 79000
+    },
+    {
+     "u": "/assets/trunk-lotus-bloomed-new-X15zJfrU.webp",
+     "bytes": 76322
+    },
+    {
+     "u": "/assets/trunk-lotus-dormant-new-DxnGsfZl.webp",
+     "bytes": 67400
+    },
+    {
+     "u": "/assets/pond-big-rock-BNd6qRWB.webp",
+     "bytes": 43778
+    },
+    {
+     "u": "/assets/trunk-lotus-upright-new-DVwqO-P4.webp",
+     "bytes": 43334
+    },
+    {
+     "u": "/assets/pond-bg-fixed-C53CyX-r.webp",
+     "bytes": 32264
+    },
+    {
+     "u": "/assets/pond-pebble-DKuAm0NP.webp",
+     "bytes": 31084
+    }
+   ],
+   "ownRecordedOnly": [
+    {
+     "u": "/assets/trail-bg-DVooAXGU.webp",
+     "bytes": 21106
+    }
+   ],
+   "shared": [
+    {
+     "u": "/images/ganesha-poses/sit-modak.webp",
+     "bytes": 63850
+    },
+    {
+     "u": "/images/ganesha-poses/sit-hi.webp",
+     "bytes": 58414
+    },
+    {
+     "u": "/images/ganesha-poses/stand-point.webp",
+     "bytes": 53782
+    },
+    {
+     "u": "/images/modakmtn-bg.webp",
+     "bytes": 29796
+    },
+    {
+     "u": "/assets/gesture-touch-finger-BeZeq0G1.png",
+     "bytes": 16698
+    },
+    {
+     "u": "/images/icons/symbol-collection-rosette.png",
+     "bytes": 16508
+    },
+    {
+     "u": "/images/hand-thumbsup.svg",
+     "bytes": 12862
+    },
+    {
+     "u": "/images/hand-victory.svg",
+     "bytes": 12794
+    },
+    {
+     "u": "/images/icons/replay-icon.png",
+     "bytes": 9093
+    }
+   ],
+   "otherScene": [],
+   "unclear": []
+  },
+  "Symbol": {
+   "own": [
+    {
+     "u": "/assets/ear_bird_forest_ambient-bLjsuiEQ.wav",
+     "bytes": 230444
+    },
+    {
+     "u": "/assets/ear_grass_rustle-QpjGzif7.wav",
+     "bytes": 202904
+    },
+    {
+     "u": "/assets/ear_water_drip-L8PZco_K.wav",
+     "bytes": 192044
+    },
+    {
+     "u": "/assets/dragon-studio-wind-gust-386158-CKnCyhJi.mp3",
+     "bytes": 165511
+    },
+    {
+     "u": "/assets/symbol_mountain_3_bg-DbjhDqj0.webp",
+     "bytes": 67876
+    },
+    {
+     "u": "/assets/hidden_spring-cUXuyG6s.webp",
+     "bytes": 51414
+    },
+    {
+     "u": "/assets/revealed_grass_bush-6ibRjHWT.webp",
+     "bytes": 48976
+    },
+    {
+     "u": "/assets/leafy_bush-D5cBfKFo.webp",
+     "bytes": 44908
+    },
+    {
+     "u": "/assets/peacock-new-Be7ffzum.webp",
+     "bytes": 44750
+    },
+    {
+     "u": "/assets/dragon-studio-dry-grass-rustling-478361-CBWgJgVK.mp3",
+     "bytes": 44544
+    },
+    {
+     "u": "/assets/revealed_spring-VG7fzx7y.webp",
+     "bytes": 42600
+    },
+    {
+     "u": "/assets/new_feather_bush-BSAT2gLe.webp",
+     "bytes": 39966
+    },
+    {
+     "u": "/assets/new_mango_bush-Dg7PAmIc.webp",
+     "bytes": 39416
+    },
+    {
+     "u": "/assets/peacock_04_feather_highlight-CA1QWEVK.webp",
+     "bytes": 38472
+    },
+    {
+     "u": "/assets/elephant-new1-CRSvho7k.webp",
+     "bytes": 37452
+    },
+    {
+     "u": "/assets/hidden_grass_bush-DLd7b70d.webp",
+     "bytes": 36522
+    },
+    {
+     "u": "/assets/peacock_worried_missing_feather-DfR1wfPA.webp",
+     "bytes": 36396
+    },
+    {
+     "u": "/assets/nest-4-WWk5NZqx.webp",
+     "bytes": 33374
+    },
+    {
+     "u": "/assets/nest-3-C38WzjAJ.webp",
+     "bytes": 30562
+    },
+    {
+     "u": "/assets/cow_eating_grass-C4EUlB4M.webp",
+     "bytes": 30410
+    },
+    {
+     "u": "/assets/elephant_thirsty-XA64aY1D.webp",
+     "bytes": 30288
+    },
+    {
+     "u": "/assets/cow_hungry-8_G9SE2t.webp",
+     "bytes": 29818
+    },
+    {
+     "u": "/assets/elephant_happy_water-DiJ9rr39.webp",
+     "bytes": 29330
+    },
+    {
+     "u": "/assets/cow_happy_chewing_new-DBW7o19G.webp",
+     "bytes": 29304
+    },
+    {
+     "u": "/assets/cow-new-QCDNZbc7.webp",
+     "bytes": 28664
+    },
+    {
+     "u": "/assets/cow_tired-IjLubFdf.webp",
+     "bytes": 28576
+    },
+    {
+     "u": "/assets/elephant_drinking-C4XbTiKk.webp",
+     "bytes": 28146
+    },
+    {
+     "u": "/assets/nest-2-DAvNWUQ6.webp",
+     "bytes": 27084
+    },
+    {
+     "u": "/assets/nest-1-CZuoN1W2.webp",
+     "bytes": 24610
+    },
+    {
+     "u": "/assets/nest-0-CIgf76i6.webp",
+     "bytes": 20048
+    },
+    {
+     "u": "/assets/bunny-helping-DfAVbiRF.webp",
+     "bytes": 18000
+    },
+    {
+     "u": "/assets/monkey-new-BMGKSLYJ.webp",
+     "bytes": 16956
+    },
+    {
+     "u": "/assets/monkey_hungry_worried-D-y4kELE.webp",
+     "bytes": 15446
+    },
+    {
+     "u": "/assets/yellow_flower_cluster-DCLpnsOz.webp",
+     "bytes": 14712
+    },
+    {
+     "u": "/assets/monkey_04_smiles_holds_close-DiQKMB4T.webp",
+     "bytes": 13884
+    },
+    {
+     "u": "/assets/peacock_feather_single-BJEhczLF.webp",
+     "bytes": 10638
+    },
+    {
+     "u": "/assets/grass-bundle-DRdbP1sn.webp",
+     "bytes": 9530
+    },
+    {
+     "u": "/assets/leaf-DzaRkFC4.webp",
+     "bytes": 5906
+    },
+    {
+     "u": "/assets/mango-DipgeBUV.webp",
+     "bytes": 5330
+    },
+    {
+     "u": "/assets/feather-BfrtU2hc.webp",
+     "bytes": 5038
+    },
+    {
+     "u": "/assets/baby-bird-happy-Cgk82AS8.webp",
+     "bytes": 4148
+    },
+    {
+     "u": "/assets/baby-bird-sad-BHWHmAS9.webp",
+     "bytes": 4128
+    }
+   ],
+   "ownRecordedOnly": [],
+   "shared": [
+    {
+     "u": "/images/ganesha-poses/stand-point.webp",
+     "bytes": 53782
+    },
+    {
+     "u": "/images/modakmtn-bg.webp",
+     "bytes": 29796
+    },
+    {
+     "u": "/assets/symbol-eyes-new-C0gnqOX1.webp",
+     "bytes": 22186
+    },
+    {
+     "u": "/assets/symbol-mooshika-new-v9laY71u.webp",
+     "bytes": 18680
+    },
+    {
+     "u": "/assets/symbol-ears-new-opt-BTNGAdTG.webp",
+     "bytes": 17098
+    },
+    {
+     "u": "/images/icons/symbol-collection-rosette.png",
+     "bytes": 16508
+    },
+    {
+     "u": "/assets/symbol-belly-new-opt-CYnzk-Lo.webp",
+     "bytes": 16396
+    },
+    {
+     "u": "/assets/symbol-modak-new-DipM3nD_.webp",
+     "bytes": 13014
+    },
+    {
+     "u": "/images/hand-victory.svg",
+     "bytes": 12794
+    },
+    {
+     "u": "/images/hand-ok.svg",
+     "bytes": 12794
+    },
+    {
+     "u": "/assets/broken-tusk-symbol-CFiziyPm.webp",
+     "bytes": 12434
+    },
+    {
+     "u": "/images/icons/replay-icon.png",
+     "bytes": 9093
+    },
+    {
+     "u": "/audio/music/bg-ambient.mp3",
+     "bytes": 2550861
+    },
+    {
+     "u": "/images/ganesha-poses/sit-modak.webp",
+     "bytes": 63850
+    },
+    {
+     "u": "/images/ganesha-poses/sit-hi.webp",
+     "bytes": 58414
+    },
+    {
+     "u": "/assets/symbol-lotus-new-opt-C-FJU0-Y.webp",
+     "bytes": 22598
+    },
+    {
+     "u": "/assets/symbol-trunk-new-opt-BZgNCNpa.webp",
+     "bytes": 18528
+    },
+    {
+     "u": "/assets/gesture-touch-finger-BeZeq0G1.png",
+     "bytes": 16698
+    },
+    {
+     "u": "/assets/lotus-iconnew-BcBt695a.svg",
+     "bytes": 6352
+    },
+    {
+     "u": "/images/zone-badge/icon-symbolmtn.webp",
+     "bytes": 536
+    }
+   ],
+   "otherScene": [
+    {
+     "u": "/assets/final_symbol_background-G8VZXjjL.webp",
+     "bytes": 15188,
+     "belongsTo": "Sacred Assembly"
+    }
+   ],
+   "unclear": []
+  },
+  "Sacred Assembly": {
+   "own": [
+    {
+     "u": "/assets/final_symbol_background-G8VZXjjL.webp",
+     "bytes": 15188
+    },
+    {
+     "u": "/assets/ganesha-base-BdHhmFbq.png",
+     "bytes": 14759
+    },
+    {
+     "u": "/assets/ganesha-ear-SoDnhnYg.png",
+     "bytes": 3071
+    },
+    {
+     "u": "/assets/ganesha-mooshika-DVaUa_JE.png",
+     "bytes": 2276
+    },
+    {
+     "u": "/assets/ganesha-eyes-CKYn7ZUI.png",
+     "bytes": 2126
+    },
+    {
+     "u": "/assets/ganesha-lotus-DxeEQd-p.png",
+     "bytes": 1980
+    },
+    {
+     "u": "/assets/ganesha-modak-CV_2KZG7.png",
+     "bytes": 1831
+    },
+    {
+     "u": "/assets/ganesha-trunk-DmiK-Me1.png",
+     "bytes": 1747
+    },
+    {
+     "u": "/assets/ganesha-belly-BZ_Ibem-.png",
+     "bytes": 1420
+    },
+    {
+     "u": "/assets/ganesha-tusk-2d6VrpXf.png",
+     "bytes": 1047
+    }
+   ],
+   "ownRecordedOnly": [],
+   "shared": [
+    {
+     "u": "/audio/music/bg-ambient.mp3",
+     "bytes": 2550861
+    },
+    {
+     "u": "/images/ganesha-poses/sit-modak.webp",
+     "bytes": 63850
+    },
+    {
+     "u": "/images/ganesha-poses/stand-point.webp",
+     "bytes": 53782
+    },
+    {
+     "u": "/images/modakmtn-bg.webp",
+     "bytes": 29796
+    },
+    {
+     "u": "/assets/symbol-lotus-new-opt-C-FJU0-Y.webp",
+     "bytes": 22598
+    },
+    {
+     "u": "/assets/symbol-eyes-new-C0gnqOX1.webp",
+     "bytes": 22186
+    },
+    {
+     "u": "/assets/symbol-mooshika-new-v9laY71u.webp",
+     "bytes": 18680
+    },
+    {
+     "u": "/assets/symbol-trunk-new-opt-BZgNCNpa.webp",
+     "bytes": 18528
+    },
+    {
+     "u": "/assets/symbol-ears-new-opt-BTNGAdTG.webp",
+     "bytes": 17098
+    },
+    {
+     "u": "/assets/symbol-belly-new-opt-CYnzk-Lo.webp",
+     "bytes": 16396
+    },
+    {
+     "u": "/images/icons/symbols-icon.png",
+     "bytes": 14788
+    },
+    {
+     "u": "/assets/symbol-modak-new-DipM3nD_.webp",
+     "bytes": 13014
+    },
+    {
+     "u": "/assets/broken-tusk-symbol-CFiziyPm.webp",
+     "bytes": 12434
+    },
+    {
+     "u": "/images/zone-badge/icon-symbolmtn.webp",
+     "bytes": 536
+    }
+   ],
+   "otherScene": [],
+   "unclear": []
+  },
+  "Vakratunda Grove": {
+   "own": [
+    {
+     "u": "/assets/peacock-new-vZjKlY_R.png",
+     "bytes": 210691
+    },
+    {
+     "u": "/assets/reeds-C2GA5vx_.webp",
+     "bytes": 210438
+    },
+    {
+     "u": "/assets/cow-new-CgRkp5Ax.png",
+     "bytes": 147589
+    },
+    {
+     "u": "/assets/monkey-new-CVNIOQML.png",
+     "bytes": 116461
+    },
+    {
+     "u": "/assets/frog-baby-Cdx7bQLl.webp",
+     "bytes": 94494
+    },
+    {
+     "u": "/assets/18-SOdk5aaI.png",
+     "bytes": 88129
+    },
+    {
+     "u": "/assets/19-BTHIUYf8.png",
+     "bytes": 70763
+    },
+    {
+     "u": "/assets/mahakaya-log-single-BydM_8rb.png",
+     "bytes": 48176
+    },
+    {
+     "u": "/assets/banyan-full-from-download-iVyJTFCV.webp",
+     "bytes": 34578
+    },
+    {
+     "u": "/assets/vakratunda-scene-bg-CB24EHJO.webp",
+     "bytes": 23896
+    },
+    {
+     "u": "/assets/frog-happy-BTmW92-w.webp",
+     "bytes": 17056
+    },
+    {
+     "u": "/assets/frog-family-from-download-DcfwKk02.webp",
+     "bytes": 14380
+    },
+    {
+     "u": "/assets/lilypad-DwCZs5Ez.webp",
+     "bytes": 7784
+    }
+   ],
+   "ownRecordedOnly": [
+    {
+     "u": "/assets/elephant-new-L7zw_ZvW.png",
+     "bytes": 7423
+    }
+   ],
+   "shared": [
+    {
+     "u": "/assets/app-Vakratunda-BNUf-IIB.webp",
+     "bytes": 293514
+    },
+    {
+     "u": "/images/meanings-caveofsecrets/vakratunda-symbol.webp",
+     "bytes": 293514
+    },
+    {
+     "u": "/images/ganesha-poses/sit-modak.webp",
+     "bytes": 63850
+    },
+    {
+     "u": "/images/ganesha-poses/sit-hi.webp",
+     "bytes": 58414
+    },
+    {
+     "u": "/images/shloka-river-bg.webp",
+     "bytes": 55240
+    },
+    {
+     "u": "/assets/app-sarvakaryeshu-D2FkMi35.png",
+     "bytes": 47273
+    },
+    {
+     "u": "/assets/app-samaprabha-CVLC1_4r.png",
+     "bytes": 39436
+    },
+    {
+     "u": "/assets/app-sarvada-D8bw1JsM.png",
+     "bytes": 28402
+    },
+    {
+     "u": "/audio/syllables/mahakaya-ma.mp3",
+     "bytes": 28003
+    },
+    {
+     "u": "/assets/app-mahakaya-Blm8Fs5d.png",
+     "bytes": 24078
+    },
+    {
+     "u": "/audio/syllables/mahakaya-ka.mp3",
+     "bytes": 20897
+    },
+    {
+     "u": "/audio/syllables/mahakaya-ya.mp3",
+     "bytes": 20897
+    },
+    {
+     "u": "/assets/app-kurumedeva-CRKr1fsR.png",
+     "bytes": 20814
+    },
+    {
+     "u": "/assets/symbol-trunk-new-opt-BZgNCNpa.webp",
+     "bytes": 18528
+    },
+    {
+     "u": "/assets/gesture-point-finger-D5Cq1zmm.png",
+     "bytes": 18440
+    },
+    {
+     "u": "/audio/syllables/mahakaya-ha.mp3",
+     "bytes": 17554
+    },
+    {
+     "u": "/assets/gesture-touch-finger-BeZeq0G1.png",
+     "bytes": 16698
+    },
+    {
+     "u": "/assets/app-nirvighnam-CGPR_6IX.png",
+     "bytes": 16595
+    },
+    {
+     "u": "/images/icons/symbol-collection-rosette.png",
+     "bytes": 16508
+    },
+    {
+     "u": "/audio/syllables/vakratunda-tun.mp3",
+     "bytes": 16300
+    },
+    {
+     "u": "/audio/syllables/vakratunda-da.mp3",
+     "bytes": 16300
+    },
+    {
+     "u": "/assets/app-mahakaya-CJlutVkR.webp",
+     "bytes": 15868
+    },
+    {
+     "u": "/images/meanings-caveofsecrets/mahakaya-symbol.webp",
+     "bytes": 15868
+    },
+    {
+     "u": "/audio/syllables/vakratunda-kra.mp3",
+     "bytes": 15464
+    },
+    {
+     "u": "/assets/app-suryakoti-CrsY7s-q.png",
+     "bytes": 13980
+    },
+    {
+     "u": "/images/hand-ok.svg",
+     "bytes": 12794
+    },
+    {
+     "u": "/audio/syllables/vakratunda-va.mp3",
+     "bytes": 12120
+    },
+    {
+     "u": "/images/icons/replay-icon.png",
+     "bytes": 9093
+    },
+    {
+     "u": "/assets/lotus-iconnew-BcBt695a.svg",
+     "bytes": 6352
+    },
+    {
+     "u": "/images/zone-badge/icon-shlokariver.webp",
+     "bytes": 720
+    }
+   ],
+   "otherScene": [
+    {
+     "u": "/assets/saurakoti-bg-J6OQQkGy.webp",
+     "bytes": 36872,
+     "belongsTo": "Suryakoti Bank"
+    },
+    {
+     "u": "/audio/words/vakratunda.mp3",
+     "bytes": 34272,
+     "belongsTo": "Shloka River Finale"
+    },
+    {
+     "u": "/audio/words/mahakaya.mp3",
+     "bytes": 28839,
+     "belongsTo": "Shloka River Finale"
+    }
+   ],
+   "unclear": []
+  },
+  "Suryakoti Bank": {
+   "own": [
+    {
+     "u": "/assets/fawn-worried-Crlp0ROT.webp",
+     "bytes": 117224
+    },
+    {
+     "u": "/assets/reveal-branch-new-opt-BK9Y_L_1.webp",
+     "bytes": 115048
+    },
+    {
+     "u": "/assets/reveal-rock-new-opt-DixXMLpf.webp",
+     "bytes": 106688
+    },
+    {
+     "u": "/assets/fawn-happy-CjCmF6VN.webp",
+     "bytes": 96974
+    },
+    {
+     "u": "/assets/shadow-reed-BfjbKY7P.png",
+     "bytes": 88876
+    },
+    {
+     "u": "/assets/reveal-reeds-leaves-opt-CyOzAJLt.webp",
+     "bytes": 62160
+    },
+    {
+     "u": "/assets/samaprabha-bg-CO-ppm-S.webp",
+     "bytes": 55952
+    },
+    {
+     "u": "/assets/shadow-branch-NQQ6fLdF.png",
+     "bytes": 46156
+    },
+    {
+     "u": "/assets/shadow-stump-opt-DBdwlo8M.webp",
+     "bytes": 45148
+    },
+    {
+     "u": "/assets/shadow-leaves-BMqQ1AJy.png",
+     "bytes": 43814
+    },
+    {
+     "u": "/assets/saurakoti-bg-J6OQQkGy.webp",
+     "bytes": 36872
+    },
+    {
+     "u": "/assets/reveal-stump-opt-DRHxTH0P.webp",
+     "bytes": 30076
+    },
+    {
+     "u": "/assets/sun-zip-Smem5tSp.png",
+     "bytes": 25253
+    },
+    {
+     "u": "/assets/fawn-walk-new-opt-fPvQzfJZ.webp",
+     "bytes": 21624
+    },
+    {
+     "u": "/assets/burrow-zip-opt-CEbMowv9.webp",
+     "bytes": 21446
+    },
+    {
+     "u": "/assets/bunny-sad-zip-opt-PfW3tjSp.webp",
+     "bytes": 11216
+    },
+    {
+     "u": "/assets/bunny-happy-zip-opt-D0zlHlex.webp",
+     "bytes": 10500
+    }
+   ],
+   "ownRecordedOnly": [],
+   "shared": [
+    {
+     "u": "/images/ganesha-poses/sit-modak.webp",
+     "bytes": 63850
+    },
+    {
+     "u": "/images/ganesha-poses/sit-hi.webp",
+     "bytes": 58414
+    },
+    {
+     "u": "/images/shloka-river-bg.webp",
+     "bytes": 55240
+    },
+    {
+     "u": "/images/ganesha-poses/stand-point.webp",
+     "bytes": 53782
+    },
+    {
+     "u": "/assets/app-sarvakaryeshu-D2FkMi35.png",
+     "bytes": 47273
+    },
+    {
+     "u": "/assets/app-samaprabha-CVLC1_4r.png",
+     "bytes": 39436
+    },
+    {
+     "u": "/assets/saurakoti-bg-opt-DyzJ54gV.webp",
+     "bytes": 36118
+    },
+    {
+     "u": "/images/meanings-caveofsecrets/samaprabha-symbol.webp",
+     "bytes": 33650
+    },
+    {
+     "u": "/assets/app-samaprabha-qU3cuXhQ.webp",
+     "bytes": 33650
+    },
+    {
+     "u": "/assets/app-sarvada-D8bw1JsM.png",
+     "bytes": 28402
+    },
+    {
+     "u": "/audio/syllables/suryakoti-sur.mp3",
+     "bytes": 25495
+    },
+    {
+     "u": "/audio/syllables/suryakoti-ya.mp3",
+     "bytes": 25495
+    },
+    {
+     "u": "/audio/syllables/suryakoti-ko.mp3",
+     "bytes": 25495
+    },
+    {
+     "u": "/audio/syllables/suryakoti-ti.mp3",
+     "bytes": 25495
+    },
+    {
+     "u": "/images/meanings-caveofsecrets/suryakoti-symbol.webp",
+     "bytes": 24904
+    },
+    {
+     "u": "/assets/app-suryakoti-DxQEo_yY.webp",
+     "bytes": 24904
+    },
+    {
+     "u": "/assets/app-mahakaya-Blm8Fs5d.png",
+     "bytes": 24078
+    },
+    {
+     "u": "/audio/syllables/samaprabha-sa.mp3",
+     "bytes": 21315
+    },
+    {
+     "u": "/audio/syllables/samaprabha-ma.mp3",
+     "bytes": 21315
+    },
+    {
+     "u": "/audio/syllables/samaprabha-pra.mp3",
+     "bytes": 21315
+    },
+    {
+     "u": "/audio/syllables/samaprabha-bha.mp3",
+     "bytes": 21315
+    },
+    {
+     "u": "/assets/app-kurumedeva-CRKr1fsR.png",
+     "bytes": 20814
+    },
+    {
+     "u": "/assets/symbol-trunk-new-opt-BZgNCNpa.webp",
+     "bytes": 18528
+    },
+    {
+     "u": "/assets/gesture-touch-finger-BeZeq0G1.png",
+     "bytes": 16698
+    },
+    {
+     "u": "/assets/app-nirvighnam-CGPR_6IX.png",
+     "bytes": 16595
+    },
+    {
+     "u": "/images/icons/symbol-collection-rosette.png",
+     "bytes": 16508
+    },
+    {
+     "u": "/assets/app-suryakoti-CrsY7s-q.png",
+     "bytes": 13980
+    },
+    {
+     "u": "/images/hand-ok.svg",
+     "bytes": 12794
+    },
+    {
+     "u": "/images/zone-badge/icon-shlokariver.webp",
+     "bytes": 720
+    }
+   ],
+   "otherScene": [
+    {
+     "u": "/assets/bg-HOLjpsuu.webp",
+     "bytes": 31698,
+     "belongsTo": "Nirvighnam Chant"
+    },
+    {
+     "u": "/audio/words/suryakoti.mp3",
+     "bytes": 29257,
+     "belongsTo": "Shloka River Finale"
+    },
+    {
+     "u": "/audio/words/samaprabha.mp3",
+     "bytes": 27585,
+     "belongsTo": "Shloka River Finale"
+    }
+   ],
+   "unclear": []
+  },
+  "Nirvighnam Chant": {
+   "own": [
+    {
+     "u": "/assets/vine-C1269Z2C.webp",
+     "bytes": 170776
+    },
+    {
+     "u": "/assets/monkey-playing-twig-xLbviUD8.webp",
+     "bytes": 137556
+    },
+    {
+     "u": "/assets/monkey-happy-PNU_npin.webp",
+     "bytes": 127214
+    },
+    {
+     "u": "/assets/monkey-tie-DpxbEFyl.webp",
+     "bytes": 126286
+    },
+    {
+     "u": "/assets/beaver-tie-CkgqugPb.webp",
+     "bytes": 119834
+    },
+    {
+     "u": "/assets/beaver-baby-reunion-hW5zIAz_.webp",
+     "bytes": 115146
+    },
+    {
+     "u": "/assets/beaver-lift-D9kv1cE-.webp",
+     "bytes": 114942
+    },
+    {
+     "u": "/assets/reeds-open-DETHuA0a.png",
+     "bytes": 114227
+    },
+    {
+     "u": "/assets/elephant-happy-DDFu1-ot.webp",
+     "bytes": 104402
+    },
+    {
+     "u": "/assets/beaver-placing-plank-BIio2Gse.webp",
+     "bytes": 104192
+    },
+    {
+     "u": "/assets/beaver-crossing-DkYGI3wE.webp",
+     "bytes": 103032
+    },
+    {
+     "u": "/assets/beaver-asking-B68OBwlF.webp",
+     "bytes": 101004
+    },
+    {
+     "u": "/assets/elephant-idle-banana-Cm32VOq0.webp",
+     "bytes": 99534
+    },
+    {
+     "u": "/assets/elephant-lift-BRHVCwB6.webp",
+     "bytes": 96528
+    },
+    {
+     "u": "/assets/help-bubble-elephant-logs-BuBhJboe.webp",
+     "bytes": 90564
+    },
+    {
+     "u": "/assets/beaver-idle-worried-fN7X9XH8.webp",
+     "bytes": 88140
+    },
+    {
+     "u": "/assets/baby-beaver-waving-B_xUCrqS.webp",
+     "bytes": 87182
+    },
+    {
+     "u": "/assets/reeds-closed-DT-c23jA.png",
+     "bytes": 81937
+    },
+    {
+     "u": "/assets/help-vine-DeP-f0OV.webp",
+     "bytes": 68078
+    },
+    {
+     "u": "/assets/step2-VPLdsCm9.webp",
+     "bytes": 58604
+    },
+    {
+     "u": "/assets/help-hand-icon-CRFJwdnO.webp",
+     "bytes": 44134
+    },
+    {
+     "u": "/assets/step1-CRFxGQ0H.webp",
+     "bytes": 42184
+    },
+    {
+     "u": "/assets/bg-HOLjpsuu.webp",
+     "bytes": 31698
+    },
+    {
+     "u": "/assets/log-turtle-yhwy8GLw.webp",
+     "bytes": 22580
+    },
+    {
+     "u": "/assets/plank-bunny-CUmzI7pj.webp",
+     "bytes": 22220
+    },
+    {
+     "u": "/assets/nir-turtle-happy-opt-Be-_LC9w.webp",
+     "bytes": 14298
+    },
+    {
+     "u": "/assets/nir-turtle-sad-opt-B4gdzQsW.webp",
+     "bytes": 13686
+    },
+    {
+     "u": "/assets/nest-opt-c1vE0G18.webp",
+     "bytes": 12320
+    },
+    {
+     "u": "/assets/branch-DT1RrtEQ.png",
+     "bytes": 12198
+    },
+    {
+     "u": "/assets/stone-BKtmZDzq.png",
+     "bytes": 7920
+    }
+   ],
+   "ownRecordedOnly": [],
+   "shared": [
+    {
+     "u": "/assets/trunk-after-DWyeHysW.webp",
+     "bytes": 172584
+    },
+    {
+     "u": "/assets/trunk-before-sLqiM4cV.webp",
+     "bytes": 151660
+    },
+    {
+     "u": "/images/ganesha-poses/sit-modak.webp",
+     "bytes": 63850
+    },
+    {
+     "u": "/images/ganesha-poses/sit-hi.webp",
+     "bytes": 58414
+    },
+    {
+     "u": "/images/shloka-river-bg.webp",
+     "bytes": 55240
+    },
+    {
+     "u": "/images/ganesha-poses/stand-point.webp",
+     "bytes": 53782
+    },
+    {
+     "u": "/images/meanings-caveofsecrets/sarvakaryeshu-symbol.webp",
+     "bytes": 51066
+    },
+    {
+     "u": "/assets/app-sarvakaryeshu-ByKZDPeS.webp",
+     "bytes": 51066
+    },
+    {
+     "u": "/assets/app-sarvakaryeshu-D2FkMi35.png",
+     "bytes": 47273
+    },
+    {
+     "u": "/assets/app-samaprabha-CVLC1_4r.png",
+     "bytes": 39436
+    },
+    {
+     "u": "/assets/saurakoti-bg-opt-DyzJ54gV.webp",
+     "bytes": 36118
+    },
+    {
+     "u": "/audio/voiceover/sarvakaryeshu/kar.mp3",
+     "bytes": 31283
+    },
+    {
+     "u": "/images/meanings-caveofsecrets/sarvada-symbol.webp",
+     "bytes": 29422
+    },
+    {
+     "u": "/assets/app-sarvada-Cm6m0Mt8.webp",
+     "bytes": 29422
+    },
+    {
+     "u": "/assets/app-sarvada-D8bw1JsM.png",
+     "bytes": 28402
+    },
+    {
+     "u": "/audio/syllables/kurumedeva-deva.mp3",
+     "bytes": 26793
+    },
+    {
+     "u": "/images/meanings-caveofsecrets/nirvighnam-symbol.webp",
+     "bytes": 24292
+    },
+    {
+     "u": "/assets/app-nirvighnam-BurhZZ_j.webp",
+     "bytes": 24292
+    },
+    {
+     "u": "/assets/app-mahakaya-Blm8Fs5d.png",
+     "bytes": 24078
+    },
+    {
+     "u": "/images/meanings-caveofsecrets/kurumedeva-symbol.webp",
+     "bytes": 23534
+    },
+    {
+     "u": "/assets/app-kurumedeva-D32-TCGP.webp",
+     "bytes": 23534
+    },
+    {
+     "u": "/assets/symbol-eyes-new-C0gnqOX1.webp",
+     "bytes": 22186
+    },
+    {
+     "u": "/audio/syllables/sarvakaryeshu-sar.mp3",
+     "bytes": 20897
+    },
+    {
+     "u": "/audio/syllables/sarvakaryeshu-va.mp3",
+     "bytes": 20897
+    },
+    {
+     "u": "/audio/syllables/sarvakaryeshu-shu.mp3",
+     "bytes": 20897
+    },
+    {
+     "u": "/assets/app-kurumedeva-CRKr1fsR.png",
+     "bytes": 20814
+    },
+    {
+     "u": "/audio/syllables/kurume%20-kuru.mp3",
+     "bytes": 20062
+    },
+    {
+     "u": "/audio/syllables/kurume-me.mp3",
+     "bytes": 20062
+    },
+    {
+     "u": "/audio/syllables/sarvada-sar.mp3",
+     "bytes": 19226
+    },
+    {
+     "u": "/audio/syllables/sarvada-va.mp3",
+     "bytes": 19226
+    },
+    {
+     "u": "/audio/syllables/sarvada-da.mp3",
+     "bytes": 19226
+    },
+    {
+     "u": "/audio/syllables/nirvighnam-nam.mp3",
+     "bytes": 18808
+    },
+    {
+     "u": "/audio/syllables/nirvighnam-nir.mp3",
+     "bytes": 18808
+    },
+    {
+     "u": "/audio/syllables/nirvighnam-vigh.mp3",
+     "bytes": 18808
+    },
+    {
+     "u": "/assets/symbol-mooshika-new-v9laY71u.webp",
+     "bytes": 18680
+    },
+    {
+     "u": "/assets/symbol-trunk-new-opt-BZgNCNpa.webp",
+     "bytes": 18528
+    },
+    {
+     "u": "/assets/symbol-ears-new-opt-BTNGAdTG.webp",
+     "bytes": 17098
+    },
+    {
+     "u": "/assets/gesture-touch-finger-BeZeq0G1.png",
+     "bytes": 16698
+    },
+    {
+     "u": "/assets/app-nirvighnam-CGPR_6IX.png",
+     "bytes": 16595
+    },
+    {
+     "u": "/images/icons/symbol-collection-rosette.png",
+     "bytes": 16508
+    },
+    {
+     "u": "/assets/app-suryakoti-CrsY7s-q.png",
+     "bytes": 13980
+    },
+    {
+     "u": "/assets/symbol-modak-new-DipM3nD_.webp",
+     "bytes": 13014
+    },
+    {
+     "u": "/images/hand-ok.svg",
+     "bytes": 12794
+    }
+   ],
+   "otherScene": [
+    {
+     "u": "/assets/mooshika-before-DQ_hijlW.webp",
+     "bytes": 171446,
+     "belongsTo": "Sarvakaryeshu Chant"
+    },
+    {
+     "u": "/assets/mooshika-after-CNKEFNOz.webp",
+     "bytes": 166924,
+     "belongsTo": "Sarvakaryeshu Chant"
+    },
+    {
+     "u": "/assets/eyes-before-_0MbF62C.webp",
+     "bytes": 145600,
+     "belongsTo": "Sarvakaryeshu Chant"
+    },
+    {
+     "u": "/assets/eyes-after-RMSXll6X.webp",
+     "bytes": 126456,
+     "belongsTo": "Sarvakaryeshu Chant"
+    },
+    {
+     "u": "/assets/boat-opt-Dk9lRvHr.webp",
+     "bytes": 120766,
+     "belongsTo": "Sarvakaryeshu Chant"
+    },
+    {
+     "u": "/assets/tusk-after-CJxdVSWZ.webp",
+     "bytes": 99412,
+     "belongsTo": "Sarvakaryeshu Chant"
+    },
+    {
+     "u": "/assets/tusk-before-DjJulXHc.webp",
+     "bytes": 97766,
+     "belongsTo": "Sarvakaryeshu Chant"
+    },
+    {
+     "u": "/assets/sarvakaryeshu-bg-CM-kgDMv.webp",
+     "bytes": 92372,
+     "belongsTo": "Sarvakaryeshu Chant"
+    },
+    {
+     "u": "/assets/night-B7MFujcM.webp",
+     "bytes": 41372,
+     "belongsTo": "Sarvakaryeshu Chant"
+    },
+    {
+     "u": "/audio/words/sarvakaryeshu.mp3",
+     "bytes": 37198,
+     "belongsTo": "Shloka River Finale"
+    },
+    {
+     "u": "/audio/words/kurumedeva.mp3",
+     "bytes": 29257,
+     "belongsTo": "Shloka River Finale"
+    },
+    {
+     "u": "/audio/words/nirvighnam.mp3",
+     "bytes": 25495,
+     "belongsTo": "Shloka River Finale"
+    },
+    {
+     "u": "/assets/symbol-tusk-new-D0ECZsQv.webp",
+     "bytes": 23622,
+     "belongsTo": "Sarvakaryeshu Chant"
+    },
+    {
+     "u": "/audio/words/sarvada.mp3",
+     "bytes": 22569,
+     "belongsTo": "Shloka River Finale"
+    }
+   ],
+   "unclear": []
+  },
+  "Sarvakaryeshu Chant": {
+   "own": [
+    {
+     "u": "/assets/afternoon-scene-I4vGAJSD.webp",
+     "bytes": 232584
+    },
+    {
+     "u": "/assets/morning-scene-DV0wQxDX.webp",
+     "bytes": 224382
+    },
+    {
+     "u": "/assets/mooshika-before-DQ_hijlW.webp",
+     "bytes": 171446
+    },
+    {
+     "u": "/assets/mooshika-after-CNKEFNOz.webp",
+     "bytes": 166924
+    },
+    {
+     "u": "/assets/night-scene-BVXELAQY.webp",
+     "bytes": 155888
+    },
+    {
+     "u": "/assets/eyes-before-_0MbF62C.webp",
+     "bytes": 145600
+    },
+    {
+     "u": "/assets/eyes-after-RMSXll6X.webp",
+     "bytes": 126456
+    },
+    {
+     "u": "/assets/tusk-after-CJxdVSWZ.webp",
+     "bytes": 99412
+    },
+    {
+     "u": "/assets/tusk-before-DjJulXHc.webp",
+     "bytes": 97766
+    },
+    {
+     "u": "/assets/boat-fApCffXw.webp",
+     "bytes": 75330
+    },
+    {
+     "u": "/images/ganesha-hi-stand.webp",
+     "bytes": 53162
+    },
+    {
+     "u": "/assets/night-B7MFujcM.webp",
+     "bytes": 41372
+    },
+    {
+     "u": "/assets/afternoon-mdwRmRXV.webp",
+     "bytes": 40412
+    },
+    {
+     "u": "/assets/morning-CLImEBlX.webp",
+     "bytes": 40192
+    },
+    {
+     "u": "/assets/symbol-tusk-new-D0ECZsQv.webp",
+     "bytes": 23622
+    },
+    {
+     "u": "/assets/night-phase-Djf7T7E9.webp",
+     "bytes": 23512
+    }
+   ],
+   "ownRecordedOnly": [],
+   "shared": [
+    {
+     "u": "/assets/trunk-after-DWyeHysW.webp",
+     "bytes": 172584
+    },
+    {
+     "u": "/images/ganesha-poses/sit-modak.webp",
+     "bytes": 63850
+    },
+    {
+     "u": "/images/ganesha-poses/sit-hi.webp",
+     "bytes": 58414
+    },
+    {
+     "u": "/assets/app-sarvakaryeshu-ByKZDPeS.webp",
+     "bytes": 51066
+    },
+    {
+     "u": "/assets/app-sarvakaryeshu-D2FkMi35.png",
+     "bytes": 47273
+    },
+    {
+     "u": "/assets/app-samaprabha-CVLC1_4r.png",
+     "bytes": 39436
+    },
+    {
+     "u": "/assets/app-sarvada-Cm6m0Mt8.webp",
+     "bytes": 29422
+    },
+    {
+     "u": "/assets/app-sarvada-D8bw1JsM.png",
+     "bytes": 28402
+    },
+    {
+     "u": "/assets/app-mahakaya-Blm8Fs5d.png",
+     "bytes": 24078
+    },
+    {
+     "u": "/assets/symbol-eyes-new-C0gnqOX1.webp",
+     "bytes": 22186
+    },
+    {
+     "u": "/assets/app-kurumedeva-CRKr1fsR.png",
+     "bytes": 20814
+    },
+    {
+     "u": "/assets/symbol-ears-new-opt-BTNGAdTG.webp",
+     "bytes": 17098
+    },
+    {
+     "u": "/assets/app-nirvighnam-CGPR_6IX.png",
+     "bytes": 16595
+    },
+    {
+     "u": "/images/icons/symbol-collection-rosette.png",
+     "bytes": 16508
+    },
+    {
+     "u": "/assets/symbol-belly-new-opt-CYnzk-Lo.webp",
+     "bytes": 16396
+    },
+    {
+     "u": "/assets/app-suryakoti-CrsY7s-q.png",
+     "bytes": 13980
+    },
+    {
+     "u": "/assets/symbol-modak-new-DipM3nD_.webp",
+     "bytes": 13014
+    },
+    {
+     "u": "/images/hand-ok.svg",
+     "bytes": 12794
+    }
+   ],
+   "otherScene": [
+    {
+     "u": "/assets/river-finale-bg-BJqXnOYu.webp",
+     "bytes": 64562,
+     "belongsTo": "Shloka River Finale"
+    }
+   ],
+   "unclear": []
+  },
+  "Shloka River Finale": {
+   "own": [
+    {
+     "u": "/assets/river-finale-bg-BJqXnOYu.webp",
+     "bytes": 64562
+    },
+    {
+     "u": "/images/new-ganesha-sit-modak.webp",
+     "bytes": 63850
+    },
+    {
+     "u": "/assets/choice-boat-opt-DpvWH0MI.webp",
+     "bytes": 23872
+    }
+   ],
+   "ownRecordedOnly": [],
+   "shared": [
+    {
+     "u": "/images/meanings-caveofsecrets/vakratunda-symbol.webp",
+     "bytes": 293514
+    },
+    {
+     "u": "/images/ganesha-poses/sit-modak.webp",
+     "bytes": 63850
+    },
+    {
+     "u": "/images/shloka-river-bg.webp",
+     "bytes": 55240
+    },
+    {
+     "u": "/images/ganesha-poses/stand-point.webp",
+     "bytes": 53782
+    },
+    {
+     "u": "/assets/app-sarvakaryeshu-ByKZDPeS.webp",
+     "bytes": 51066
+    },
+    {
+     "u": "/assets/app-samaprabha-qU3cuXhQ.webp",
+     "bytes": 33650
+    },
+    {
+     "u": "/images/meanings-caveofsecrets/sarvada-symbol.webp",
+     "bytes": 29422
+    },
+    {
+     "u": "/assets/app-sarvada-Cm6m0Mt8.webp",
+     "bytes": 29422
+    },
+    {
+     "u": "/assets/app-suryakoti-DxQEo_yY.webp",
+     "bytes": 24904
+    },
+    {
+     "u": "/images/meanings-caveofsecrets/nirvighnam-symbol.webp",
+     "bytes": 24292
+    },
+    {
+     "u": "/assets/app-nirvighnam-BurhZZ_j.webp",
+     "bytes": 24292
+    },
+    {
+     "u": "/assets/app-kurumedeva-D32-TCGP.webp",
+     "bytes": 23534
+    },
+    {
+     "u": "/assets/symbol-trunk-new-opt-BZgNCNpa.webp",
+     "bytes": 18528
+    },
+    {
+     "u": "/assets/app-mahakaya-CJlutVkR.webp",
+     "bytes": 15868
+    },
+    {
+     "u": "/images/icons/chant-icon.png",
+     "bytes": 7334
+    },
+    {
+     "u": "/assets/lotus-iconnew-BcBt695a.svg",
+     "bytes": 6352
+    },
+    {
+     "u": "/images/zone-badge/icon-shlokariver.webp",
+     "bytes": 720
+    }
+   ],
+   "otherScene": [],
+   "unclear": []
+  },
+  "Family Tree": {
+   "own": [
+    {
+     "u": "/assets/family-kartkeya-CB2tEcNh.webp",
+     "bytes": 86148
+    },
+    {
+     "u": "/assets/family-shiva-DjiP0PR4.webp",
+     "bytes": 59116
+    },
+    {
+     "u": "/assets/family-parvati-BBXmDFte.webp",
+     "bytes": 55110
+    },
+    {
+     "u": "/assets/family_tree-hD26_MUN.webp",
+     "bytes": 17546
+    },
+    {
+     "u": "/assets/family-grandma-Dm3Q6wU2.webp",
+     "bytes": 15776
+    },
+    {
+     "u": "/assets/family-grandpa-D47Dwex9.webp",
+     "bytes": 15046
+    },
+    {
+     "u": "/assets/family-dad-xmLKn0Sl.webp",
+     "bytes": 15018
+    },
+    {
+     "u": "/assets/family-mom-1i8PNKCt.webp",
+     "bytes": 14684
+    },
+    {
+     "u": "/assets/family-sister-DX2lzBoF.webp",
+     "bytes": 14670
+    },
+    {
+     "u": "/assets/family-brother-CM7ogB2R.webp",
+     "bytes": 14172
+    },
+    {
+     "u": "/assets/family-myself-JXQYIj-c.webp",
+     "bytes": 11704
+    },
+    {
+     "u": "/assets/family-pet-lK_GAyEY.webp",
+     "bytes": 10962
+    },
+    {
+     "u": "/assets/family_background-Cb_SQKpa.webp",
+     "bytes": 9918
+    }
+   ],
+   "ownRecordedOnly": [],
+   "shared": [
+    {
+     "u": "/audio/music/bg-ambient.mp3",
+     "bytes": 2550861
+    },
+    {
+     "u": "/images/ganesha-final-new.svg",
+     "bytes": 1567279
+    },
+    {
+     "u": "/images/ganesha-poses/sit-modak.webp",
+     "bytes": 63850
+    },
+    {
+     "u": "/images/ganesha-poses/sit-hi.webp",
+     "bytes": 58414
+    },
+    {
+     "u": "/images/ganesha-poses/stand-point.webp",
+     "bytes": 53782
+    },
+    {
+     "u": "/images/hand-thumbsup.svg",
+     "bytes": 12862
+    },
+    {
+     "u": "/assets/family-icon-JWJiCKr2.webp",
+     "bytes": 9898
+    },
+    {
+     "u": "/assets/house-icon-C66Ird-F.webp",
+     "bytes": 6632
+    },
+    {
+     "u": "/assets/heart-icon-CLkE2XwY.webp",
+     "bytes": 6468
+    },
+    {
+     "u": "/images/zone-badge/icon-aboutme.webp",
+     "bytes": 630
+    }
+   ],
+   "otherScene": [
+    {
+     "u": "/assets/fav_background-CPM6qZmy.webp",
+     "bytes": 29258,
+     "belongsTo": "Favorite Food"
+    }
+   ],
+   "unclear": []
+  },
+  "Favorite Food": {
+   "own": [
+    {
+     "u": "/assets/fav-noodles-e9oEUXZr.webp",
+     "bytes": 41278
+    },
+    {
+     "u": "/assets/fav-burger-C62PQ7cz.webp",
+     "bytes": 31954
+    },
+    {
+     "u": "/assets/fav_background-CPM6qZmy.webp",
+     "bytes": 29258
+    },
+    {
+     "u": "/assets/fav-dosa-BXO-rctN.webp",
+     "bytes": 28226
+    },
+    {
+     "u": "/assets/fav-fruit-idQbcJb2.webp",
+     "bytes": 25510
+    },
+    {
+     "u": "/assets/fav-rice-CDSmlm9z.webp",
+     "bytes": 25460
+    },
+    {
+     "u": "/assets/fav-pizza-D65N0PUp.webp",
+     "bytes": 23936
+    },
+    {
+     "u": "/assets/fav-barfi-C5HAvO4X.webp",
+     "bytes": 21186
+    },
+    {
+     "u": "/assets/fav-ladoo-C7hBnx99.webp",
+     "bytes": 18370
+    },
+    {
+     "u": "/assets/fav-icecream-BU3SjIj4.webp",
+     "bytes": 17002
+    },
+    {
+     "u": "/assets/fav-brown-CbWUj-wa.webp",
+     "bytes": 11430
+    },
+    {
+     "u": "/assets/stem-DlNCx7X0.webp",
+     "bytes": 11248
+    },
+    {
+     "u": "/assets/read-DVPI3Q3A.webp",
+     "bytes": 8804
+    },
+    {
+     "u": "/assets/sing-BUpjbPJO.webp",
+     "bytes": 8580
+    },
+    {
+     "u": "/assets/fav-orange-CpRKeCS5.webp",
+     "bytes": 8210
+    },
+    {
+     "u": "/assets/fav-purple-BGsgwUmz.webp",
+     "bytes": 8150
+    },
+    {
+     "u": "/assets/fav-pink-DOWZ9p2b.webp",
+     "bytes": 8104
+    },
+    {
+     "u": "/assets/sports-IoKYszup.webp",
+     "bytes": 7538
+    },
+    {
+     "u": "/assets/fav-green-BKv_D6I2.webp",
+     "bytes": 7532
+    },
+    {
+     "u": "/assets/cook-Dnn_bNRu.webp",
+     "bytes": 7450
+    },
+    {
+     "u": "/assets/fav-yellow-twU4ZUsG.webp",
+     "bytes": 7220
+    },
+    {
+     "u": "/assets/fav-blue-CiBxHtkn.webp",
+     "bytes": 7012
+    },
+    {
+     "u": "/assets/fav-red-oye0R8Wn.webp",
+     "bytes": 6804
+    },
+    {
+     "u": "/assets/fav-drawing-DRQWrNi8.webp",
+     "bytes": 6802
+    },
+    {
+     "u": "/assets/game-CFULXJ9t.webp",
+     "bytes": 6374
+    },
+    {
+     "u": "/assets/nature-BTwtWOJo.webp",
+     "bytes": 6246
+    },
+    {
+     "u": "/assets/friends-DTK83ETM.webp",
+     "bytes": 5888
+    },
+    {
+     "u": "/assets/art-DtA8p-8a.webp",
+     "bytes": 5772
+    },
+    {
+     "u": "/assets/fav-sweets-CBnyfr4n.webp",
+     "bytes": 5702
+    },
+    {
+     "u": "/assets/fav-reading-D9EGvEo9.webp",
+     "bytes": 5696
+    },
+    {
+     "u": "/assets/fav-playing-1YlvSX6q.webp",
+     "bytes": 5352
+    },
+    {
+     "u": "/assets/fav-tv-CcX5AsDi.webp",
+     "bytes": 4956
+    },
+    {
+     "u": "/assets/fav-music-hc1Fid6d.webp",
+     "bytes": 4324
+    }
+   ],
+   "ownRecordedOnly": [],
+   "shared": [
+    {
+     "u": "/images/ganesha-final-new.svg",
+     "bytes": 1567279
+    },
+    {
+     "u": "/images/ganesha-poses/sit-modak.webp",
+     "bytes": 63850
+    },
+    {
+     "u": "/images/ganesha-poses/sit-hi.webp",
+     "bytes": 58414
+    },
+    {
+     "u": "/images/ganesha-poses/stand-point.webp",
+     "bytes": 53782
+    },
+    {
+     "u": "/assets/fav-peacock-C-48EOua.webp",
+     "bytes": 49344
+    },
+    {
+     "u": "/assets/fav-cow-CNwIzbY5.webp",
+     "bytes": 42738
+    },
+    {
+     "u": "/assets/fav-mouse-2Rbr2U4B.webp",
+     "bytes": 36772
+    },
+    {
+     "u": "/assets/gesture-touch-finger-BeZeq0G1.png",
+     "bytes": 16698
+    },
+    {
+     "u": "/images/hand-thumbsup.svg",
+     "bytes": 12862
+    },
+    {
+     "u": "/assets/color-icon-Cmzh4Bj1.webp",
+     "bytes": 7112
+    },
+    {
+     "u": "/assets/food-icon-DEE6Lw1w.webp",
+     "bytes": 6056
+    },
+    {
+     "u": "/assets/sports-icon-Gu7Cn04G.webp",
+     "bytes": 5106
+    }
+   ],
+   "otherScene": [
+    {
+     "u": "/assets/dream_background-DndpCRVN.webp",
+     "bytes": 30526,
+     "belongsTo": "Dreams and Wishes"
+    },
+    {
+     "u": "/assets/modak-BRiUUkbm.webp",
+     "bytes": 12246,
+     "belongsTo": "My Indian Story"
+    }
+   ],
+   "unclear": []
+  },
+  "Dreams and Wishes": {
+   "own": [
+    {
+     "u": "/assets/plate-h4TIXPc0.webp",
+     "bytes": 100926
+    },
+    {
+     "u": "/assets/wish-forest-4-Ca4kaoJH.webp",
+     "bytes": 74804
+    },
+    {
+     "u": "/assets/butterfly-DrKQFC42.webp",
+     "bytes": 70790
+    },
+    {
+     "u": "/assets/wish-earth-happy-tgFnj8-L.webp",
+     "bytes": 70738
+    },
+    {
+     "u": "/assets/wish-earth-sad-CYWJ_bAs.webp",
+     "bytes": 62344
+    },
+    {
+     "u": "/assets/tree-opt-Cr0ml65I.webp",
+     "bytes": 49036
+    },
+    {
+     "u": "/assets/wish-forest-3-4-SlkvmW.webp",
+     "bytes": 47394
+    },
+    {
+     "u": "/assets/bird-q4awcYmF.webp",
+     "bytes": 41006
+    },
+    {
+     "u": "/assets/wish-forest-2-D3C1hQ_F.webp",
+     "bytes": 38278
+    },
+    {
+     "u": "/assets/bush-opt-BjtM1ZgZ.webp",
+     "bytes": 33626
+    },
+    {
+     "u": "/assets/wish-forest-1-BULHT4lA.webp",
+     "bytes": 30790
+    },
+    {
+     "u": "/assets/dream_background-DndpCRVN.webp",
+     "bytes": 30526
+    },
+    {
+     "u": "/assets/hit-j_qGuVch.webp",
+     "bytes": 27256
+    },
+    {
+     "u": "/assets/flower-opt-BVUzPqVL.webp",
+     "bytes": 26562
+    },
+    {
+     "u": "/assets/fight-Bi_G7fRY.webp",
+     "bytes": 25740
+    },
+    {
+     "u": "/assets/wish-bowl-full-BruGQpZw.webp",
+     "bytes": 23276
+    },
+    {
+     "u": "/assets/sharing-BM2NHnjh.webp",
+     "bytes": 22792
+    },
+    {
+     "u": "/assets/teasing-DujrudiB.webp",
+     "bytes": 21882
+    },
+    {
+     "u": "/assets/helping-Cj-Ewj7B.webp",
+     "bytes": 21562
+    },
+    {
+     "u": "/assets/gifting-DYJofjCk.webp",
+     "bytes": 20722
+    },
+    {
+     "u": "/assets/angry-D5lrImEq.webp",
+     "bytes": 19054
+    },
+    {
+     "u": "/assets/base-DXjqq9SD.webp",
+     "bytes": 18478
+    },
+    {
+     "u": "/assets/hugging-BaG8T3AW.webp",
+     "bytes": 16782
+    },
+    {
+     "u": "/assets/cloud-opt-BwgBKepI.webp",
+     "bytes": 13854
+    },
+    {
+     "u": "/assets/wish-icon-earth-B8sy7SCy.webp",
+     "bytes": 13204
+    },
+    {
+     "u": "/assets/wish-bowl-empty-D1oX-DKf.webp",
+     "bytes": 11534
+    },
+    {
+     "u": "/assets/sharing-icon-CAk9q7sL.webp",
+     "bytes": 9680
+    },
+    {
+     "u": "/assets/wish-icon-flower-BJPM2RWv.webp",
+     "bytes": 9368
+    },
+    {
+     "u": "/assets/nature-icon-QEP1k4_t.webp",
+     "bytes": 9226
+    },
+    {
+     "u": "/assets/kindness-icon-DVndAk1l.webp",
+     "bytes": 8808
+    },
+    {
+     "u": "/assets/brocolli-AaTFGevR.webp",
+     "bytes": 8452
+    },
+    {
+     "u": "/assets/wish-icon-share-Cs-_rLd_.webp",
+     "bytes": 7910
+    },
+    {
+     "u": "/assets/carrot-GBUg2xQl.webp",
+     "bytes": 7824
+    },
+    {
+     "u": "/assets/milk-BxokY6UM.webp",
+     "bytes": 7430
+    },
+    {
+     "u": "/assets/rice-DiqhCy7K.webp",
+     "bytes": 6920
+    },
+    {
+     "u": "/assets/banana-gW8YNe40.webp",
+     "bytes": 6722
+    },
+    {
+     "u": "/assets/bread-Dk3Szmew.webp",
+     "bytes": 6196
+    },
+    {
+     "u": "/assets/apple-BlXY4_Kz.webp",
+     "bytes": 6084
+    }
+   ],
+   "ownRecordedOnly": [],
+   "shared": [
+    {
+     "u": "/images/ganesha-final-new.svg",
+     "bytes": 1567279
+    },
+    {
+     "u": "/images/ganesha-poses/sit-modak.webp",
+     "bytes": 63850
+    },
+    {
+     "u": "/images/ganesha-poses/sit-hi.webp",
+     "bytes": 58414
+    },
+    {
+     "u": "/images/ganesha-poses/stand-point.webp",
+     "bytes": 53782
+    },
+    {
+     "u": "/assets/fav-peacock-C-48EOua.webp",
+     "bytes": 49344
+    },
+    {
+     "u": "/assets/fav-cow-CNwIzbY5.webp",
+     "bytes": 42738
+    },
+    {
+     "u": "/assets/fav-mouse-2Rbr2U4B.webp",
+     "bytes": 36772
+    },
+    {
+     "u": "/assets/gesture-touch-finger-BeZeq0G1.png",
+     "bytes": 16698
+    },
+    {
+     "u": "/images/hand-thumbsup.svg",
+     "bytes": 12862
+    },
+    {
+     "u": "/assets/shootingstar-icon-Cxl72vet.webp",
+     "bytes": 8426
+    },
+    {
+     "u": "/assets/heart-icon-CLkE2XwY.webp",
+     "bytes": 6468
+    },
+    {
+     "u": "/assets/world-icon-9dYwrc2y.webp",
+     "bytes": 6052
+    }
+   ],
+   "otherScene": [],
+   "unclear": []
+  },
+  "My Indian Story": {
+   "own": [
+    {
+     "u": "/assets/india-map-DRhHylKt.webp",
+     "bytes": 74044
+    },
+    {
+     "u": "/assets/otherlanguage-CETm5R8O.webp",
+     "bytes": 25342
+    },
+    {
+     "u": "/assets/play-language-BNCHj4om.webp",
+     "bytes": 23828
+    },
+    {
+     "u": "/assets/Telugu-CqzvErwB.webp",
+     "bytes": 23588
+    },
+    {
+     "u": "/assets/Bengali-eBd7nELj.webp",
+     "bytes": 20810
+    },
+    {
+     "u": "/assets/Kannada-1-bqAaDE.webp",
+     "bytes": 20482
+    },
+    {
+     "u": "/assets/English-CaaYbXlZ.webp",
+     "bytes": 20442
+    },
+    {
+     "u": "/assets/Marathi-CRRLskUU.webp",
+     "bytes": 19964
+    },
+    {
+     "u": "/assets/TamilNadu-Bg7xZU_3.webp",
+     "bytes": 19642
+    },
+    {
+     "u": "/assets/hindi-0pxIcx8c.webp",
+     "bytes": 19090
+    },
+    {
+     "u": "/assets/malyalam-BHsuGjyb.webp",
+     "bytes": 18448
+    },
+    {
+     "u": "/assets/Punjabi-DbClhJcT.webp",
+     "bytes": 18090
+    },
+    {
+     "u": "/assets/Tamil-BmuRH7ie.webp",
+     "bytes": 17584
+    },
+    {
+     "u": "/assets/chaturthi-De_ZCWqV.webp",
+     "bytes": 17294
+    },
+    {
+     "u": "/assets/Sanskrit-hJjzaj4B.webp",
+     "bytes": 17282
+    },
+    {
+     "u": "/assets/dussehra-BlRv6ZPf.webp",
+     "bytes": 16974
+    },
+    {
+     "u": "/assets/onam-WrFwfcxl.webp",
+     "bytes": 16354
+    },
+    {
+     "u": "/assets/sakranti-jXGRS-UN.webp",
+     "bytes": 16268
+    },
+    {
+     "u": "/assets/Gujarati-BQVvxNHt.webp",
+     "bytes": 14358
+    },
+    {
+     "u": "/assets/eid-Bj6mFaB5.webp",
+     "bytes": 13008
+    },
+    {
+     "u": "/assets/south-Bv6A7FMO.webp",
+     "bytes": 12716
+    },
+    {
+     "u": "/assets/dessert-CLMGz3SN.webp",
+     "bytes": 12626
+    },
+    {
+     "u": "/assets/modak-BRiUUkbm.webp",
+     "bytes": 12246
+    },
+    {
+     "u": "/assets/pongal-BRU8yXmP.webp",
+     "bytes": 11384
+    },
+    {
+     "u": "/assets/xmas-Cr2uc3zU.webp",
+     "bytes": 11292
+    },
+    {
+     "u": "/assets/east-Dr65KLMz.webp",
+     "bytes": 11286
+    },
+    {
+     "u": "/assets/holi-CjA25597.webp",
+     "bytes": 10074
+    },
+    {
+     "u": "/assets/Varanasi-Cd46fmZK.webp",
+     "bytes": 9958
+    },
+    {
+     "u": "/assets/diwali-DMNIRJxy.webp",
+     "bytes": 9874
+    },
+    {
+     "u": "/assets/durgapuja-BysMzp97.webp",
+     "bytes": 9166
+    },
+    {
+     "u": "/assets/mumbai-DEyzhMT4.webp",
+     "bytes": 8824
+    },
+    {
+     "u": "/assets/rakhi-D5_L_PUR.webp",
+     "bytes": 8778
+    },
+    {
+     "u": "/assets/north-DLmT8hwW.webp",
+     "bytes": 8658
+    },
+    {
+     "u": "/assets/central-DUOuJMEt.webp",
+     "bytes": 8106
+    },
+    {
+     "u": "/assets/west-Bjl8KKVJ.webp",
+     "bytes": 8094
+    },
+    {
+     "u": "/assets/north-east-DdI8_aqr.webp",
+     "bytes": 6846
+    },
+    {
+     "u": "/assets/janmashtami-BEKDDoJQ.webp",
+     "bytes": 5542
+    },
+    {
+     "u": "/assets/mglass-T5EZRK8n.webp",
+     "bytes": 4644
+    }
+   ],
+   "ownRecordedOnly": [],
+   "shared": [
+    {
+     "u": "/audio/music/bg-ambient.mp3",
+     "bytes": 2550861
+    },
+    {
+     "u": "/images/ganesha-final-new.svg",
+     "bytes": 1567279
+    },
+    {
+     "u": "/images/map/shloka-stream-opt.webp",
+     "bytes": 118216
+    },
+    {
+     "u": "/images/map/modakmtn-shell.webp",
+     "bytes": 84312
+    },
+    {
+     "u": "/images/ganesha-poses/sit-modak.webp",
+     "bytes": 63850
+    },
+    {
+     "u": "/images/ganesha-poses/stand-point.webp",
+     "bytes": 53782
+    },
+    {
+     "u": "/images/map/mapbg-meadow.webp",
+     "bytes": 39558
+    },
+    {
+     "u": "/images/map/shloka-waterfall-opt.webp",
+     "bytes": 35980
+    },
+    {
+     "u": "/images/map/abtmehut2.webp",
+     "bytes": 27242
+    },
+    {
+     "u": "/images/map/butterflyyellow.webp",
+     "bytes": 20624
+    },
+    {
+     "u": "/images/map/shloka-bridge-opt.webp",
+     "bytes": 18998
+    },
+    {
+     "u": "/assets/gesture-touch-finger-BeZeq0G1.png",
+     "bytes": 16698
+    },
+    {
+     "u": "/images/map/festivalsq1.webp",
+     "bytes": 14996
+    },
+    {
+     "u": "/images/hand-thumbsup.svg",
+     "bytes": 12862
+    },
+    {
+     "u": "/images/map/treehouse1.webp",
+     "bytes": 12740
+    },
+    {
+     "u": "/images/map/flower2.webp",
+     "bytes": 9732
+    },
+    {
+     "u": "/images/map/flower1.webp",
+     "bytes": 9598
+    },
+    {
+     "u": "/images/map/tree1.webp",
+     "bytes": 6822
+    },
+    {
+     "u": "/assets/house-icon-C66Ird-F.webp",
+     "bytes": 6632
+    },
+    {
+     "u": "/images/map/grass.webp",
+     "bytes": 6332
+    },
+    {
+     "u": "/images/map/tree2.webp",
+     "bytes": 5936
+    },
+    {
+     "u": "/assets/festival-icon-tqq28wOM.webp",
+     "bytes": 5496
+    },
+    {
+     "u": "/assets/language-icon-3Pa_PQT5.webp",
+     "bytes": 5230
+    },
+    {
+     "u": "/images/icons/icon-sound-off.svg",
+     "bytes": 1305
+    }
+   ],
+   "otherScene": [
+    {
+     "u": "/assets/fav_background-CPM6qZmy.webp",
+     "bytes": 29258,
+     "belongsTo": "Favorite Food"
+    }
+   ],
+   "unclear": []
+  }
+ },
+ "shared": {
+  "/audio/music/bg-ambient.mp3": {
+   "u": "/audio/music/bg-ambient.mp3",
+   "bytes": 2550861
+  },
+  "/images/ganesha-poses/sit-modak.webp": {
+   "u": "/images/ganesha-poses/sit-modak.webp",
+   "bytes": 63850
+  },
+  "/images/ganesha-poses/sit-hi.webp": {
+   "u": "/images/ganesha-poses/sit-hi.webp",
+   "bytes": 58414
+  },
+  "/images/modakmtn-bg.webp": {
+   "u": "/images/modakmtn-bg.webp",
+   "bytes": 29796
+  },
+  "symbol-lotus-new-opt.webp": {
+   "u": "/assets/symbol-lotus-new-opt-C-FJU0-Y.webp",
+   "bytes": 22598
+  },
+  "symbol-eyes-new.webp": {
+   "u": "/assets/symbol-eyes-new-C0gnqOX1.webp",
+   "bytes": 22186
+  },
+  "symbol-mooshika-new.webp": {
+   "u": "/assets/symbol-mooshika-new-v9laY71u.webp",
+   "bytes": 18680
+  },
+  "symbol-trunk-new-opt.webp": {
+   "u": "/assets/symbol-trunk-new-opt-BZgNCNpa.webp",
+   "bytes": 18528
+  },
+  "symbol-ears-new-opt.webp": {
+   "u": "/assets/symbol-ears-new-opt-BTNGAdTG.webp",
+   "bytes": 17098
+  },
+  "/images/icons/symbol-collection-rosette.png": {
+   "u": "/images/icons/symbol-collection-rosette.png",
+   "bytes": 16508
+  },
+  "symbol-belly-new-opt.webp": {
+   "u": "/assets/symbol-belly-new-opt-CYnzk-Lo.webp",
+   "bytes": 16396
+  },
+  "symbol-modak-new.webp": {
+   "u": "/assets/symbol-modak-new-DipM3nD_.webp",
+   "bytes": 13014
+  },
+  "/images/hand-thumbsup.svg": {
+   "u": "/images/hand-thumbsup.svg",
+   "bytes": 12862
+  },
+  "broken-tusk-symbol.webp": {
+   "u": "/assets/broken-tusk-symbol-CFiziyPm.webp",
+   "bytes": 12434
+  },
+  "/images/icons/replay-icon.png": {
+   "u": "/images/icons/replay-icon.png",
+   "bytes": 9093
+  },
+  "/images/zone-badge/icon-symbolmtn.webp": {
+   "u": "/images/zone-badge/icon-symbolmtn.webp",
+   "bytes": 536
+  },
+  "/images/ganesha-poses/stand-point.webp": {
+   "u": "/images/ganesha-poses/stand-point.webp",
+   "bytes": 53782
+  },
+  "gesture-touch-finger.png": {
+   "u": "/assets/gesture-touch-finger-BeZeq0G1.png",
+   "bytes": 16698
+  },
+  "/images/hand-victory.svg": {
+   "u": "/images/hand-victory.svg",
+   "bytes": 12794
+  },
+  "/images/hand-ok.svg": {
+   "u": "/images/hand-ok.svg",
+   "bytes": 12794
+  },
+  "lotus-iconnew.svg": {
+   "u": "/assets/lotus-iconnew-BcBt695a.svg",
+   "bytes": 6352
+  },
+  "/images/icons/symbols-icon.png": {
+   "u": "/images/icons/symbols-icon.png",
+   "bytes": 14788
+  },
+  "app-Vakratunda.webp": {
+   "u": "/assets/app-Vakratunda-BNUf-IIB.webp",
+   "bytes": 293514
+  },
+  "/images/meanings-caveofsecrets/vakratunda-symbol.webp": {
+   "u": "/images/meanings-caveofsecrets/vakratunda-symbol.webp",
+   "bytes": 293514
+  },
+  "/images/shloka-river-bg.webp": {
+   "u": "/images/shloka-river-bg.webp",
+   "bytes": 55240
+  },
+  "app-sarvakaryeshu.png": {
+   "u": "/assets/app-sarvakaryeshu-D2FkMi35.png",
+   "bytes": 47273
+  },
+  "app-samaprabha.png": {
+   "u": "/assets/app-samaprabha-CVLC1_4r.png",
+   "bytes": 39436
+  },
+  "app-sarvada.png": {
+   "u": "/assets/app-sarvada-D8bw1JsM.png",
+   "bytes": 28402
+  },
+  "/audio/syllables/mahakaya-ma.mp3": {
+   "u": "/audio/syllables/mahakaya-ma.mp3",
+   "bytes": 28003
+  },
+  "app-mahakaya.png": {
+   "u": "/assets/app-mahakaya-Blm8Fs5d.png",
+   "bytes": 24078
+  },
+  "/audio/syllables/mahakaya-ka.mp3": {
+   "u": "/audio/syllables/mahakaya-ka.mp3",
+   "bytes": 20897
+  },
+  "/audio/syllables/mahakaya-ya.mp3": {
+   "u": "/audio/syllables/mahakaya-ya.mp3",
+   "bytes": 20897
+  },
+  "app-kurumedeva.png": {
+   "u": "/assets/app-kurumedeva-CRKr1fsR.png",
+   "bytes": 20814
+  },
+  "gesture-point-finger.png": {
+   "u": "/assets/gesture-point-finger-D5Cq1zmm.png",
+   "bytes": 18440
+  },
+  "/audio/syllables/mahakaya-ha.mp3": {
+   "u": "/audio/syllables/mahakaya-ha.mp3",
+   "bytes": 17554
+  },
+  "app-nirvighnam.png": {
+   "u": "/assets/app-nirvighnam-CGPR_6IX.png",
+   "bytes": 16595
+  },
+  "/audio/syllables/vakratunda-tun.mp3": {
+   "u": "/audio/syllables/vakratunda-tun.mp3",
+   "bytes": 16300
+  },
+  "/audio/syllables/vakratunda-da.mp3": {
+   "u": "/audio/syllables/vakratunda-da.mp3",
+   "bytes": 16300
+  },
+  "app-mahakaya.webp": {
+   "u": "/assets/app-mahakaya-CJlutVkR.webp",
+   "bytes": 15868
+  },
+  "/images/meanings-caveofsecrets/mahakaya-symbol.webp": {
+   "u": "/images/meanings-caveofsecrets/mahakaya-symbol.webp",
+   "bytes": 15868
+  },
+  "/audio/syllables/vakratunda-kra.mp3": {
+   "u": "/audio/syllables/vakratunda-kra.mp3",
+   "bytes": 15464
+  },
+  "app-suryakoti.png": {
+   "u": "/assets/app-suryakoti-CrsY7s-q.png",
+   "bytes": 13980
+  },
+  "/audio/syllables/vakratunda-va.mp3": {
+   "u": "/audio/syllables/vakratunda-va.mp3",
+   "bytes": 12120
+  },
+  "/images/zone-badge/icon-shlokariver.webp": {
+   "u": "/images/zone-badge/icon-shlokariver.webp",
+   "bytes": 720
+  },
+  "saurakoti-bg-opt.webp": {
+   "u": "/assets/saurakoti-bg-opt-DyzJ54gV.webp",
+   "bytes": 36118
+  },
+  "/images/meanings-caveofsecrets/samaprabha-symbol.webp": {
+   "u": "/images/meanings-caveofsecrets/samaprabha-symbol.webp",
+   "bytes": 33650
+  },
+  "app-samaprabha.webp": {
+   "u": "/assets/app-samaprabha-qU3cuXhQ.webp",
+   "bytes": 33650
+  },
+  "/audio/syllables/suryakoti-sur.mp3": {
+   "u": "/audio/syllables/suryakoti-sur.mp3",
+   "bytes": 25495
+  },
+  "/audio/syllables/suryakoti-ya.mp3": {
+   "u": "/audio/syllables/suryakoti-ya.mp3",
+   "bytes": 25495
+  },
+  "/audio/syllables/suryakoti-ko.mp3": {
+   "u": "/audio/syllables/suryakoti-ko.mp3",
+   "bytes": 25495
+  },
+  "/audio/syllables/suryakoti-ti.mp3": {
+   "u": "/audio/syllables/suryakoti-ti.mp3",
+   "bytes": 25495
+  },
+  "/images/meanings-caveofsecrets/suryakoti-symbol.webp": {
+   "u": "/images/meanings-caveofsecrets/suryakoti-symbol.webp",
+   "bytes": 24904
+  },
+  "app-suryakoti.webp": {
+   "u": "/assets/app-suryakoti-DxQEo_yY.webp",
+   "bytes": 24904
+  },
+  "/audio/syllables/samaprabha-sa.mp3": {
+   "u": "/audio/syllables/samaprabha-sa.mp3",
+   "bytes": 21315
+  },
+  "/audio/syllables/samaprabha-ma.mp3": {
+   "u": "/audio/syllables/samaprabha-ma.mp3",
+   "bytes": 21315
+  },
+  "/audio/syllables/samaprabha-pra.mp3": {
+   "u": "/audio/syllables/samaprabha-pra.mp3",
+   "bytes": 21315
+  },
+  "/audio/syllables/samaprabha-bha.mp3": {
+   "u": "/audio/syllables/samaprabha-bha.mp3",
+   "bytes": 21315
+  },
+  "trunk-after.webp": {
+   "u": "/assets/trunk-after-DWyeHysW.webp",
+   "bytes": 172584
+  },
+  "trunk-before.webp": {
+   "u": "/assets/trunk-before-sLqiM4cV.webp",
+   "bytes": 151660
+  },
+  "/images/meanings-caveofsecrets/sarvakaryeshu-symbol.webp": {
+   "u": "/images/meanings-caveofsecrets/sarvakaryeshu-symbol.webp",
+   "bytes": 51066
+  },
+  "app-sarvakaryeshu.webp": {
+   "u": "/assets/app-sarvakaryeshu-ByKZDPeS.webp",
+   "bytes": 51066
+  },
+  "/audio/voiceover/sarvakaryeshu/kar.mp3": {
+   "u": "/audio/voiceover/sarvakaryeshu/kar.mp3",
+   "bytes": 31283
+  },
+  "/images/meanings-caveofsecrets/sarvada-symbol.webp": {
+   "u": "/images/meanings-caveofsecrets/sarvada-symbol.webp",
+   "bytes": 29422
+  },
+  "app-sarvada.webp": {
+   "u": "/assets/app-sarvada-Cm6m0Mt8.webp",
+   "bytes": 29422
+  },
+  "/audio/syllables/kurumedeva-deva.mp3": {
+   "u": "/audio/syllables/kurumedeva-deva.mp3",
+   "bytes": 26793
+  },
+  "/images/meanings-caveofsecrets/nirvighnam-symbol.webp": {
+   "u": "/images/meanings-caveofsecrets/nirvighnam-symbol.webp",
+   "bytes": 24292
+  },
+  "app-nirvighnam.webp": {
+   "u": "/assets/app-nirvighnam-BurhZZ_j.webp",
+   "bytes": 24292
+  },
+  "/images/meanings-caveofsecrets/kurumedeva-symbol.webp": {
+   "u": "/images/meanings-caveofsecrets/kurumedeva-symbol.webp",
+   "bytes": 23534
+  },
+  "app-kurumedeva.webp": {
+   "u": "/assets/app-kurumedeva-D32-TCGP.webp",
+   "bytes": 23534
+  },
+  "/audio/syllables/sarvakaryeshu-sar.mp3": {
+   "u": "/audio/syllables/sarvakaryeshu-sar.mp3",
+   "bytes": 20897
+  },
+  "/audio/syllables/sarvakaryeshu-va.mp3": {
+   "u": "/audio/syllables/sarvakaryeshu-va.mp3",
+   "bytes": 20897
+  },
+  "/audio/syllables/sarvakaryeshu-shu.mp3": {
+   "u": "/audio/syllables/sarvakaryeshu-shu.mp3",
+   "bytes": 20897
+  },
+  "/audio/syllables/kurume -kuru.mp3": {
+   "u": "/audio/syllables/kurume%20-kuru.mp3",
+   "bytes": 20062
+  },
+  "/audio/syllables/kurume-me.mp3": {
+   "u": "/audio/syllables/kurume-me.mp3",
+   "bytes": 20062
+  },
+  "/audio/syllables/sarvada-sar.mp3": {
+   "u": "/audio/syllables/sarvada-sar.mp3",
+   "bytes": 19226
+  },
+  "/audio/syllables/sarvada-va.mp3": {
+   "u": "/audio/syllables/sarvada-va.mp3",
+   "bytes": 19226
+  },
+  "/audio/syllables/sarvada-da.mp3": {
+   "u": "/audio/syllables/sarvada-da.mp3",
+   "bytes": 19226
+  },
+  "/audio/syllables/nirvighnam-nam.mp3": {
+   "u": "/audio/syllables/nirvighnam-nam.mp3",
+   "bytes": 18808
+  },
+  "/audio/syllables/nirvighnam-nir.mp3": {
+   "u": "/audio/syllables/nirvighnam-nir.mp3",
+   "bytes": 18808
+  },
+  "/audio/syllables/nirvighnam-vigh.mp3": {
+   "u": "/audio/syllables/nirvighnam-vigh.mp3",
+   "bytes": 18808
+  },
+  "/images/icons/chant-icon.png": {
+   "u": "/images/icons/chant-icon.png",
+   "bytes": 7334
+  },
+  "/images/ganesha-final-new.svg": {
+   "u": "/images/ganesha-final-new.svg",
+   "bytes": 1567279
+  },
+  "family-icon.webp": {
+   "u": "/assets/family-icon-JWJiCKr2.webp",
+   "bytes": 9898
+  },
+  "house-icon.webp": {
+   "u": "/assets/house-icon-C66Ird-F.webp",
+   "bytes": 6632
+  },
+  "heart-icon.webp": {
+   "u": "/assets/heart-icon-CLkE2XwY.webp",
+   "bytes": 6468
+  },
+  "/images/zone-badge/icon-aboutme.webp": {
+   "u": "/images/zone-badge/icon-aboutme.webp",
+   "bytes": 630
+  },
+  "fav-peacock.webp": {
+   "u": "/assets/fav-peacock-C-48EOua.webp",
+   "bytes": 49344
+  },
+  "fav-cow.webp": {
+   "u": "/assets/fav-cow-CNwIzbY5.webp",
+   "bytes": 42738
+  },
+  "fav-mouse.webp": {
+   "u": "/assets/fav-mouse-2Rbr2U4B.webp",
+   "bytes": 36772
+  },
+  "color-icon.webp": {
+   "u": "/assets/color-icon-Cmzh4Bj1.webp",
+   "bytes": 7112
+  },
+  "food-icon.webp": {
+   "u": "/assets/food-icon-DEE6Lw1w.webp",
+   "bytes": 6056
+  },
+  "sports-icon.webp": {
+   "u": "/assets/sports-icon-Gu7Cn04G.webp",
+   "bytes": 5106
+  },
+  "shootingstar-icon.webp": {
+   "u": "/assets/shootingstar-icon-Cxl72vet.webp",
+   "bytes": 8426
+  },
+  "world-icon.webp": {
+   "u": "/assets/world-icon-9dYwrc2y.webp",
+   "bytes": 6052
+  },
+  "/images/map/shloka-stream-opt.webp": {
+   "u": "/images/map/shloka-stream-opt.webp",
+   "bytes": 118216
+  },
+  "/images/map/modakmtn-shell.webp": {
+   "u": "/images/map/modakmtn-shell.webp",
+   "bytes": 84312
+  },
+  "/images/map/mapbg-meadow.webp": {
+   "u": "/images/map/mapbg-meadow.webp",
+   "bytes": 39558
+  },
+  "/images/map/shloka-waterfall-opt.webp": {
+   "u": "/images/map/shloka-waterfall-opt.webp",
+   "bytes": 35980
+  },
+  "/images/map/abtmehut2.webp": {
+   "u": "/images/map/abtmehut2.webp",
+   "bytes": 27242
+  },
+  "/images/map/butterflyyellow.webp": {
+   "u": "/images/map/butterflyyellow.webp",
+   "bytes": 20624
+  },
+  "/images/map/shloka-bridge-opt.webp": {
+   "u": "/images/map/shloka-bridge-opt.webp",
+   "bytes": 18998
+  },
+  "/images/map/festivalsq1.webp": {
+   "u": "/images/map/festivalsq1.webp",
+   "bytes": 14996
+  },
+  "/images/map/treehouse1.webp": {
+   "u": "/images/map/treehouse1.webp",
+   "bytes": 12740
+  },
+  "/images/map/flower2.webp": {
+   "u": "/images/map/flower2.webp",
+   "bytes": 9732
+  },
+  "/images/map/flower1.webp": {
+   "u": "/images/map/flower1.webp",
+   "bytes": 9598
+  },
+  "/images/map/tree1.webp": {
+   "u": "/images/map/tree1.webp",
+   "bytes": 6822
+  },
+  "/images/map/grass.webp": {
+   "u": "/images/map/grass.webp",
+   "bytes": 6332
+  },
+  "/images/map/tree2.webp": {
+   "u": "/images/map/tree2.webp",
+   "bytes": 5936
+  },
+  "festival-icon.webp": {
+   "u": "/assets/festival-icon-tqq28wOM.webp",
+   "bytes": 5496
+  },
+  "language-icon.webp": {
+   "u": "/assets/language-icon-3Pa_PQT5.webp",
+   "bytes": 5230
+  },
+  "/images/icons/icon-sound-off.svg": {
+   "u": "/images/icons/icon-sound-off.svg",
+   "bytes": 1305
+  }
+ },
+ "otherScreens": {
+  "screen:loading": [
+   {
+    "u": "/audio/sfx-role-mapping-2/sfx-frog-hop.mp3",
+    "bytes": 193881
+   },
+   {
+    "u": "/images/modak.webp",
+    "bytes": 119904
+   },
+   {
+    "u": "/audio/sfx-role-mapping-2/sfx-frog-reunion.mp3",
+    "bytes": 73497
+   },
+   {
+    "u": "/images/profile-bg.webp",
+    "bytes": 65650
+   },
+   {
+    "u": "/images/mooshika-flying.webp",
+    "bytes": 61126
+   },
+   {
+    "u": "/images/ganesha-poses/sit-hi.webp",
+    "bytes": 58714
+   },
+   {
+    "u": "/audio/sfx/sfx-power-unlock.mp3",
+    "bytes": 50336
+   },
+   {
+    "u": "/audio/sfx/sfx-place.wav",
+    "bytes": 49881
+   },
+   {
+    "u": "/audio/sfx/sfx-transition.wav",
+    "bytes": 49881
+   },
+   {
+    "u": "/audio/sfx/sfx-celebration.wav",
+    "bytes": 49881
+   },
+   {
+    "u": "/audio/sfx/sfx-tap.mp3",
+    "bytes": 47237
+   },
+   {
+    "u": "/images/welcome-opening-bg.webp",
+    "bytes": 44448
+   },
+   {
+    "u": "/audio/sfx/sfx-chime.mp3",
+    "bytes": 29285
+   },
+   {
+    "u": "/audio/sfx/sfx-emotional-glow.wav",
+    "bytes": 25689
+   },
+   {
+    "u": "/audio/sfx/sfx-idle-hint.wav",
+    "bytes": 25689
+   },
+   {
+    "u": "/audio/sfx/sfx-discovery.wav",
+    "bytes": 25689
+   },
+   {
+    "u": "/images/ganesha-welcome-poster.webp",
+    "bytes": 23772
+   },
+   {
+    "u": "/images/welcome-background.svg",
+    "bytes": 22857
+   },
+   {
+    "u": "/images/new-explorer-tiger.webp",
+    "bytes": 16940
+   },
+   {
+    "u": "/images/new-explorer-peacock.webp",
+    "bytes": 16872
+   },
+   {
+    "u": "/audio/sfx/sfx-reveal-bloom.wav",
+    "bytes": 13017
+   },
+   {
+    "u": "/images/new-explorer-squirrel.webp",
+    "bytes": 12952
+   },
+   {
+    "u": "/images/new-explorer-monkey.webp",
+    "bytes": 12852
+   },
+   {
+    "u": "/audio/sfx/sfx-soft-wrong-2.wav",
+    "bytes": 11624
+   },
+   {
+    "u": "/icons/icon-144x144.png",
+    "bytes": 7308
+   },
+   {
+    "u": "/ganesha-outline.svg",
+    "bytes": 3449
+   }
+  ],
+  "screen:main-welcome": [
+   {
+    "u": "/audio/music/bg-ambient.mp3",
+    "bytes": 2551161
+   },
+   {
+    "u": "/videos/ganeshawelcome-new.webm",
+    "bytes": 649797
+   },
+   {
+    "u": "/images/ganesha-poses/sit-hi.webp",
+    "bytes": 58414
+   },
+   {
+    "u": "/icons/icon-512x512.png",
+    "bytes": 13514
+   },
+   {
+    "u": "/images/onboarding/icon-email.webp",
+    "bytes": 3844
+   },
+   {
+    "u": "/images/onboarding/icon-continue-here.webp",
+    "bytes": 3456
+   }
+  ],
+  "screen:parent-gate": [
+   {
+    "u": "/images/profile-bg.webp",
+    "bytes": 65350
+   },
+   {
+    "u": "/assets/lotus-iconnew-BcBt695a.svg",
+    "bytes": 6352
+   }
+  ],
+  "screen:sign-in": [
+   {
+    "u": "/images/onboarding/google.svg",
+    "bytes": 1140
+   },
+   {
+    "u": "/images/onboarding/apple.svg",
+    "bytes": 926
+   }
+  ],
+  "screen:profile-create": [
+   {
+    "u": "/images/pan-bg.webp",
+    "bytes": 64530
+   },
+   {
+    "u": "/images/mooshika-flying.webp",
+    "bytes": 60826
+   },
+   {
+    "u": "/images/ganesha-poses/sit-hi.webp",
+    "bytes": 58414
+   },
+   {
+    "u": "/images/new-explorer-tiger.webp",
+    "bytes": 16640
+   },
+   {
+    "u": "/images/new-explorer-peacock.webp",
+    "bytes": 16572
+   },
+   {
+    "u": "/images/new-explorer-cobra.webp",
+    "bytes": 15180
+   },
+   {
+    "u": "/icons/icon-512x512.png",
+    "bytes": 13514
+   },
+   {
+    "u": "/images/new-explorer-owl.webp",
+    "bytes": 13056
+   },
+   {
+    "u": "/images/new-explorer-turtle.webp",
+    "bytes": 12922
+   },
+   {
+    "u": "/images/new-explorer-horse.webp",
+    "bytes": 12740
+   },
+   {
+    "u": "/images/new-explorer-camel.webp",
+    "bytes": 12726
+   },
+   {
+    "u": "/images/new-explorer-squirrel.webp",
+    "bytes": 12652
+   },
+   {
+    "u": "/images/new-explorer-monkey.webp",
+    "bytes": 12552
+   },
+   {
+    "u": "/images/new-explorer-buffalo.webp",
+    "bytes": 12190
+   },
+   {
+    "u": "/images/new-explorer-deer.webp",
+    "bytes": 12136
+   },
+   {
+    "u": "/images/new-explorer-fish.webp",
+    "bytes": 11764
+   },
+   {
+    "u": "/images/new-explorer-lion.webp",
+    "bytes": 10416
+   },
+   {
+    "u": "/images/new-explorer-rabbit.webp",
+    "bytes": 10040
+   },
+   {
+    "u": "/images/new-explorer-fox.webp",
+    "bytes": 9826
+   },
+   {
+    "u": "/images/new-explorer-crane.webp",
+    "bytes": 9234
+   },
+   {
+    "u": "/images/new-explorer-swan.webp",
+    "bytes": 9198
+   },
+   {
+    "u": "/images/new-explorer-elephant.webp",
+    "bytes": 7838
+   },
+   {
+    "u": "/images/new-explorer-mouse.webp",
+    "bytes": 7542
+   },
+   {
+    "u": "/icons/icon-152x152.png",
+    "bytes": 7348
+   },
+   {
+    "u": "/icons/icon-144x144.png",
+    "bytes": 7008
+   },
+   {
+    "u": "/images/new-explorer-crow.webp",
+    "bytes": 6898
+   },
+   {
+    "u": "/images/onboarding/icon-install.webp",
+    "bytes": 6110
+   },
+   {
+    "u": "/icons/icon-128x128.png",
+    "bytes": 5951
+   },
+   {
+    "u": "/icons/icon-192x192.png",
+    "bytes": 4995
+   },
+   {
+    "u": "/icons/apple-touch-icon.png",
+    "bytes": 4613
+   },
+   {
+    "u": "/icons/icon-96x96.png",
+    "bytes": 4178
+   },
+   {
+    "u": "/images/onboarding/icon-name.webp",
+    "bytes": 4138
+   },
+   {
+    "u": "/icons/icon-72x72.png",
+    "bytes": 2904
+   },
+   {
+    "u": "/icons/icon-48x48.png",
+    "bytes": 1742
+   }
+  ],
+  "screen:map": [
+   {
+    "u": "/videos/ganeshawelcome-new.webm",
+    "bytes": 649797
+   },
+   {
+    "u": "/audio/ambient/map%20ambient%20sound.mp3",
+    "bytes": 431587
+   },
+   {
+    "u": "/images/map/shloka-stream-opt.webp",
+    "bytes": 118216
+   },
+   {
+    "u": "/intro-story/story1-img2.webp",
+    "bytes": 96190
+   },
+   {
+    "u": "/images/map/modakmtn-shell.webp",
+    "bytes": 84312
+   },
+   {
+    "u": "/intro-story/story1-img1.webp",
+    "bytes": 83662
+   },
+   {
+    "u": "/images/ganesha-poses/stand-point.webp",
+    "bytes": 53782
+   },
+   {
+    "u": "/images/map/mapbg-meadow.webp",
+    "bytes": 39558
+   },
+   {
+    "u": "/images/map/shloka-waterfall-opt.webp",
+    "bytes": 35980
+   },
+   {
+    "u": "/images/map/abtmehut2.webp",
+    "bytes": 27242
+   },
+   {
+    "u": "/images/map/butterflyyellow.webp",
+    "bytes": 20624
+   },
+   {
+    "u": "/images/map/shloka-bridge-opt.webp",
+    "bytes": 18998
+   },
+   {
+    "u": "/images/icons/parent-icon.webp",
+    "bytes": 18680
+   },
+   {
+    "u": "/assets/gesture-touch-finger-BeZeq0G1.png",
+    "bytes": 16698
+   },
+   {
+    "u": "/images/map/festivalsq1.webp",
+    "bytes": 14996
+   },
+   {
+    "u": "/images/map/treehouse1.webp",
+    "bytes": 12740
+   },
+   {
+    "u": "/images/map/flower2.webp",
+    "bytes": 9732
+   },
+   {
+    "u": "/images/map/flower1.webp",
+    "bytes": 9598
+   },
+   {
+    "u": "/images/map/tree1.webp",
+    "bytes": 6822
+   },
+   {
+    "u": "/images/map/grass.webp",
+    "bytes": 6332
+   },
+   {
+    "u": "/images/map/tree2.webp",
+    "bytes": 5936
+   },
+   {
+    "u": "/images/icons/icon-sound-on.svg",
+    "bytes": 1147
+   },
+   {
+    "u": "/images/ganesha-poses/sit-hi.webp",
+    "bytes": 58414
+   },
+   {
+    "u": "/images/map/birdnew.webp",
+    "bytes": 24752
+   },
+   {
+    "u": "/images/map/butterflyblue.webp",
+    "bytes": 19292
+   },
+   {
+    "u": "/images/new-explorer-owl.webp",
+    "bytes": 13056
+   },
+   {
+    "u": "/images/icons/icon-sound-off.svg",
+    "bytes": 1305
+   },
+   {
+    "u": "/images/ganesha-poses/celebrate.webp",
+    "bytes": 0
+   }
+  ],
+  "screen:scene": [
+   {
+    "u": "/images/ganesha-poses/sit-hi.webp",
+    "bytes": 58414
+   },
+   {
+    "u": "/images/ganesha-final-new.svg",
+    "bytes": 1567279
+   },
+   {
+    "u": "/images/meanings-caveofsecrets/vakratunda-symbol.webp",
+    "bytes": 293514
+   },
+   {
+    "u": "/images/shloka-river-bg.webp",
+    "bytes": 55240
+   },
+   {
+    "u": "/images/ganesha-poses/stand-point.webp",
+    "bytes": 53782
+   },
+   {
+    "u": "/assets/saurakoti-bg-J6OQQkGy.webp",
+    "bytes": 36872
+   },
+   {
+    "u": "/assets/banyan-full-from-download-iVyJTFCV.webp",
+    "bytes": 34578
+   },
+   {
+    "u": "/images/meanings-caveofsecrets/sarvada-symbol.webp",
+    "bytes": 29422
+   },
+   {
+    "u": "/assets/fav_background-CPM6qZmy.webp",
+    "bytes": 29258
+   },
+   {
+    "u": "/images/meanings-caveofsecrets/nirvighnam-symbol.webp",
+    "bytes": 24292
+   },
+   {
+    "u": "/assets/play-language-BNCHj4om.webp",
+    "bytes": 23828
+   },
+   {
+    "u": "/images/meanings-caveofsecrets/mahakaya-symbol.webp",
+    "bytes": 15868
+   },
+   {
+    "u": "/assets/final_symbol_background-G8VZXjjL.webp",
+    "bytes": 15188
+   },
+   {
+    "u": "/images/icons/replay-icon.png",
+    "bytes": 9093
+   },
+   {
+    "u": "/assets/lotus-iconnew-BcBt695a.svg",
+    "bytes": 6352
+   },
+   {
+    "u": "/images/zone-badge/icon-shlokariver.webp",
+    "bytes": 720
+   },
+   {
+    "u": "/images/zone-badge/icon-aboutme.webp",
+    "bytes": 630
+   }
+  ],
+  "screen:profile-welcome": [
+   {
+    "u": "/audio/ambient/map%20ambient%20sound.mp3",
+    "bytes": 431587
+   },
+   {
+    "u": "/intro-story/story1-img3.webp",
+    "bytes": 104156
+   },
+   {
+    "u": "/intro-story/story1-img2-transition.webp",
+    "bytes": 99426
+   },
+   {
+    "u": "/intro-story/story1-img4.webp",
+    "bytes": 96588
+   },
+   {
+    "u": "/intro-story/story1-img2.webp",
+    "bytes": 96190
+   },
+   {
+    "u": "/intro-story/story1-img1.webp",
+    "bytes": 83662
+   },
+   {
+    "u": "/images/pan-bg.webp",
+    "bytes": 64530
+   },
+   {
+    "u": "/intro-story/map-new-2.webp",
+    "bytes": 54130
+   },
+   {
+    "u": "/images/ganesha-poses/stand-namaste.webp",
+    "bytes": 41120
+   },
+   {
+    "u": "/images/map/birdnew.webp",
+    "bytes": 24752
+   },
+   {
+    "u": "/images/welcome-back-bg.webp",
+    "bytes": 21172
+   },
+   {
+    "u": "/images/map/butterflyyellow.webp",
+    "bytes": 20624
+   },
+   {
+    "u": "/images/map/butterflyblue.webp",
+    "bytes": 19292
+   },
+   {
+    "u": "/images/map/lock.webp",
+    "bytes": 17626
+   },
+   {
+    "u": "/icons/icon-512x512.png",
+    "bytes": 13514
+   },
+   {
+    "u": "/images/new-explorer-owl.webp",
+    "bytes": 13056
+   },
+   {
+    "u": "/images/critters/butterfly-pink.svg",
+    "bytes": 1239
+   },
+   {
+    "u": "/images/critters/bird-flying-orange.svg",
+    "bytes": 727
+   }
+  ],
+  "zone-welcome:shloka-river": [
+   {
+    "u": "/images/ganesha-poses/sit-hi.webp",
+    "bytes": 58414
+   },
+   {
+    "u": "/images/shlokariver-bg.webp",
+    "bytes": 55240
+   },
+   {
+    "u": "/assets/vakratunda-scene-bg-CB24EHJO.webp",
+    "bytes": 23896
+   },
+   {
+    "u": "/images/map/butterflyyellow.webp",
+    "bytes": 20624
+   },
+   {
+    "u": "/images/map/lock.webp",
+    "bytes": 17626
+   },
+   {
+    "u": "/images/zones/shloka-river/suryakoti-bank-icon.png",
+    "bytes": 3565
+   },
+   {
+    "u": "/images/zones/shloka-river/sarvakaryeshu-chant-icon.png",
+    "bytes": 2204
+   },
+   {
+    "u": "/images/zones/shloka-river/vakratunda-grove-icon.png",
+    "bytes": 1972
+   },
+   {
+    "u": "/images/zones/shloka-river/nirvighnam-chant-icon.png",
+    "bytes": 1929
+   },
+   {
+    "u": "/images/zones/shloka-river/finale-icon.png",
+    "bytes": 1815
+   },
+   {
+    "u": "/images/icons/icon-home.svg",
+    "bytes": 1245
+   }
+  ],
+  "screen:zone-welcome": [
+   {
+    "u": "/images/ganesha-final-new.svg",
+    "bytes": 1567279
+   },
+   {
+    "u": "/images/about-me-hut-bg.webp",
+    "bytes": 247786
+   },
+   {
+    "u": "/images/hut-bg.webp",
+    "bytes": 66934
+   },
+   {
+    "u": "/images/ganesha-poses/sit-modak.webp",
+    "bytes": 63850
+   },
+   {
+    "u": "/images/shlokariver-bg.webp",
+    "bytes": 55240
+   },
+   {
+    "u": "/images/symbol-mountain-bg.webp",
+    "bytes": 43510
+   },
+   {
+    "u": "/assets/newmodakbg-D4jhmYX4.webp",
+    "bytes": 42160
+   },
+   {
+    "u": "/images/modakmtn-bg.webp",
+    "bytes": 29796
+   },
+   {
+    "u": "/images/ganesha-point.webp",
+    "bytes": 23574
+   },
+   {
+    "u": "/images/map/lock.webp",
+    "bytes": 17626
+   },
+   {
+    "u": "/images/symbols-symbolmountain/broken-tusk-symbol.png",
+    "bytes": 15093
+   },
+   {
+    "u": "/images/zones/about-me-hut/family-tree-icon.webp",
+    "bytes": 11418
+   },
+   {
+    "u": "/images/zones/about-me-hut/family-tree-icon.png",
+    "bytes": 11006
+   },
+   {
+    "u": "/images/zones/about-me-hut/my-indian-story-icon.png",
+    "bytes": 8376
+   },
+   {
+    "u": "/images/zones/about-me-hut/obstacle-remover-icon.png",
+    "bytes": 8070
+   },
+   {
+    "u": "/images/zones/shloka-river/vakratunda-grove-icon.webp",
+    "bytes": 3896
+   },
+   {
+    "u": "/images/zones/shloka-river/suryakoti-bank-icon.png",
+    "bytes": 3565
+   },
+   {
+    "u": "/images/zones/about-me-hut/favorite-things-icon.png",
+    "bytes": 3438
+   },
+   {
+    "u": "/images/zones/symbol-mountain/modak-icon.webp",
+    "bytes": 3362
+   },
+   {
+    "u": "/images/zones/symbol-mountain/pond-icon.png",
+    "bytes": 3227
+   },
+   {
+    "u": "/images/zones/symbol-mountain/assembly-icon.png",
+    "bytes": 2510
+   },
+   {
+    "u": "/images/zones/symbol-mountain/modak-icon.png",
+    "bytes": 2223
+   },
+   {
+    "u": "/images/zones/shloka-river/sarvakaryeshu-chant-icon.png",
+    "bytes": 2204
+   },
+   {
+    "u": "/images/zones/shloka-river/vakratunda-grove-icon.png",
+    "bytes": 1972
+   },
+   {
+    "u": "/images/zones/shloka-river/nirvighnam-chant-icon.png",
+    "bytes": 1929
+   },
+   {
+    "u": "/images/zones/shloka-river/finale-icon.png",
+    "bytes": 1815
+   },
+   {
+    "u": "/images/icons/icon-home.svg",
+    "bytes": 1245
+   }
+  ],
+  "zone-welcome:symbol-mountain": [],
+  "zone-welcome:about-me-hut": [
+   {
+    "u": "/images/zones/about-me-hut/family-tree-icon.png",
+    "bytes": 11006
+   },
+   {
+    "u": "/assets/family_background-Cb_SQKpa.webp",
+    "bytes": 9918
+   },
+   {
+    "u": "/images/zones/about-me-hut/my-indian-story-icon.png",
+    "bytes": 8376
+   },
+   {
+    "u": "/images/zones/about-me-hut/obstacle-remover-icon.png",
+    "bytes": 8070
+   },
+   {
+    "u": "/images/zones/about-me-hut/favorite-things-icon.png",
+    "bytes": 3438
+   },
+   {
+    "u": "/images/icons/icon-home.svg",
+    "bytes": 1245
+   }
+  ]
+ }
+}
