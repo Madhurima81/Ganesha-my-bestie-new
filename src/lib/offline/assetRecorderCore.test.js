@@ -75,12 +75,16 @@ describe('storage and the on/off flag', () => {
     expect(loadRecord(s)).toEqual({});
     expect(loadRecord({ getItem() { throw new Error('blocked'); } })).toEqual({});
   });
-  test('?recordassets=1 turns it on and stays on; ?recordassets=0 turns it off; otherwise off', () => {
+  test('?recordassets=1 turns it on for that load only; any load without it is off and clears an old stored switch', () => {
     const s = memory();
     expect(recorderWanted('', s)).toBe(false);
     expect(recorderWanted('?recordassets=1', s)).toBe(true);
-    expect(recorderWanted('', s)).toBe(true);
-    expect(recorderWanted('?recordassets=0', s)).toBe(false);
+    expect(s.getItem('gmb_record_assets')).toBe('1'); // the offline downloader reads this while recording
     expect(recorderWanted('', s)).toBe(false);
+    expect(s.getItem('gmb_record_assets')).toBeNull();
+    s.setItem('gmb_record_assets', '1'); // a device left on by the old sticky switch
+    expect(recorderWanted('?other=1', s)).toBe(false);
+    expect(s.getItem('gmb_record_assets')).toBeNull();
+    expect(recorderWanted('?recordassets=0', s)).toBe(false);
   });
 });

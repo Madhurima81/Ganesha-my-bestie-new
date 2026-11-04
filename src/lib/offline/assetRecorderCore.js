@@ -63,14 +63,16 @@ export function saveRecord(record, storage = globalThis.localStorage) {
   try { storage.setItem(RECORD_STORAGE_KEY, JSON.stringify(record)); return true; } catch { return false; }
 }
 
-// Turn the recorder on with ?recordassets=1 (it stays on for this browser) and off with ?recordassets=0.
+// The recorder is on only while the address has ?recordassets=1. It used to stay on in the browser after one visit,
+// which left its panel (folded into a small draggable dot) and a switched-off offline download on every test device.
+// Now any load without the flag switches it off and clears the old stored switch, so devices heal themselves.
 export function recorderWanted(search, storage = globalThis.localStorage) {
-  const flag = new URLSearchParams(search).get('recordassets');
+  const on = new URLSearchParams(search).get('recordassets') === '1';
   try {
-    if (flag === '1') storage.setItem('gmb_record_assets', '1');
-    if (flag === '0') storage.removeItem('gmb_record_assets');
-    return storage.getItem('gmb_record_assets') === '1';
-  } catch { return flag === '1'; }
+    if (on) storage.setItem('gmb_record_assets', '1');
+    else storage.removeItem('gmb_record_assets');
+  } catch { /* storage blocked: the flag alone decides */ }
+  return on;
 }
 
 // True while the recorder is switched on in this browser. The offline downloader stays quiet then, so the recording
