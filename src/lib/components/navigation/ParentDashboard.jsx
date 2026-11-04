@@ -445,15 +445,7 @@ export default function ParentDashboard({ onBack, onOpenChildProfile, initialUnl
             </div>
 
             <SettingsSectionLabel>Explorers</SettingsSectionLabel>
-            <ExplorerManager onChanged={refreshActiveChild} />
-            <div style={{ marginBottom: '1.2rem' }}>
-              <SettingRow
-                label="Switch explorer"
-                sublabel={`Playing now: ${name}`}
-                action={onOpenChildProfile}
-                actionLabel="Switch"
-              />
-            </div>
+            <ExplorerManager onChanged={refreshActiveChild} onAddExplorer={onOpenChildProfile} />
 
             <SettingsSectionLabel>App</SettingsSectionLabel>
             <div style={{ marginBottom: '1.2rem' }}>

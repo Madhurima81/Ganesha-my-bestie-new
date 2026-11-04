@@ -30,6 +30,26 @@
 }
 
 .pdex-tile:active { transform: scale(0.97); }
+.pdex-tile.is-active { border-color: #8E7BD8; background: #F6F3FC; box-shadow: 0 0 0 2px rgba(142, 123, 216, 0.25); }
+
+.pdex-tilewrap { position: relative; flex: 0 0 auto; }
+.pdex-tilewrap .pdex-tile { height: 100%; box-sizing: border-box; }
+.pdex-tile-edit {
+  position: absolute; top: -6px; right: -6px; width: 48px; height: 48px; padding: 0; border: 0;
+  background: transparent; display: flex; align-items: flex-start; justify-content: flex-end;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.pdex-tile-edit .pdex-pencil { position: static; width: 26px; height: 26px; }
+.pdex-playing { margin-top: 2px; padding: 1px 8px; border-radius: 999px; background: #8E7BD8; color: #fff; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.68rem; }
+
+.pdex-tile--new { justify-content: center; border-style: dashed; border-color: #CFC4F0; background: transparent; }
+.pdex-plus {
+  width: 56px; height: 56px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: #EFEAFB; color: #8E7BD8;
+  font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 2rem; line-height: 1;
+}
 
 .pdex-avatar {
   display: block;

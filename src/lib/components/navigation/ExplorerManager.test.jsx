@@ -94,3 +94,24 @@ test('updateProfile ignores an unknown id and clamps age', () => {
   GameStateManager.updateProfile('profile_a', { age: 99 });
   expect(profileOf('profile_a').age).toBe(14);
 });
+
+test('tapping a tile switches who is playing; tapping the active one changes nothing', () => {
+  const changed = jest.fn();
+  render(<ExplorerManager onChanged={changed} />);
+  fireEvent.click(screen.getByLabelText('Play as Radha'));
+  expect(changed).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByLabelText('Play as Arjun'));
+  expect(localStorage.getItem('activeProfileId')).toBe('profile_b');
+  expect(localStorage.getItem('childName')).toBe('Arjun');
+  expect(changed).toHaveBeenCalledTimes(1);
+  expect(screen.getAllByText('Playing now')).toHaveLength(1);
+});
+
+test('New explorer tile only shows when the dashboard can add one', () => {
+  const add = jest.fn();
+  const { rerender } = render(<ExplorerManager />);
+  expect(screen.queryByText('New explorer')).toBeNull();
+  rerender(<ExplorerManager onAddExplorer={add} />);
+  fireEvent.click(screen.getByLabelText('New explorer'));
+  expect(add).toHaveBeenCalledTimes(1);
+});
