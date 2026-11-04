@@ -126,3 +126,35 @@ export const clearZoneReturnFocus = (zoneId, profileId = getProfileId()) => {
     // best effort
   }
 };
+
+/* -------------------------
+   HOME FROM A COMPLETION CARD (sessionStorage, seconds)
+   Home on a scene's completion card means "on to what is next", so Zone Welcome must NOT seed the
+   one-visit return focus (which shows the finished scene with Play Again). The card marks it, App
+   consumes it when it lands on Zone Welcome. The mark expires after a few seconds so a Home that
+   went somewhere else (e.g. the map) can never leak into a later zone-badge visit.
+------------------------- */
+
+const HOME_FROM_COMPLETION_KEY = 'gmb_home_from_completion';
+const HOME_FROM_COMPLETION_TTL_MS = 4000;
+
+export const markHomeFromCompletion = () => {
+  if (typeof window === 'undefined') return;
+  try {
+    sessionStorage.setItem(HOME_FROM_COMPLETION_KEY, String(Date.now()));
+  } catch {
+    // best effort
+  }
+};
+
+export const consumeHomeFromCompletion = () => {
+  if (typeof window === 'undefined') return false;
+  try {
+    const raw = sessionStorage.getItem(HOME_FROM_COMPLETION_KEY);
+    if (raw === null) return false;
+    sessionStorage.removeItem(HOME_FROM_COMPLETION_KEY);
+    return Date.now() - Number(raw) < HOME_FROM_COMPLETION_TTL_MS;
+  } catch {
+    return false;
+  }
+};

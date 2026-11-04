@@ -9,6 +9,7 @@ import { preparePose, usePreloadPoses } from '../animation/PoseImage';
 import ProfilePillBtn from '../shared/ProfilePillBtn';
 import { getProfilePillBtnStyle } from '../../config/ZoneThemes';
 import { sfx } from '../../audio/sfx';
+import { markHomeFromCompletion } from '../../utils/zoneNavigationState';
 import ModalShell, { ModalGhostLinks, getModalThemeVars } from '../../../zones/shared/components/ModalShell';
 
 const SceneCompletionCelebration = ({
@@ -206,6 +207,14 @@ const SceneCompletionCelebration = ({
   };
   const handleExplore = onExploreZones || onBackToMap;
 
+  // Home on the completion card means "on to what is next". Zone Welcome would otherwise show this finished
+  // scene again with Play Again (the one-visit return focus meant for the zone badge). App reads this mark
+  // when it lands on Zone Welcome. DECISIONS 2026-11-04.
+  const goHome = () => {
+    markHomeFromCompletion();
+    handleAction(handleExplore);
+  };
+
   // The primary button: next adventure (or Home on a final scene). Shared by the classic and the shared-card layout.
   const handlePrimaryClick = () => {
     if (isFinalScene) {
@@ -313,7 +322,7 @@ const SceneCompletionCelebration = ({
             links={[
               // a final scene's big button already leaves the scene (Home, or "See My Journey" in My Indian Story):
               // a second "Home" link would repeat it or lead somewhere else under the same name
-              ...(isFinalScene ? [] : [{ label: 'Home', onClick: () => handleAction(handleExplore) }]),
+              ...(isFinalScene ? [] : [{ label: 'Home', onClick: goHome }]),
               { label: 'Play Again', onClick: () => handleAction(onReplay, true) },
             ]}
           />
@@ -489,7 +498,7 @@ const SceneCompletionCelebration = ({
                   <div className="celebration-secondary-row">
                     <button
                       type="button"
-                      onClick={() => handleAction(handleExplore)}
+                      onClick={goHome}
                       className="celebration-btn-teal"
                     >
                       Home

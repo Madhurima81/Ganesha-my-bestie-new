@@ -45,6 +45,7 @@ import {
   clearActiveScene,
   setZoneReturnFocus,
   clearZoneReturnFocus,
+  consumeHomeFromCompletion,
 } from './lib/utils/zoneNavigationState';
 import { isStandalone, isIOS } from './lib/services/PwaInstallManager';
 import InAppBrowserBanner from './lib/components/onboarding/InAppBrowserBanner';
@@ -1320,9 +1321,14 @@ const getNextScene = (zoneId, currentSceneId) => {
       case 'zone-welcome': {
         // Leaving via the zone badge from a scene's completion screen never goes
         // through handleSceneComplete, so detect the finished session here and
-        // give Zone Welcome the same one-visit return focus.
+        // give Zone Welcome the same one-visit return focus. Home on the completion card
+        // (consumeHomeFromCompletion) skips it so the NEXT scene shows as Start.
         const leavingProfileId = localStorage.getItem('activeProfileId');
-        if (leavingProfileId && currentZone && currentScene) {
+        const homeFromCompletion = consumeHomeFromCompletion();
+        if (homeFromCompletion && currentZone) {
+          clearActiveScene(currentZone);
+          clearZoneReturnFocus(currentZone);
+        } else if (leavingProfileId && currentZone && currentScene) {
           const leavingSession = (() => {
             try {
               const raw =
@@ -1510,7 +1516,11 @@ chants: result?.chants || result?.chantedVerses || {},
     // directly on Zone Welcome from its completion modal, so show it once
     // (cleared by handleNavigate if they pick Home / Map / next scene instead).
     clearActiveScene(currentZone);
-    setZoneReturnFocus(currentZone, normalizedSceneId);
+    if (consumeHomeFromCompletion()) {
+      clearZoneReturnFocus(currentZone); // Home on the completion card: next scene shows as Start
+    } else {
+      setZoneReturnFocus(currentZone, normalizedSceneId);
+    }
 
     setCurrentScene(null);
     setCurrentView('zone-welcome');

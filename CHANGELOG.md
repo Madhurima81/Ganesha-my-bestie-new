@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-04] - Home on a completion card shows the next scene as Start on Zone Welcome
+**Touched:** src/lib/components/celebration/SceneCompletionCelebration.jsx, src/lib/utils/zoneNavigationState.js (+ homeFromCompletion.test.js, new), src/App.jsx, DECISIONS.md.
+**Changed:** Home on a non-final scene's completion card landed on Zone Welcome showing the finished scene with Play Again (the one-visit return focus meant for the zone badge); after Vakratunda it should show scene 2 as Start. The card's Home now marks `gmb_home_from_completion` (sessionStorage, 4 s); App consumes it in handleSceneComplete and handleNavigate('zone-welcome') and skips the return focus, so the next scene is featured. The zone badge on the completion screen still shows the finished scene once with Play Again. Final scenes' Home still goes to the map. DECISIONS 2026-11-04 narrows the 2026-10-11 rule.
+**Verified:** 3 jest cases for the mark (once, expires, empty); parse checks; Zone Welcome shows the next scene as Start when no return focus is seeded.
+**NOT verified:** a full run through a scene's completion card and Home on a device.
+
 ## [2026-11-03 l] - Map: phone Ganesha no longer covers the Lodge label
 **Touched:** CleanMapZone.jsx.
 **Changed:** Rendered stage 1, 2, 3 on phone (844x390) and stage 3 on iPad (1194x834). On phone, when the Lodge is active, Ganesha stood on top of the "Lambodara Lodge" label. Moved the phone Ganesha spot (ganeshaHut 32/67 -> 25/77), so he stands left of the Lodge below the label. iPad unchanged.
