@@ -208,13 +208,13 @@
 
 .zone-check-badge--journey-celebration {
   box-shadow: 0 0 0 4px rgba(255, 214, 105, 0.5), 0 0 24px 8px rgba(255, 196, 80, 0.8);
-  animation: journey-check-pulse 3s ease-in-out calc(0.5s + var(--journey-check-delay, 0s)) 3;
+  animation: journey-check-pulse 1.2s ease-in-out calc(0.4s + var(--journey-check-delay, 0s)) 1;
 }
 
 @keyframes journey-check-pulse {
-  0%, 30%, 100% { transform: scale(1); }
-  15% {
-    transform: scale(1.5);
+  0%, 100% { transform: scale(1); }
+  40% {
+    transform: scale(1.25);
     box-shadow: 0 0 0 7px rgba(255, 224, 130, 0.65), 0 0 32px 12px rgba(255, 196, 80, 0.95);
   }
 }
@@ -1371,4 +1371,40 @@
   background: rgba(117, 95, 174, 0.5);
   box-shadow: 0 2px 6px rgba(80, 50, 150, 0.08);
   text-shadow: none;
+}
+
+/* =========================================
+   GMB MAP — SOFT ACTIVE DESTINATION FOCUS
+   ========================================= */
+.map-active-zone-focus {
+  position: absolute;
+  z-index: 7;
+  pointer-events: none;
+  border-radius: 50%;
+  background: transparent;
+}
+
+/* Gentle feathered halo, not a solid circle */
+.map-active-zone-focus::before {
+  content: "";
+  position: absolute;
+  inset: -22%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 244, 190, 0.52) 0%,
+    rgba(255, 235, 170, 0.30) 34%,
+    rgba(250, 218, 172, 0.12) 56%,
+    transparent 76%
+  );
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-active-zone-focus,
+  .map-active-zone-focus::before {
+    animation: none;
+    transition: none;
+  }
 }
