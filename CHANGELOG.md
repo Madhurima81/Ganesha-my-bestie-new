@@ -1,5 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-04 d] - Parent area: grown-up check replaces the 4-digit PIN
+**Touched:** src/lib/components/navigation/ParentDashboard.jsx, ParentDashboardGate.test.jsx (new), ParentDashboardReset.test.jsx, ParentDashboardResume.test.jsx, ExplorerManager.jsx and src/App.jsx (comments only), DECISIONS.md.
+**Changed:** the parent dashboard asked for a 4-digit PIN the parent had to create and remember (no forgot-PIN way out), and editing or deleting a profile needed it. It now shows the same grown-up check as onboarding and Add Friend (ParentGate: 4 random digits spelled out, typed back on a keypad; wrong answer = new digits; Back leaves). Nothing is stored or remembered. The "Change PIN" row is gone. Coming back from the profile picker still reopens Settings without asking again. Old saved PINs are ignored; Delete all data still clears them. PinScreen.jsx and the PIN helpers in dashboardData.js are left unused.
+**Verified:** 15 jest cases in the navigation folder pass (4 suites, run with a temporary local jest config: this checkout lacks identity-obj-proxy and the stock config cannot run modules using import.meta.env), including 3 new ones for the gate; parse checks.
+**NOT verified:** on a device.
+**Trade-off:** weaker than a private PIN; a child who can read the spelled-out digits can open the parent area (same bar as Add Friend). Chosen by Madhurima over keeping a PIN.
+
 ## [2026-11-04 c] - Child profile picker: long-press delete removed
 **Touched:** src/lib/components/navigation/CleanProfileSelector.jsx.
 **Changed:** a child could erase a profile by pressing and holding it for 0.9 s (an "x" and a confirm box, no PIN). Removed the long-press, the manage mode, the delete "x", the Done button and the delete confirm. Tapping a profile just opens it. Deleting now happens only in the parent area (Settings, Explorers, Delete explorer). The picker's help text and the "could not be created" message (4 profiles already) now point to that place. The now-unused CSS (.clean-delete-trigger, .manage, .manage-done-btn, .clean-delete-card) is left in place.

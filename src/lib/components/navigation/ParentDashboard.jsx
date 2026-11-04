@@ -9,11 +9,10 @@
 
 import React, { useState, useEffect } from 'react'
 import './ParentDashboard.css'
-import PinScreen     from '../dashboard/PinScreen'
+import ParentGate    from '../onboarding/ParentGate'
 import PrivacyPolicy from '../onboarding/PrivacyPolicy'
 import GameStateManager from '../../services/GameStateManager'
 import { getUnlockedLearnings, getLatestLearning, getLearningById } from '../../services/LearningProgress'
-import { clearPin } from '../../utils/dashboardData'
 import { setSoundPref, subscribeSoundPrefs } from '../../utils/soundPrefs'
 import { isVoiceMuted, setVoiceMuted, subscribeVoiceMute, migrateLegacyVoicePref } from '../../utils/voiceMute'
 import pwaInstallManager, { isStandalone, getInstallGuide } from '../../services/PwaInstallManager'
@@ -65,7 +64,7 @@ const CV = {
 }
 
 // initialUnlocked / initialTab: coming BACK from a screen the parent opened from here (Settings > Child profile):
-// they already entered the PIN a moment ago, so reopen straight on that tab. App only passes them on that return path.
+// they already passed the grown-up check a moment ago, so reopen straight on that tab. App only passes them on that return path.
 export default function ParentDashboard({ onBack, onOpenChildProfile, initialUnlocked = false, initialTab = 'forParents' }) {
   const [unlocked, setUnlocked] = useState(!!initialUnlocked)
   const [activeTab, setActiveTab] = useState(initialTab || 'forParents')
@@ -140,7 +139,7 @@ export default function ParentDashboard({ onBack, onOpenChildProfile, initialUnl
   }
 
   // Start the current child over: wipes their game progress, keeps their profile (name, age, avatar).
-  // Lives here (behind the PIN) so a child can never hit it by accident. Was "Start Over" in the welcome popup.
+  // Lives here (behind the grown-up check) so a child can never hit it by accident. Was "Start Over" in the welcome popup.
   const handleResetProgress = () => {
     if (!profileId) return
     const who = childName || 'this child'
@@ -207,9 +206,11 @@ export default function ParentDashboard({ onBack, onOpenChildProfile, initialUnl
     else setSoundPref(key, nextValue)
   }
 
-  // ── PIN gate ──────────────────────────────────────────────────
+  // ── Grown-up check ────────────────────────────────────────────
+  // Same random-digits check as onboarding / Add Friend: 4 digits spelled out, typed back on a keypad.
+  // Nothing to remember and nothing stored (replaced the 4-digit PIN, 2026-11-04). Back leaves the dashboard.
   if (!unlocked) {
-    return <PinScreen onSuccess={() => setUnlocked(true)} />
+    return <ParentGate onComplete={() => setUnlocked(true)} onBackToWelcome={onBack} />
   }
 
   if (showPrivacyPolicy) {
@@ -498,15 +499,6 @@ export default function ParentDashboard({ onBack, onOpenChildProfile, initialUnl
                 sublabel="Review what this local-only version stores on this device"
                 action={() => setShowPrivacyPolicy(true)}
                 actionLabel="Open"
-              />
-              <SettingRow
-                label="Change PIN"
-                sublabel="Update your 4-digit parent PIN"
-                action={() => {
-                  clearPin()
-                  setUnlocked(false)
-                }}
-                actionLabel="Change"
               />
               <SettingRow
                 label="Delete all data"

@@ -443,7 +443,7 @@ const dareOpenTimerRef = useRef(null);
 const sceneJustCompletedRef = useRef(false);
 
 // Parent Dashboard > Settings > Child profile opens the profile picker; this lets that screen offer "back to Settings"
-// and reopen the dashboard on Settings without asking for the PIN again. Both reset as soon as the parent goes anywhere else.
+// and reopen the dashboard on Settings without asking for the grown-up check again. Both reset as soon as the parent goes anywhere else.
 const [profilePickerFromDashboard, setProfilePickerFromDashboard] = useState(false);
 const [resumeDashboardSettings, setResumeDashboardSettings] = useState(false);
 useEffect(() => {

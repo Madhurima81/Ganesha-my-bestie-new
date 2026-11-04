@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ParentDashboard from './ParentDashboard';
 
-jest.mock('../dashboard/PinScreen', () => ({ onSuccess }) => <button onClick={onSuccess}>enter-pin</button>);
+jest.mock('../onboarding/ParentGate', () => ({ onComplete }) => <button onClick={onComplete}>enter-pin</button>);
 
 beforeEach(() => {
   localStorage.clear();

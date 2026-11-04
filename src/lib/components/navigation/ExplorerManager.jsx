@@ -1,4 +1,4 @@
-// ExplorerManager.jsx — "Explorers" in Parent Settings (behind the PIN).
+// ExplorerManager.jsx — "Explorers" in Parent Settings (behind the grown-up check).
 // A row of the children on this device; tap one to open the Edit Explorer card: avatar (pencil badge),
 // name (with clear button), age (stepper 3–14), Cancel / Okay, and a two-step "Delete explorer".
 // Editing and deleting live here only, so a child can never rename or erase a profile by accident

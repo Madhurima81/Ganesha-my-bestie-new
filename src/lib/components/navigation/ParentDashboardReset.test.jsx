@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import ParentDashboard from './ParentDashboard';
 import GameStateManager from '../../services/GameStateManager';
 
-jest.mock('../dashboard/PinScreen', () => ({ onSuccess }) => <button onClick={onSuccess}>enter-pin</button>);
+jest.mock('../onboarding/ParentGate', () => ({ onComplete }) => <button onClick={onComplete}>enter-pin</button>);
 
 const seed = () => {
   const id = 'profile_test1';
