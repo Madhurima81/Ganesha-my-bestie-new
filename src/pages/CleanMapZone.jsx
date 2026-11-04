@@ -122,7 +122,6 @@ const RIVER_ART_IDS = new Set(['shlokaStream', 'shlokaWaterfall', 'shlokaBridge'
 
 const ZONE_ART_TO_ZONE_ID = {
   symbol: ZONE_IDS.SYMBOL,
-  shlokaWaterfall: ZONE_IDS.RIVER, // only the waterfall fades; stream + bridge stay colourful
   hut: ZONE_IDS.HUT,
   festival: ZONE_IDS.FESTIVAL,
   treehouse: ZONE_IDS.TREEHOUSE,
@@ -735,23 +734,12 @@ const MAP_ZONE_ART_DEFAULTS = {
     rotate: 0,
     opacity: 1
   },
-  shlokaStream: {
-    id: 'shlokaStream', label: 'Shloka River — River',
-    src: '/images/map/shloka-stream-opt.webp',
-    left: 57.3, top: 69.8, w: 30, h: 75.2,
+  // One combined image (river + bridge + waterfall), always full colour.
+  shlokaRiver: {
+    id: 'shlokaRiver', label: 'Shloka River — River, Bridge & Waterfall',
+    src: '/images/map/shloka-river-opt.webp',
+    left: 57.3, top: 59.9, w: 30, h: 95,
     centered: true, flip: false, rotate: 0, opacity: 1
-  },
-  shlokaWaterfall: {
-    id: 'shlokaWaterfall', label: 'Shloka River — Waterfall',
-    src: '/images/map/shloka-waterfall-opt.webp',
-    left: 57.3, top: 22.3, w: 30, h: 19.8,
-    centered: true, flip: false, rotate: 0, opacity: 1
-  },
-  shlokaBridge: {
-    id: 'shlokaBridge', label: 'Shloka River — Bridge',
-    src: '/images/map/shloka-bridge-opt.webp',
-    left: 55.7, top: 49.6, w: 13, h: 15,
-    centered: true, flip: false, rotate: 2, opacity: 1
   },
   cave: {
     id: 'cave',
@@ -1149,10 +1137,14 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
 
   const ACTIVE_FOCUS_ART = {
     [ZONE_IDS.SYMBOL]: 'symbol',
-    [ZONE_IDS.RIVER]: 'shlokaWaterfall',
     [ZONE_IDS.HUT]: 'hut',
   };
   const activeFocusArtId = currentMapZoneId ? ACTIVE_FOCUS_ART[currentMapZoneId] : null;
+  // The river is one image, so its halo uses a fixed box around the waterfall rocks.
+  const riverFocusStyle = {
+    left: '63.6%', top: '23.4%', width: '19%', height: '24%',
+    transform: 'translate(-50%, -50%)',
+  };
 
   const responsiveOverlayItems = isPhoneLandscape
     ? Object.fromEntries(
@@ -1505,6 +1497,9 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         alt="Map"
         className="map-bg-img"
       />
+      {progressLoaded && currentMapZoneId === ZONE_IDS.RIVER && (
+        <div className="map-active-zone-focus" style={riverFocusStyle} aria-hidden="true" />
+      )}
       {progressLoaded && activeFocusArtId && zoneArtItems[activeFocusArtId] && (
         <div
           className="map-active-zone-focus"
@@ -1538,16 +1533,13 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         }}
         style={getZoneArtStyle('symbol', { pointerEvents: 'none' })}
       />
-      {['shlokaStream', 'shlokaWaterfall'].map((id) => (
-        <img
-          key={id}
-          src={zoneArtItems[id].src}
-          alt=""
-          className="map-zone-art"
-          aria-hidden="true"
-          style={getZoneArtStyle(id)}
-        />
-      ))}
+      <img
+        src={zoneArtItems.shlokaRiver.src}
+        alt=""
+        className="map-zone-art"
+        aria-hidden="true"
+        style={getZoneArtStyle('shlokaRiver')}
+      />
       {/* Wonder Caves is temporarily hidden from the map. Keep this block for quick restore later.
       <img
         src="/images/map/cavelight.webp"
