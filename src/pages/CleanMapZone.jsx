@@ -118,7 +118,6 @@ const writeMapFlag = (key) => {
 const getZoneStartedKey = (profileId, zoneId) => `gmb_zone_started_${profileId}_${zoneId}`;
 const getMapUnlockSeenKey = (profileId, zoneId) => `gmb_map_unlock_seen_${profileId}_${zoneId}`;
 
-const RIVER_ART_IDS = new Set(['shlokaStream', 'shlokaWaterfall', 'shlokaBridge']);
 
 const ZONE_ART_TO_ZONE_ID = {
   symbol: ZONE_IDS.SYMBOL,
@@ -1104,20 +1103,6 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         hierarchyFilter = 'saturate(0.55)';
       }
 
-    }
-
-    // Shloka River's three pieces (river, waterfall, bridge) are not in ZONE_ART_TO_ZONE_ID (no scale change:
-    // their art is big). Until it is the current zone, dim them the same way as the Lodge: only the current
-    // zone is in full colour.
-    if (RIVER_ART_IDS.has(id)) {
-      const riverFocus =
-        currentMapZoneId === ZONE_IDS.RIVER || getZoneState(ZONE_IDS.RIVER, zoneProgress) === 'completed';
-      if (!riverFocus) {
-        // A wash (less colour, a little lighter), NOT transparency: opacity would let the bush painted into the
-        // map background show through the river.
-        hierarchyOpacity = 1;
-        hierarchyFilter = 'saturate(0.65) brightness(1.08)';
-      }
     }
 
     if (hierarchyScale !== 1) transforms.push(`scale(${hierarchyScale})`);
