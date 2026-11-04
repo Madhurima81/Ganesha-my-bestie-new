@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freeze checklist: iPad and phone</title>
+<style>
+  :root{--ink:#3d2b24;--heading:#5D2E0F;--muted:#846f65;--paper:#fffdf6;--bg:#f7f2ea;--border:#eadfc9;--purple:#7356b4;--ok:#2E7D32}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito','Segoe UI',sans-serif;line-height:1.5}
+  .wrap{max-width:860px;margin:0 auto;padding:20px 16px 60px}
+  h1{font-family:'Baloo 2','Trebuchet MS',sans-serif;color:var(--heading);font-size:28px;margin:6px 0 2px}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 18px}
+  .bar{position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:2}
+  .track{height:8px;background:#efe7d7;border-radius:99px;overflow:hidden}
+  .fill{height:100%;width:0;background:var(--purple);transition:width .2s}
+  .meta{font-size:12px;color:var(--muted);font-weight:700;margin-top:4px}
+  section{background:var(--paper);border:1px solid var(--border);border-radius:18px;margin:14px 0;padding:6px 16px 10px}
+  h2{font-family:'Baloo 2','Trebuchet MS',sans-serif;color:var(--heading);font-size:19px;margin:10px 0 2px}
+  .why{font-size:13px;color:var(--muted);margin:0 0 6px}
+  .row{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;padding:10px 0;border-top:1px solid #f1e9dc}
+  .row:first-of-type{border-top:0}
+  .txt{flex:1;min-width:0}
+  .t{font-weight:800}
+  .e{font-size:13px;color:#69564d}
+  .ticks{display:flex;gap:10px;flex:none}
+  .ticks label{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:800;color:#4f378b;cursor:pointer;min-width:52px;padding:4px 2px}
+  input[type=checkbox]{width:28px;height:28px;accent-color:var(--purple);margin:0}
+  .tag{display:inline-block;font-size:11px;font-weight:800;background:#f3ecff;color:#4f378b;border-radius:99px;padding:1px 8px;margin-left:6px}
+  .note{border:1px solid #eadbbd;background:#fff8e5;border-radius:14px;padding:10px 14px;font-size:13px;margin:12px 0}
+  textarea{width:100%;min-height:60px;border:1px solid #e5d9c7;border-radius:12px;padding:8px 10px;font:inherit;font-size:13px;margin-top:6px}
+  button{border:1px solid #dfd2f4;background:#fffaf0;color:#4f378b;border-radius:99px;height:36px;padding:0 14px;font-weight:800;cursor:pointer}
+  @media (max-width:560px){.row{flex-direction:column}.ticks{align-self:flex-end}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Freeze checklist: iPad and phone</h1>
+  <p class="sub">Run this on the newest green staging build before freezing. Tick the iPad box and the Phone box separately where an item has both. Ticks are saved in this browser only.</p>
+
+  <div class="bar">
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <div class="meta"><span id="count">0 of 0 done</span> &nbsp;&middot;&nbsp; <button type="button" id="reset">Clear ticks</button></div>
+  </div>
+
+  <div class="note"><strong>Before you start:</strong> open the Netlify <em>staging</em> link, not localhost. Keep DevTools "Disable cache" <strong>unticked</strong>. Installed app: close and reopen it twice to pick up a new build.</div>
+
+  <section>
+    <h2>0. Setup <span class="tag">both devices</span></h2>
+    <p class="why">Do this first.</p>
+    <div class="row"><div class="txt"><div class="t">Netlify is green for the newest staging commit</div><div class="e">Then close and reopen the installed app twice so it has the new build.</div></div><div class="ticks"><label><input type="checkbox" data-k="s1i0any">Done</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Recorder dot is gone</div><div class="e">No small draggable dot at the top. The offline banner (&quot;Getting Ganesha ready...&quot;) finishes.</div></div><div class="ticks"><label><input type="checkbox" data-k="s1i1ipad">iPad</label><label><input type="checkbox" data-k="s1i1phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Two profiles to test with</div><div class="e">A brand-new profile and one that is part-way through.</div></div><div class="ticks"><label><input type="checkbox" data-k="s1i2any">Done</label></div></div>
+    <div class="row"><div class="txt"><div class="t">No repeating console errors</div><div class="e">Open the browser console on any device that has one (Windows app: Ctrl+Shift+I).</div></div><div class="ticks"><label><input type="checkbox" data-k="s1i3any">Done</label></div></div>
+  </section>
+  <section>
+    <h2>1. First run and install <span class="tag">iPad Safari / iPhone Safari</span></h2>
+    <div class="row"><div class="txt"><div class="t">Add to Home Screen first card</div><div class="e">In Safari, not installed: the grown-up check, then the &quot;Add to Home Screen first&quot; card. &quot;Continue here instead&quot; still works.</div></div><div class="ticks"><label><input type="checkbox" data-k="s2i0ipad">iPad</label><label><input type="checkbox" data-k="s2i0phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Installed app keeps the profile</div><div class="e">Add to Home Screen, open the app, set up there. The profile survives closing and reopening.</div></div><div class="ticks"><label><input type="checkbox" data-k="s2i1ipad">iPad</label><label><input type="checkbox" data-k="s2i1phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">iPad skips the device-choice screen</div><div class="e">&quot;Where would you like to begin?&quot; does not appear.</div></div><div class="ticks"><label><input type="checkbox" data-k="s2i2ipad">iPad</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Link opened inside the Google app</div><div class="e">The banner suggests opening it in Safari.</div></div><div class="ticks"><label><input type="checkbox" data-k="s2i3any">Done</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Setup is portrait, then rotate, then landscape</div><div class="e">Portrait through All Set, then the rotate screen, then the child&#x27;s landscape flow.</div></div><div class="ticks"><label><input type="checkbox" data-k="s2i4phone">Phone</label></div></div>
+  </section>
+  <section>
+    <h2>2. Parent area <span class="tag">behind the grown-up check</span></h2>
+    <div class="row"><div class="txt"><div class="t">Grown-up check opens it</div><div class="e">4 spelled-out digits typed on the keypad. A wrong answer gives new digits. Back leaves.</div></div><div class="ticks"><label><input type="checkbox" data-k="s3i0ipad">iPad</label><label><input type="checkbox" data-k="s3i0phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Settings has Explorers and no Change PIN</div><div class="e">Sound toggles work. Reset progress and Delete all data are behind the same check.</div></div><div class="ticks"><label><input type="checkbox" data-k="s3i1ipad">iPad</label><label><input type="checkbox" data-k="s3i1phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Edit Explorer (spare profile)</div><div class="e">Change avatar, name and age; Okay saves; Cancel changes nothing; Delete explorer asks once and removes only that explorer.</div></div><div class="ticks"><label><input type="checkbox" data-k="s3i2ipad">iPad</label><label><input type="checkbox" data-k="s3i2phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Profile picker has no long-press delete</div><div class="e">Pressing and holding a profile does nothing; a tap opens it.</div></div><div class="ticks"><label><input type="checkbox" data-k="s3i3ipad">iPad</label><label><input type="checkbox" data-k="s3i3phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Explorers card fits in landscape</div><div class="e">Avatar grid opens without covering Okay; tiles scroll sideways if there are many.</div></div><div class="ticks"><label><input type="checkbox" data-k="s3i4phone">Phone</label></div></div>
+  </section>
+  <section>
+    <h2>3. Map and Zone Welcome <span class="tag">all three zones</span></h2>
+    <div class="row"><div class="txt"><div class="t">Map: every destination visible and tappable</div><div class="e">Profile chip compact. Phone: both bridges visible.</div></div><div class="ticks"><label><input type="checkbox" data-k="s4i0ipad">iPad</label><label><input type="checkbox" data-k="s4i0phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Zone Welcome draws fully on first visit</div><div class="e">Background, title and cards show in Symbol Mountain, Shloka River and About Me Hut (including right after unlocking). Phone: the carousel swipes.</div></div><div class="ticks"><label><input type="checkbox" data-k="s4i1ipad">iPad</label><label><input type="checkbox" data-k="s4i1phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Start / Continue / Play Again show the right scene</div><div class="e">Part-way profile and finished profile.</div></div><div class="ticks"><label><input type="checkbox" data-k="s4i2ipad">iPad</label><label><input type="checkbox" data-k="s4i2phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Home on a completion card</div><div class="e">Tap Home: Zone Welcome shows the NEXT scene with Start (e.g. after scene 4, scene 5).</div></div><div class="ticks"><label><input type="checkbox" data-k="s4i3ipad">iPad</label><label><input type="checkbox" data-k="s4i3phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Zone badge on a completion screen</div><div class="e">Shows the finished scene once with Play Again.</div></div><div class="ticks"><label><input type="checkbox" data-k="s4i4ipad">iPad</label><label><input type="checkbox" data-k="s4i4phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Home on the final scenes goes to the map</div><div class="e">Sacred Assembly, Shloka Finale, My Indian Story.</div></div><div class="ticks"><label><input type="checkbox" data-k="s4i5ipad">iPad</label><label><input type="checkbox" data-k="s4i5phone">Phone</label></div></div>
+    <textarea placeholder="Notes: device, time, what went wrong..." data-k="note4"></textarea>
+  </section>
+  <section>
+    <h2>4. The 13 scenes <span class="tag">play each to the end</span></h2>
+    <p class="why">For every scene: it opens, the first line speaks, it plays through, the completion card fits without scroll, Play Again resets it.</p>
+    <div class="row"><div class="txt"><div class="t">Modak</div><div class="e">Opening line and the &quot;Press and hold&quot; line both speak.</div></div><div class="ticks"><label><input type="checkbox" data-k="s5i0ipad">iPad</label><label><input type="checkbox" data-k="s5i0phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Pond</div><div class="e">Lotus ring and hand sit on the bud; white flowers sit on the pebbles; rock ring on the rock.</div></div><div class="ticks"><label><input type="checkbox" data-k="s5i1ipad">iPad</label><label><input type="checkbox" data-k="s5i1phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Symbol Mountain scene 3</div><div class="e">Plays through; collection and reveal look right.</div></div><div class="ticks"><label><input type="checkbox" data-k="s5i2ipad">iPad</label><label><input type="checkbox" data-k="s5i2phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Sacred Assembly</div><div class="e">Final fireworks last about 8 seconds, then the mandala and completion.</div></div><div class="ticks"><label><input type="checkbox" data-k="s5i3ipad">iPad</label><label><input type="checkbox" data-k="s5i3phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Vakratunda</div><div class="e">Frog start, water area, stone, logs and reeds in the right places. Phone: phone sizes look right.</div></div><div class="ticks"><label><input type="checkbox" data-k="s5i4ipad">iPad</label><label><input type="checkbox" data-k="s5i4phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Suryakoti / Samaprabha</div><div class="e">Press and hold shows no image menu; scratch and shadow line up.</div></div><div class="ticks"><label><input type="checkbox" data-k="s5i5ipad">iPad</label><label><input type="checkbox" data-k="s5i5phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Nirvighnam / Kurumedeva</div><div class="e">Play to the very end, once with sound and once muted. No freeze on the success line.</div></div><div class="ticks"><label><input type="checkbox" data-k="s5i6ipad">iPad</label><label><input type="checkbox" data-k="s5i6phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Sarvakaryeshu / Sarvada</div><div class="e">Choices readable; hidden symbol hit area lines up.</div></div><div class="ticks"><label><input type="checkbox" data-k="s5i7ipad">iPad</label><label><input type="checkbox" data-k="s5i7phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Shloka River Finale</div><div class="e">Shloka shows (also muted), boats place, the recap plays, eight boats readable.</div></div><div class="ticks"><label><input type="checkbox" data-k="s5i8ipad">iPad</label><label><input type="checkbox" data-k="s5i8phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Family Tree</div><div class="e">Tree fits; tray pictures show; info card fits.</div></div><div class="ticks"><label><input type="checkbox" data-k="s5i9ipad">iPad</label><label><input type="checkbox" data-k="s5i9phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Favourite Food</div><div class="e">Drawing pad: type a word, tap the brush, drag the word with a finger, Undo, Save, reopen.</div></div><div class="ticks"><label><input type="checkbox" data-k="s5i10ipad">iPad</label><label><input type="checkbox" data-k="s5i10phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Dreams and Wishes</div><div class="e">Same drawing pad check; cloud, flower, bush and tree not clipped.</div></div><div class="ticks"><label><input type="checkbox" data-k="s5i11ipad">iPad</label><label><input type="checkbox" data-k="s5i11phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">My Indian Story</div><div class="e">Place names play once in full; the closing line is not cut.</div></div><div class="ticks"><label><input type="checkbox" data-k="s5i12ipad">iPad</label><label><input type="checkbox" data-k="s5i12phone">Phone</label></div></div>
+  </section>
+  <section>
+    <h2>5. Everywhere <span class="tag">cross-cutting</span></h2>
+    <div class="row"><div class="txt"><div class="t">One Ganesha voice</div><div class="e">The same voice in opening modals, hints and scenes.</div></div><div class="ticks"><label><input type="checkbox" data-k="s6i0ipad">iPad</label><label><input type="checkbox" data-k="s6i0phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Continue after leaving a scene</div><div class="e">Leave mid-scene, come back, tap Continue: the line is heard and the scene is not stuck.</div></div><div class="ticks"><label><input type="checkbox" data-k="s6i1ipad">iPad</label><label><input type="checkbox" data-k="s6i1phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">No blank or old pictures</div><div class="e">Pond, Dreams, the Finale and Scenes 2 to 4 after two reloads.</div></div><div class="ticks"><label><input type="checkbox" data-k="s6i2ipad">iPad</label><label><input type="checkbox" data-k="s6i2phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">No image menu on press and hold</div><div class="e">No &quot;Save to Photos / Search inside image&quot; in Safari or the installed app.</div></div><div class="ticks"><label><input type="checkbox" data-k="s6i3ipad">iPad</label><label><input type="checkbox" data-k="s6i3phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">No sideways scroll; rotate and return</div><div class="e">Stage re-centres after rotating; browser bar collapsing does not push controls away.</div></div><div class="ticks"><label><input type="checkbox" data-k="s6i4ipad">iPad</label><label><input type="checkbox" data-k="s6i4phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Background and return</div><div class="e">No overlay, hand demo or drawer left stuck.</div></div><div class="ticks"><label><input type="checkbox" data-k="s6i5ipad">iPad</label><label><input type="checkbox" data-k="s6i5phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Keyboard</div><div class="e">Name field and the drawing pad&#x27;s text box: usable with the keyboard open, fully restored after.</div></div><div class="ticks"><label><input type="checkbox" data-k="s6i6ipad">iPad</label><label><input type="checkbox" data-k="s6i6phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Safe areas and fonts</div><div class="e">Controls clear of the notch and corners. Baloo 2 and Nunito, no fallback font.</div></div><div class="ticks"><label><input type="checkbox" data-k="s6i7ipad">iPad</label><label><input type="checkbox" data-k="s6i7phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Inner Mandala has no thin line</div><div class="e">After a Symbol Mountain scene, while the second symbol flies to its petal.</div></div><div class="ticks"><label><input type="checkbox" data-k="s6i8ipad">iPad</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Touch targets feel easy</div><div class="e">Thumb-sized (about 60px) everywhere, especially Explorers and the drawing pad.</div></div><div class="ticks"><label><input type="checkbox" data-k="s6i9phone">Phone</label></div></div>
+    <textarea placeholder="Notes: device, time, what went wrong..." data-k="note6"></textarea>
+  </section>
+  <section>
+    <h2>6. Offline and speed <span class="tag">after the offline download</span></h2>
+    <div class="row"><div class="txt"><div class="t">Offline play</div><div class="e">Wait for the offline banner to finish. Airplane mode: open the app, the map and one scene in each zone. Sound still plays.</div></div><div class="ticks"><label><input type="checkbox" data-k="s7i0ipad">iPad</label><label><input type="checkbox" data-k="s7i0phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Loader to map (mobile data)</div><div class="e">Time from opening the link to the map being tappable. Note below.</div></div><div class="ticks"><label><input type="checkbox" data-k="s7i1phone">Phone</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Zone Welcome (mobile data)</div><div class="e">Time from tapping a zone to it being ready. Note below.</div></div><div class="ticks"><label><input type="checkbox" data-k="s7i2phone">Phone</label></div></div>
+  </section>
+  <section>
+    <h2>7. Freeze <span class="tag">last</span></h2>
+    <p class="why">Nothing goes live until you approve it.</p>
+    <div class="row"><div class="txt"><div class="t">QA Copilot failures dealt with</div><div class="e">Every Critical and Major failure is fixed or knowingly accepted.</div></div><div class="ticks"><label><input type="checkbox" data-k="s8i0any">Done</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Known unknowns decided</div><div class="e">Nirvighnam freeze (cause unknown, safety net in place) and the mandala line on iPad (experiment live): if either showed up, capture __sceneLog() before freezing.</div></div><div class="ticks"><label><input type="checkbox" data-k="s8i1any">Done</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Backup branch and tag made</div><div class="e">Make a backup/ branch and a tag before the merge.</div></div><div class="ticks"><label><input type="checkbox" data-k="s8i2any">Done</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Approved merge to prod</div><div class="e">Only after you say so. Never push straight to prod.</div></div><div class="ticks"><label><input type="checkbox" data-k="s8i3any">Done</label></div></div>
+  </section>
+
+  <section>
+    <h2>Anything else you noticed</h2>
+    <textarea placeholder="Notes..." data-k="noteall"></textarea>
+  </section>
+
+  <p class="sub">Nothing goes live until you approve a merge to production and a backup branch exists.</p>
+</div>
+<script>
+(function(){
+  var KEY='gmb-freeze-checklist-v1', boxes=[].slice.call(document.querySelectorAll('input[type=checkbox]')), notes=[].slice.call(document.querySelectorAll('textarea'));
+  var state={};
+  try{ state=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){}
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
+  function paint(){
+    var done=boxes.filter(function(b){return b.checked}).length;
+    document.getElementById('count').textContent=done+' of '+boxes.length+' done';
+    document.getElementById('fill').style.width=(boxes.length?done/boxes.length*100:0)+'%';
+  }
+  boxes.forEach(function(b){ b.checked=!!state[b.dataset.k]; b.addEventListener('change',function(){ state[b.dataset.k]=b.checked; save(); paint(); }); });
+  notes.forEach(function(n){ n.value=state[n.dataset.k]||''; n.addEventListener('input',function(){ state[n.dataset.k]=n.value; save(); }); });
+  document.getElementById('reset').addEventListener('click',function(){ boxes.forEach(function(b){ b.checked=false; state[b.dataset.k]=false; }); save(); paint(); });
+  paint();
+})();
+</script>
+</body>
+</html>
