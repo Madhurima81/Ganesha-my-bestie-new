@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-04 c] - Child profile picker: long-press delete removed
+**Touched:** src/lib/components/navigation/CleanProfileSelector.jsx.
+**Changed:** a child could erase a profile by pressing and holding it for 0.9 s (an "x" and a confirm box, no PIN). Removed the long-press, the manage mode, the delete "x", the Done button and the delete confirm. Tapping a profile just opens it. Deleting now happens only in the parent area (Settings, Explorers, Delete explorer). The picker's help text and the "could not be created" message (4 profiles already) now point to that place. The now-unused CSS (.clean-delete-trigger, .manage, .manage-done-btn, .clean-delete-card) is left in place.
+**Verified:** parse check; read the diff.
+**NOT verified:** the picker on a device; nothing else in the app deleted profiles through this screen.
+
 ## [2026-11-04 b] - Parent Settings: Explorers row and Edit Explorer card
 **Touched:** src/lib/components/navigation/ExplorerManager.jsx, ExplorerManager.css, ExplorerManager.test.jsx (new), ParentDashboard.jsx, src/lib/services/GameStateManager.js (updateProfile), src/lib/utils/explorerAvatar.js (EXPLORER_AVATARS).
 **Changed:** profiles could not be renamed or re-aged anywhere, and the only way to delete one was a 0.9 s long-press on the child-facing picker (no PIN). Settings (behind the PIN) now has an Explorers row (avatar, name, age per child); tapping one opens an Edit Explorer card: avatar with a pencil badge (20-friend picker), name (max 12, clear button), age stepper 3-14, Cancel / Okay (Okay disabled while the name is empty), and a two-step Delete explorer (confirm, then remove only that explorer and its data). GameStateManager.updateProfile changes name, age and avatar only and keeps childName in step for the active child; the dashboard re-reads the active child after an edit. All controls 60px; Baloo 2 / Nunito; `pdex-` prefixed CSS.

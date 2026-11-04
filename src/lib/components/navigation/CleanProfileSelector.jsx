@@ -39,9 +39,7 @@ const CleanProfileSelector = ({
   const [selectedAge, setSelectedAge] = useState(resumedAge);
   const [currentStep, setCurrentStep] = useState(1);
   const [isCreatingProfile, setIsCreatingProfile] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
-  const [manageModeId, setManageModeId] = useState(null);
   const [createError, setCreateError] = useState('');
 
   // Post-Age flow:
@@ -57,13 +55,6 @@ const CleanProfileSelector = ({
   const [showAddGate, setShowAddGate] = useState(false);
   const { isAudioOn, toggleAudio } = useAudioPreference();
 
-  const longPressTimer = React.useRef(null);
-  // HIGH FIX: guards against the stale-closure touchend synthetic click. The
-  // 900ms timer flips manageModeId state, but a touchend-triggered click event
-  // fires with the pre-timer `isManaging` closure still false, launching the
-  // game instead of entering delete mode. A ref updates synchronously so the
-  // click handler always sees the current value.
-  const isManagingRef = React.useRef(false);
   const voiceTimersRef = useRef([]);
   const avatarAudioCtxRef = useRef(null);
 
@@ -114,7 +105,6 @@ const CleanProfileSelector = ({
 
   useEffect(() => {
     return () => {
-      clearLongPressTimer();
       voiceTimersRef.current.forEach(clearTimeout);
       if (avatarAudioCtxRef.current?.close) {
         avatarAudioCtxRef.current.close().catch(() => {});
@@ -123,13 +113,6 @@ const CleanProfileSelector = ({
       window.speechSynthesis?.cancel();
     };
   }, []);
-
-  const clearLongPressTimer = () => {
-    if (longPressTimer.current) {
-      clearTimeout(longPressTimer.current);
-      longPressTimer.current = null;
-    }
-  };
 
   const resetCreateFlow = () => {
     setShowCreateProfile(false);
@@ -237,26 +220,13 @@ const CleanProfileSelector = ({
         setShowCreateProfile(false);
         setTransitionStage('ride');
       } else {
-        setCreateError('That profile could not be created. Try deleting one first.');
+        setCreateError('That profile could not be created. A grown-up can delete one in the Parent area (Settings, then Explorers).');
         setIsCreatingProfile(false);
       }
     } catch (error) {
       console.error('Error creating profile:', error);
       setCreateError('Something went wrong while creating your profile.');
       setIsCreatingProfile(false);
-    }
-  };
-
-  const confirmDelete = (profileId) => {
-    try {
-      GameStateManager.deleteProfile(profileId);
-      const updated = { ...profiles };
-      delete updated[profileId];
-      setProfiles(updated);
-      setShowDeleteConfirm(null);
-      setManageModeId(null);
-    } catch (error) {
-      console.error('Error deleting profile:', error);
     }
   };
 
@@ -695,48 +665,17 @@ const CleanProfileSelector = ({
             <div className="clean-profiles-grid">
               {profileArray.map((profile) => {
                 const animalId = getAnimalId(profile.avatar);
-                const isManaging = manageModeId === profile.id;
-                isManagingRef.current = isManaging;
                 return (
                   <div
                     key={profile.id}
-                    className={`clean-profile-card ${isManaging ? 'manage' : ''}`}
+                    className="clean-profile-card"
                     onClick={() => {
-                      if (!isManagingRef.current) {
-                        playUiTap(0.24);
-                        onProfileSelect(profile.id);
-                      }
+                      playUiTap(0.24);
+                      onProfileSelect(profile.id);
                     }}
-                    onMouseDown={() => {
-                      longPressTimer.current = setTimeout(() => {
-                        isManagingRef.current = true;
-                        setManageModeId(profile.id);
-                      }, 900);
-                    }}
-                    onMouseUp={clearLongPressTimer}
-                    onMouseLeave={clearLongPressTimer}
-                    onTouchStart={() => {
-                      longPressTimer.current = setTimeout(() => {
-                        isManagingRef.current = true;
-                        setManageModeId(profile.id);
-                      }, 900);
-                    }}
-                    onTouchEnd={clearLongPressTimer}
-                    onTouchCancel={clearLongPressTimer}
                   >
                     <div className="clean-animal-avatar-container">
                       <img src={`/images/new-explorer-${animalId}.webp`} alt="Profile" className="clean-animal-avatar-image" />
-                      {isManaging && (
-                        <button
-                          className="clean-delete-trigger"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowDeleteConfirm(profile.id);
-                          }}
-                        >
-                          x
-                        </button>
-                      )}
                     </div>
                     <div className="clean-profile-name">{profile.name}</div>
                   </div>
@@ -749,7 +688,6 @@ const CleanProfileSelector = ({
                   className="clean-profile-card empty"
                   onClick={() => {
                     playUiTap(0.24);
-                    setManageModeId(null);
                     setCreateError('');
                     // Re-adding a profile from here is a fresh "add profile" entry
                     // point — re-trigger the parent gate rather than skip straight in.
@@ -761,33 +699,6 @@ const CleanProfileSelector = ({
                 </div>
               ))}
             </div>
-
-            {manageModeId && (
-              <button className="manage-done-btn" onClick={() => setManageModeId(null)}>
-                Done
-              </button>
-            )}
-
-            {showDeleteConfirm && (
-              <div className="clean-modal-overlay" onClick={() => setShowDeleteConfirm(null)}>
-                <div className="clean-delete-card" onClick={(e) => e.stopPropagation()}>
-                  <h3 className="modal-title-small">Delete {profiles[showDeleteConfirm]?.name}?</h3>
-                  <p className="modal-text">This will erase all their progress. This can't be undone.</p>
-                  <button className="btn-delete-lavender" onClick={() => confirmDelete(showDeleteConfirm)}>
-                    Yes, Delete
-                  </button>
-                  <button
-                    className="btn-text-cancel"
-                    onClick={() => {
-                      setShowDeleteConfirm(null);
-                      setManageModeId(null);
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
           </>
         )}
 
@@ -804,7 +715,7 @@ const CleanProfileSelector = ({
                 <br />
                 <strong>3. Play:</strong> Tap your profile to continue.
                 <br />
-                <strong>4. Manage:</strong> Long-press a profile to show the delete button.
+                <strong>4. Manage:</strong> A grown-up can edit or delete a profile in the Parent area (Settings, then Explorers).
               </p>
               <PrimaryBtn label="Got it!" onClick={() => setShowInfo(false)} size="md" fullWidth />
             </div>
