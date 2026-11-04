@@ -17,6 +17,7 @@ import { clearPin } from '../../utils/dashboardData'
 import { setSoundPref, subscribeSoundPrefs } from '../../utils/soundPrefs'
 import { isVoiceMuted, setVoiceMuted, subscribeVoiceMute, migrateLegacyVoicePref } from '../../utils/voiceMute'
 import pwaInstallManager, { isStandalone, getInstallGuide } from '../../services/PwaInstallManager'
+import ExplorerManager from './ExplorerManager'
 
 const SOUND_PREF_KEYS = {
   ambience: 'gmb_parent_sound_ambience',
@@ -117,6 +118,17 @@ export default function ParentDashboard({ onBack, onOpenChildProfile, initialUnl
   useEffect(() => {
     return pwaInstallManager.subscribe(() => setAppInstalled(isStandalone()))
   }, [])
+
+  // The Explorers card edited or deleted a profile: re-read who is active so the rest of the dashboard follows.
+  const refreshActiveChild = () => {
+    const activeId = localStorage.getItem('activeProfileId')
+    setProfileId(activeId)
+    let profile = null
+    try { profile = GameStateManager.getProfiles?.()?.profiles?.[activeId] || null } catch (_) {}
+    setChildName(profile?.name || localStorage.getItem('childName') || '')
+    setChildAge(profile?.age || null)
+    setUnlockedLearnings(activeId ? getUnlockedLearnings(activeId) : [])
+  }
 
   const handleInstallClick = async () => {
     if (pwaInstallManager.isAvailable()) {
@@ -431,6 +443,9 @@ export default function ParentDashboard({ onBack, onOpenChildProfile, initialUnl
                 last
               />
             </div>
+
+            <SettingsSectionLabel>Explorers</SettingsSectionLabel>
+            <ExplorerManager onChanged={refreshActiveChild} />
 
             <SettingsSectionLabel>Child</SettingsSectionLabel>
             <div style={{ marginBottom: '1.2rem' }}>

@@ -1,0 +1,327 @@
+/* ExplorerManager.css — "Explorers" in Parent Settings.
+   Every class is prefixed `pdex-` (Vite bundles all CSS into one global sheet).
+   Adult-facing register, same palette as ParentDashboard. Baloo 2 headings/buttons, Nunito body. */
+
+.pdex-wrap { margin-bottom: 1.2rem; }
+
+.pdex-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 2px 2px 8px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pdex-tile {
+  flex: 0 0 auto;
+  width: 96px;
+  min-height: 60px;
+  padding: 10px 6px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: #FFFDF8;
+  border: 1.5px solid #EFEAFB;
+  border-radius: 16px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.pdex-tile:active { transform: scale(0.97); }
+
+.pdex-avatar {
+  display: block;
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 50%;
+  background: #EFEAFB;
+  -webkit-user-drag: none;
+}
+
+.pdex-tile-name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #5D2E0F;
+}
+
+.pdex-tile-age {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.74rem;
+  color: #8B4513;
+  opacity: 0.65;
+}
+
+.pdex-hint,
+.pdex-empty {
+  margin: 2px 0 0 0.2rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.78rem;
+  color: #8B4513;
+  opacity: 0.6;
+}
+
+/* ---------- Edit Explorer card ---------- */
+
+.pdex-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  background: rgba(60, 40, 90, 0.42);
+}
+
+.pdex-card {
+  box-sizing: border-box;
+  width: min(100%, 420px);
+  max-height: calc(100% - 8px);
+  overflow-y: auto;
+  padding: 18px 20px 14px;
+  background: #FFFDF8;
+  border-radius: 24px;
+  box-shadow: 0 18px 44px rgba(60, 40, 90, 0.28);
+  font-family: 'Nunito', sans-serif;
+  color: #5D2E0F;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.pdex-title {
+  margin: 0 0 12px;
+  text-align: center;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+  font-size: 1.3rem;
+  color: #5D2E0F;
+}
+
+.pdex-edit-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.pdex-avatar-btn {
+  position: relative;
+  flex: 0 0 auto;
+  width: 92px;
+  height: 92px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pdex-avatar--large { width: 92px; height: 92px; border: 3px solid #EFEAFB; box-sizing: border-box; }
+.pdex-avatar--confirm { width: 72px; height: 72px; margin: 0 auto 8px; }
+
+.pdex-pencil {
+  position: absolute;
+  right: -2px;
+  bottom: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: #8E7BD8;
+  border: 2px solid #FFFDF8;
+  border-radius: 50%;
+}
+
+.pdex-age {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  background: #F6F3FC;
+  border-radius: 999px;
+}
+
+.pdex-step {
+  width: 60px;
+  height: 60px;
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #EFEAFB;
+  color: #8E7BD8;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+  font-size: 1.7rem;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pdex-step:disabled { opacity: 0.35; cursor: default; }
+.pdex-step:active:not(:disabled) { transform: scale(0.94); }
+
+.pdex-age-value {
+  min-width: 46px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.05;
+}
+
+.pdex-age-label { font-size: 0.7rem; color: #8B4513; opacity: 0.65; }
+.pdex-age-number { font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 1.5rem; color: #5D2E0F; }
+
+.pdex-avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 10px;
+  background: #F6F3FC;
+  border-radius: 16px;
+}
+
+.pdex-avatar-choice {
+  min-height: 60px;
+  padding: 2px;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pdex-avatar-choice .pdex-avatar { width: 100%; height: auto; aspect-ratio: 1; }
+.pdex-avatar-choice.is-selected { border-color: #8E7BD8; }
+
+.pdex-field-label {
+  display: block;
+  margin: 0 0 4px 4px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #8B4513;
+  opacity: 0.7;
+}
+
+.pdex-name-wrap { position: relative; margin-bottom: 14px; }
+
+.pdex-name {
+  box-sizing: border-box;
+  width: 100%;
+  height: 60px;
+  padding: 0 64px 0 16px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.1rem; /* 16px+ keeps iOS from zooming on focus */
+  font-weight: 700;
+  color: #5D2E0F;
+  background: #fff;
+  border: 2px solid #D9D0F0;
+  border-radius: 16px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.pdex-name:focus { border-color: #8E7BD8; box-shadow: 0 0 0 3px rgba(142, 123, 216, 0.18); }
+
+.pdex-clear {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdex-clear span {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #D9D0F0;
+  color: #fff;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.pdex-actions { display: flex; gap: 10px; }
+
+.pdex-btn {
+  flex: 1;
+  min-height: 60px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+  font-size: 1.05rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pdex-btn:active:not(:disabled) { transform: scale(0.97); }
+.pdex-btn:disabled { opacity: 0.4; cursor: default; }
+.pdex-btn--ghost { background: #EFEAFB; color: #6F5CC0; }
+.pdex-btn--primary { background: #8E7BD8; color: #fff; box-shadow: 0 3px 0 #6F5CC0; }
+.pdex-btn--danger { background: #C62828; color: #fff; box-shadow: 0 3px 0 #8E1B1B; }
+
+.pdex-delete-link {
+  display: block;
+  width: 100%;
+  min-height: 60px;
+  margin-top: 4px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #C62828;
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.pdex-confirm { text-align: center; }
+
+.pdex-confirm-text {
+  margin: 0 0 16px;
+  font-size: 0.98rem;
+  line-height: 1.45;
+  color: #5D2E0F;
+}
+
+/* short landscape phones: keep the card inside the screen */
+@media (max-height: 520px) {
+  .pdex-card { padding: 12px 16px 8px; }
+  .pdex-title { margin-bottom: 6px; font-size: 1.1rem; }
+  .pdex-avatar-btn, .pdex-avatar--large { width: 72px; height: 72px; }
+  .pdex-edit-top { margin-bottom: 6px; }
+  .pdex-name-wrap { margin-bottom: 8px; }
+}

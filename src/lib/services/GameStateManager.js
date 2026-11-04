@@ -346,6 +346,28 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
     return null;
   }
 
+  // Parent edits an explorer (name, age, avatar). Progress, stars and settings are untouched.
+  // Returns the updated profile, or null when the id is unknown.
+  updateProfile(profileId, { name, age, avatar } = {}) {
+    const profiles = this.getProfiles();
+    const profile = profiles?.profiles?.[profileId];
+    if (!profile) return null;
+
+    if (typeof name === 'string' && name.trim()) profile.name = name.trim().substring(0, 12);
+    if (Number.isFinite(age)) profile.age = Math.min(14, Math.max(3, Math.round(age)));
+    if (avatar) profile.avatar = avatar;
+    profiles.lastUpdated = Date.now();
+    safeSetItem('gameProfiles', JSON.stringify(profiles));
+
+    // The dashboard and a few screens read the active child's name from here.
+    if (profileId === (this.activeProfileId || localStorage.getItem('activeProfileId'))) {
+      try { localStorage.setItem('childName', profile.name); } catch { /* best effort */ }
+    }
+
+    cloudSync.pushProfiles();
+    return profile;
+  }
+
   // Delete a profile (with all its data) - FIXED null checks
   deleteProfile(profileId) {
     const profiles = this.getProfiles();

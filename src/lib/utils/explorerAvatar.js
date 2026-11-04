@@ -13,3 +13,9 @@ export function getExplorerAvatarId(avatar) {
   }
   return null;
 }
+
+// The 20 explorer friends a child can pick. Art: /images/new-explorer-<id>.webp (+ .png fallback).
+export const EXPLORER_AVATARS = [
+  'monkey', 'elephant', 'peacock', 'tiger', 'lion', 'rabbit', 'squirrel', 'mouse', 'owl', 'deer',
+  'horse', 'camel', 'buffalo', 'cobra', 'turtle', 'fish', 'swan', 'crane', 'crow', 'fox',
+].map((id) => ({ id, name: id.charAt(0).toUpperCase() + id.slice(1) }));
