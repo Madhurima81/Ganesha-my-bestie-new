@@ -1,5 +1,18 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-05] - For Parents: learnings count as soon as they are found, and stay
+**Touched:** src/lib/services/LearningProgress.js, LearningProgress.test.js (new), ParentDashboard.jsx.
+**Changed:** the For Parents tab said "Nothing discovered yet" until a whole scene was finished, because it only read finished scenes. It now also reads each scene's live saved state the way the Inner Mandala does (Symbol Mountain `discoveredSymbols` / `symbols`; Shloka River `chantedVerses`), so a symbol or word shows once found. Every learning seen is remembered per child in `<profileId>_learningsUnlocked`, so Play Again or an unfinished scene cannot take it away; Reset progress, delete explorer and Delete all data clear it. Replay sessions and other children's scenes are ignored.
+**Verified:** LearningProgress and navigation tests (28 pass).
+**NOT verified:** on an iPad or phone. Other callers of getUnlockedLearnings (Daily Dare) now also see mid-scene learnings; not checked in the app.
+
+## [2026-11-04 g] - Parent Settings simplified; explorer tiles choose who plays; freeze checklist
+**Touched:** src/lib/components/navigation/ParentDashboard.jsx, ParentDashboard.css, ExplorerManager.jsx, ExplorerManager.css, ExplorerManager.test.jsx, ParentDashboardResume.test.jsx, docs/FREEZE_CHECKLIST.html (new).
+**Changed:** Settings now reads Sound (Sound effects, Ambience only; the Voice switch is gone because voice is always on, and Help no longer mentions it), Explorers, App (Install GMB hidden once installed, Help, About), Danger zone (Reset progress and Delete all data together, each still asks to confirm), and a small grey footer "Terms and conditions, Privacy policy and Copyright" (each name taps open a page). The Child profile / Switch explorer rows are removed: the Explorers row shows every child as a tile; tapping a tile makes that child the one playing (ring + "Playing now"), the pencil on the tile opens the Edit Explorer card, and a dashed "+ New explorer" tile opens the profile picker to add one. Row subtext lost its faded opacity (low contrast on cream). docs/FREEZE_CHECKLIST.html: tick-box iPad and phone checklist (85 boxes, ticks saved per browser).
+**Verified:** navigation tests (17 pass) before the final rebase.
+**NOT verified:** layout on an iPad or phone; four tiles in a row. A blank staging page seen on a laptop was a stale cached copy (assets load fine from staging), not a build fault, unconfirmed after a clean load.
+**Open:** the Terms and Copyright pages are DRAFT placeholder wording (and use the [SUPPORT EMAIL] placeholder); they need Madhurima's or legal review before release. PinScreen.jsx, the PIN helpers and the old long-press delete CSS are still unused.
+
 ## [2026-11-04 f] - Asset recorder no longer stays on in the browser
 **Touched:** src/lib/offline/assetRecorderCore.js, assetRecorderCore.test.js.
 **Changed:** `?recordassets=1` used to switch the recorder on for good in that browser or installed app, which left its panel (folded into a small draggable dot) on every test device and kept the offline download switched off there. It now runs only while the address has `?recordassets=1`; any load without it turns it off and clears the old stored `gmb_record_assets` switch, so devices heal themselves on their next launch (installed apps: after two launches of the new build). Supersedes the "?recordassets=0" instructions in entry e. To record again, keep `?recordassets=1` in the address for the whole session; a reload without it switches the recorder off.

@@ -12,7 +12,7 @@ import './ParentDashboard.css'
 import ParentGate    from '../onboarding/ParentGate'
 import PrivacyPolicy from '../onboarding/PrivacyPolicy'
 import GameStateManager from '../../services/GameStateManager'
-import { getUnlockedLearnings, getLatestLearning, getLearningById } from '../../services/LearningProgress'
+import { getUnlockedLearnings, getLatestLearning, getLearningById, unlockedKey } from '../../services/LearningProgress'
 import { setSoundPref, subscribeSoundPrefs } from '../../utils/soundPrefs'
 import { isVoiceMuted, setVoiceMuted, subscribeVoiceMute, migrateLegacyVoicePref } from '../../utils/voiceMute'
 import pwaInstallManager, { isStandalone, getInstallGuide } from '../../services/PwaInstallManager'
@@ -152,6 +152,7 @@ export default function ParentDashboard({ onBack, onOpenChildProfile, initialUnl
     try {
       GameStateManager.setActiveProfile?.(profileId)
       GameStateManager.resetGame()
+      localStorage.removeItem(unlockedKey(profileId)) // a fresh start also clears the remembered learnings
       window.alert(`${who}'s progress has been reset. They can begin again from the start.`)
     } catch (error) {
       console.error('Failed to reset progress:', error)
@@ -171,6 +172,7 @@ export default function ParentDashboard({ onBack, onOpenChildProfile, initialUnl
 
       profileIds.forEach((id) => {
         localStorage.removeItem(`${id}_gameProgress`)
+        localStorage.removeItem(unlockedKey(id))
       })
 
       Object.keys(localStorage).forEach((key) => {
