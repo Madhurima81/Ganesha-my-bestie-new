@@ -221,3 +221,20 @@ Lint detail: two existing hook-dependency warnings (cards at lines 279 and 601);
 
 
 Phase 1 clarification (append-only): encoding counts are 14 PNG lossless /4 WebP lossy for Scene2 and 8 PNG lossless /23 WebP lossy for Scene3. Poses without a measured or known container size keep original dimensions. Evidence covers 25 traced scene/layout/style snapshots.
+
+
+## Approved scene-local warm-up — Scenes2,3,4; test pending
+
+Madhurima authorized Samaprabha/Kurumedeva warm-up and then explicitly included Sarvada, leaving Scene1 unchanged. Six runtime files touched: the three live parent scene entries each pass one warmImages prop; SamaprabhaGame.jsx, KurumedevaGame.jsx and SarvadaGame.jsx change only image-preload imports/config/effects. No image file changes. Inactive later games use a stable empty preload array; active games retain their own full preload hook for direct Continue. Warm-up requires first-game phase, no recorder/sidebar pause, 2.5 seconds elapsed and loaded visible first-game image elements; it retries every 250 ms while missing/loading/hidden. Effect cleanup clears the pending timer. No early started flag; StrictMode setup-cleanup-setup works. Existing mounts are unchanged; no hidden game added. Voice, gameplay timers, state/resume/Play Again logic and shared helpers untouched.
+
+| Scene / later game | Opening image MB before →after | Opening seconds before →after | Image settle seconds before →after | Deferred unique URLs |
+|---|---:|---:|---:|---:|
+| Scene2 / Samaprabha | 2.240 →1.412 | 15.4 →15.0 | 17.7 →15.3 | 12 |
+| Scene3 / Kurumedeva | 3.573 →1.525 | 14.8 →14.7 | 15.4 →15.0 | 22 |
+| Scene4 / Sarvada | 3.667 →2.804 | 14.4 →14.4 | 17.2 →17.1 | 9 |
+
+Cache disabled, SW blocked, Slow 4G 1.6Mbps/562.5ms, 1024×768 DPR2; audio off equally. A single private production build is used for both arms: baseline locally restores only the three compiled preload argument conditionals to their original unconditional asset lists. This reconstructs eager image preloading on the same optimized-image build, not an old-source build. The deferred effect remains but shares preparePose's cache, so it adds no duplicate fetch in baseline. Fully drawn timed endpoint is the opening modal after Continue; game 1 and a fresh direct Continue into game 2 also visually checked. One pair per scene; no statistical speedup claim. Bytes are deferred, not eliminated: runtime trace verifies every counted deferred URL starts after first-game entry +2.4 s, finishes during first-game warm-up and is requested on direct Continue. Shared app warm-ups remain in totals. File-size budget unchanged.
+
+**Checks:** default ESLint no-undef filter output **(no output)** for all six files; full lint still exits 1 with exactly pre-existing errors/warnings, before/after normalized findings identical. Focused esbuild passes (Vite CSS/public-image URLs external). Deterministic lifecycle tests exercise exact extracted preload code for all three games: idle opening, 2.5 s delay, absent/unfinished first art, StrictMode cleanup/re-setup, navigation cancellation and immediate active preload. Production traces and screenshots supplement these tests. git diff --check passes. One exclusive-lock private build exit 0 in 377.5 s; 10-minute timeout, lock released; sibling build deleted after measurements and external logs retained. No Session B file edits.
+
+[Warm-up pass-check](IMAGE_PASSCHECK_A.md): fresh openings, first-game intros/art, later-game transitions, direct Continue and Play Again. Disable cache UNTICKED for crossfade/voice judgement. No commit/push; await Madhurima's test and explicit commit.

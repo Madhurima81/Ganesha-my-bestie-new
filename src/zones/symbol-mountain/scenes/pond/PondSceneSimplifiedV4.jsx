@@ -723,10 +723,15 @@ const PondSceneContent = ({
     revealConfig,
     showSparkle
   ]);
-  const replayCurrentVoice = useCallback(() => {
+  // Replay counts as engagement: restart the idle clock when it starts (so no hint fires over the
+  // line) and again when it really ends (so the L1/L3 window starts after the child heard it).
+  // `done` releases the button's lock on the line's real end (see VOReplayButton).
+  const replayCurrentVoice = useCallback((done) => {
     const replayKey = getPromptKeyForPhase();
-    if (replayKey) speakPondPrompt(replayKey);
-  }, [getPromptKeyForPhase, speakPondPrompt]);
+    if (!replayKey) { done?.(); return; }
+    resetIdleBaseline();
+    speakPondPrompt(replayKey, () => { resetIdleBaseline(); done?.(); });
+  }, [getPromptKeyForPhase, speakPondPrompt, resetIdleBaseline]);
   function onPauseHide() {
     stopSpokenVoice();
     if (rockHoldRafRef.current) {

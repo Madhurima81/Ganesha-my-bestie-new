@@ -13,8 +13,8 @@ import './EyesPopUpGame.css';
 import bgImg from './assets/images-opt/margin35/eyes-game/symbol_mountain_3_bg.webp';
 import monkeyWorriedImg from './assets/images-opt/margin35/eyes-game-v2/monkey_hungry_worried.webp';
 import peacockWorriedImg from './assets/images-opt/margin35/eyes-game-v2/peacock_worried_missing_feather.webp';
-import monkeyHappyImg from './assets/images-opt/margin35/eyes-game/monkey_04_smiles_holds_close.webp';
-import peacockHappyImg from './assets/images-opt/margin35/eyes-game/peacock_04_feather_highlight.webp';
+import monkeyHappyImg from './assets/images-opt/margin35/success-gifs/monkey_happy_mango.gif';
+import peacockHappyImg from './assets/images-opt/margin35/success-gifs/peacock_happy_feather.gif';
 import newFeatherBushImg from './assets/images-opt/margin35/eyes-game-v2/new_feather_bush.webp';
 import newMangoBushImg from './assets/images-opt/margin35/eyes-game-v2/new_mango_bush.webp';
 import featherFoundImg from './assets/images-opt/margin35/eyes-game-v2/peacock_feather_single.webp';
@@ -56,9 +56,9 @@ const BASE_LAYOUT = {
   // what made the bushes render too small the first time. Butterfly and
   // cream-flowers were dropped from the authored layout entirely, so they're
   // removed below rather than kept in their old spots.
-  monkeyCharacter: { x: 17.2, y: 40, w: 10.5, z: 15 },
+  monkeyCharacter: { x: 17.2, y: 40, w: 9, z: 15 },
   // Peacock sits higher/back (z 13: between the back bush z 12 and the front bush z 14), so the front greenery overlaps him
-  peacockCharacter: { x: 68.5, y: 39.5, w: 16.5, z: 13 },
+  peacockCharacter: { x: 68.5, y: 39.5, w: 12.5, z: 13 },
   // The bushes are permanent scenery — they never disappear. Only the
   // feather/mango icon itself (rendered separately, invisible until tapped)
   // flies out to the peacock/monkey. targetFeather/targetMango below are

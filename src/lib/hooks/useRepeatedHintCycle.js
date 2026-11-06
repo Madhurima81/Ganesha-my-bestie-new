@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import useOnVoiceReplay from './useOnVoiceReplay';
 
 /**
  * Repeats a staged hint pattern for a single gameplay sub-stage.
@@ -233,6 +234,10 @@ export default function useRepeatedHintCycle({
     if (realLevelRef.current >= 1) return;
     schedule();
   }, [schedule]);
+
+  // A replay tap counts like a genuine attempt: restarts the idle clock only if no hint is showing,
+  // so a hint never fires over a replayed line and a visible hint is never cleared by it.
+  useOnVoiceReplay(markAttempt);
 
   useEffect(() => {
     wrongAttemptCountRef.current = 0;

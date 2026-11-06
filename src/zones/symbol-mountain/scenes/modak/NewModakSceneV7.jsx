@@ -44,6 +44,7 @@ import { getLineCue } from '../../../../lib/config/content/voiceCues';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../../lib/components/feedback/ResumeCountdown';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
+import useOnVoiceReplay from '../../../../lib/hooks/useOnVoiceReplay';
 
 const RESUME_DELAY_MS = 3000;
 
@@ -709,6 +710,7 @@ const NewModakSceneMVPContent = ({
     setIdleHintLevel(0);
     setShowIdleGestureHint(false);
   }, []);
+  useOnVoiceReplay(resetIdleBaseline); // a replay tap restarts the idle clock (no hint over the line)
 
   const noteInteraction = useCallback(() => {
     recordInteraction();

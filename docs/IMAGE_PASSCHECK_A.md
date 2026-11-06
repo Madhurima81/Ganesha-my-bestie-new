@@ -33,3 +33,15 @@ Use the dev server with **Disable cache UNTICKED**.
 - [ ] Continue into both games and Play Again; check transitions and voice timing.
 
 Only one boat image import changed. No commit/push.
+
+
+## Later-game image warm-up — Scenes2,3,4
+
+Use the dev server with **Disable cache UNTICKED** for voice/crossfades.
+
+- [ ] Scene2: fresh opening and Suryakoti intro/art, then Samaprabha first clue/rock/happy fawn; Continue directly into Samaprabha and Play Again.
+- [ ] Scene3: fresh opening and Nirvighnam turtle/nest sequence, then Kurumedeva intro/bridge art; Continue directly into Kurumedeva and Play Again.
+- [ ] Scene4: fresh opening and Sarvakaryeshu intro/boat, then Sarvada morning/afternoon/night; Continue directly into Sarvada and Play Again.
+- [ ] Leave via the sidebar during the first-game opening, return, and check art/voice still work.
+
+Only preload timing changed; images remain the approved files. Scene1 untouched. No commit/push.

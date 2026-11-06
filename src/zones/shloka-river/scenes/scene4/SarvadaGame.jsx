@@ -24,7 +24,11 @@ const SYLLABLES = ['Sar', 'va', 'da'];
 const AUDIO = ['sar', 'va', 'da'];
 const PHASE_VO_KEYS = ['scene14_morning', 'scene14_afternoon', 'scene14_night'];
 const PHASE_AFTER_VO_KEYS = ['scene14_morning_after', 'scene14_afternoon_after', 'scene14_night_after'];
-const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
+// Tap Zone Debug panel is dev-only (same gate as the other scenes).
+const DEBUG_UI_ENABLED = typeof window !== 'undefined' &&
+  (window.location.pathname.includes('game-test') ||
+    new URLSearchParams(window.location.search).has('debugSarvada'));
+const SHOW_HIT_ZONES =typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
 
 const PHASES_CONFIG = [
   {
@@ -759,7 +763,7 @@ export default function SarvadaGame({
         />
       )}
 
-      <div className={`sarvada-debug ${showDebugPanel ? 'is-open' : ''}`}>
+      {DEBUG_UI_ENABLED && <div className={`sarvada-debug ${showDebugPanel ? 'is-open' : ''}`}>
         <button
           type="button"
           className="sarvada-debug-toggle"
@@ -837,7 +841,7 @@ export default function SarvadaGame({
             </div>
           </div>
         )}
-      </div>
+      </div>}
     </div>
   );
 }

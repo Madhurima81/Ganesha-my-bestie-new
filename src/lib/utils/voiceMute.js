@@ -28,6 +28,20 @@ export const setVoiceMuted = (muted) => {
   }
 };
 
+// [voice mute removed 2026-11-04] The voice mute UI is gone (voice is always on; parents use
+// device volume), so anyone who muted before would be silent with no way back. Run once at
+// startup, before render: force the flag to 'true' (voice on) and record that it ran.
+export const resetVoiceMuteOnce = () => {
+  try {
+    if (localStorage.getItem('gmb_voice_mute_removed_v1') === '1') return;
+    localStorage.setItem(VOICE_PREF_KEY, 'true');
+    localStorage.setItem('gmb_parent_sound_voice', '1');
+    localStorage.setItem('gmb_voice_mute_removed_v1', '1');
+  } catch {
+    // ignore storage errors
+  }
+};
+
 // Run once: a parent who switched Voice OFF in Settings before they were linked
 // keeps that choice. Only an explicit 0 counts as off; the new flag wins if already set.
 export const migrateLegacyVoicePref = () => {

@@ -27,6 +27,11 @@ const SYLLABLE_WATCHDOG_MS = 3500; // longest clip ("ma") is ~1.75s; if its onEn
 const DROP_RX = 9.5;
 const DROP_RY = 7;
 const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
+// Layout Debug panel is dev-only (same gate as the other scenes).
+const DEBUG_UI_ENABLED =
+  typeof window !== 'undefined' &&
+  (window.location.pathname.includes('game-test') ||
+    new URLSearchParams(window.location.search).has('debugMaha'));
 const DEBUG_PHASE_OPTIONS = [
   { value: 0, label: 'Start' },
   { value: 1, label: 'After Log 1' },
@@ -1102,6 +1107,7 @@ export default function MahakayaRescueGame({
         paused={handPaused}
       />
 
+      {DEBUG_UI_ENABLED && (
       <div
         className={`maha-debug-panel ${debugMode ? 'is-open' : ''}`}
         style={{ left: `${debugPanelPosition.x}px`, top: `${debugPanelPosition.y}px` }}
@@ -1209,6 +1215,7 @@ export default function MahakayaRescueGame({
           </div>
         )}
       </div>
+      )}
     </div>
   );
 }

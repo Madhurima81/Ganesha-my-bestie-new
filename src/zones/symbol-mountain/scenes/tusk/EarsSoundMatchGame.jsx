@@ -20,11 +20,11 @@ import hiddenGrassBushImg from './assets/images-opt/margin35/ears-game-v2/hidden
 import revealedGrassBushImg from './assets/images-opt/margin35/ears-game-v2/revealed_grass_bush.webp';
 import elephantThirstyImg from './assets/images-opt/margin35/ears-game-v2/elephant_thirsty.webp';
 import elephantDrinkingImg from './assets/images-opt/margin35/ears-game-v2/elephant_drinking.webp';
-import elephantHappyWaterImg from './assets/images-opt/margin35/ears-game-v2/elephant_happy_water.webp';
+import elephantHappyWaterImg from './assets/images-opt/margin35/success-gifs/elephant_happy_water.gif';
 import cowTiredImg from './assets/images-opt/margin35/ears-game-v2/cow_tired.webp';
 import cowHungryImg from './assets/images-opt/margin35/ears-game-v2/cow_hungry.webp';
 import cowEatingGrassImg from './assets/images-opt/margin35/ears-game-v2/cow_eating_grass.webp';
-import cowHappyChewingImg from './assets/images-opt/margin35/ears-game-v2/cow_happy_chewing_new.webp';
+import cowHappyChewingImg from './assets/images-opt/margin35/success-gifs/cow_happy_chewing.gif';
 import soundWaterDrip from './assets/audio/ear_water_drip.wav';
 import soundGrassRustle from './assets/audio/ear_grass_rustle.wav';
 import soundBirdAmbient from './assets/audio/ear_bird_forest_ambient.wav';
@@ -67,8 +67,8 @@ const DEFAULT_LAYOUT = {
   // Hierarchy tune: elephant -12.5% (24 -> 21), nudged left/down; cow keeps its
   // size and moves 3% right for separation. Sprites are non-interactive (taps
   // go to the *Hit zones above), so shrinking them doesn't affect touch targets.
-  elephantSprite: { x: 28.5, y: 75, w: 21, z: 20 },
-  cowSprite: { x: 60.5, y: 68.5, w: 18.75, z: 20 }
+  elephantSprite: { x: 28.5, y: 75, w: 18.7, z: 20 },
+  cowSprite: { x: 60.5, y: 68.5, w: 16.5, z: 20 }
 };
 
 const DEBUG_KEYS = [
@@ -144,7 +144,7 @@ const ROUNDS = [
       right: soundBirdAmbient
     },
     idleImg: elephantThirstyImg,
-    revealFrames: [elephantDrinkingImg, elephantHappyWaterImg]
+    revealFrames: [elephantHappyWaterImg]
   },
   {
     id: 'cow',
@@ -159,7 +159,7 @@ const ROUNDS = [
       right: soundGrassRustle
     },
     idleImg: cowHungryImg,
-    revealFrames: [cowEatingGrassImg, cowHappyChewingImg]
+    revealFrames: [cowHappyChewingImg]
   }
 ];
 
@@ -983,7 +983,8 @@ const EarsSoundMatchGame = ({
 
       setRoundIndex(nextIndex);
       playSequence(ROUNDS[nextIndex]);
-    }, (animalRound.revealFrames.length * REVEAL_FRAME_MS) + NEXT_ROUND_DELAY_MS);
+    // Fixed 2 frames' worth: the success GIF is now the only reveal frame, but the round pacing is unchanged.
+    }, (2 * REVEAL_FRAME_MS) + NEXT_ROUND_DELAY_MS);
   }, [clearTimers, markSuccessDoneIfFinished, onAnimalPositionsChange, onGameComplete, playSequence, roundIndex, schedule, speak, stopAudio]);
 
   const handleZoneTap = useCallback((zoneId, e) => {

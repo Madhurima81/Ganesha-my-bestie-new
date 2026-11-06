@@ -656,11 +656,13 @@ const CleanProfileSelector = ({
               </button>
             </div>
 
+            {/* [voice mute removed 2026-11-04] uncomment to restore.
             <AudioToggle
               isAudioOn={isAudioOn}
               onToggle={toggleAudio}
               position="top-right"
             />
+            */}
 
             <div className="clean-profiles-grid">
               {profileArray.map((profile) => {

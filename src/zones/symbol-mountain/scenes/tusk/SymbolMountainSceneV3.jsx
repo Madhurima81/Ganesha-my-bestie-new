@@ -65,6 +65,7 @@ import AudioToggle from '../../../../lib/components/ui/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import { getCollectionTarget } from '../../../../lib/utils/collectionTarget';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
+import useOnVoiceReplay from '../../../../lib/hooks/useOnVoiceReplay';
 import SceneStallPrompt from '../../../../lib/components/feedback/SceneStallPrompt';
 // import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay'; // superseded by SymbolAutoReveal
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
@@ -424,6 +425,7 @@ const SymbolMountainSceneContent = ({
     lastIdleInteractionAtRef.current = Date.now();
     l2VoiceEndedAtRef.current = null;
   }, []);
+  useOnVoiceReplay(resetIdleBaseline); // a replay tap restarts the idle clock (no hint over the line)
 
   const getSidebarTarget = useCallback((symbolId) => {
     const el = getCollectionTarget(symbolId);
