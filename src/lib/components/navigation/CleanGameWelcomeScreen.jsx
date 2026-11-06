@@ -613,6 +613,7 @@ const CleanGameWelcomeScreen = ({
   return (
     <div className={overlayClass}>
       {/* [welcome mute removed 2026-10-09] mute lives on Home map + Parent Dashboard; uncomment to restore.
+      [voice mute removed 2026-11-04] uncomment to restore.
       {!isModal && (
         <AudioToggle
           isAudioOn={audioOn}

@@ -3,7 +3,8 @@ import './AppSidebar.css';
 import SanskritVoiceRecorder from '../../../lib/components/audio/SanskritVoiceRecorder.jsx';
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 import { applyRecorderTheme } from '../../../lib/theme/RecorderThemeAdapter';
-import ChantCardModal from './components/ChantCardModal';
+import AffirmationCard from '../../../lib/components/affirmation/AffirmationCard';
+import { getLearningForKey } from '../../../lib/config/affirmationLookup';
 import PhoneCollectionDrawer from '../../../lib/components/collection/PhoneCollectionDrawer';
 import { playUiTap } from '../../../lib/services/AudioService';
 
@@ -170,10 +171,12 @@ const AppSidebar = ({
         </div>
 
         {showCard && selectedApp && (
-          <ChantCardModal
-            wordId={selectedApp}
-            themeStyles={chantThemeVars}
-            onPracticeChant={() => {
+          <AffirmationCard
+            name={appInfo[selectedApp].title}
+            image={appInfo[selectedApp].icon}
+            affirmation={getLearningForKey(selectedApp)?.affirmation}
+            backLabel="Back"
+            onChant={() => {
               setShowCard(false);
               setShowPopup(true);
             }}
@@ -256,10 +259,12 @@ const AppSidebar = ({
       />
 
       {showCard && selectedApp && (
-        <ChantCardModal
-          wordId={selectedApp}
-          themeStyles={chantThemeVars}
-          onPracticeChant={() => {
+        <AffirmationCard
+          name={appInfo[selectedApp].title}
+          image={appInfo[selectedApp].icon}
+          affirmation={getLearningForKey(selectedApp)?.affirmation}
+          backLabel="Back"
+          onChant={() => {
             setShowCard(false);
             setShowPopup(true);
           }}

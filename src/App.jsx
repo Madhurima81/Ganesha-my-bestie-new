@@ -973,6 +973,18 @@ const initializeApp = async () => {
       return;
     }
 
+    // Returning from the Google sign-in redirect (SignInScreen sets the flag
+    // just before leaving): carry on to "enter name" instead of restarting.
+    let returningFromSignIn = false;
+    try {
+      returningFromSignIn = sessionStorage.getItem('gmb_signin_return') === '1';
+      if (returningFromSignIn) sessionStorage.removeItem('gmb_signin_return');
+    } catch { /* storage blocked — fall through to normal start */ }
+    if (returningFromSignIn && !hasExistingProfiles) {
+      setCurrentView('profile-create');
+      return;
+    }
+
     // Determine starting view
     if (hasExistingProfiles && activeProfileId) {
       setCurrentView('profile-welcome');

@@ -8,13 +8,15 @@ import { getCompletionModal } from '../../../lib/config/content';
 import FreeDraggableItem from '../../../lib/components/interactive/FreeDraggableItem';
 import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 import GamePauseMenu from '../components/GamePauseMenu';
-import HomeButton from '../../../lib/components/ui/HomeButton';
 import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
-import AudioToggle from '../../../lib/components/ui/AudioToggle';
-import TocaBocaNav from '../../../lib/components/navigation/TocaBocaNav';
 import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
 import SceneManager from '../../../lib/components/scenes/SceneManager';
+import GameStateManager from '../../../lib/services/GameStateManager';
+import ProgressManager from '../../../lib/services/ProgressManager';
+import SimpleSceneManager from '../../../lib/services/SimpleSceneManager';
+import useSceneReset from '../../../lib/hooks/useSceneReset';
+import { getSceneResetConfig } from '../../../lib/config/SceneResetConfigs';
 
 import PujaSidebar from './components/sidebars/PujaSidebar';
 import FixSidebar from './components/sidebars/FixSidebar';
@@ -29,6 +31,7 @@ const MissionCompletionOverlay = ({
   missionName,
   starsEarned,
   totalTime,
+  bonusMessage,
   onPlayAgain,
   onTryAnother
 }) => {
@@ -74,6 +77,10 @@ const MissionCompletionOverlay = ({
 
           {totalTime && (
             <p className="completion-time">⏱️ Time: {totalTime}s</p>
+          )}
+
+          {bonusMessage && (
+            <p className="mandapCompletionBonus">{bonusMessage}</p>
           )}
         </div>
 
@@ -163,7 +170,7 @@ export function getMissionData(selectedMission, currentStep, progressCount = 0) 
       type: 'light',
       currentProgress: progressCount,
       totalSteps: selectedMission.items?.length || 5,
-      instruction: 'Quick! Place lights before time runs out!'
+      instruction: 'Light up the mandap! Place all 5 lights! 💡'
     };
   }
 
@@ -769,10 +776,12 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
 
   // ADD LIGHT CHALLENGE STATE
   const [lightsPlaced, setLightsPlaced] = useState(0);
-  const [timeRemaining, setTimeRemaining] = useState(60);
+  const [timeElapsedLight, setTimeElapsedLight] = useState(0); // untimed: only counts up, for the speed bonus
+  const [placedLightIds, setPlacedLightIds] = useState([]);
   const [timerActive, setTimerActive] = useState(false);
 
   const [showPauseMenu, setShowPauseMenu] = useState(false);
+  const { resetScene } = useSceneReset(sceneActions, 'festival-square', 'game4', getSceneResetConfig('game4'));
   const [showMissionComplete, setShowMissionComplete] = useState(false);
   const [completedMissionData, setCompletedMissionData] = useState(null);
 
@@ -923,39 +932,23 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
     }
   }, [selectedMission, showMissionIntro]);
 
-  // Light Challenge Timer
+  // Light Challenge: untimed. The clock only counts up (hidden from the child) for a speed bonus,
+  // and starts once the intro is dismissed. No fail state.
   useEffect(() => {
-    if (selectedMission?.type === 'light' && timerActive) {
-      const timer = setInterval(() => {
-        setTimeRemaining(prev => {
-          if (prev <= 1) {
-            // Time's up!
-            setTimerActive(false);
-            setGuidanceMessage('⏰ Time\'s up! Try again!');
-
-            safeSetTimeout(() => {
-              resetMissionState();
-              setSelectedMission(null);
-              setCurrentMode(GAME_MODES.SELECTION);
-            }, 3000);
-
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-
+    if (selectedMission?.type === 'light' && timerActive && !showMissionIntro) {
+      const timer = setInterval(() => setTimeElapsedLight(prev => prev + 1), 1000);
       return () => clearInterval(timer);
     }
-  }, [selectedMission, timerActive]);
+  }, [selectedMission, timerActive, showMissionIntro]);
 
   // Initialize Light Challenge
   useEffect(() => {
     if (selectedMission?.type === 'light') {
       setLightsPlaced(0);
-      setTimeRemaining(60);
+      setPlacedLightIds([]);
+      setTimeElapsedLight(0);
       setTimerActive(true);
-      setGuidanceMessage('Quick! Place all the lights before time runs out! 💡');
+      setGuidanceMessage('Light up the mandap! Place all 5 lights! 💡');
       setGameState(prev => ({ ...prev, selectedCategory: 'lights' }));
     }
   }, [selectedMission]);
@@ -966,7 +959,7 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
       selectedDecoration: null,
       placedDecorations: new Map(),
       decorationPositions: new Map(),
-      phase: PHASES.CHOOSING
+      phase: PHASES.DISCOVERY
     });
 
     setCurrentStep(1);
@@ -977,7 +970,8 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
     setFixedCount(0);
     setWrongItemsMap(new Map());
     setLightsPlaced(0);        // ✅ ADD
-    setTimeRemaining(60);      // ✅ ADD
+    setPlacedLightIds([]);
+    setTimeElapsedLight(0);
     setTimerActive(false);     // ✅ ADD
     setSelectedWrongItem(null);
     setHighlightedZones(new Set());
@@ -1267,6 +1261,40 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
       return;
     }
 
+    // --- LIGHT CHALLENGE: count each of the mission's lights once, finish when all are placed ---
+    if (selectedMission?.type === 'light') {
+      const isMissionLight = selectedMission.items.some(i => i.id === decoration.id);
+      if (!isMissionLight || placedLightIds.includes(decoration.id)) {
+        setGuidanceMessage(isMissionLight ? 'That light is already glowing! Try another one. 💡' : 'Try one of the glowing lights! 💡');
+        setGameState(prev => ({ ...prev, selectedDecoration: null }));
+        clearHighlights();
+        return;
+      }
+
+      const newCount = lightsPlaced + 1;
+      setLightsPlaced(newCount);
+      setPlacedLightIds(prev => [...prev, decoration.id]);
+      setShowStepSuccess(true);
+      setLastCompletedStep({ emoji: '💡', successMessage: `${newCount}/${selectedMission.items.length} lights placed!` });
+      safeSetTimeout(() => setShowStepSuccess(false), 1500);
+
+      if (newCount >= selectedMission.items.length) {
+        setTimerActive(false);
+        const fast = timeElapsedLight < 60;
+        const earned = fast ? 8 : 5;
+        safeSetTimeout(() => {
+          setMissionStars(prev => prev + earned);
+          setCompletedMissions(prev => ({ ...prev, [selectedMission.id]: true }));
+          setCompletedMissionData({
+            name: selectedMission.name,
+            starsEarned: earned,
+            bonusMessage: fast ? '⚡ Lightning fast! +3 bonus stars!' : null
+          });
+          setShowMissionComplete(true);
+        }, 1500);
+      }
+    }
+
     // --- B. FREE PLAY & OTHERS (Instant Placement) ---
     let decorationWithPosition = { ...decoration };
 
@@ -1454,12 +1482,6 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
           characterImg={ganeshaImage}
           showButton={true}
         />
-        <TocaBocaNav
-          onHome={() => onNavigate?.('home')}
-          onZonesClick={() => onNavigate?.('zones')}
-          isAudioOn={isAudioOn}
-          onAudioToggle={toggleAudio}
-        />
       </>
     );
   }
@@ -1605,7 +1627,7 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
                 : selectedMission.type === 'eco'
                   ? "Let's protect Mother Earth! Choose only natural, eco-friendly decorations. Avoid plastic and artificial items! 🌿"
                   : selectedMission.type === 'light'
-                    ? "Time to light up the mandap! Place all the diyas and lights quickly before time runs out! Ready, set, GO! 💡⏰"
+                    ? "Time to light up the mandap! Place all 5 diyas and lights, and watch it glow! 💡✨"
                     : "Let's prepare for my puja together! Follow my steps carefully!"}
             </div>
             <button
@@ -1675,9 +1697,7 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
           </div>
         )}
 
-        <HomeButton onNavigate={onNavigate} />
-        <ZoneBadgeButton zoneId="festival-square" onBack={() => onNavigate?.('zone-welcome')} />
-        <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
+        <ZoneBadgeButton variant="gameplay" zoneId="festival-square" onBack={() => onNavigate?.('zone-welcome')} />
 
 
 
@@ -2097,7 +2117,7 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
         {isInMission && selectedMission?.type === 'light' && !gameState.selectedCategory && (
           <div className="inventory-tray">
             <div className="categories-title">
-              Choose Lights: 💡 ⏰ {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60).toString().padStart(2, '0')}
+              Choose Lights: 💡 {lightsPlaced}/{selectedMission.items.length}
             </div>
             <div className="category-buttons">
               <div
@@ -2117,7 +2137,7 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
             <div className="items-header">
               {/* The back button has been removed */}
               <div className="items-title">
-                Place the Lights! ⏰ {timeRemaining}s
+                Place the Lights! 💡 {lightsPlaced}/{selectedMission.items.length}
               </div>
             </div>
             <div className="item-buttons">
@@ -2331,6 +2351,7 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
           missionName={completedMissionData?.name}
           starsEarned={completedMissionData?.starsEarned}
           totalTime={completedMissionData?.totalTime}
+          bonusMessage={completedMissionData?.bonusMessage}
 
           onPlayAgain={() => {
             setShowMissionComplete(false);
@@ -2361,10 +2382,10 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
             if (selectedMission) {
               resetMissionState();
               setShowMissionIntro(true);
-              if (selectedMission.type === 'light') { setTimeRemaining(60); setTimerActive(false); }
+              if (selectedMission.type === 'light') { setTimeElapsedLight(0); setPlacedLightIds([]); setTimerActive(false); }
             } else {
               localStorage.removeItem('mandapGame');
-              setGameState({ phase: PHASES.CHOOSING, selectedCategory: null, selectedDecoration: null, placedDecorations: new Map(), decorationPositions: new Map(), decorationCount: 0, stars: 0, gameStartTime: Date.now(), completed: false, showDoneButton: false });
+              setGameState({ phase: PHASES.DISCOVERY, selectedCategory: null, selectedDecoration: null, placedDecorations: new Map(), decorationPositions: new Map(), decorationCount: 0, stars: 0, gameStartTime: Date.now(), completed: false, showDoneButton: false });
               resetMissionState();
               setHighlightedZones(new Set());
               setShowSparkle(null);
@@ -2458,6 +2479,7 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
               }
 
               // RESET ALL GAME STATE - fresh start
+              resetScene();
               setGameState({
                 phase: 'intro',
                 placedDecorations: new Map(),
@@ -2494,46 +2516,6 @@ const MandapDecorationContent = ({ sceneState, sceneActions, isReload, onComplet
             }}
           />
         )}
-
-        <TocaBocaNav
-          onHome={() => {
-            if (onNavigate) onNavigate('home');
-          }}
-          onProgress={() => {
-            console.log('Show festival progress');
-          }}
-          onHelp={() => console.log('Show help')}
-          onParentMenu={() => console.log('Parent menu')}
-          isAudioOn={isAudioOn}
-          onAudioToggle={toggleAudio}
-          onZonesClick={() => {
-            if (onNavigate) onNavigate('zones');
-          }}
-          onStartFresh={() => {
-            // Reset entire decoration game
-            localStorage.removeItem('mandapGame');
-
-            setGameState({
-              phase: 'intro',
-              placedDecorations: new Map(),
-              decorationPositions: new Map(),
-              stars: 0,
-              showDoneButton: false,
-              completed: false
-            });
-            setHighlightedZones(new Set());
-            setShowSparkle(null);
-            setShowCulturalNote(null);
-            setMilestoneSparkle(false);
-            setShowSceneCompletion(false);
-            setNearDeleteZone(false);
-          }}
-          currentProgress={{
-            stars: gameState.stars || 0,
-            completed: gameState.completed ? 1 : 0,
-            total: 1
-          }}
-        />
 
       </div>
     );

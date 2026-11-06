@@ -9,7 +9,7 @@
   background: url('./assets/images/mandap-bg.png') center/cover no-repeat;
   position: relative;
   overflow: hidden;
-  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'Baloo 2', cursive;
 }
 
 /* Original game container, now for the game screen itself */
@@ -67,7 +67,7 @@
 }
 
 .header-text {
-  font-family: 'Baloo', 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'Baloo 2', cursive;
   font-size: 1.3rem;
   font-weight: bold;
   color: #8B4513;
@@ -211,7 +211,7 @@
 }
 
 .mission-name {
-  font-family: 'Baloo', 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'Baloo 2', cursive;
   font-size: 16px;
   font-weight: 700;
   color: #8B4513;
@@ -442,7 +442,7 @@
   padding: 20px 25px;
   max-width: 450px;
   text-align: center;
-  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'Baloo 2', cursive;
   font-size: 1.5rem;
   color: #a5682a;
   line-height: 1.4;
@@ -510,7 +510,7 @@
 
 /* Title Styling */
 .mandap-popup-title {
-  font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
+  font-family: 'Baloo 2', cursive;
   color: #D35400; /* Burnt Orange/Brown text */
   font-size: 2.5rem;
   margin: 0 0 30px 0;
@@ -579,7 +579,7 @@
 
 
 .mandap-option-card h2 {
-  font-family: 'Comic Sans MS', cursive;
+  font-family: 'Baloo 2', cursive;
   font-size: 1.5rem;
   margin: 0 0 5px 0;
   font-weight: bold;
@@ -661,7 +661,7 @@ animation: fadeIn 0.3s ease-out;
 
 /* 2. Title Styling - Larger Text */
 .mandap-popup-title {
-  font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
+  font-family: 'Baloo 2', cursive;
   color: #D35400;
   font-size: 3.2rem;       /* INCREASED FONT SIZE */
   margin: 0 0 40px 0;      /* More space below title */
@@ -765,7 +765,7 @@ animation: fadeIn 0.3s ease-out;
 }
 
 .mandap-option-card h2 {
-  font-family: 'Comic Sans MS', cursive;
+  font-family: 'Baloo 2', cursive;
   font-size: 2rem;         /* Larger Heading */
   margin: 0 0 10px 0;
   font-weight: bold;
@@ -869,7 +869,7 @@ animation: fadeIn 0.3s ease-out;
 }
 
 .mode-subtitle {
-  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'Baloo 2', cursive;
   font-size: 2.5rem;
   color: #8c5b3c;
   margin-bottom: 20px;
@@ -915,7 +915,7 @@ animation: fadeIn 0.3s ease-out;
 }
 
 .mode-card h2 {
-  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'Baloo 2', cursive;
   font-size: 1.8rem;
   color: #c57545;
   margin: 0 0 8px 0;
@@ -1013,7 +1013,7 @@ animation: fadeIn 0.3s ease-out;
 }
 
 .mission-popup-title {
-  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'Baloo 2', cursive;
   font-size: 2rem;
   color: #D35400;
   margin: 0;
@@ -1701,7 +1701,7 @@ filter:
   font-weight: bold;
   color: #8c5b3c;
   margin-bottom: 8px;  /* Was 12px - LESS SPACE */
-  font-family: 'Comic Sans MS', cursive;
+  font-family: 'Baloo 2', cursive;
 }
 
 .step-item {
@@ -1762,7 +1762,7 @@ filter:
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  /* Was 0 3px 10px */
   border: 2px solid #FFD54F;
   z-index: 100;
-  font-family: 'Comic Sans MS', cursive;
+  font-family: 'Baloo 2', cursive;
 }
 
 .mission-instruction-minimal {
@@ -1908,7 +1908,7 @@ filter:
   color: #FF6B35;
   margin: 0 0 5px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-  font-family: 'Comic Sans MS', cursive;
+  font-family: 'Baloo 2', cursive;
 }
 
 .completion-subtitle {
@@ -2012,7 +2012,7 @@ filter:
   border-radius: 20px;
   max-width: 500px;
   text-align: center;
-  font-family: 'Comic Sans MS', cursive;
+  font-family: 'Baloo 2', cursive;
   font-size: 1.2rem;
   color: #a5682a;
   line-height: 1.4;
@@ -2250,7 +2250,7 @@ filter:
   font-size: 1rem;
   color: #8c5b3c;
   font-weight: bold;
-  font-family: 'Comic Sans MS', cursive;
+  font-family: 'Baloo 2', cursive;
 }
 
 /* Pause Button */
@@ -2402,7 +2402,7 @@ filter:
 /* 2. Headers */
 .categories-title, .items-title {
   text-align: center;
-  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'Baloo 2', cursive;
   font-size: 18px; /* Larger text */
   font-weight: 700;
   color: #8B4513;
@@ -2680,7 +2680,7 @@ filter:
 
 /* 5. Item Text (Right Side) */
 .item-name {
-  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'Baloo 2', cursive;
   font-size: 17px;
   font-weight: 700;
   text-align: left;
@@ -2775,7 +2775,7 @@ filter:
 
 /* Title - Centered */
 .items-title {
-  font-family: 'Baloo', 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'Baloo 2', cursive;
   font-size: 19px;
   font-weight: 700;
   color: #8B4513;
@@ -3270,7 +3270,7 @@ filter:
 }
 
 .fix-item-name {
-  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'Baloo 2', cursive;
   font-size: 15px;
   font-weight: 700;
   line-height: 1.2;
@@ -3497,4 +3497,11 @@ filter:
 @keyframes gentle-icon-bounce {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-3px); }
+}
+.mandapCompletionBonus {
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(18px, 2.4vw, 26px);
+  font-weight: 700;
+  color: #e65100;
+  margin: 6px 0 0;
 }

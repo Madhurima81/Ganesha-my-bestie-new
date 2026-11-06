@@ -98,6 +98,10 @@ const SCENES = {
   'amh-family-tree': { label: 'About Me Hut 1 — Family Tree', isScene: true, zoneId: 'about-me-hut', sceneId: 'family-tree', Comp: lazy(() => import('../zones/about-me-hut/family-tree/Familytreegame')) },
   'amh-favorite-food': { label: 'About Me Hut 2 — Favorite Food', isScene: true, zoneId: 'about-me-hut', sceneId: 'favorite-food', Comp: lazy(() => import('../zones/about-me-hut/food/Favoritefoodgame')) },
   'amh-dreams-wishes': { label: 'About Me Hut 3 — Dreams and Wishes', isScene: true, zoneId: 'about-me-hut', sceneId: 'dreams-wishes', Comp: lazy(() => import('../zones/about-me-hut/enjoy/ObstacleRemoverGame')) },
+  'fs-piano':   { label: 'Festival Square 1 — Piano (Festival Beats)', isScene: true, zoneId: 'festival-square', sceneId: 'game1', Comp: lazy(() => import('../zones/festival-square/Game1-piano/FestivalPianoGame')) },
+  'fs-rangoli': { label: 'Festival Square 2 — Rangoli Art Booth',      isScene: true, zoneId: 'festival-square', sceneId: 'game2', Comp: lazy(() => import('../zones/festival-square/Game2-Rangoli/FestivalRangoliGame')) },
+  'fs-modak':   { label: 'Festival Square 3 — Modak Cooking',          isScene: true, zoneId: 'festival-square', sceneId: 'game3', Comp: lazy(() => import('../zones/festival-square/game3-cooking/ModakCookingGame')) },
+  'fs-mandap':  { label: 'Festival Square 4 — Mandap Decoration',      isScene: true, zoneId: 'festival-square', sceneId: 'game4', Comp: lazy(() => import('../zones/festival-square/Game4-mandapdecor/MandapDecorationGame')) },
   'amh-indian-story': { label: 'About Me Hut 4 — My Indian Story', isScene: true, zoneId: 'about-me-hut', sceneId: 'my-indian-story', Comp: lazy(() => import('../zones/about-me-hut/indian-story/MyIndianStoryGame')) },
 };
 
