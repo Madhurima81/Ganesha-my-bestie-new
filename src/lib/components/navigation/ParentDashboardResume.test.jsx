@@ -13,19 +13,19 @@ beforeEach(() => {
 test('normal entry: asks for the PIN first and opens on "For Parents"', () => {
   render(<ParentDashboard onBack={() => {}} onOpenChildProfile={() => {}} />);
   expect(screen.getByText('enter-pin')).toBeTruthy();
-  expect(screen.queryByText('Switch explorer')).toBeNull();
+  expect(screen.queryByText('New explorer')).toBeNull();
 });
 
 test('coming back from Child profile: no PIN, straight to Settings', () => {
   render(<ParentDashboard onBack={() => {}} onOpenChildProfile={() => {}} initialUnlocked initialTab="settings" />);
   expect(screen.queryByText('enter-pin')).toBeNull();
-  expect(screen.getByText('Switch explorer')).toBeTruthy(); // the Settings > Explorers row
+  expect(screen.getByText('New explorer')).toBeTruthy(); // the Settings > Explorers row
 });
 
-test('Switch explorer asks the app to open the profile picker', () => {
+test('New explorer asks the app to open the profile picker', () => {
   const open = jest.fn();
   render(<ParentDashboard onBack={() => {}} onOpenChildProfile={open} initialUnlocked initialTab="settings" />);
-  const row = screen.getByText('Switch explorer').closest('.pd-setting-row');
-  fireEvent.click(row.querySelector('button'));
+  const row = screen.getByText('New explorer').closest('button');
+  fireEvent.click(row);
   expect(open).toHaveBeenCalledTimes(1);
 });

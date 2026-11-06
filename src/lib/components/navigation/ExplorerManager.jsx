@@ -1,5 +1,6 @@
 // ExplorerManager.jsx — "Explorers" in Parent Settings (behind the grown-up check).
-// A row of the children on this device; tap one to open the Edit Explorer card: avatar (pencil badge),
+// A row of the children on this device (like Khan Academy Kids "Users (Tap to Edit)"); tap one to make them the one
+// playing, tap the pencil to open the Edit Explorer card, tap "New explorer" to add another. The child playing now is ringed: avatar (pencil badge),
 // name (with clear button), age (stepper 3–14), Cancel / Okay, and a two-step "Delete explorer".
 // Editing and deleting live here only, so a child can never rename or erase a profile by accident
 // (the old way was a 900 ms long-press on the child-facing picker).
@@ -197,11 +198,25 @@ function EditExplorerCard({ profile, onCancel, onSave, onDelete }) {
   )
 }
 
-export default function ExplorerManager({ onChanged }) {
+const readActiveId = () => {
+  try { return localStorage.getItem('activeProfileId') } catch (_) { return null }
+}
+
+export default function ExplorerManager({ onChanged, onAddExplorer }) {
   const [profiles, setProfiles] = useState(readProfiles)
   const [editingId, setEditingId] = useState(null)
+  const [activeId, setActiveId] = useState(readActiveId)
 
   const editing = profiles.find((p) => p.id === editingId) || null
+
+  // Same thing the child picker does on a tap: this explorer becomes the one playing.
+  const handleSwitch = (p) => {
+    if (p.id === activeId) return
+    GameStateManager.setActiveProfile(p.id)
+    try { localStorage.setItem('childName', p.name || '') } catch (_) {}
+    setActiveId(p.id)
+    onChanged?.()
+  }
 
   const handleSave = (id, changes) => {
     GameStateManager.updateProfile(id, changes)
@@ -213,32 +228,54 @@ export default function ExplorerManager({ onChanged }) {
   const handleDelete = (id) => {
     GameStateManager.deleteProfile(id)
     setProfiles(readProfiles())
+    setActiveId(readActiveId())
     setEditingId(null)
     onChanged?.()
   }
 
   return (
     <div className="pdex-wrap">
-      {profiles.length === 0 ? (
-        <p className="pdex-empty">No explorers on this device yet.</p>
-      ) : (
-        <div className="pdex-row">
-          {profiles.map((p) => (
-            <button
-              key={p.id}
-              type="button"
-              className="pdex-tile"
-              onClick={() => setEditingId(p.id)}
-              aria-label={`Edit ${p.name}`}
-            >
-              <ExplorerAvatar avatar={p.avatar} />
-              <span className="pdex-tile-name">{p.name}</span>
-              <span className="pdex-tile-age">{Number.isFinite(p.age) ? `Age ${p.age}` : 'Tap to edit'}</span>
-            </button>
-          ))}
-        </div>
-      )}
-      <p className="pdex-hint">Tap an explorer to edit.</p>
+      <div className="pdex-row">
+        {profiles.map((p) => {
+          const isActive = p.id === activeId
+          return (
+            <div key={p.id} className="pdex-tilewrap">
+              <button
+                type="button"
+                className={`pdex-tile ${isActive ? 'is-active' : ''}`}
+                onClick={() => handleSwitch(p)}
+                aria-pressed={isActive}
+                aria-label={`Play as ${p.name}`}
+              >
+                <ExplorerAvatar avatar={p.avatar} />
+                <span className="pdex-tile-name">{p.name}</span>
+                <span className="pdex-tile-age">{Number.isFinite(p.age) ? `Age ${p.age}` : ''}</span>
+                {isActive && <span className="pdex-playing">Playing now</span>}
+              </button>
+              <button
+                type="button"
+                className="pdex-tile-edit"
+                onClick={() => setEditingId(p.id)}
+                aria-label={`Edit ${p.name}`}
+              >
+                <span className="pdex-pencil" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 20h9" />
+                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                  </svg>
+                </span>
+              </button>
+            </div>
+          )
+        })}
+        {onAddExplorer && (
+          <button type="button" className="pdex-tile pdex-tile--new" onClick={onAddExplorer} aria-label="New explorer">
+            <span className="pdex-plus" aria-hidden="true">+</span>
+            <span className="pdex-tile-name">New explorer</span>
+          </button>
+        )}
+      </div>
+      <p className="pdex-hint">Tap an explorer to play as them. Tap the pencil to edit.</p>
 
       {editing && (
         <EditExplorerCard
