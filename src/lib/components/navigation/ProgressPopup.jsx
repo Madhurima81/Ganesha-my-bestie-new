@@ -3,7 +3,8 @@ import './ProgressPopup.css';
 import { symbolCardContent } from '../../../zones/symbol-mountain/shared/components/symbolCardContent';
 import CloseButton from '../../../components/CloseButton';
 import SanskritVoiceRecorder from '../audio/SanskritVoiceRecorder';
-import ChantCardModal from '../../../zones/shloka-river/shared/components/ChantCardModal';
+import AffirmationCard from '../affirmation/AffirmationCard';
+import { getLearningForKey } from '../../config/affirmationLookup';
 import { chantCardContent } from '../../../zones/shloka-river/shared/components/chantCardContent';
 
 const AUDIO_PREF_KEY = 'ganesha_audio_enabled';
@@ -283,30 +284,6 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
     window.speechSynthesis.speak(utterance);
   };
 
-  const playDetailVo = (symbolId) => {
-    const actionLine = DETAIL_VO[symbolId];
-    if (!actionLine || !isGlobalAudioEnabled()) return;
-
-    speechEnabledRef.current = true;
-    clearVoTimers();
-    setIsBreathingCueActive(false);
-
-    const starter = setTimeout(() => {
-      if (!speechEnabledRef.current) return;
-      const isBreathLine =
-        (symbolId === 'lotus' || symbolId === 'belly') &&
-        /breath|rise and fall/i.test(actionLine);
-      setIsBreathingCueActive(isBreathLine);
-
-      speakLine(actionLine, () => {
-        setIsBreathingCueActive(false);
-        setIsSpeaking(false);
-      });
-    }, 1000);
-
-    voTimersRef.current.push(starter);
-  };
-
   useEffect(() => {
     if (!isOpen) {
       stopVoice();
@@ -374,8 +351,6 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
     if (type === 'symbols') {
       const symbolId = normalizeSymbolId(item);
       const sidebarMeta = getSymbolMeta(symbolId);
-      const quickVo = GRID_TAP_VO[symbolId];
-      const tapStartMs = Date.now();
 
       if (sidebarMeta) {
         const detailItem = {
@@ -399,19 +374,6 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
           return;
         }
 
-        if (quickVo && isGlobalAudioEnabled()) {
-          speakLine(quickVo, () => {
-            if (!speechEnabledRef.current) return;
-            setIsSpeaking(false);
-            const elapsed = Date.now() - tapStartMs;
-            const waitMs = Math.max(150, 900 - elapsed);
-            const voTimer = setTimeout(() => playDetailVo(symbolId), waitMs);
-            voTimersRef.current.push(voTimer);
-          });
-        } else if (isGlobalAudioEnabled()) {
-          const voTimer = setTimeout(() => playDetailVo(symbolId), 900);
-          voTimersRef.current.push(voTimer);
-        }
         return;
       }
     }
@@ -529,13 +491,26 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
     }
 
     return (
-      <ChantCardModal
-        wordId={chantWordId}
-        onPracticeChant={() => setShowChantPractice(true)}
+      <AffirmationCard
+        name={getDisplayName(selectedItem.name) || chantContent.label}
+        image={selectedItem.image || chantContent.icon}
+        affirmation={getLearningForKey(chantWordId)?.affirmation}
+        backLabel="Back to Mandala"
+        onChant={() => setShowChantPractice(true)}
         onClose={closeDetail}
       />
     );
   };
+
+  const renderSymbolReview = () => (
+    <AffirmationCard
+      name={getDisplayName(selectedItem.name)}
+      image={selectedItem.image}
+      affirmation={getLearningForKey(selectedItem.id)?.affirmation || selectedItem.affirmation}
+      backLabel="Back to Mandala"
+      onClose={closeDetail}
+    />
+  );
 
   if (!isOpen) return null;
 
@@ -545,6 +520,7 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
       return renderChantFlow();
     }
     const directLocked = !checkIsCompleted(selectedItem);
+    if (type === 'symbols' && !directLocked) return renderSymbolReview();
     return (
       <DetailCard
         item={selectedItem}
@@ -624,7 +600,9 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
 
       {selectedItem && type === 'chants' ? renderChantFlow() : null}
 
-      {selectedItem && type !== 'chants' ? (
+      {selectedItem && type === 'symbols' && checkIsCompleted(selectedItem) ? renderSymbolReview() : null}
+
+      {selectedItem && type !== 'chants' && !(type === 'symbols' && checkIsCompleted(selectedItem)) ? (
         <DetailCard
           item={selectedItem}
           type={type}

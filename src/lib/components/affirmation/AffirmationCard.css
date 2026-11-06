@@ -1,0 +1,85 @@
+/* Review-mode affirmation card. Every class is prefixed affCard- (Vite bundles all CSS globally). */
+.affCard-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(40, 20, 8, 0.55);
+}
+.affCard {
+  width: min(92vw, 380px);
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: clamp(14px, 3vh, 26px) clamp(16px, 4vw, 28px);
+  border-radius: 28px;
+  background: #FFF8E7;
+  border: 3px solid #FFD700;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(6px, 1.4vh, 12px);
+}
+.affCard-icon {
+  width: clamp(72px, 22vh, 140px);
+  height: clamp(72px, 22vh, 140px);
+  object-fit: contain;
+}
+.affCard-name {
+  margin: 0;
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.4rem, 4.5vh, 2rem);
+  color: #FF5722;
+}
+.affCard-text {
+  margin: 0;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.05rem, 3.2vh, 1.4rem);
+  line-height: 1.35;
+  color: #5D2E0F;
+}
+.affCard-replay {
+  min-height: 60px;
+  min-width: 60px;
+  padding: 0 20px;
+  border: 2px solid #FFD700;
+  border-radius: 999px;
+  background: #FFFDF4;
+  color: #5D2E0F;
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.affCard-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+.affCard-btn {
+  min-height: 60px;
+  padding: 0 26px;
+  border: none;
+  border-radius: 999px;
+  background: #FF5722;
+  color: #fff;
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #C43E12;
+}
+.affCard-btn--chant {
+  background: #2E7D32;
+  box-shadow: 0 4px 0 #1B5E20;
+}
+.affCard-btn:focus-visible,
+.affCard-replay:focus-visible { outline: 3px solid #7663C1; outline-offset: 2px; }

@@ -6,7 +6,8 @@ import {
   playCardRevealChime,
   playUiTap,
 } from '../../../../lib/services/AudioService';
-import SymbolCardModal from './SymbolCardModal';
+import AffirmationCard from '../../../../lib/components/affirmation/AffirmationCard';
+import { getLearningForKey } from '../../../../lib/config/affirmationLookup';
 import PhoneCollectionDrawer from '../../../../lib/components/collection/PhoneCollectionDrawer';
 
 import symbolBellyColored from '../images/icons/symbol-belly-new-opt.webp';
@@ -196,8 +197,11 @@ const SymbolSidebar = ({
         </div>
 
         {showPopup && selectedSymbol && (
-          <SymbolCardModal
-            symbolId={selectedSymbol}
+          <AffirmationCard
+            name={symbolInfo[selectedSymbol].title}
+            image={symbolInfo[selectedSymbol].colorIcon}
+            affirmation={getLearningForKey(selectedSymbol)?.affirmation}
+            backLabel="Back"
             onClose={closePopup}
           />
         )}
@@ -257,8 +261,11 @@ const SymbolSidebar = ({
       />
 
       {showPopup && selectedSymbol && (
-        <SymbolCardModal
-          symbolId={selectedSymbol}
+        <AffirmationCard
+          name={symbolInfo[selectedSymbol].title}
+          image={symbolInfo[selectedSymbol].colorIcon}
+          affirmation={getLearningForKey(selectedSymbol)?.affirmation}
+          backLabel="Back"
           onClose={closePopup}
         />
       )}

@@ -12,7 +12,8 @@ import './ParentDashboard.css'
 import PinScreen     from '../dashboard/PinScreen'
 import PrivacyPolicy from '../onboarding/PrivacyPolicy'
 import GameStateManager from '../../services/GameStateManager'
-import { getUnlockedLearnings, getLatestLearning, getLearningById } from '../../services/LearningProgress'
+import { getUnlockedLearnings } from '../../services/LearningProgress'
+import ParentDiscoveries from './ParentDiscoveries'
 import { clearPin } from '../../utils/dashboardData'
 import { setSoundPref, subscribeSoundPrefs } from '../../utils/soundPrefs'
 import { isVoiceMuted, setVoiceMuted, subscribeVoiceMute, migrateLegacyVoicePref } from '../../utils/voiceMute'
@@ -71,7 +72,6 @@ export default function ParentDashboard({ onBack, onOpenChildProfile }) {
   const [childAge, setChildAge] = useState(null)
   const [profileId, setProfileId] = useState(null)
   const [unlockedLearnings, setUnlockedLearnings] = useState([])
-  const [selectedLearningId, setSelectedLearningId] = useState(null)
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
   const [showAbout, setShowAbout] = useState(false)
@@ -191,10 +191,6 @@ export default function ParentDashboard({ onBack, onOpenChildProfile }) {
   }
 
   const name = childName || 'Your child'
-  const latestLearning = getLatestLearning(profileId)
-  const displayedLearning = selectedLearningId
-    ? getLearningById(selectedLearningId)
-    : latestLearning
 
   const tabs = [
     { id: 'forParents', label: 'For Parents' },
@@ -282,98 +278,11 @@ export default function ParentDashboard({ onBack, onOpenChildProfile }) {
         {activeTab === 'forParents' && (
           <div className="pd-panel">
 
-            {!displayedLearning ? (
-              <div style={{
-                background: CV.ivory,
-                border: `1.5px solid ${CV.lavenderBg}`,
-                borderRadius: 20, padding: '1.6rem 1.2rem',
-                textAlign: 'center',
-              }}>
-                <p style={{
-                  fontFamily: 'Nunito, sans-serif',
-                  fontSize: '0.92rem', color: CV.softBrown,
-                  margin: 0, lineHeight: 1.6,
-                }}>
-                  Nothing discovered yet. Once {name} explores Symbol Mountain
-                  or Shloka River, their journey will show up here.
-                </p>
-              </div>
-            ) : (
-              <>
-                <div style={{
-                  background: CV.ivory,
-                  border: `1.5px solid ${CV.lavenderBg}`,
-                  borderRadius: 20, padding: '1.4rem',
-                  marginBottom: '1rem',
-                }}>
-                  <p style={{
-                    fontFamily: 'Baloo 2, cursive',
-                    fontSize: '1.05rem', color: CV.lavender,
-                    margin: '0 0 1rem', fontWeight: 800,
-                    letterSpacing: '0.02em',
-                    textTransform: 'uppercase',
-                  }}>
-                    {displayedLearning.title}
-                  </p>
-
-                  <GuidanceSection label="What your child explored">
-                    {displayedLearning.parent.explored}
-                  </GuidanceSection>
-
-                  <GuidanceSection label="Their GMB words">
-                    <span style={{ fontStyle: 'italic' }}>
-                      "{displayedLearning.affirmation}"
-                    </span>
-                  </GuidanceSection>
-
-                  <GuidanceSection label="Ask">
-                    {displayedLearning.parent.ask}
-                  </GuidanceSection>
-
-                  <GuidanceSection label="Try">
-                    {displayedLearning.parent.try}
-                  </GuidanceSection>
-
-                  <GuidanceSection label="Watch for" last>
-                    {displayedLearning.parent.watchFor}
-                  </GuidanceSection>
-                </div>
-
-                <p style={{
-                  fontFamily: 'Baloo 2, cursive',
-                  fontSize: '0.88rem', color: CV.softBrown,
-                  margin: '0 0 0.6rem', fontWeight: 700,
-                }}>
-                  Their discoveries
-                </p>
-                <div style={{
-                  display: 'flex', flexWrap: 'wrap', gap: '0.5rem',
-                }}>
-                  {unlockedLearnings.map(({ learningId }) => {
-                    const entry = getLearningById(learningId)
-                    if (!entry) return null
-                    const isActive = displayedLearning.id === learningId
-                    return (
-                      <button
-                        key={learningId}
-                        onClick={() => setSelectedLearningId(learningId)}
-                        style={{
-                          background: isActive ? CV.lavender : CV.lavenderBg,
-                          color: isActive ? '#fff' : CV.brown,
-                          border: 'none', borderRadius: 999,
-                          padding: '0.5rem 1rem',
-                          fontFamily: 'Nunito, sans-serif',
-                          fontWeight: 700, fontSize: '0.82rem',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        {entry.title}
-                      </button>
-                    )
-                  })}
-                </div>
-              </>
-            )}
+            <ParentDiscoveries
+              key={profileId}
+              unlockedIds={unlockedLearnings.map((u) => u.learningId)}
+              latestId={unlockedLearnings[0]?.learningId}
+            />
           </div>
         )}
 
@@ -389,12 +298,14 @@ export default function ParentDashboard({ onBack, onOpenChildProfile }) {
               padding: '1rem',
               marginBottom: '1.2rem',
             }}>
+              {/* [voice mute removed 2026-11-04] voice is always on (use device volume); uncomment to restore.
               <SoundToggleRow
                 label="Voice & pronunciation"
                 sublabel="Stories, hints & Sanskrit sounds"
                 checked={soundSettings.voice}
                 onChange={() => toggleSoundSetting('voice')}
               />
+              */}
               <SoundToggleRow
                 label="Sound effects"
                 sublabel="Taps, movement & feedback"
@@ -705,7 +616,7 @@ const SUPPORT_EMAIL = '[SUPPORT EMAIL]'
 const HELP_ITEMS = [
   {
     title: 'Audio not working',
-    body: "Open Settings → Sound and make sure Voice, Sound effects, and Ambience are turned on. Also check that your device isn't muted or in silent mode.",
+    body: "Open Settings → Sound and make sure Sound effects and Ambience are turned on. Also turn up your device volume and check it isn't muted or in silent mode.",
   },
   {
     title: 'Game not responding',
