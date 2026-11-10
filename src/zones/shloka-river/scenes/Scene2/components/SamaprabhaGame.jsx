@@ -10,7 +10,7 @@ import './SamaprabhaGame.css';
 import bgImg from '../assets/images/Samaprabha/samaprabha-bg.webp';
 import fawnWorriedImg from '../assets/images/Samaprabha/fawn-worried.webp';
 import fawnHappyImg from '../assets/images/Samaprabha/fawn-happy.webp';
-import fawnWalkImg from '../assets/images-opt/Samaprabha/fawn-walk-new-opt.webp';
+import fawnWalkImg from '../assets/images-opt/Samaprabha/fawn-walk.gif';
 import branchImg from '../assets/images-opt/Samaprabha/reveal-branch-new-opt.webp';
 import reedsLeavesImg from '../assets/images-opt/Samaprabha/reveal-reeds-leaves-opt.webp';
 import stumpImg from '../assets/images-opt/Samaprabha/reveal-stump-opt.webp';
@@ -49,7 +49,7 @@ const CLUE_META = [
 
 const SAMA_DEFAULT_LAYOUT = {
   fawnStart: { l: 20, t: 69, w: 11, flip: 1 },
-  fawnWalk: { l: 12.952856684840002, t: 45.947287246765875, w: 11, flip: 1 },
+  fawnWalk: { l: 12.952856684840002, t: 45.947287246765875, w: 8.7, flip: 1 },
   shadowPieces: {
     // rx/ry is the hold-target hit-zone the child actually shines the
     // light on — the shadow IS the interaction target now. hitOffsetX/Y

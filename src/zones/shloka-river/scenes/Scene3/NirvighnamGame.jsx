@@ -12,6 +12,8 @@ import './NirvighnamGame.css';
 import sharedSceneBg from './assets/images-opt/saurakoti-bg-opt.webp';
 import turtleSadImg from './assets/images-opt/nirvighnam/nir-turtle-sad-opt.webp';
 import turtleHappyImg from './assets/images-opt/nirvighnam/nir-turtle-happy-opt.webp';
+import turtleSwimImg from './assets/images-opt/nirvighnam/turtle-swim.gif';
+import turtleWalkImg from './assets/images-opt/nirvighnam/turtle-walk.gif';
 import nestImg from './assets/images-opt/nirvighnam/nest-opt.webp';
 import stoneImg from './assets/images/nirvighnam/stone-opt.webp';
 import branchImg from './assets/images/nirvighnam/branch-opt.webp';
@@ -154,6 +156,8 @@ const POSE_ASSETS = [
   sharedSceneBg,
   turtleSadImg,
   turtleHappyImg,
+  turtleSwimImg,
+  turtleWalkImg,
   nestImg,
   stoneImg,
   branchImg,
@@ -1148,7 +1152,15 @@ export default function NirvighnamGame({
             scale: activeLayout.turtleFlip ? '-1 1' : '1 1',
           }}
         >
-          <PoseImage src={effPhase === 'play' ? turtleSadImg : turtleHappyImg} alt="turtle" draggable={false} />
+          <PoseImage
+            src={effPhase === 'play'
+              // Swims between obstacles once the first one is cleared; still sad at the start.
+              ? (previewClearedCount > 0 || (!debugPreview && cleared.length > 0) ? turtleSwimImg : turtleSadImg)
+              // After the reeds the turtle walks to the nest, then rests happy.
+              : effPhase === 'swim' ? turtleWalkImg : turtleHappyImg}
+            alt="turtle"
+            draggable={false}
+          />
         </div>
 
         <div

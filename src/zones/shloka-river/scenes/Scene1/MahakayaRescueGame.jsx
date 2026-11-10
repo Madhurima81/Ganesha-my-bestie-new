@@ -20,10 +20,10 @@ import cowSymbolMountain from '../../../symbol-mountain/scenes/tusk/assets/image
 import monkeySymbolMountain from '../../../symbol-mountain/scenes/tusk/assets/images/monkey-new-opt.webp';
 import waterRipples from './assets/images/water-ripples.gif';
 // Animated versions shown once each animal has landed on the raft.
-import elephantAboard from '../../../symbol-mountain/scenes/tusk/assets/images-opt/margin35/success-gifs/elephant_happy_water.gif';
-import peacockAboard from '../../../symbol-mountain/scenes/tusk/assets/images-opt/margin35/success-gifs/peacock_happy_feather.gif';
-import cowAboard from '../../../symbol-mountain/scenes/tusk/assets/images-opt/margin35/success-gifs/cow_happy_chewing.gif';
-import monkeyAboard from '../../../symbol-mountain/scenes/tusk/assets/images-opt/margin35/success-gifs/monkey_happy_mango.gif';
+import elephantAboard from './assets/images/mahakaya/aboard-elephant.gif';
+import peacockAboard from './assets/images/mahakaya/aboard-peacock.gif';
+import cowAboard from './assets/images/mahakaya/aboard-cow.gif';
+import monkeyAboard from './assets/images/mahakaya/aboard-monkey.gif';
 
 const SYLLABLES = ['Ma', 'ha', 'ka', 'ya'];
 const AUDIO = { syllables: ['ma', 'ha', 'ka', 'ya'] };
@@ -934,7 +934,7 @@ export default function MahakayaRescueGame({
       onPointerCancel={onPointerUp}
       onContextMenu={(e) => e.preventDefault()}
     >
-      <img className="maha-water-ripples" src={waterRipples} alt="" draggable={false} />
+      <div className="maha-water-ripples" style={{ backgroundImage: `url(${waterRipples})` }} />
 
       {phase !== 'intro' && (
         <SyllableHighlight

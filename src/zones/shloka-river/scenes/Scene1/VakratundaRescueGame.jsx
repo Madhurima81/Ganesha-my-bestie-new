@@ -1129,7 +1129,7 @@ export default function VakratundaRescueGame({
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
     >
-      <img className="vak-water-ripples" src={waterRipples} alt="" draggable={false} />
+      <div className="vak-water-ripples" style={{ backgroundImage: `url(${waterRipples})` }} />
 
       {phase !== 'intro' && (
         <SyllableHighlight
