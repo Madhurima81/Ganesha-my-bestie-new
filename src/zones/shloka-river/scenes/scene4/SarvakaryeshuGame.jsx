@@ -13,6 +13,23 @@ import mooshikaBeforeImg from './assets/images/sarvakaryeshu/mooshika-before.web
 import mooshikaAfterImg from './assets/images/sarvakaryeshu/mooshika-after.webp';
 import eyesBeforeImg from './assets/images/sarvakaryeshu/eyes-before.webp';
 import eyesAfterImg from './assets/images/sarvakaryeshu/eyes-after.webp';
+// Eyes round is built from layers: one empty playroom + a boy before (distracted, animated) and after (focused, animated).
+import eyesRoomBg from './assets/images/sarvakaryeshu/eyes-layers/playroom-bg.webp';
+import eyesBoyBefore from './assets/images/sarvakaryeshu/eyes-layers/boy-before-anim.webp';
+import eyesBoyAfter from './assets/images/sarvakaryeshu/eyes-layers/boy-after.gif';
+// Trunk round: a different garden picture for each state (before: boy hauling the sack; after: boy planting), each with its own animated boy.
+import trunkBgBefore from './assets/images/sarvakaryeshu/trunk-layers/garden-bg-before.webp';
+import trunkBgAfter from './assets/images/sarvakaryeshu/trunk-layers/garden-bg-after.webp';
+import trunkBoyBefore from './assets/images/sarvakaryeshu/trunk-layers/boy-before.gif';
+import trunkBoyAfter from './assets/images/sarvakaryeshu/trunk-layers/boy-after.gif';
+// Tusk round: one desk room, a worried boy with the broken crayon before and a happy colouring boy after.
+import tuskRoomBg from './assets/images/sarvakaryeshu/tusk-layers/playroom-desk-bg.webp';
+import tuskBoyBefore from './assets/images/sarvakaryeshu/tusk-layers/boy-before.gif';
+import tuskBoyAfter from './assets/images/sarvakaryeshu/tusk-layers/boy-after.gif';
+// Mooshika round: messy bedroom, a worried boy (animated) before and a boy tidying a block into the bin after (still for now).
+import mooshikaRoomBg from './assets/images/sarvakaryeshu/mooshika-layers/bedroom-bg.webp';
+import mooshikaBoyBefore from './assets/images/sarvakaryeshu/mooshika-layers/boy-before.gif';
+import mooshikaBoyAfter from './assets/images/sarvakaryeshu/mooshika-layers/boy-after.webp';
 import trunkBeforeImg from './assets/images/sarvakaryeshu/trunk-before.webp';
 import trunkAfterImg from './assets/images/sarvakaryeshu/trunk-after.webp';
 import tuskBeforeImg from './assets/images/sarvakaryeshu/tusk-before.webp';
@@ -57,6 +74,12 @@ const SITUATIONS = [
     id: 'mooshika',
     before: mooshikaBeforeImg,
     after: mooshikaAfterImg,
+    // l/t/w are % of the 1825x862 room. The After picture is a full-room cut-out, so it covers 100%.
+    layers: {
+      bg: mooshikaRoomBg,
+      before: { src: mooshikaBoyBefore, l: 34.8, t: 35.1, w: 28.05 },
+      after: { src: mooshikaBoyAfter, l: 0, t: 0, w: 100 },
+    },
     beforeLine: 'So much to do.',
     afterLine: 'Mooshika helped him begin with one small thing.',
     question: 'Which Ganesha power can help?',
@@ -76,6 +99,12 @@ const SITUATIONS = [
     id: 'eyes',
     before: eyesBeforeImg,
     after: eyesAfterImg,
+    // Layered version of the scene. l/t/w are % of the 1825x862 room, placed so the boy sits where he did in the old picture.
+    layers: {
+      bg: eyesRoomBg,
+      before: { src: eyesBoyBefore, l: 26.8, t: 14.8, w: 28.2 },
+      after: { src: eyesBoyAfter, l: 25.03, t: 20.88, w: 32.99 },
+    },
     beforeLine: 'So many distractions.',
     afterLine: 'The Eyes helped him focus on what mattered.',
     question: 'Which Ganesha power can help?',
@@ -95,6 +124,11 @@ const SITUATIONS = [
     id: 'trunk',
     before: trunkBeforeImg,
     after: trunkAfterImg,
+    // l/t/w are % of the 1825x862 garden. After boy is aligned so his seedling tray sits exactly over the tray in the background.
+    layers: {
+      before: { bg: trunkBgBefore, src: trunkBoyBefore, l: 20.8, t: 26.7, w: 60.3 },
+      after: { bg: trunkBgAfter, src: trunkBoyAfter, l: 32.24, t: 4.93, w: 40.68 },
+    },
     beforeLine: 'Heavy here, gentle there.',
     afterLine: 'The Trunk helped him use strength, then gentleness.',
     question: 'Which Ganesha power can help?',
@@ -114,13 +148,19 @@ const SITUATIONS = [
     id: 'tusk',
     before: tuskBeforeImg,
     after: tuskAfterImg,
+    // l/t/w are % of the 1825x862 room. The After boy's drawing sheet sits over the sheet already on the desk.
+    layers: {
+      bg: tuskRoomBg,
+      before: { src: tuskBoyBefore, l: 36.08, t: 1.67, w: 26.34 },
+      after: { src: tuskBoyAfter, l: 27.53, t: 10.09, w: 42.08 },
+    },
     beforeLine: 'The crayon is broken.',
-    afterLine: 'The Tusk reminded her that something broken can still help.',
+    afterLine: 'The Tusk reminded him that something broken can still help.',
     question: 'Which Ganesha power can help?',
     voKeyBefore: 'scene13_grandma',
     voKeyAfter: 'scene13_grandma_after',
     correct: 'tusk',
-    feedback: 'The Tusk reminded her that something broken can still help.',
+    feedback: 'The Tusk reminded him that something broken can still help.',
     syllableChunk: 'YESHU',
     options: ['tusk', 'modak', 'trunk'],
     clues: [
@@ -146,6 +186,19 @@ const POSE_ASSETS = [
   mooshikaAfterImg,
   eyesBeforeImg,
   eyesAfterImg,
+  eyesRoomBg,
+  eyesBoyBefore,
+  eyesBoyAfter,
+  trunkBgBefore,
+  trunkBgAfter,
+  trunkBoyBefore,
+  trunkBoyAfter,
+  tuskRoomBg,
+  tuskBoyBefore,
+  tuskBoyAfter,
+  mooshikaRoomBg,
+  mooshikaBoyBefore,
+  mooshikaBoyAfter,
   trunkBeforeImg,
   trunkAfterImg,
   tuskBeforeImg,
@@ -638,13 +691,32 @@ export default function SarvakaryeshuGame({
               className={`sarva-card-img-wrap${imageHit ? ' power-hit' : ''}${showAfter ? ' is-after-reveal' : ''}`}
             >
               {showAfter && <div className="sarva-after-badge">After</div>}
-              <PoseImage
-                className="sarva-card-img"
-                imageStyle={{ height: '100%', objectFit: 'contain' }}
-                src={showAfter ? situation.after : situation.before}
-                alt={situation.id}
-                draggable={false}
-              />
+              {situation.layers ? (
+                <div className="sarva-layers">
+                  <img className="sarva-layers-bg" src={(showAfter ? situation.layers.after : situation.layers.before).bg || situation.layers.bg} alt="" draggable={false} />
+                  {/* key restarts the boy's GIF each time the After state appears */}
+                  <img
+                    key={showAfter ? 'after' : 'before'}
+                    className={`sarva-layers-boy${showAfter ? ' is-after' : ''}`}
+                    src={showAfter ? situation.layers.after.src : situation.layers.before.src}
+                    alt={situation.id}
+                    draggable={false}
+                    style={{
+                      left: `${(showAfter ? situation.layers.after : situation.layers.before).l}%`,
+                      top: `${(showAfter ? situation.layers.after : situation.layers.before).t}%`,
+                      width: `${(showAfter ? situation.layers.after : situation.layers.before).w}%`,
+                    }}
+                  />
+                </div>
+              ) : (
+                <PoseImage
+                  className="sarva-card-img"
+                  imageStyle={{ height: '100%', objectFit: 'contain' }}
+                  src={showAfter ? situation.after : situation.before}
+                  alt={situation.id}
+                  draggable={false}
+                />
+              )}
             </div>
 
             <p className="sarva-situation">{showAfter ? situation.afterLine : situation.beforeLine}</p>

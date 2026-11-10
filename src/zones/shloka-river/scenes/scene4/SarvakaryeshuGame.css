@@ -761,3 +761,40 @@
     z-index: 15;
   }
 }
+
+/* Layered scene (Eyes round): empty room + a separate boy so he can animate. Box keeps the room's 1825:862 ratio so % placement stays exact. */
+.sarva-layers {
+  position: relative;
+  width: min(100%, calc(clamp(200px, 38vh, 340px) * 2.117));
+  aspect-ratio: 1825 / 862;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #f5efe4;
+}
+
+.sarva-layers-bg,
+.sarva-layers-boy {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.sarva-layers-bg {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.sarva-layers-boy {
+  height: auto;
+}
+
+/* Phone landscape: the card picture is only min(52dvh, 185px) tall, so the layered room must match that height (not the desktop one). */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .sarva-layers {
+    width: min(100%, calc(min(52dvh, 185px) * 2.117));
+  }
+}
