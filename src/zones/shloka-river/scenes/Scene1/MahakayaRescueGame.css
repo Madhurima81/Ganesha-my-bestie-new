@@ -467,3 +467,20 @@
 .maha-game.is-paused *::after {
   animation-play-state: paused !important;
 }
+
+/* Soft animated ripples over the river. Non-interactive, sits under every game object. */
+.maha-water-ripples {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.4;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .maha-water-ripples { display: none; }
+}

@@ -9,8 +9,9 @@ import { getLineCue } from '../../../../lib/config/content/voiceCues';
 import './VakratundaRescueGame.css';
 
 import frogSwim from './assets/images/vakratunda/frog-baby.webp';
-import frogHappy from './assets/images/vakratunda/frog-happy.webp';
-import frogFamily from './assets/images/vakratunda/frog-family-from-download.webp';
+import frogHappy from './assets/images/vakratunda/frog-happy.gif';
+import frogFamily from './assets/images/vakratunda/frog-family.gif';
+import waterRipples from './assets/images/water-ripples.gif';
 import lilypad from './assets/images/vakratunda/lilypad.webp';
 import stoneImg from './assets/images/vakratunda/18-opt.webp';
 import logPileImg from './assets/images/vakratunda/19-opt.webp';
@@ -30,6 +31,9 @@ const VAK_DEBUG_UI_ENABLED = typeof window !== 'undefined' && new URLSearchParam
 
 const SYLLABLES = ['va', 'kra', 'tun', 'da'];
 const AUDIO = { syllables: ['va', 'kra', 'tun', 'da'] };
+// Keep layout authoring controls out of normal play; enable explicitly with ?hitzones.
+const SHOW_TRACE_DEBUG = typeof window !== 'undefined'
+  && new URLSearchParams(window.location.search).has('hitzones');
 
 const START_POS = { x: 9.501689672470093, y: 62.62557544647315 };
 const FROG_W = 6;
@@ -259,25 +263,13 @@ const PHONE_OBSTACLES = {
 };
 
 function cloneObstacles() {
-  const phone = isPhone();
-  return DEFAULT_OBSTACLES.map((obstacle) => {
-    const o = phone ? PHONE_OBSTACLES[obstacle.id] : null;
-    return {
-      ...obstacle,
-      ...(o || {}),
-      hit: { ...obstacle.hit, ...(o?.hit || {}) },
-    };
-  });
+  return DEFAULT_OBSTACLES.map((obstacle) => ({ ...obstacle, hit: { ...obstacle.hit } }));
 }
 
 // X thresholds (in %) that light va / kra / tun as the frog passes 25% / 50% /
 // 75% of the way from the start bay to the family. 'da' (100%) lights on
 // actually reaching the family, not just an X line.
-const BAND_FRACTIONS = [0.25, 0.5, 0.75];
-
-function computeBandsX(startX, familyX) {
-  return BAND_FRACTIONS.map((f) => Number((startX + (familyX - startX) * f).toFixed(2)));
-}
+const DEFAULT_BANDS_X = [40.84, 57.59, 74.33];
 
 function isPointInsideObstacle(point, obstacles) {
   return obstacles.some((obstacle) => {
@@ -323,20 +315,25 @@ export default function VakratundaRescueGame({
   const [blockPulse, setBlockPulse] = useState(false);
   const [familyBounce, setFamilyBounce] = useState(false);
   const [obstacles, setObstacles] = useState(() => cloneObstacles());
-  const [bandsX, setBandsX] = useState(() => computeBandsX(START_POS.x, FAMILY.x));
+  const [bandsX, setBandsX] = useState(DEFAULT_BANDS_X);
   const [startPos, setStartPos] = useState(START_POS);   // frog start / reset spot
-  const [frogW, setFrogW] = useState(startFrogW);            // frog width %
+  const [frogW, setFrogW] = useState(FROG_W);            // frog width %
   const [familyPoint, setFamilyPoint] = useState({ x: FAMILY.x, y: FAMILY.y });
   const [familyW, setFamilyW] = useState(FAMILY.w);      // family width %
   const [waterPoly, setWaterPoly] = useState(DEFAULT_WATER_POLY);  // drag-allowed region
 
   // Debug / layout authoring
-  const [showDebugPanel, setShowDebugPanel] = useState(false);
+  const [debugPanelOpen, setDebugPanelOpen] = useState(false);
+  const showDebugPanel = SHOW_TRACE_DEBUG && isActive && debugPanelOpen;
   const [showHitboxes, setShowHitboxes] = useState(false);
   const [showWaterArea, setShowWaterArea] = useState(false);
   const [debugPanelPosition, setDebugPanelPosition] = useState({ x: 12, y: 96 });
   const [selectedObstacleId, setSelectedObstacleId] = useState(DEFAULT_OBSTACLES[0].id);
   const [layoutCopyStatus, setLayoutCopyStatus] = useState('');
+
+  useEffect(() => {
+    setDebugPanelOpen(false);
+  }, [isActive]);
 
   const [stuckLevel, setStuckLevel] = useState(0);  // 0 none · 1 shimmer · 2 +bubble/VO · 3 +arc
   const [showIntroGesture, setShowIntroGesture] = useState(false);  // one-time "you drag me" cue
@@ -1132,6 +1129,8 @@ export default function VakratundaRescueGame({
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
     >
+      <img className="vak-water-ripples" src={waterRipples} alt="" draggable={false} />
+
       {phase !== 'intro' && (
         <SyllableHighlight
           syllables={SYLLABLES}

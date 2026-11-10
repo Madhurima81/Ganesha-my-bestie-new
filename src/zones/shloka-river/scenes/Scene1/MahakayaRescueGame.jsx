@@ -18,6 +18,12 @@ import elephantCalf from './assets/images/mahakaya/elephant-calf.png';
 import peacockSymbolMountain from '../../../symbol-mountain/scenes/tusk/assets/images/peacock-new-opt.webp';
 import cowSymbolMountain from '../../../symbol-mountain/scenes/tusk/assets/images/cow-new-opt.webp';
 import monkeySymbolMountain from '../../../symbol-mountain/scenes/tusk/assets/images/monkey-new-opt.webp';
+import waterRipples from './assets/images/water-ripples.gif';
+// Animated versions shown once each animal has landed on the raft.
+import elephantAboard from '../../../symbol-mountain/scenes/tusk/assets/images-opt/margin35/success-gifs/elephant_happy_water.gif';
+import peacockAboard from '../../../symbol-mountain/scenes/tusk/assets/images-opt/margin35/success-gifs/peacock_happy_feather.gif';
+import cowAboard from '../../../symbol-mountain/scenes/tusk/assets/images-opt/margin35/success-gifs/cow_happy_chewing.gif';
+import monkeyAboard from '../../../symbol-mountain/scenes/tusk/assets/images-opt/margin35/success-gifs/monkey_happy_mango.gif';
 
 const SYLLABLES = ['Ma', 'ha', 'ka', 'ya'];
 const AUDIO = { syllables: ['ma', 'ha', 'ka', 'ya'] };
@@ -173,10 +179,10 @@ const getDebugKeysForPhase = (phaseIndex) => {
 };
 
 const ANIMALS = [
-  { id: 'elephant', img: elephantCalf, name: 'Elephant' },
-  { id: 'peacock', img: peacockSymbolMountain, name: 'Peacock' },
-  { id: 'cow', img: cowSymbolMountain, name: 'Cow' },
-  { id: 'monkey', img: monkeySymbolMountain, name: 'Monkey' },
+  { id: 'elephant', img: elephantCalf, joinedImg: elephantAboard, name: 'Elephant' },
+  { id: 'peacock', img: peacockSymbolMountain, joinedImg: peacockAboard, name: 'Peacock' },
+  { id: 'cow', img: cowSymbolMountain, joinedImg: cowAboard, name: 'Cow' },
+  { id: 'monkey', img: monkeySymbolMountain, joinedImg: monkeyAboard, name: 'Monkey' },
 ];
 
 const FLIPPED_ANIMAL_IDS = new Set(['peacock', 'cow']);
@@ -189,6 +195,10 @@ const POSE_ASSETS = [
   peacockSymbolMountain,
   cowSymbolMountain,
   monkeySymbolMountain,
+  elephantAboard,
+  peacockAboard,
+  cowAboard,
+  monkeyAboard,
 ];
 
 export default function MahakayaRescueGame({
@@ -910,7 +920,7 @@ export default function MahakayaRescueGame({
         onPointerDown={(e) => startDebugDrag(e, shouldBeJoined ? joinedKey : waitingKey)}
         title={animal.name}
       >
-        <img src={animal.img} alt="" />
+        <img src={shouldBeJoined ? animal.joinedImg : animal.img} alt="" />
       </div>
     );
   };
@@ -924,6 +934,8 @@ export default function MahakayaRescueGame({
       onPointerCancel={onPointerUp}
       onContextMenu={(e) => e.preventDefault()}
     >
+      <img className="maha-water-ripples" src={waterRipples} alt="" draggable={false} />
+
       {phase !== 'intro' && (
         <SyllableHighlight
           syllables={SYLLABLES}
