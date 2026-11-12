@@ -933,10 +933,14 @@ const getMapGaneshaState = (allProgress, unlockingZones, overlayItems = {}, show
   };
 };
 
-const getMainMapGaneshaAsset = (pose, isWalking) => {
-  if (isWalking) return GANESHA_POSE_ASSETS.standPoint;
+const MAP_POINT_LEFT_GIF = '/images/ganesha/ganesha-map-point-left.gif';
+const MAP_POINT_LEFT_IDLE = '/images/ganesha/ganesha-map-point-left-idle.png';
+const MAP_POINT_MS = 1050; // six 180ms frames; swap out before the GIF loops
+
+// isWalking is deliberately ignored: moving to another zone is not an invitation to animate.
+const getMainMapGaneshaAsset = (pose, isWalking, isPointingGifPlaying) => {
   if (pose === 'celebration') return GANESHA_POSE_ASSETS.celebrate;
-  return GANESHA_POSE_ASSETS.standPoint;
+  return isPointingGifPlaying ? MAP_POINT_LEFT_GIF : MAP_POINT_LEFT_IDLE;
 };
 
 // First scene for each zone — used for direct entry on first visit
@@ -1390,6 +1394,53 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   }, [showJourneyCelebration]);
 
   const mapGaneshaState = getMapGaneshaState(zoneProgress, unlockingZones, responsiveOverlayItems, showJourneyCelebration);
+
+  const [isPointingGifPlaying, setIsPointingGifPlaying] = useState(false);
+  const [pointGifRun, setPointGifRun] = useState(0);
+  const pointGifStopRef = useRef(null);
+  const pointGifStartRef = useRef(null);
+  const lastUnlockAnimatedRef = useRef(null);
+
+  const playPointGifOnce = () => {
+    clearTimeout(pointGifStopRef.current);
+    setPointGifRun(n => n + 1); // remount the <img> so the GIF restarts at frame 1
+    setIsPointingGifPlaying(true);
+    pointGifStopRef.current = setTimeout(() => {
+      setIsPointingGifPlaying(false);
+      pointGifStopRef.current = null;
+    }, MAP_POINT_MS);
+  };
+
+  // One-time invitation on the child's very first Main Map visit.
+  useEffect(() => {
+    if (!progressLoaded || mapDebugMode || !activeProfile) return;
+    if (currentMapZoneId !== ZONE_IDS.SYMBOL) return;
+    if (zoneProgress[ZONE_IDS.SYMBOL]?.hasStarted) return;
+    const profileId = localStorage.getItem('activeProfileId');
+    if (!profileId) return;
+    const key = `gmb_map_point_gif_intro_seen_${profileId}`;
+    if (readMapFlag(key)) return;
+    writeMapFlag(key); // persist before animating so rerenders never repeat it
+    playPointGifOnce();
+  }, [progressLoaded, mapDebugMode, activeProfile?.id, currentMapZoneId]);
+
+  // Wait for Ganesha's 1200ms position transition, then react once to a new unlock.
+  const unlockingPointZoneId = Object.keys(unlockingZones)[0] || null;
+  useEffect(() => {
+    if (!unlockingPointZoneId || showJourneyCelebration) return;
+    if (lastUnlockAnimatedRef.current === unlockingPointZoneId) return;
+    lastUnlockAnimatedRef.current = unlockingPointZoneId;
+    clearTimeout(pointGifStartRef.current);
+    pointGifStartRef.current = setTimeout(() => {
+      playPointGifOnce();
+      pointGifStartRef.current = null;
+    }, 1200);
+  }, [unlockingPointZoneId, showJourneyCelebration]);
+
+  useEffect(() => () => {
+    clearTimeout(pointGifStartRef.current);
+    clearTimeout(pointGifStopRef.current);
+  }, []);
   const showFirstMapGuide = progressLoaded && !mapDebugMode && !firstMapTapDone &&
     !zoneProgress[ZONE_IDS.SYMBOL]?.hasStarted &&
     (zoneProgress[ZONE_IDS.SYMBOL]?.completedScenes || 0) === 0 &&
@@ -1747,16 +1798,19 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       {mapGaneshaState && (
         <div
           className={`map-ganesha-guide map-ganesha-wrapper ${isGaneshaWalking ? 'is-walking' : ''}`}
-          style={(() => {
-            const { transform, ...rest } = mapGaneshaState.position;
-            return isGaneshaWalking ? rest : mapGaneshaState.position;
-          })()}
+          style={mapGaneshaState.position}
           aria-hidden="true"
         >
           <div className="map-ganesha-guide__float">
             <img
-              src={getMainMapGaneshaAsset(mapGaneshaState.pose, isGaneshaWalking)}
+              key={isPointingGifPlaying ? `point-${pointGifRun}` : `idle-${mapGaneshaState.pose}`}
+              src={getMainMapGaneshaAsset(
+                mapGaneshaState.pose,
+                isGaneshaWalking,
+                isPointingGifPlaying && mapGaneshaState.pose !== 'celebration'
+              )}
               alt=""
+              className="map-ganesha-image"
               style={{
                 width: mapGaneshaState.size,
                 height: mapGaneshaState.size,

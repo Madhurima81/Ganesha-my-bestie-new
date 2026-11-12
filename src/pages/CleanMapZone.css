@@ -1104,24 +1104,19 @@
     bottom 1.2s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
+/* Motion lives in the GIF frames; no wrapper bob or infinite float on the figure. */
 .map-ganesha-wrapper.is-walking {
-  animation: ganeshaWalkBob 0.4s ease-in-out infinite;
-}
-
-@keyframes ganeshaWalkBob {
-  0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
-  50%      { transform: translate(-50%, -50%) translateY(-3px); }
+  animation: none;
 }
 
 .map-ganesha-guide__float {
-  animation: ganeshaGuideFloat 4s ease-in-out infinite;
-  filter: drop-shadow(0 4px 14px rgba(120, 80, 200, 0.35));
+  animation: none;
+  filter: drop-shadow(0 4px 14px rgba(120, 80, 200, 0.25));
 }
 
-@keyframes ganeshaGuideFloat {
-  0%   { transform: translateY(0px);   }
-  50%  { transform: translateY(-8px);  }
-  100% { transform: translateY(0px);   }
+.map-ganesha-image {
+  display: block;
+  object-fit: contain;
 }
 
 /* =========================

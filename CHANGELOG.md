@@ -1,5 +1,10 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-12 b]
+**Touched:** CleanMapZone.jsx, CleanMapZone.css, public/images/ganesha/ganesha-map-point-left(.gif / -idle.png)
+**Changed:** Main Map Ganesha now uses the left-pointing GIF once (first-ever map visit, per profile flag gmb_map_point_gif_intro_seen_*; first unlock after the 1.2s move) then a matching still. Removed the walking transform jump and the infinite bob/float. ZoneWelcome untouched.
+**Open:** Not tested on iPad/phone. Check pointing direction toward the river/lodge (image-only scaleX(-1) if it points the wrong way), no replay on return/refresh, and celebrate pose unaffected.
+
 ## [2026-11-12]
 **Touched:** RotatingOrbsEffect.jsx (new optional className prop), ShlokaRiverFinale.jsx, ShlokaRiverFinale.css
 **Changed:** Shloka River finale orb celebration: centre Ganesha now uses ganesha-poses/sit-full.webp, about 22% larger; symbol halos about 17% smaller and softer. Scoped under .srf-orbs so Symbol Mountain is unaffected. No GIF, no new effects.
