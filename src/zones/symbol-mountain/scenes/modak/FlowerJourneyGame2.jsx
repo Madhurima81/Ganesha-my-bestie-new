@@ -16,6 +16,7 @@ import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
 import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
 import { getLineCue } from '../../../../lib/config/content/voiceCues';
 import { attachSpeechCue, startCueTimer } from '../../../../lib/utils/speechCue';
+import { getVoClipUrl, playVoClip } from '../../../../lib/audio/voClip';
 import './FlowerJourneyGame2.css';
 
 import forestBackground from './assets/images/modak-fj-bg.webp';
@@ -355,6 +356,27 @@ export default function FlowerJourneyGame2({
     // isn't touched by window.speechSynthesis.cancel() below, so without this
     // a still-playing scene VO keeps going under this mini-game's line.
     stopVoice?.();
+    // Recorded clip for this exact line (voiceover/script.csv)? Play it instead of Web Speech,
+    // same lookup as useGaneshaVoice. No clip -> falls through to TTS unchanged. The entry keeps
+    // an utterance-shaped stub so interruptSpeech / silenceIntroVO treat it like any other line.
+    const clipUrl = getVoClipUrl(text);
+    if (clipUrl && !document.hidden) {
+      const prev = activeSpeechRef.current;
+      if (prev?.clip) { prev.clip.stop(false); prev.cancelCue?.(); prev.utterance.onerror?.(); }
+      try { window.speechSynthesis.cancel(); } catch { /* no-op */ }
+      const handlers = { onend: null, onerror: null };
+      const clipEntry = { text, resolve, utterance: handlers, cue, clip: null };
+      const clipDone = (finished) => {
+        if (activeSpeechRef.current === clipEntry) activeSpeechRef.current = null;
+        resolve?.(finished);
+      };
+      handlers.onend = () => clipDone(true);
+      handlers.onerror = () => clipDone(false);
+      clipEntry.cancelCue = startCueTimer(text, cue);
+      activeSpeechRef.current = clipEntry;
+      clipEntry.clip = playVoClip(clipUrl, { onEnd: () => handlers.onend?.() });
+      return;
+    }
     // Chrome drops a speak() issued in the same tick as a cancel() that interrupts a
     // line still starting up (two mounts on Continue). Wait briefly in that case.
     const wasBusy = window.speechSynthesis.speaking || window.speechSynthesis.pending;
@@ -419,6 +441,7 @@ export default function FlowerJourneyGame2({
       entry.utterance.onend = null;
       entry.utterance.onerror = null;
       entry.cancelCue?.();
+      entry.clip?.stop(false); // recorded clip: stop the audio without firing its end
       interruptedSpeechRef.current = { text: entry.text, resolve: entry.resolve, cue: entry.cue };
     }
     try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
@@ -434,6 +457,7 @@ export default function FlowerJourneyGame2({
     entry.utterance.onend = null;
     entry.utterance.onerror = null;
     entry.cancelCue?.();
+    entry.clip?.stop(false);
     try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
     entry.resolve?.();
   }, []);
@@ -468,6 +492,8 @@ export default function FlowerJourneyGame2({
     if (replayTimerRef.current) clearTimeout(replayTimerRef.current);
     replayTimerRef.current = null;
     interruptedSpeechRef.current = null;
+    // Our own recorded clip is an <audio> that speechSynthesis.cancel() (and the scene) can't stop.
+    { const c = activeSpeechRef.current?.clip; activeSpeechRef.current = null; c?.stop(false); }
     if (teachingTimerRef.current) {
       cancelTimer(teachingTimerRef.current);
       teachingTimerRef.current = null;

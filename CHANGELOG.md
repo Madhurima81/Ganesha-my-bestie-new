@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-12 c] - Modak recorded voice (45 clips) wired in
+**Touched:** public/audio/mountain-modak-01..45.mp3 + mountain-pond-01..08.mp3 (new), public/audio/vo-manifest.json, voiceover/script.csv + voClipMap.generated.js (2 hand-added rows: modak-44/45), FlowerJourneyGame2.jsx, GarlandGame3.jsx, docs/KNOWN_PITFALLS.md #67.
+**Changed:** All 45 Modak lines and 8 Pond lines are recordings cut from the ElevenLabs takes. The two mini-games spoke through window.speechSynthesis directly and ignored clips; they now play the recording for an exact-text match (falls back to TTS) and stop it on sidebar open, tab hide and unmount. "Press and hold Mooshika." / "Keep holding until Mooshika settles." were live in NewModakSceneV7 but missing from the script, so they are modak-44/45 (added by hand: generate_script.py inputs content.json/inline.json no longer exist, do not re-run it blindly).
+**Verified:** vite build OK; lint shows only old errors in the two game files. NOT played in the app.
+**Open:** play Modak end to end on staging (calm, swipe, pull, safe spots, garland, mandala): no TTS voice anywhere, no overlapping lines, sidebar/tab-hide mid-line, Play Again. "Small steps, big feelings..." (modak-12) is recorded but the scene no longer speaks it (Mandala line removed 2026-10-10). Pond: lines 09-13 still to record; scene itself not yet checked for direct-TTS use. Voice settings changed between takes (s50_sim64 for modak-01..33, s68_sim56 for 34..45): check they sound like one voice.
+
 ## [2026-11-12 b]
 **Touched:** CleanMapZone.jsx, CleanMapZone.css, public/images/ganesha/ganesha-map-point-left(.gif / -idle.png)
 **Changed:** Main Map Ganesha now uses the left-pointing GIF once (first-ever map visit, per profile flag gmb_map_point_gif_intro_seen_*; first unlock after the 1.2s move) then a matching still. Removed the walking transform jump and the infinite bob/float. ZoneWelcome untouched.

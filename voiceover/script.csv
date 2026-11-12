@@ -115,6 +115,8 @@ mountain-modak-40.mp3,symbol-mountain,modak,story,One small step at a time.,P2 |
 mountain-modak-41.mp3,symbol-mountain,modak,feedback,You held lots of feelings and kept going.,P2 | source: symbol-mountain/scenes/modak/NewModakSceneV7.jsx:1902
 mountain-modak-42.mp3,symbol-mountain,modak,feedback,You kept trying and found joy.,P2 | source: symbol-mountain/scenes/modak/NewModakSceneV7.jsx:1902
 mountain-modak-43.mp3,symbol-mountain,modak,instruction,Tap the symbols to learn about them.,"P2 | same line also used in: pond, symbol, final-scene | source: symbol-mountain/shared/components/SymbolSidebar.jsx:96 (+3 more)"
+mountain-modak-44.mp3,symbol-mountain,modak,instruction,Press and hold Mooshika.,P2 | added by hand 2026-11-12 (generator inputs gone) | source: symbol-mountain/scenes/modak/NewModakSceneV7.jsx:258
+mountain-modak-45.mp3,symbol-mountain,modak,instruction,Keep holding until Mooshika settles.,P2 | added by hand 2026-11-12 (generator inputs gone) | source: symbol-mountain/scenes/modak/NewModakSceneV7.jsx:259
 mountain-pond-01.mp3,symbol-mountain,pond,story,The lotus needs water to bloom. Let’s help the water reach it.,P2 | source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:102
 mountain-pond-02.mp3,symbol-mountain,pond,instruction,The rock is blocking the stream. Press and hold to move it.,P2 | source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:102
 mountain-pond-03.mp3,symbol-mountain,pond,instruction,Keep holding.,P2 | source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:102

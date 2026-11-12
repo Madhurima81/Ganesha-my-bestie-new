@@ -117,6 +117,8 @@ export const VO_CLIP_BY_TEXT = {
  "you held lots of feelings and kept going.": "mountain-modak-41",
  "you kept trying and found joy.": "mountain-modak-42",
  "tap the symbols to learn about them.": "mountain-modak-43",
+ "press and hold mooshika.": "mountain-modak-44",
+ "keep holding until mooshika settles.": "mountain-modak-45",
  "the lotus needs water to bloom. let's help the water reach it.": "mountain-pond-01",
  "the rock is blocking the stream. press and hold to move it.": "mountain-pond-02",
  "keep holding.": "river-bank-10",
