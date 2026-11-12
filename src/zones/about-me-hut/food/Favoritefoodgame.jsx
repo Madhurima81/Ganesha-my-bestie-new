@@ -25,8 +25,6 @@ import OpeningModal from '../../shared/components/OpeningModal';
 
 // --- EXISTING ASSETS ---
 import foodBg from './assets/images/fav_background.webp';
-import babyGaneshaImg from '/images/ganesha-final-new-opt.svg';
-import babyGaneshaSit from '/images/ganesha-final-new-opt.svg';
 
 const GANESHA_POSES = {
   idle: '/images/ganesha-favorite-idle.png',
@@ -204,8 +202,7 @@ const FavoriteFoodGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
 // =========================================================
 const SCENE_IMAGES = [
   foodBg,
-  babyGaneshaImg,
-  babyGaneshaSit,
+  ...Object.values(GANESHA_POSES),
   modakImg,
   ladooImg,
   barfiImg,
@@ -1997,7 +1994,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           zoneId="about-me-hut"
           sceneId="favorite-food"
           onStart={handleStartGame}
-          characterImg={babyGaneshaImg}
         />
       )}
 
@@ -2118,7 +2114,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Friend Intro (commented out: flow now goes directly to friend-choice) */}
       {/* {sceneState.gamePhase === 'friend-intro' && (
         <div className="intro-overlay">
-          <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
+          <img src={GANESHA_POSES.idle} alt="Ganesha" className="intro-ganesha bounce" />
           <div className="friend-intro-box">
             <h2 className="friend-intro-text">Great! Now find my best friend!</h2>
             <button className="friend-intro-btn" onClick={handleStartFriendChoice}>Find Friend! {'\u{1F31F}'}</button>
@@ -2168,7 +2164,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Child Intro */}
       {sceneState.gamePhase === 'child-intro' && (
         <div className="intro-overlay">
-          <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
+          <img src={GANESHA_POSES.idle} alt="Ganesha" className="intro-ganesha bounce" />
           <div className="child-phase-modal">
             <h2 className="child-phase-title">Your turn!</h2>
             <p className="child-phase-subtext">Show me your favorites!</p>
@@ -2493,7 +2489,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           leftColumn={{
             header: (
               <div className="aboutme-comparison-avatar is-plain">
-                <img src={babyGaneshaSit} alt="Ganesha" />
+                <img src={GANESHA_POSES.idle} alt="Ganesha" />
               </div>
             ),
             title: 'Ganesha',
