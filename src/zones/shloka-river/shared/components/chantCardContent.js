@@ -1,11 +1,4 @@
-import vakratundaIcon from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new-opt.webp';
-import mahakayaIcon from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
-import suryakotiIcon from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
-import samaprabhaIcon from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
-import nirvighnamIcon from '../../../meaning cave/assets/images/symbols/nirvighnam-symbol.png';
-import kurumedevaIcon from '../../../meaning cave/assets/images/symbols/kurumedeva-symbol.png';
-import sarvakaryeshuIcon from '../../../meaning cave/assets/images/symbols/sarvakaryeshu-symbol.png';
-import sarvadaIcon from '../../../meaning cave/assets/images/symbols/sarvada-symbol.png';
+import { symbolVakratunda as vakratundaIcon, symbolMahakaya as mahakayaIcon, symbolSuryakoti as suryakotiIcon, symbolSamaprabha as samaprabhaIcon, symbolNirvighnam as nirvighnamIcon, symbolKurumedeva as kurumedevaIcon, symbolSarvakaryeshu as sarvakaryeshuIcon, symbolSarvada as sarvadaIcon } from '../shlokaSymbolGifs'; // animated pictures
 
 export const chantCardContent = {
   vakratunda: {

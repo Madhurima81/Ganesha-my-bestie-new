@@ -493,7 +493,7 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
     return (
       <AffirmationCard
         name={getDisplayName(selectedItem.name) || chantContent.label}
-        image={selectedItem.image || chantContent.icon}
+        image={chantContent.icon || selectedItem.image}
         affirmation={getLearningForKey(chantWordId)?.affirmation}
         backLabel="Back to Mandala"
         onChant={() => setShowChantPractice(true)}

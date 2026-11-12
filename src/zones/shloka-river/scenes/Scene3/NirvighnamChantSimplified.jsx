@@ -58,12 +58,7 @@ import nirvighnamBg from './assets/images/nirvighnam/bg.webp';
 import mooshikaCoach from './assets/images/mooshika-coach.webp';
 
 // Symbol icons — TODO: replace with actual nirvighnam/kurumedeva symbols
-import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.webp';
-import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.webp';
-import symbolSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.webp';
-import symbolSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.webp';
-import symbolNirvighnam from '../../../meaning cave/assets/images/symbols/nirvighnam-symbol.webp';
-import symbolKurumedeva from '../../../meaning cave/assets/images/symbols/kurumedeva-symbol.webp';
+import { symbolKurumedeva, symbolMahakaya, symbolNirvighnam, symbolSamaprabha, symbolSuryakoti, symbolVakratunda } from '../../shared/shlokaSymbolGifs'; // animated pictures for the 8 words
 
 // ── Local UI ─────────────────────────────────────────────────────────────────
 const VOGatedButton = ({ visible, onClick, children, className = '', style = {} }) => {

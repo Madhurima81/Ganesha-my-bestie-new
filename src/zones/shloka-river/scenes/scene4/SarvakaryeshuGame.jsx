@@ -26,10 +26,10 @@ import trunkBoyAfter from './assets/images/sarvakaryeshu/trunk-layers/boy-after.
 import tuskRoomBg from './assets/images/sarvakaryeshu/tusk-layers/playroom-desk-bg.webp';
 import tuskBoyBefore from './assets/images/sarvakaryeshu/tusk-layers/boy-before.gif';
 import tuskBoyAfter from './assets/images/sarvakaryeshu/tusk-layers/boy-after.gif';
-// Mooshika round: messy bedroom, a worried boy (animated) before and a boy tidying a block into the bin after (still for now).
+// Mooshika round: messy bedroom, a worried boy (animated) before and a boy tidying a red block into the bin after (plays once).
 import mooshikaRoomBg from './assets/images/sarvakaryeshu/mooshika-layers/bedroom-bg.webp';
 import mooshikaBoyBefore from './assets/images/sarvakaryeshu/mooshika-layers/boy-before.gif';
-import mooshikaBoyAfter from './assets/images/sarvakaryeshu/mooshika-layers/boy-after.webp';
+import mooshikaBoyAfter from './assets/images/sarvakaryeshu/mooshika-layers/boy-after.gif';
 import trunkBeforeImg from './assets/images/sarvakaryeshu/trunk-before.webp';
 import trunkAfterImg from './assets/images/sarvakaryeshu/trunk-after.webp';
 import tuskBeforeImg from './assets/images/sarvakaryeshu/tusk-before.webp';
@@ -74,11 +74,11 @@ const SITUATIONS = [
     id: 'mooshika',
     before: mooshikaBeforeImg,
     after: mooshikaAfterImg,
-    // l/t/w are % of the 1825x862 room. The After picture is a full-room cut-out, so it covers 100%.
+    // l/t/w are % of the 1825x862 room. The After boy is placed so his bin sits where the bin was in the old still.
     layers: {
       bg: mooshikaRoomBg,
       before: { src: mooshikaBoyBefore, l: 34.8, t: 35.1, w: 28.05 },
-      after: { src: mooshikaBoyAfter, l: 0, t: 0, w: 100 },
+      after: { src: mooshikaBoyAfter, l: 13.82, t: -0.35, w: 50.47 },
     },
     beforeLine: 'So much to do.',
     afterLine: 'Mooshika helped him begin with one small thing.',

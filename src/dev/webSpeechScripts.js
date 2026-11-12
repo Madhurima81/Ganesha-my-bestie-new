@@ -105,7 +105,7 @@ export const WEB_SPEECH_SCRIPTS = {
     scene13_bike: "Heavy here, gentle there. Which symbol can help?",
     scene13_bike_after: "The Trunk helped him use strength, then gentleness.",
     scene13_grandma: "The crayon is broken. Which symbol can help?",
-    scene13_grandma_after: "The Tusk reminded her that something broken can still help.",
+    scene13_grandma_after: "The Tusk reminded him that something broken can still help.",
     welcome: "Let’s see where Ganesha is with you today.",
     scene13_try_again: "Try another symbol.",
     scene13_success: "Sarvakaryeshu! You chose a Ganesha symbol for each task.",

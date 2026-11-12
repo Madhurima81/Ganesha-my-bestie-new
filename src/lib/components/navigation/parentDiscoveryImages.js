@@ -1,5 +1,7 @@
+import { SHLOKA_SYMBOL_GIFS } from '../../../zones/shloka-river/shared/shlokaSymbolGifs';
+
 // Approved GMB art for the For Parents thumbnails, keyed by CATALOG id (learningCatalog.js).
-// Symbols reuse the symbol-card icons; shloka words reuse the Shloka River app icons.
+// Symbols reuse the symbol-card icons; shloka words show their animated pictures.
 export const PARENT_DISCOVERY_IMAGES = {
   mooshika: '/images/icons/symbol-mooshika-new-opt.webp',
   bigBelly: '/images/icons/symbol-belly-new-opt.webp',
@@ -9,12 +11,12 @@ export const PARENT_DISCOVERY_IMAGES = {
   eyes: '/images/icons/symbol-eyes-new-opt.webp',
   ears: '/images/icons/symbol-ears-new-opt.webp',
   tusk: '/images/icons/broken-tusk-symbol.webp',
-  vakratunda: '/images/apps-shlokariver/app-Vakratunda.webp',
-  mahakaay: '/images/apps-shlokariver/app-mahakaya.webp',
-  suryakoti: '/images/apps-shlokariver/app-suryakoti.webp',
-  samaprabha: '/images/apps-shlokariver/app-samaprabha.webp',
-  nirvighnam: '/images/apps-shlokariver/app-nirvighnam.webp',
-  kuruMeDeva: '/images/apps-shlokariver/app-kurumedeva.webp',
-  sarvakaryeshu: '/images/apps-shlokariver/app-sarvakaryeshu.webp',
-  sarvada: '/images/apps-shlokariver/app-sarvada.webp',
+  vakratunda: SHLOKA_SYMBOL_GIFS.vakratunda,
+  mahakaay: SHLOKA_SYMBOL_GIFS.mahakaya,
+  suryakoti: SHLOKA_SYMBOL_GIFS.suryakoti,
+  samaprabha: SHLOKA_SYMBOL_GIFS.samaprabha,
+  nirvighnam: SHLOKA_SYMBOL_GIFS.nirvighnam,
+  kuruMeDeva: SHLOKA_SYMBOL_GIFS.kurumedeva,
+  sarvakaryeshu: SHLOKA_SYMBOL_GIFS.sarvakaryeshu,
+  sarvada: SHLOKA_SYMBOL_GIFS.sarvada,
 };

@@ -50,10 +50,7 @@ import SamaprabhaGame from './components/SamaprabhaGame';
 import ganeshaHeadphones from './assets/images/ganesha_with_headphones.webp';
 import riverBackground from './assets/images/saurakoti-bg.webp';
 import mooshikaCoach from './assets/images/mooshika-coach.webp';
-import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.webp';
-import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.webp';
-import symbolSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.webp';
-import symbolSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.webp';
+import { symbolMahakaya, symbolSamaprabha, symbolSuryakoti, symbolVakratunda } from '../../shared/shlokaSymbolGifs'; // animated pictures for the 8 words
 
 const RESUME_DELAY_MS = 3000;
 const sceneOuterPetalId = SCENE_TO_OUTER_PETAL_ID['Bring Back the Light!'];

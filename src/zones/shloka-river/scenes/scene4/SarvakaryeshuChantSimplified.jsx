@@ -49,14 +49,7 @@ import mooshikaCoach from './assets/images/mooshika-coach.webp';
 import sarvadaBg from './assets/images/sarvada/night.webp';
 import sarvakaryeshuBg from './assets/images/sarvakaryeshu-bg.webp';
 
-import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.webp';
-import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.webp';
-import symbolSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.webp';
-import symbolSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.webp';
-import symbolNirvighnam from '../../../meaning cave/assets/images/symbols/nirvighnam-symbol.webp';
-import symbolKurumedeva from '../../../meaning cave/assets/images/symbols/kurumedeva-symbol.webp';
-import symbolSarvakaryeshu from '../../../meaning cave/assets/images/symbols/sarvakaryeshu-symbol.webp';
-import symbolSarvada from '../../../meaning cave/assets/images/symbols/sarvada-symbol.webp';
+import { symbolKurumedeva, symbolMahakaya, symbolNirvighnam, symbolSamaprabha, symbolSarvada, symbolSarvakaryeshu, symbolSuryakoti, symbolVakratunda } from '../../shared/shlokaSymbolGifs'; // animated pictures for the 8 words
 
 const RESUME_DELAY_MS = 3000;
 const sceneOuterPetalId = SCENE_TO_OUTER_PETAL_ID['River Memories!'];
@@ -423,7 +416,7 @@ const SarvakaryeshuChantContent = ({
       scene13_bike: "Heavy here, gentle there. Which symbol can help?",
       scene13_bike_after: "The Trunk helped him use strength, then gentleness.",
       scene13_grandma: "The crayon is broken. Which symbol can help?",
-      scene13_grandma_after: "The Tusk reminded her that something broken can still help.",
+      scene13_grandma_after: "The Tusk reminded him that something broken can still help.",
       scene13_hint_mooshika_1: "Which symbol can help him start small?",
       scene13_hint_mooshika_2: "Think of a symbol that reminds us to begin with one small step.",
       scene13_hint_mooshika_3: "Remember? Mooshika helps us start small.",

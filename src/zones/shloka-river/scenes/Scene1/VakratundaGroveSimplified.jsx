@@ -66,8 +66,7 @@ import ganeshaHeadphones from './assets/images/ganesha_with_headphones.webp';
 import riverBackground from './assets/images/vakratunda-scene-bg.webp';
 import mooshikaCoach from "./assets/images/mooshika-coach.webp";
 import banyanTree from './assets/images/banyan-full-from-download.webp';
-import symbolVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new.webp';
-import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.webp';
+import { symbolMahakaya, symbolVakratunda } from '../../shared/shlokaSymbolGifs'; // animated pictures for the 8 words
 
 // Elephant images for memory game
 import elephantBabyVa from './assets/images/vakratunda/elephant-baby-va.webp';

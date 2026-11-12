@@ -281,7 +281,7 @@ export const VOICE_SCRIPTS = {
         text: "The crayon is broken. Which symbol can help?"
       },
       scene13_grandma_after: {
-        text: "The Tusk reminded her that something broken can still help."
+        text: "The Tusk reminded him that something broken can still help."
       },
       scene13_hint_mooshika_1: {
         text: "Which symbol can help him start small?"
