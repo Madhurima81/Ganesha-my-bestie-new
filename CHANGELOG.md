@@ -1,5 +1,10 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-12]
+**Touched:** RotatingOrbsEffect.jsx (new optional className prop), ShlokaRiverFinale.jsx, ShlokaRiverFinale.css
+**Changed:** Shloka River finale orb celebration: centre Ganesha now uses ganesha-poses/sit-full.webp, about 22% larger; symbol halos about 17% smaller and softer. Scoped under .srf-orbs so Symbol Mountain is unaffected. No GIF, no new effects.
+**Open:** Not checked on the iPad viewport yet: confirm crown, lotus and axe are not clipped and Ganesha does not crowd the symbol ring.
+
 ## [2026-11-05] - For Parents: learnings count as soon as they are found, and stay
 **Touched:** src/lib/services/LearningProgress.js, LearningProgress.test.js (new), ParentDashboard.jsx.
 **Changed:** the For Parents tab said "Nothing discovered yet" until a whole scene was finished, because it only read finished scenes. It now also reads each scene's live saved state the way the Inner Mandala does (Symbol Mountain `discoveredSymbols` / `symbols`; Shloka River `chantedVerses`), so a symbol or word shows once found. Every learning seen is remembered per child in `<profileId>_learningsUnlocked`, so Play Again or an unfinished scene cannot take it away; Reset progress, delete explorer and Delete all data clear it. Replay sessions and other children's scenes are ignored.

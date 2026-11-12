@@ -1295,3 +1295,20 @@
     height: clamp(125px, 20vw, 155px);
   }
 }
+
+/* Finale orb celebration: Ganesha ~22% larger (focal point), symbol halos ~17% smaller and softer.
+   Scoped under .srf-orbs so Symbol Mountain's use of RotatingOrbsEffect is untouched. */
+.srf-orbs .ganesha-divine-image {
+  width: clamp(96px, 18vmin, 124px);
+  height: clamp(96px, 18vmin, 124px);
+}
+.srf-orbs .orb-glow {
+  top: -12px;
+  left: -12px;
+  right: -12px;
+  bottom: -12px;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, rgba(255, 215, 0, 0.14) 50%, transparent 100%);
+}
+.srf-orbs .orb-inner {
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), inset 0 0 15px rgba(255, 255, 255, 0.2);
+}

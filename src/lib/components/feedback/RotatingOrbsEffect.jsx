@@ -14,7 +14,8 @@ const RotatingOrbsEffect = ({
   orbRadius = 200,
   rotationDuration = 3800,
   showCentralGanesha = true,
-  showBuiltInFireworks = true
+  showBuiltInFireworks = true,
+  className = ''
 }) => {
   const [orbsVisible, setOrbsVisible] = useState(false);
   const [showFireworks, setShowFireworks] = useState(false);
@@ -62,7 +63,7 @@ const RotatingOrbsEffect = ({
   if (!show) return null;
 
   return (
-    <div className="rotating-orbs-effect">
+    <div className={`rotating-orbs-effect ${className}`.trim()}>
       {orbsVisible && (
         <div
           className="orbs-container"
