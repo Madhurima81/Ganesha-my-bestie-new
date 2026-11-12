@@ -55,16 +55,17 @@ export default function AffirmationCard({
       >
         {image && <img src={image} alt="" className="affCard-icon" />}
         <h2 className="affCard-name">{name}</h2>
-        <p className="affCard-text">{affirmation}</p>
-
-        <button
-          type="button"
-          className="affCard-replay"
-          onClick={handleReplay}
-          aria-label={`Hear ${name} again`}
-        >
-          <span aria-hidden="true">&#128266;</span> Hear it
-        </button>
+        <div className="affCard-line">
+          <p className="affCard-text">{affirmation}</p>
+          <button
+            type="button"
+            className="affCard-speaker"
+            onClick={handleReplay}
+            aria-label={`Hear ${name} again`}
+          >
+            <span aria-hidden="true">&#128266;</span>
+          </button>
+        </div>
 
         <div className="affCard-actions">
           {onChant && (

@@ -56,21 +56,27 @@
   line-height: 1.4;
   color: #5C4633;
 }
-.affCard-replay {
-  min-height: 60px;
-  padding: 0 22px;
+.affCard-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  max-width: 100%;
+}
+.affCard-speaker {
+  flex: 0 0 auto;
+  width: 60px;
+  height: 60px;
   border: 0;
-  border-radius: 999px;
+  border-radius: 50%;
   background: rgba(61, 40, 23, 0.07);
-  color: #5C4633;
-  font-family: 'Nunito', sans-serif;
-  font-weight: 800;
-  font-size: clamp(14px, 1.15vw, 17px);
+  font-size: 26px;
+  line-height: 1;
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
-.affCard-replay:active { background: rgba(61, 40, 23, 0.13); }
+.affCard-speaker:active { background: rgba(61, 40, 23, 0.14); }
 .affCard-actions {
   display: flex;
   flex-wrap: wrap;
@@ -109,7 +115,7 @@
 }
 .affCard-btn--chant:active { box-shadow: 0 3px 10px rgba(74, 155, 135, 0.3); }
 .affCard-btn:focus-visible,
-.affCard-replay:focus-visible { outline: 3px solid #7663C1; outline-offset: 2px; }
+.affCard-speaker:focus-visible { outline: 3px solid #7663C1; outline-offset: 2px; }
 
 @keyframes affCardBackdropIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes affCardIn {
