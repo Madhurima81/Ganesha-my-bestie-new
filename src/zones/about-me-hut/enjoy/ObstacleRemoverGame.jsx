@@ -5,8 +5,6 @@ import SceneCompletionCelebration from "../../../lib/components/celebration/Scen
 import DrawingPad from '../components/Drawingpad';
 import StoryProgressHeader from '../components/StoryProgressHeader';
 import AboutMeGaneshaHost from '../components/AboutMeGaneshaHost';
-import GaneshaGestureCue from '../../../lib/components/gesture/GaneshaGestureCue';
-import { useMiniGesture } from '../../../lib/hooks/useMiniGesture';
 
 // Navigation Components
 import SceneManager from "../../../lib/components/scenes/SceneManager";
@@ -43,8 +41,10 @@ import '../../../lib/styles/zone-themes.css';
 import '../../../lib/styles/animations.css';
 
 // Import images
-import babyGaneshaImg from '/images/ganesha-final-new-opt.svg';
-import babyGaneshaSit from '/images/ganesha-final-new-opt.svg';
+const GANESHA_POSES = {
+  idle: '/images/ganesha-favorite-idle.png',
+  happy: '/images/ganesha-favorite-happy.gif',
+};
 import dreamsBg from './assets/images/dream_background.webp';
 
 // Wish Icons
@@ -181,8 +181,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
 // 2. CONTENT COMPONENT
 // =========================================================
 const SCENE_IMAGES = [
-  babyGaneshaImg,
-  babyGaneshaSit,
+  ...Object.values(GANESHA_POSES),
   dreamsBg,
   wishIconEarth,
   wishIconFlower,
@@ -484,7 +483,22 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const [showDrawingPad, setShowDrawingPad] = useState(false); // Controls visibility
   const [showDreamContinue, setShowDreamContinue] = useState(false); // Continue button after dream reveal magic moment
-  const [ganeshaReactKey, setGaneshaReactKey] = useState(0); // Triggers ganesha bounce on dream reveal
+  // Ganesha's happy GIF plays once at the dream reveal (the all-wishes screen plays it on mount),
+  // then he returns to the still pose. The sequence counter stops an older timeout cutting a newer reaction.
+  const [ganeshaReaction, setGaneshaReaction] = useState('idle');
+  const reactionTimerRef = useRef(null);
+  const reactionSequenceRef = useRef(0);
+  const playGaneshaReaction = useCallback((reaction) => {
+    if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
+    const sequence = ++reactionSequenceRef.current;
+    setGaneshaReaction(reaction);
+    reactionTimerRef.current = setTimeout(() => {
+      if (reactionSequenceRef.current === sequence) setGaneshaReaction('idle');
+    }, 1100);
+  }, []);
+  useEffect(() => () => {
+    if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
+  }, []);
   const [selectedWish2FoodKey, setSelectedWish2FoodKey] = useState(null);
 
   const resumePopupTimeoutRef = useRef(null);
@@ -496,7 +510,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const [openingButtonVisible] = useState(true);
 
   // Mini gesture (thumbs up) on successful taps
-  const { miniGesture, triggerMiniGesture } = useMiniGesture();
   const wish1SparkleCancelRef = useRef(null);
   const [wish1Sparkle, setWish1Sparkle] = useState({ type: null, key: 0 });
   const wish2SparkleCancelRef = useRef(null);
@@ -948,10 +961,10 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     else if (sceneState.dreamRevealed && (gamePhase === 'dream-clouded' || gamePhase === 'dream-clearing')) {
       // Magical moment: sparkles + glow up; Ganesha bounces at 900ms; VO fires from its own effect;
       // auto-advance to comparison card after the VO + pause.
-      const bounceTimer = safeSetTimeout(() => { setGaneshaReactKey(k => k + 1); }, 900);
+      const reactTimer = safeSetTimeout(() => { playGaneshaReaction('happy'); }, 900);
       expectReveal('dreams-comparison', { id: 'dreams-comparison', phase: 'comparison-card' }, 'live');
       cancel = safeSetTimeout(showDreamComparisonOnce, 5000);
-      return () => { bounceTimer?.(); cancel?.(); };
+      return () => { reactTimer?.(); cancel?.(); };
     }
 
     return () => cancel?.();
@@ -1302,7 +1315,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       interruptCurrentVoice();
       playUiTap();
     }
-    triggerMiniGesture('thumbsup', 'center', 1500);
     const newTaps = currentTaps + 1;
     wish1TapCountRef.current = newTaps;
     // The solving tap is saved the moment it happens (checkpoint), not by the 1 s autosave.
@@ -1614,7 +1626,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     markInteraction();
     interruptCurrentVoice();
     playPlace(); // food lands on the plate: soft "placed" sound, not a generic tap
-    triggerMiniGesture('thumbsup', 'center', 1500);
 
     const newStates = [...sceneState.bowlStates];
     newStates[index] = true;
@@ -1676,7 +1687,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     markInteraction();
     interruptCurrentVoice();
     playUiTap();
-    triggerMiniGesture('thumbsup', 'center', 1500);
     const newTaps = sceneState.wish3Taps + 1;
     if (newTaps >= 3) sceneActions.checkpoint({ wish3Taps: newTaps });
     else sceneActions.updateState({ wish3Taps: newTaps });
@@ -1721,7 +1731,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     markInteraction();
     interruptCurrentVoice();
     playUiTap();
-    triggerMiniGesture('thumbsup', 'center', 1500);
     const newStates = [...sceneState.parkStates];
     newStates[index] = true;
     const count = newStates.filter(Boolean).length;
@@ -1764,7 +1773,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     markInteraction();
     interruptCurrentVoice();
     playUiTap();
-    triggerMiniGesture('thumbsup', 'center', 1500);
     const newTaps = sceneState.trunkTaps + 1;
     sceneActions.updateState({ trunkTaps: newTaps, gamePhase: 'dream-clearing' });
 
@@ -1845,7 +1853,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           zoneId="about-me-hut"
           sceneId="dreams-wishes"
           onStart={handleStartGame}
-          characterImg={babyGaneshaImg}
           showButton={openingButtonVisible}
         />
       )}
@@ -1853,7 +1860,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Wish 1 Active */}
       {sceneState.gamePhase === 'wish1-active' && (
         <div className="wish-screen">
-          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--left-bottom" />
+          <AboutMeGaneshaHost image={GANESHA_POSES.idle} className="about-me-ganesha-host--left-bottom" />
           <div className="game-header-hud">
             {/* Header instruction commented out - using progress header instead */}
             {/* <div className="wish-instruction-bubble">Tap the earth 3 times to send smiles! ({sceneState.wish1Taps}/3)</div> */}
@@ -1943,7 +1950,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/*
       {sceneState.gamePhase === 'wish1-complete' && (
         <div className="wish-complete-screen">
-          <img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate celebrate-scale" />
+          <img src={GANESHA_POSES.idle} alt="Happy Ganesha" className="ganesha-celebrate" />
           <div className="success-message-large">You made the world smile! 😊✨</div>
           <div className="soft-thank-you">Thank you for helping me 💛</div>
           <div className="wish-checkmark">🌱 1 of 3 wishes complete</div>
@@ -1955,7 +1962,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Wish 2 Intro (disabled: flow goes directly to wish2-active) */}
       {false && sceneState.gamePhase === 'wish2-intro' && (
         <div className="intro-overlay">
-          <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
+          <img src={GANESHA_POSES.idle} alt="Baby Ganesha" className="intro-ganesha bounce" />
           <div className="wish-intro-card">
             <p className="wish-intro-text">My second wish is that no one feels hungry.</p>
             <p className="wish-intro-text">Let's share our food with everyone!</p>
@@ -1978,7 +1985,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Wish 2 Active */}
       {sceneState.gamePhase === 'wish2-active' && (
         <>
-          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--left-bottom" />
+          <AboutMeGaneshaHost image={GANESHA_POSES.idle} className="about-me-ganesha-host--left-bottom" />
           <Wish2PlateDropGame
             sceneState={sceneState}
             wish2IdleLevel={wish2IdleLevel}
@@ -2007,7 +2014,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/*
       {sceneState.gamePhase === 'wish2-complete' && (
         <div className="wish-complete-screen">
-          <img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate celebrate-scale" />
+          <img src={GANESHA_POSES.idle} alt="Happy Ganesha" className="ganesha-celebrate" />
           <div className="success-message-large">You filled hearts with sharing! ✨</div>
           <div className="soft-thank-you">Thank you for caring so much 💛</div>
           <div className="wish-checkmark">🌱 2 of 3 wishes complete</div>
@@ -2019,7 +2026,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Wish 3 Intro (disabled: flow goes directly to wish3-active) */}
       {false && sceneState.gamePhase === 'wish3-intro' && (
         <div className="intro-overlay">
-          <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
+          <img src={GANESHA_POSES.idle} alt="Baby Ganesha" className="intro-ganesha bounce" />
           <div className="wish-intro-card">
             <p className="wish-intro-text">My last wish is for a green world full of life.</p>
             <p className="wish-intro-text">Let's help this forest grow!</p>
@@ -2042,7 +2049,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Wish 3 Active */}
       {sceneState.gamePhase === 'wish3-active' && (
         <div className="wish-screen">
-          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--left-bottom" />
+          <AboutMeGaneshaHost image={GANESHA_POSES.idle} className="about-me-ganesha-host--left-bottom" />
           <div className="game-header-hud">
             <div className="wish-progress-header">
               <div className="wish-progress-title">Wish 3: Grow The Forest</div>
@@ -2179,7 +2186,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/*
       {sceneState.gamePhase === 'wish3-complete' && (
         <div className="wish-complete-screen">
-          <img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate celebrate-scale" />
+          <img src={GANESHA_POSES.idle} alt="Happy Ganesha" className="ganesha-celebrate" />
           <div className="success-message-large">You made the world green and playful! ✨</div>
           <div className="soft-thank-you">Thank you for helping the Earth 💛</div>
           <div className="wish-checkmark">🌱 3 of 3 wishes complete</div>
@@ -2191,7 +2198,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* All Wishes Complete → Combined Modal (Goes straight to drawing) */}
       {sceneState.gamePhase === 'all-wishes-complete' && (
         <div className="intro-overlay dreams-turn-overlay">
-          <img src={babyGaneshaSit} alt="Baby Ganesha" className="intro-ganesha celebrate-scale" />
+          <img src={GANESHA_POSES.happy} alt="Baby Ganesha" className="intro-ganesha" />
           <div className="wish-intro-card">
             <p className="wish-intro-text">You made the world brighter!</p>
             <p className="wish-intro-text">Now it's your turn.<br />Draw your happy wish on this magic canvas!</p>
@@ -2216,7 +2223,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/*
       {sceneState.gamePhase === 'dream-intro' && (
         <div className="intro-overlay">
-          <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
+          <img src={GANESHA_POSES.idle} alt="Baby Ganesha" className="intro-ganesha bounce" />
           <div className="wish-intro-card">
             <p className="wish-intro-text">Draw a happy wish on this magic canvas!</p>
             <p className="wish-intro-text">What would you love to draw today?</p>
@@ -2279,11 +2286,10 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
               ))}
             </div>
             <div
-              key={`ganesha-helper-${ganeshaReactKey}`}
-              className={`ganesha-helper ${sceneState.trunkTaps > 0 ? 'ganesha-blowing' : ''} ${childIdleLevel >= 2 ? 'dream-trunk-hint-final' : ''} ${ganeshaReactKey > 0 && sceneState.dreamRevealed ? 'ganesha-react' : ''}`}
+              className={`ganesha-helper ${sceneState.trunkTaps > 0 ? 'ganesha-blowing' : ''} ${childIdleLevel >= 2 ? 'dream-trunk-hint-final' : ''}`}
               onClick={handleTrunkTap}
             >
-              <img src={babyGaneshaImg} alt="Ganesha" className="ganesha-trunk bounce-gentle" />
+              <img src={ganeshaReaction === 'happy' ? GANESHA_POSES.happy : GANESHA_POSES.idle} alt="Ganesha" className="ganesha-trunk bounce-gentle" />
             </div>
           </div>
           {/* Instruction box hidden */}
@@ -2307,7 +2313,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           leftColumn={{
             header: (
               <div className="aboutme-comparison-avatar is-plain">
-                <img src={babyGaneshaSit} alt="Ganesha" />
+                <img src={GANESHA_POSES.idle} alt="Ganesha" />
               </div>
             ),
             title: 'My Wishes',
@@ -2354,7 +2360,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/*
       {sceneState.gamePhase === 'ending' && !sceneState.showingCompletionScreen && (
         <div className="ending-screen">
-          <img src={babyGaneshaSit} alt="Ganesha" className="ganesha-final celebrate-scale" />
+          <img src={GANESHA_POSES.idle} alt="Ganesha" className="ganesha-final" />
           <div className="final-title">Dreams Connected! 🌟</div>
         </div>
       )}
@@ -2378,16 +2384,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       <ResumeCountdown value={countdownValue} />
       <SceneStallPrompt show={!!revealStall} onTap={resolveRevealStall} />
 
-      {/* Mini Gesture (Thumbs Up) on Success */}
-      {miniGesture.show && (
-        <GaneshaGestureCue
-          key={miniGesture.key}
-          gestureType={miniGesture.type}
-          position={miniGesture.position}
-          anchor={miniGesture.anchor}
-          size={72}
-        />
-      )}
 
       {/* Completion Modal */}
       {sceneState.showingCompletionScreen && (

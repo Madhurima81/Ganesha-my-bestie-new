@@ -3,8 +3,6 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './MyIndianStoryGame.css';
 import '../../shared/components/OpeningModal.css';
 import SceneCompletionCelebration from '../../../lib/components/celebration/SceneCompletionCelebration';
-import GaneshaGestureCue from '../../../lib/components/gesture/GaneshaGestureCue';
-import { useMiniGesture } from '../../../lib/hooks/useMiniGesture';
 import AboutMeComparisonCard from '../components/AboutMeComparisonCard';
 import GameStateManager from '../../../lib/services/GameStateManager';
 import ProgressManager from '../../../lib/services/ProgressManager';
@@ -24,7 +22,11 @@ import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import StoryProgressHeader from '../components/StoryProgressHeader';
 import AboutMeGaneshaHost from '../components/AboutMeGaneshaHost';
 import bgImage from './assets/images/name_background.webp';
-import babyGaneshaImg from '/images/ganesha-final-new-opt.svg';
+const GANESHA_POSES = {
+  idle: '/images/ganesha-favorite-idle.png',
+  blink: '/images/ganesha-favorite-blink.gif',
+  happy: '/images/ganesha-favorite-happy.gif',
+};
 import OpeningModal from '../../shared/components/OpeningModal';
 import SceneManager from '../../../lib/components/scenes/SceneManager';
 import storyHouseIcon from './assets/images/house-icon.webp';
@@ -316,7 +318,7 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
 // =========================================================
 const SCENE_IMAGES = [
   bgImage,
-  babyGaneshaImg,
+  ...Object.values(GANESHA_POSES),
   storyHouseIcon,
   storyLanguageIcon,
   storyFestivalIcon,
@@ -550,7 +552,23 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const [festivalChildPromptReady, setFestivalChildPromptReady] = useState(false);
 
   // Gesture & sparkle
-  const { miniGesture, triggerMiniGesture: triggerMiniGestureRaw } = useMiniGesture();
+  // Ganesha reaction pose for the two guessing games: 'idle', 'blink' (wrong), 'happy' (correct).
+  // The sequence counter stops an older timeout from cutting off a newer reaction.
+  const [ganeshaReaction, setGaneshaReaction] = useState('idle');
+  const reactionTimerRef = useRef(null);
+  const reactionSequenceRef = useRef(0);
+  const playGaneshaReaction = useCallback((reaction) => {
+    if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
+    const sequence = ++reactionSequenceRef.current;
+    setGaneshaReaction(reaction);
+    reactionTimerRef.current = setTimeout(() => {
+      if (reactionSequenceRef.current === sequence) setGaneshaReaction('idle');
+    }, reaction === 'blink' ? 1300 : 1100);
+  }, []);
+  useEffect(() => () => {
+    if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
+  }, []);
+  const currentGaneshaImage = GANESHA_POSES[ganeshaReaction] || GANESHA_POSES.idle;
   const [sparkleState, setSparkleState] = useState({ type: null, key: 0, position: null, radius: 180 });
 
   // Idle Hint Level for Ganesha Home Phase
@@ -757,24 +775,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     prevStepRef.current = phase;
   }, [phase, playGlow]);
 
-  // Gesture & Sparkle triggers
-  const triggerMiniGesture = useCallback((options = 1500) => {
-    let durationMs = 1500;
-    let target = 'center';
-    let position = null;
-
-    if (typeof options === 'number') {
-      durationMs = options;
-    } else if (options && typeof options === 'object') {
-      durationMs = options.durationMs ?? 1500;
-      target = options.target ?? 'center';
-      position = options.position ?? null;
-    }
-
-    const anchor = target === 'phase1-spot' && position ? position : null;
-    triggerMiniGestureRaw('thumbsup', anchor ? 'anchored' : 'center', durationMs, anchor);
-  }, [triggerMiniGestureRaw]);
-
+  // Sparkle triggers
   const triggerSparkle = useCallback((typeOrOptions, durationMs = 1700) => {
     let sparkleType = 'single';
     let sparkleDuration = durationMs;
@@ -1639,16 +1640,11 @@ const discoverLocation = useCallback((index) => {
     ganeshaHomeIdleVoiceRef.current = false;
     setDiscoveredLocations(prev => [...prev, index]);
     playSparkle();
-    triggerMiniGesture({
-      target: 'phase1-spot',
-      durationMs: 1500,
-      position: { x: location.x, y: Math.max(8, location.y - 8) },
-    });
     triggerSparkle('single', 1700);
     triggerPhase1SpotSparkle(index, 1700);
     placeVoiceUntilRef.current = Date.now() + 2000;
     speakIfUnmuted(location.name, { age: childAge, moment: 'story' });
-  }, [playSparkle, triggerMiniGesture, triggerSparkle, triggerPhase1SpotSparkle, speakIfUnmuted, childAge]);
+  }, [playSparkle, triggerSparkle, triggerPhase1SpotSparkle, speakIfUnmuted, childAge]);
 
   // Handle magnifying glass move
   const handleMglassMove = useCallback((newPosition) => {
@@ -1677,12 +1673,6 @@ const discoverLocation = useCallback((index) => {
   const handleRegionSelect = (region, event) => {
     stopVoice();
     playUiTap();
-    triggerMiniGesture(1500);
-    const regionRect = event?.currentTarget?.getBoundingClientRect?.();
-    const regionSparklePosition = regionRect
-      ? { x: regionRect.left + regionRect.width / 2, y: regionRect.top + regionRect.height / 2 }
-      : null;
-    triggerSparkle({ type: 'single', durationMs: 1700, position: regionSparklePosition, radius: 170 });
     if (childHomeIdleTimerRef.current) clearTimeout(childHomeIdleTimerRef.current);
     if (childHomePostSelectTimerRef.current) clearTimeout(childHomePostSelectTimerRef.current);
     if (childHomeIdleHintTimerRef.current) clearTimeout(childHomeIdleHintTimerRef.current);
@@ -1706,12 +1696,6 @@ const discoverLocation = useCallback((index) => {
   const toggleLanguage = (lang, event) => {
     stopVoice();
     playUiTap();
-    triggerMiniGesture(1500);
-    const langRect = event?.currentTarget?.getBoundingClientRect?.();
-    const langSparklePosition = langRect
-      ? { x: langRect.left + langRect.width / 2, y: langRect.top + langRect.height / 2 }
-      : null;
-    triggerSparkle({ type: 'single', durationMs: 1700, position: langSparklePosition, radius: 170 });
     // Reset idle hints on language selection
     if (langGuessIdleLevel > 0) {
       if (import.meta.env.DEV) console.log('[Idle Hint Language] Reset: Child selected language');
@@ -1745,12 +1729,6 @@ const discoverLocation = useCallback((index) => {
   const toggleFestival = (fest, event) => {
     stopVoice();
     playUiTap();
-    triggerMiniGesture(1500);
-    const festRect = event?.currentTarget?.getBoundingClientRect?.();
-    const festSparklePosition = festRect
-      ? { x: festRect.left + festRect.width / 2, y: festRect.top + festRect.height / 2 }
-      : null;
-    triggerSparkle({ type: 'single', durationMs: 1700, position: festSparklePosition, radius: 170 });
     // Reset idle hints on festival selection
     if (festGuessIdleLevel > 0) {
       if (import.meta.env.DEV) console.log('[Idle Hint Festival] Reset: Child selected festival');
@@ -1786,9 +1764,7 @@ const discoverLocation = useCallback((index) => {
   const playLangSuccess = ({ celebrate = false } = {}) => {
     setLangGuessPhase('correct');
     if (celebrate) {
-      triggerSparkle('all', 2400);
-      playSparkle();
-      triggerMiniGesture(1500);
+      playGaneshaReaction('happy');
       playChime();
     }
     let advanced = false;
@@ -1830,6 +1806,7 @@ const discoverLocation = useCallback((index) => {
       playLangSuccess({ celebrate: true });
     } else {
       setWrongLangGuesses(prev => new Set(prev).add(guessLang.id));
+      playGaneshaReaction('blink');
       setShakeLang(null);
       safeSetTimeout(() => setShakeLang(guessLang.id), 0);
       // Once the clue has started (or the glow is showing), a wrong tap is shake-only so it never
@@ -1847,9 +1824,7 @@ const discoverLocation = useCallback((index) => {
   const playFestSuccess = ({ celebrate = false, label = null } = {}) => {
     setGuessPhase('correct');
     if (celebrate) {
-      triggerSparkle('all', 2400);
-      playSparkle();
-      triggerMiniGesture(1500);
+      playGaneshaReaction('happy');
       playChime();
     }
     let advanced = false;
@@ -1903,6 +1878,7 @@ const discoverLocation = useCallback((index) => {
       if (!wrongGuesses.has(fest.id)) {
         setWrongGuesses(prev => new Set(prev).add(fest.id));
       }
+      playGaneshaReaction('blink');
       setShakeGuess(null);
       safeSetTimeout(() => setShakeGuess(fest.id), 0);
       // Shake-only once the clue has started / the glow is showing, so it never cuts the clue.
@@ -2061,15 +2037,6 @@ const handleComplete = () => {
         </div>
       )}
 
-      {/* Center mini gesture (used across child phases and celebration taps) */}
-      {miniGesture.show && miniGesture.position === 'center' && (
-        <GaneshaGestureCue
-          key={miniGesture.key}
-          gestureType={miniGesture.type}
-          position="center"
-          size={56}
-        />
-      )}
 
       {/* Opening Modal */}
       {phase === STEPS.OPENING && (
@@ -2227,7 +2194,7 @@ const handleComplete = () => {
             isChildMode={false}
           />
 
-          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--left-middle" />
+          <AboutMeGaneshaHost image={GANESHA_POSES.idle} className="about-me-ganesha-host--left-middle" />
 
           {/* India Map Container */}
           <div
@@ -2251,16 +2218,6 @@ const handleComplete = () => {
               }}
             />
 
-            {/* Mini gesture near discovered spot */}
-            {miniGesture.show && miniGesture.position === 'anchored' && miniGesture.anchor && (
-              <GaneshaGestureCue
-                key={miniGesture.key}
-                gestureType={miniGesture.type}
-                position="anchored"
-                anchor={miniGesture.anchor}
-                size={56}
-              />
-            )}
 
             {/* Undiscovered location targets with idle hint glow */}
             {GANESHA_SPOTS.map((spot, idx) => {
@@ -2646,7 +2603,7 @@ const handleComplete = () => {
       {/* Language Ganesha Phase — 4 Language Guess Game */}
       {phase === STEPS.LANGUAGE_GANESHA && (
         <div className="mis-language-guess-phase" style={{ paddingTop: 'calc(var(--u) * 1.5)', paddingBottom: 'calc(var(--u) * 4)', minHeight: 'var(--app-height, 100vh)' }}>
-          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--left-middle" />
+          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--left-middle" />
 
           {/* Play Button Section */}
           <div className="mis-language-play-wrap" style={{ textAlign: 'center', marginTop: 'calc(var(--u) * 2)', marginBottom: 'calc(var(--u) * 0.5)' }}>
@@ -2871,7 +2828,7 @@ const handleComplete = () => {
           flexDirection: 'column',
           alignItems: 'center',
         }}>
-          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--left-middle" />
+          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--left-middle" />
 
           {/* Festival Cards Container — Flexbox for proper centering */}
           <div style={{
@@ -3154,7 +3111,7 @@ const handleComplete = () => {
           leftColumn={{
             header: (
               <div className="aboutme-comparison-avatar is-plain">
-                <img src={babyGaneshaImg} alt="Ganesha" />
+                <img src={GANESHA_POSES.idle} alt="Ganesha" />
               </div>
             ),
             title: "Ganesha's Story",
