@@ -7,10 +7,7 @@ import StoryProgressHeader from '../components/StoryProgressHeader';
 import TextInputModal from '../components/Textinputmodal';
 import LetterInputKeyboard from '../components/LetterInputKeyboard';
 import AboutMeGaneshaHost from '../components/AboutMeGaneshaHost';
-import AboutMeSparkle from '../components/AboutMeSparkle';
 import DiscoveryFlight from '../components/DiscoveryFlight';
-import GaneshaGestureCue from '../../../lib/components/gesture/GaneshaGestureCue';
-import { useMiniGesture } from '../../../lib/hooks/useMiniGesture';
 
 // Import SceneManager & Navigation
 import SceneManager from "../../../lib/components/scenes/SceneManager";
@@ -30,6 +27,12 @@ import OpeningModal from '../../shared/components/OpeningModal';
 import foodBg from './assets/images/fav_background.webp';
 import babyGaneshaImg from '/images/ganesha-final-new-opt.svg';
 import babyGaneshaSit from '/images/ganesha-final-new-opt.svg';
+
+const GANESHA_POSES = {
+  idle: '/images/ganesha-favorite-idle.png',
+  blink: '/images/ganesha-favorite-blink.gif',
+  happy: '/images/ganesha-favorite-happy.gif',
+};
 
 // Food images
 import modakImg from './assets/images/food/fav-modak.webp';
@@ -113,16 +116,6 @@ class ErrorBoundary extends React.Component {
     return this.props.children;
   }
 }
-
-// Mini gesture cue anchor points (% of scene) — matches the old
-// .ganesha-gesture-cue--{food,color,activity,friend,center} CSS positions.
-const MINI_GESTURE_ANCHORS = {
-  food: { x: 31, y: 35 },
-  color: { x: 68, y: 35 },
-  activity: { x: 31, y: 60 },
-  friend: { x: 68, y: 60 },
-  center: { x: 50, y: 30 },
-};
 
 // =========================================================
 // 1. MAIN WRAPPER (Handles SceneManager)
@@ -422,8 +415,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       idleHintVoiceRef.current = false;
       childEntryVoRepeatRef.current = false;
       setDiscoveryFly(null);
-      setSparkleState(prev => ({ ...prev, active: false }));
-      hideMiniGesture();
     },
     onShow: () => {
       // On tab resume: resume celebration + reset idle hints
@@ -522,16 +513,23 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   // child is still talking.
   const [phaseVoiceDone, setPhaseVoiceDone] = useState(false);
 
-  // Mini gesture (thumbs up) on successful taps
-  const { miniGesture, triggerMiniGesture: triggerMiniGestureRaw, hideMiniGesture } = useMiniGesture();
-  const triggerMiniGesture = useCallback(
-    (target = 'center', durationMs = 1500) => {
-      triggerMiniGestureRaw('thumbsup', 'anchored', durationMs, MINI_GESTURE_ANCHORS[target] || MINI_GESTURE_ANCHORS.center);
-    },
-    [triggerMiniGestureRaw]
-  );
-  const [sparkleState, setSparkleState] = useState({ active: false, key: 0, type: 'single' });
-  const sparkleTimerRef = useRef(null);
+  // Ganesha's reaction pose: 'idle' (still), 'blink' (wrong guess), 'happy' (correct guess).
+  // The sequence counter stops an older timeout from cutting off a newer reaction.
+  const [ganeshaReaction, setGaneshaReaction] = useState('idle');
+  const reactionTimerRef = useRef(null);
+  const reactionSequenceRef = useRef(0);
+  const playGaneshaReaction = useCallback((reaction) => {
+    if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
+    const sequence = ++reactionSequenceRef.current;
+    setGaneshaReaction(reaction);
+    reactionTimerRef.current = setTimeout(() => {
+      if (reactionSequenceRef.current === sequence) setGaneshaReaction('idle');
+    }, reaction === 'blink' ? 1300 : 1100);
+  }, []);
+  useEffect(() => () => {
+    if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
+  }, []);
+  const currentGaneshaImage = GANESHA_POSES[ganeshaReaction] || GANESHA_POSES.idle;
 
   // Reload Logic Refs
   const reloadHandledRef = useRef(false);
@@ -578,17 +576,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }, durationMs);
   };
 
-  const triggerSparkleFx = useCallback((type = 'single', durationMs = 1700) => {
-    if (sparkleTimerRef.current) {
-      clearTimeout(sparkleTimerRef.current);
-      sparkleTimerRef.current = null;
-    }
-    setSparkleState(prev => ({ active: true, key: prev.key + 1, type }));
-    sparkleTimerRef.current = setTimeout(() => {
-      setSparkleState(prev => ({ ...prev, active: false }));
-      sparkleTimerRef.current = null;
-    }, durationMs + 80);
-  }, []);
 
   // What is speaking right now ({ token, text, startedAt }) and a counter that names each requested line.
   // Both feed the scene event log (read it in the console with __sceneLog().food after a cut / overlap /
@@ -855,7 +842,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   useEffect(() => {
     return () => {
       if (discoveryFlyTimeoutRef.current) clearTimeout(discoveryFlyTimeoutRef.current);
-      if (sparkleTimerRef.current) clearTimeout(sparkleTimerRef.current);
     };
   }, []);
 
@@ -1696,9 +1682,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     if (food.correct) {
       interruptCurrentVoice();
       resetIdleHints();
-      playSparkle();
-      triggerMiniGesture('food', 1500);
-      triggerSparkleFx('all', 2400);
+      playGaneshaReaction('happy');
       // Saved at the solving tap (checkpoint): selectedFood marks the beat solved before the 1 s animation.
       sceneActions.checkpoint({ correctChoiceId: foodId, selectedFood: foodId });
       safeSetTimeout(() => {
@@ -1717,6 +1701,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       }, 1000);
     } else {
       playWrongTap();
+      playGaneshaReaction('blink');
       // Once the clue has started, a wrong tap must not cut it by re-reading the option name.
       if (idleHintLevel === 0) speakOptionName(food?.name);
       setShowShake(foodId);
@@ -1732,9 +1717,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     if (color.correct) {
       interruptCurrentVoice();
       resetIdleHints();
-      playSparkle();
-      triggerMiniGesture('color', 1500);
-      triggerSparkleFx('all', 2400);
+      playGaneshaReaction('happy');
       triggerDiscoveryFly({ image: redImg, name: 'Red' }, { durationMs: GANESHA_CORRECT_ADVANCE_DELAY_MS });
       sceneActions.updateState({
         correctChoiceId: colorId,
@@ -1748,6 +1731,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       }, DISCOVERY_CENTER_REACH_MS);
     } else {
       playWrongTap();
+      playGaneshaReaction('blink');
       if (idleHintLevel === 0) speakOptionName(color?.name);
       setShowShake(colorId);
       sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, colorId] });
@@ -1762,9 +1746,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     if (activity.correct) {
       interruptCurrentVoice();
       resetIdleHints();
-      playSparkle();
-      triggerMiniGesture('activity', 1500);
-      triggerSparkleFx('all', 2400);
+      playGaneshaReaction('happy');
       triggerDiscoveryFly({ image: activity.image, name: activity.name }, { durationMs: GANESHA_CORRECT_ADVANCE_DELAY_MS });
       sceneActions.updateState({
         correctChoiceId: activityId,
@@ -1778,6 +1760,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       }, DISCOVERY_CENTER_REACH_MS);
     } else {
       playWrongTap();
+      playGaneshaReaction('blink');
       if (idleHintLevel === 0) speakOptionName(activity?.name);
       setShowShake(activityId);
       sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, activityId] });
@@ -1792,9 +1775,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     if (friend.correct) {
       interruptCurrentVoice();
       resetIdleHints();
-      playSparkle();
-      triggerMiniGesture('friend', 1500);
-      triggerSparkleFx('all', 2400);
+      playGaneshaReaction('happy');
       triggerDiscoveryFly({ image: mouseImg, name: 'Mooshika' }, { durationMs: GANESHA_FRIEND_CORRECT_ADVANCE_DELAY_MS });
       sceneActions.updateState({
         correctChoiceId: friendId,
@@ -1809,6 +1790,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       }, DISCOVERY_CENTER_REACH_MS);
     } else {
       playWrongTap();
+      playGaneshaReaction('blink');
       if (idleHintLevel === 0) speakOptionName(friend?.name);
       setShowShake(friendId);
       sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, friendId] });
@@ -1830,8 +1812,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       childFoodChoice: foodId,
       childDiscoveries: [{ image: discoveryImage, name: selected.name }]
     });
-    triggerMiniGesture('center', 1200);
-    triggerSparkleFx('single', 1700);
 
     triggerDiscoveryFly({ image: discoveryImage, name: selected.name }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
 
@@ -1858,8 +1838,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       currentModal: null,
       draftData: null
     });
-    triggerMiniGesture('center', 1200);
-    triggerSparkleFx('single', 1700);
 
     safeSetTimeout(() => {
       speakSuccessLine(VOICE_LINES.childFoodCorrect, 'childFoodDone');
@@ -1888,8 +1866,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         name: selectedColor.name
       })
     });
-    triggerMiniGesture('center', 1200);
-    triggerSparkleFx('single', 1700);
     triggerDiscoveryFly({
       image: selectedColor.image,
       emoji: selectedColor.emoji,
@@ -1928,8 +1904,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       childActivityChoice: activityId,
       childDiscoveries: appendUniqueDiscovery(currentState.childDiscoveries, { image: discoveryImage, name: selected.name })
     });
-    triggerMiniGesture('center', 1200);
-    triggerSparkleFx('single', 1700);
     triggerDiscoveryFly({ image: discoveryImage, name: selected.name }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
 
     safeSetTimeout(() => {
@@ -1956,8 +1930,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       currentModal: null,
       draftData: null
     });
-    triggerMiniGesture('center', 1200);
-    triggerSparkleFx('single', 1700);
 
     safeSetTimeout(() => {
       speakSuccessLine(VOICE_LINES.childActivityCorrect, 'childActivityDone');
@@ -2006,22 +1978,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         />
       )}
 
-      {sparkleState.active && (
-        <div className="favorite-sparkle-overlay" key={`favorite-sparkle-${sparkleState.key}`}>
-          <AboutMeSparkle key={sparkleState.key} preset={sparkleState.type === 'all' ? 'big' : 'burst'} />
-        </div>
-      )}
 
-      {/* Mini Gesture (Thumbs Up) on Success */}
-      {miniGesture.show && (
-        <GaneshaGestureCue
-          key={miniGesture.key}
-          gestureType={miniGesture.type}
-          position={miniGesture.position}
-          anchor={miniGesture.anchor}
-          size={72}
-        />
-      )}
 
 
       {/* Story Progress Header */}
@@ -2047,7 +2004,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Food Choice Screen */}
       {sceneState.gamePhase === 'food-choice' && (
         <div className="choice-screen">
-          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--favorite" />
+          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--favorite" />
           {/* Tap instruction removed */}
           <div className="choices-container food-scene">
             {sceneState.randomFoods.map((food, index) => (
@@ -2075,20 +2032,17 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Food Correct */}
       {sceneState.gamePhase === 'food-correct' && (
         <div className="correct-screen">
-          <div className="ganesha-happy">
-            <img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate" />
-          </div>
+          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--favorite" />
           <div className="correct-food">
-            <img src={modakImg} alt="Modak" className="food-in-hand pop-in modak-special" />
+            <img src={modakImg} alt="Modak" className="food-in-hand modak-special" />
           </div>
-          {/* <div className="success-message">Yes! Modak is my favorite! 🎉</div> */}
         </div>
       )}
 
       {/* Color Choice */}
       {sceneState.gamePhase === 'color-choice' && (
         <div className="choice-screen">
-          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--favorite" />
+          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--favorite" />
           {/* Tap instruction removed */}
           <div className="choices-container color-scene">
             {sceneState.randomColors.map((color, index) => (
@@ -2116,20 +2070,17 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Color Correct */}
       {sceneState.gamePhase === 'color-correct' && (
         <div className="correct-screen">
-          <div className="ganesha-happy">
-            <img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate" />
-          </div>
+          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--favorite" />
           <div className="correct-food">
-            <img src={redImg} alt="Red" className="food-in-hand pop-in" style={{ width: '180px', height: '180px' }} />
+            <img src={redImg} alt="Red" className="food-in-hand" />
           </div>
-          {/* <div className="success-message">Yes! Orange is my favorite color! 🧡</div> */}
         </div>
       )}
 
       {/* Activity Choice */}
       {sceneState.gamePhase === 'activity-choice' && (
         <div className="choice-screen">
-          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--favorite" />
+          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--favorite" />
           {/* Tap instruction removed */}
           <div className="choices-container activity-scene">
             {sceneState.randomActivities.map((activity, index) => (
@@ -2157,13 +2108,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Activity Correct */}
       {sceneState.gamePhase === 'activity-correct' && (
         <div className="correct-screen">
-          <div className="ganesha-happy">
-            <img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate" />
-          </div>
+          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--favorite" />
           <div className="correct-food">
-            <img src={kidActSingImg} alt="Dancing" className="food-in-hand pop-in" style={{ width: '180px', height: '180px' }} />
+            <img src={kidActSingImg} alt="Dancing" className="food-in-hand" />
           </div>
-          {/* <div className="success-message">Yes! I love Dancing! 💃✨</div> */}
         </div>
       )}
 
@@ -2181,7 +2129,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Friend Choice */}
       {sceneState.gamePhase === 'friend-choice' && (
         <div className="choice-screen">
-          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--favorite" />
+          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--favorite" />
           {/* Tap instruction removed */}
           <div className="choices-container friend-scene">
             {sceneState.randomFriends.map((friend, index) => (
@@ -2210,13 +2158,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Friend Correct */}
       {sceneState.gamePhase === 'friend-correct' && (
         <div className="correct-screen">
-          <div className="friends-together">
-            <img src={babyGaneshaSit} alt="Ganesha" className="ganesha-with-friend" />
-          </div>
+          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--favorite" />
           <div className="correct-food">
-            <img src={mouseImg} alt="Mooshika" className="food-in-hand pop-in" style={{ width: '180px', height: '180px' }} />
+            <img src={mouseImg} alt="Mooshika" className="food-in-hand" />
           </div>
-          {/* <div className="success-message">Yes! Mooshika is my best friend! 🐭✨</div> */}
         </div>
       )}
 
@@ -2443,8 +2388,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   childFriendLetters: name.split(''),
                   childDiscoveries: [...sceneState.childDiscoveries, { image: friendsImg, name }]
                 });
-                triggerMiniGesture('center', 1200);
-                triggerSparkleFx('single', 1700);
                 triggerDiscoveryFly(
                   { image: friendsImg, name },
                   { isChild: true, showNameBelow: true, durationMs: CHILD_FRIEND_ADVANCE_DELAY_MS }
@@ -2493,8 +2436,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 childDiscoveries: appendUniqueDiscovery(currentState.childDiscoveries, { image: friendsImg, name }),
                 friendNameDraft: ''
               });
-              triggerMiniGesture('center', 1200);
-              triggerSparkleFx('single', 1700);
               triggerDiscoveryFly(
                 { image: friendsImg, name },
                 { isChild: true, showNameBelow: true, durationMs: CHILD_FRIEND_ADVANCE_DELAY_MS }
