@@ -130,6 +130,9 @@ mountain-pond-10.mp3,symbol-mountain,pond,story,The lotus grows through muddy wa
 mountain-pond-11.mp3,symbol-mountain,pond,story,Ganesha's trunk can move something heavy or handle something tiny. It reminds us to know when to use strength and when to be gentle.,P2 | TOO LONG: 24 words (>20) - split into 2 clips for ages 5-7 | source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:1059
 mountain-pond-12.mp3,symbol-mountain,pond,feedback,You were strong and gentle.,P2 | source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:2220
 mountain-pond-13.mp3,symbol-mountain,pond,feedback,You kept growing through something hard.,P2 | source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:2220
+mountain-pond-14.mp3,symbol-mountain,pond,instruction,"Say with me, I can be strong and gentle.",P2 | added by hand 2026-11-12 (generator inputs gone) | source: lib/components/reveal/SymbolAutoReveal.jsx:99 (Pond trunk card)
+mountain-pond-15.mp3,symbol-mountain,pond,instruction,"Say with me, I can keep growing when things are hard.",P2 | added by hand 2026-11-12 (generator inputs gone) | source: lib/components/reveal/SymbolAutoReveal.jsx:99 (Pond lotus card)
+mountain-pond-16.mp3,symbol-mountain,pond,instruction,Tap to collect.,P2 | added by hand 2026-11-12 (generator inputs gone) | source: lib/components/reveal/SymbolAutoReveal.jsx:88 (shared by every reveal card)
 mountain-symbols-01.mp3,symbol-mountain,symbol,story,good listening,P2 | source: symbol-mountain/scenes/tusk/EarsSoundMatchGame.jsx:169
 mountain-symbols-02.mp3,symbol-mountain,symbol,instruction,Listen again.,P2 | source: symbol-mountain/scenes/tusk/EarsSoundMatchGame.jsx:169
 mountain-symbols-03.mp3,symbol-mountain,symbol,feedback,You listened carefully and found the sounds.,P2 | source: symbol-mountain/scenes/tusk/EarsSoundMatchGame.jsx:169
