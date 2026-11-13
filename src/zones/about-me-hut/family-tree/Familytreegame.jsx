@@ -43,10 +43,11 @@ import OpeningModal from '../../shared/components/OpeningModal';
 import familyTreeBg from './assets/images/family_background.webp';
 import familyTree from './assets/images/family_tree.webp';
 
-import babyGaneshaImg from '/images/ganesha-final-new-opt.svg';
-import shivaImg from './assets/images/ganesha/family-shiva.webp';
-import parvatiImg from './assets/images/ganesha/family-parvati.webp';
-import kartikeyaImg from './assets/images/ganesha/family-kartkeya.webp';
+// Animated Ganesha and family (each GIF plays once and rests on its last frame).
+import babyGaneshaImg from './assets/images/ganesha-gifs/ganesha.gif';
+import shivaImg from './assets/images/ganesha-gifs/shiva.gif';
+import parvatiImg from './assets/images/ganesha-gifs/parvati.gif';
+import kartikeyaImg from './assets/images/ganesha-gifs/kartikeya.gif';
 
 // --- IMPORT ASSETS (Child's Family) ---
 import childDadImg from './assets/images/child/family-dad.webp';
