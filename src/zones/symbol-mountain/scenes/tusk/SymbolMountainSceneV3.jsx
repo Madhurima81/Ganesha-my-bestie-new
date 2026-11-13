@@ -76,14 +76,8 @@ import mountainBackground from './assets/images-opt/margin35/eyes-game/symbol_mo
 import ganeshaCharacter from './assets/images/ganesha-character.webp';
 
 // Symbol Icons
-import symbolEyesColored from '../../shared/images/icons/symbol-eyes-new.webp';
-import symbolEarColored from '../../shared/images/icons/symbol-ears-new-opt.webp';
-import symbolTuskColored from '../../shared/images/icons/broken-tusk-symbol.webp';
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.webp';
+import { symbolEyesColored, symbolEarsColored as symbolEarColored, symbolTuskColored, symbolMooshikaColored, symbolBellyColored, symbolLotusColored, symbolTrunkColored } from '../../shared/symbolGifs'; // animated pictures (Modak keeps its still for now)
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-new-opt.webp';
-import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new-opt.webp';
-import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new-opt.webp';
 
 
 // Shared countdown duration â€” must match across useResumeCountdown + usePauseAwareTimeout

@@ -95,9 +95,8 @@ import emotionAngry from './assets/images/emotion-angry-game3-opt.webp';
 import emotionHappy from './assets/images/emotion-happy-game3-opt.webp';
 import ganeshaFeeding from './assets/images/ganesha-game3-new.webp';
 
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.webp';
+import { symbolMooshikaColored, symbolBellyColored } from '../../shared/symbolGifs'; // animated pictures (Modak keeps its still for now)
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-new-opt.webp';
 
 // Flower Journey assets - the flower tray (beat-1 only) still needs the two
 // flower colours; the rest (mud/leaves/branch/garland art) now live inside

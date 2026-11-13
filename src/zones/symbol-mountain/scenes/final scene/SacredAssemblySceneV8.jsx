@@ -49,14 +49,8 @@ import ganeshaStone from './assets/images/ganesha-stone.webp';
 import ganeshaDivine from './assets/images/ganesha-divine.webp';
 
 // Images - Symbol Icons
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.webp';
+import { symbolMooshikaColored, symbolBellyColored, symbolLotusColored, symbolTrunkColored, symbolEyesColored, symbolEarsColored, symbolTuskColored } from '../../shared/symbolGifs'; // animated pictures (Modak keeps its still for now)
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-new-opt.webp';
-import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new-opt.webp';
-import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new-opt.webp';
-import symbolEyesColored from '../../shared/images/icons/symbol-eyes-new.webp';
-import symbolEarsColored from '../../shared/images/icons/symbol-ears-new-opt.webp';
-import symbolTuskColored from '../../shared/images/icons/broken-tusk-symbol.webp';
 
 // Body Part Overlays - ADD THESE
 import ganeshaFaded from './assets/images/ganesha-faded.webp';

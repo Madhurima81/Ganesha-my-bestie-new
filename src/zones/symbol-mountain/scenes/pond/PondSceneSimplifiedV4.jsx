@@ -72,11 +72,8 @@ import pondBigRock from './assets/images/pond-big-rock.webp';
 import pondPebble from './assets/images/pond-pebble.webp';
 import pondFlower from './assets/images/pond-flower.webp';
 import mooshikaCoach from "./assets/images/mooshika-coach.webp";
-import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.webp';
+import { symbolMooshikaColored, symbolBellyColored, symbolLotusColored, symbolTrunkColored } from '../../shared/symbolGifs'; // animated pictures (Modak keeps its still for now)
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
-import symbolBellyColored from '../../shared/images/icons/symbol-belly-new-opt.webp';
-import symbolLotusColored from '../../shared/images/icons/symbol-lotus-new-opt.webp';
-import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new-opt.webp';
 
 // Mission images
 import lotusBefore from './assets/images/lotus-before.webp';

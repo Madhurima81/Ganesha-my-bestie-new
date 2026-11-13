@@ -5,6 +5,7 @@ import CloseButton from '../../../components/CloseButton';
 import SanskritVoiceRecorder from '../audio/SanskritVoiceRecorder';
 import AffirmationCard from '../affirmation/AffirmationCard';
 import { getLearningForKey } from '../../config/affirmationLookup';
+import { SYMBOL_MOUNTAIN_GIFS } from '../../../zones/symbol-mountain/shared/symbolGifs';
 import { chantCardContent } from '../../../zones/shloka-river/shared/components/chantCardContent';
 
 const AUDIO_PREF_KEY = 'ganesha_audio_enabled';
@@ -105,7 +106,7 @@ const getSymbolMeta = (symbolId) => {
 
   return {
     name: rawMeta.label || rawMeta.title || symbolId,
-    image: rawMeta.icon || rawMeta.image,
+    image: SYMBOL_MOUNTAIN_GIFS[symbolId] || rawMeta.icon || rawMeta.image,
     affirmation: rawMeta.affirmation || '',
     description: rawMeta.description || rawMeta.gift || '',
     ganeshaLines: rawMeta.ganeshaLines || [],

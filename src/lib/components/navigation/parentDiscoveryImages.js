@@ -1,16 +1,17 @@
+import { SYMBOL_MOUNTAIN_GIFS } from '../../../zones/symbol-mountain/shared/symbolGifs';
 import { SHLOKA_SYMBOL_GIFS } from '../../../zones/shloka-river/shared/shlokaSymbolGifs';
 
 // Approved GMB art for the For Parents thumbnails, keyed by CATALOG id (learningCatalog.js).
-// Symbols reuse the symbol-card icons; shloka words show their animated pictures.
+// Symbols show their animated pictures (Modak still the symbol-card icon); shloka words show their animated pictures.
 export const PARENT_DISCOVERY_IMAGES = {
-  mooshika: '/images/icons/symbol-mooshika-new-opt.webp',
-  bigBelly: '/images/icons/symbol-belly-new-opt.webp',
+  mooshika: SYMBOL_MOUNTAIN_GIFS.mooshika,
+  bigBelly: SYMBOL_MOUNTAIN_GIFS.belly,
   modak: '/images/icons/symbol-modak-new-opt.webp',
-  trunk: '/images/icons/symbol-trunk-new-opt.webp',
-  lotus: '/images/icons/symbol-lotus-new-opt.webp',
-  eyes: '/images/icons/symbol-eyes-new-opt.webp',
-  ears: '/images/icons/symbol-ears-new-opt.webp',
-  tusk: '/images/icons/broken-tusk-symbol.webp',
+  trunk: SYMBOL_MOUNTAIN_GIFS.trunk,
+  lotus: SYMBOL_MOUNTAIN_GIFS.lotus,
+  eyes: SYMBOL_MOUNTAIN_GIFS.eyes,
+  ears: SYMBOL_MOUNTAIN_GIFS.ears,
+  tusk: SYMBOL_MOUNTAIN_GIFS.tusk,
   vakratunda: SHLOKA_SYMBOL_GIFS.vakratunda,
   mahakaay: SHLOKA_SYMBOL_GIFS.mahakaya,
   suryakoti: SHLOKA_SYMBOL_GIFS.suryakoti,
