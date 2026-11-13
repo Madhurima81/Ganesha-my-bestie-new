@@ -42,9 +42,10 @@ import beaverIdleWorriedImg from './assets/images/bridge/Characters/beaver-idle-
 import beaverLiftImg from './assets/images/bridge/Characters/beaver-lift.webp';
 import beaverTieImg from './assets/images/bridge/Characters/beaver-tie.webp';
 import beaverPlacingPlankImg from './assets/images/bridge/Characters/beaver-placing-plank.webp';
-import beaverCrossingImg from './assets/images/bridge/Characters/beaver-crossing.webp';
+// Crossing = looping walk cycle (the beaver keeps walking while it crosses); reunion = hug that plays once and holds.
+import beaverCrossingImg from './assets/images/bridge/Characters/beaver-walking.gif';
 import babyBeaverWavingImg from './assets/images/bridge/Characters/baby-beaver-waving.webp';
-import beaverBabyReunionImg from './assets/images/bridge/Characters/beaver-baby-reunion.webp';
+import beaverBabyReunionImg from './assets/images/bridge/Characters/beaver-hugging.webp';
 import helpHandIconImg from './assets/images/Kurumedeva/help-hand-icon.webp';
 // Shows next to Beaver once Elephant's logs land — a small growing-things
 // touch on her side of the bank.
