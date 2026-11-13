@@ -44,7 +44,8 @@ import familyTreeBg from './assets/images/family_background.webp';
 import familyTree from './assets/images/family_tree.webp';
 
 // Animated Ganesha and family (each GIF plays once and rests on its last frame).
-import babyGaneshaImg from './assets/images/ganesha-gifs/ganesha.gif';
+// Ganesha is the same celebration GIF the other About Me scenes use (public/images/ganesha-favorite-happy.gif, plays once).
+const babyGaneshaImg = '/images/ganesha-favorite-happy.gif';
 import shivaImg from './assets/images/ganesha-gifs/shiva.gif';
 import parvatiImg from './assets/images/ganesha-gifs/parvati.gif';
 import kartikeyaImg from './assets/images/ganesha-gifs/kartikeya.gif';
