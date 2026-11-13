@@ -6,6 +6,7 @@ import { ambience } from '../../audio/ambience';
 import AudioToggle from '../ui/AudioToggle/AudioToggle';
 import useAudioPreference from '../../hooks/useAudioPreference';
 import DeviceChoiceModal from './DeviceChoiceModal';
+import WelcomeLayers from './WelcomeLayers';
 import './MainWelcomeScreen.css';
 
 const MainWelcomeScreen = ({ onStartAdventure }) => {
@@ -69,17 +70,7 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
 
       <div className={`welcome-ganesha-image-container ${showButton ? 'visible' : ''}`}>
         <div className="ganesha-wrap">
-          <video
-            className="welcome-ganesha-video"
-            poster="/images/ganesha-welcome-poster.webp"
-            autoPlay
-            loop
-            muted
-            playsInline
-          >
-            <source src="/videos/ganeshawelcome-new.webm" type="video/webm" />
-            <source src="/videos/ganeshawelcome-new.mp4" type="video/mp4" />
-          </video>
+          <WelcomeLayers />
         </div>
       </div>
 

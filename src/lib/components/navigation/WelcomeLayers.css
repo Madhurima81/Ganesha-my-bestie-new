@@ -1,0 +1,37 @@
+/* Both layers sit in a 4:3 box (the video's shape) that covers the screen, so Ganesha stays on the
+   same spot of the background at any screen size. */
+.welcomeLayers {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.welcomeLayers-box {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  aspect-ratio: 4 / 3;
+  width: max(100%, calc(var(--app-height, 100vh) * 4 / 3));
+}
+
+.welcomeLayers-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #f9e5ef;
+}
+
+.welcomeLayers-ganesha {
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  width: 51%;
+  height: auto;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  user-select: none;
+}

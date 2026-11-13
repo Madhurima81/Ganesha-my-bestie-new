@@ -2,7 +2,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './GaneshaIntroStory.css';
 import VOReplayButton from '../lib/components/feedback/VOReplayButton';
 import { GANESHA_USAGE_SYSTEM } from '../lib/config/ganeshaUsageSystem';
+import WelcomeLayers from '../lib/components/navigation/WelcomeLayers';
 
+const GARDEN_BG = '/intro-story/story-garden-bg.webp';
 const AUTO_ADVANCE_PAUSE_MS = 2500;     // breathing room after the voice ends
 const AUTO_ADVANCE_SILENT_MS = 5500;    // muted / no speech: how long a page stays
 const AUTO_ADVANCE_WATCHDOG_MS = 8000;  // voice never reported its end: advance anyway (+90ms per character)
@@ -20,38 +22,44 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
   // Page the child replayed by hand: auto-advance leaves it alone (they are in control now).
   const replayedSlideRef = useRef(-1);
 
+  // Pages 1, 3 and 5 share ONE garden background with the characters laid over it. Layer positions
+  // (l = left, t = top, w = width) are % of the background picture, so they stay put at any screen size.
   const slides = useMemo(
     () => [
       {
-        image: '/intro-story/story1-img1.webp',
-        alt: 'Parvati with young Ganesha',
-        vo: 'My mom, Parvati, made me with love.'
+        bg: GARDEN_BG,
+        layers: [{ src: '/intro-story/story-s1-parvati-creates.gif', l: 35.1, t: 23.4, w: 24.6 }],
+        alt: 'Parvati making young Ganesha from mud',
+        vo: 'My mom, Parvati, made me from mud, with lots of love!'
       },
       {
         image: '/intro-story/story1-img2.webp',
         alt: 'Ganesha guarding the door as Shiva arrives',
-        vo: "Mom asked me to guard the door. When Shiva came, I wouldn't let him in."
+        vo: "One day, Mom asked me to guard the door. I didn't know who Shiva was, so I stopped him."
       },
       {
-        image: '/intro-story/story1-img2-transition.webp',
-        alt: 'Parvati and Shiva after something has gone wrong',
-        vo: 'Uh-oh... something went very wrong.'
+        bg: GARDEN_BG,
+        mudSpot: true,
+        layers: [{ src: '/intro-story/story-s3-parvati-shiva.webp', l: 15.8, t: 8.5, w: 73.5 }],
+        alt: 'Parvati and Shiva looking at the empty spot where Ganesha was',
+        vo: "Oh no! Shiva didn't know who I was, and I got hurt."
       },
       {
         image: '/intro-story/story1-img3.webp',
         alt: 'Ganesha restored with his elephant head',
-        vo: 'Shiva made things right, and I came back with my elephant head.'
+        vo: 'Shiva made things right, and brought me back with my elephant head!'
       },
       {
-        image: '/intro-story/story1-img4.webp',
-        alt: 'Ganesha together with his family',
-        vo: 'Soon, we were together again.'
+        bg: GARDEN_BG,
+        layers: [{ src: '/intro-story/story-s5-family.gif', l: 29.3, t: 36.1, w: 36.2 }],
+        alt: 'Ganesha together with Parvati and Shiva',
+        vo: 'And soon, we were all together again!'
       },
       {
         endScreen: true,
         endMapImage: '/intro-story/map-new-2.webp',
         endGaneshaImage: GANESHA_USAGE_SYSTEM.startJourney.asset,
-        vo: 'Now come explore my world!'
+        vo: 'Now, come explore my world!'
       }
     ],
     []
@@ -175,10 +183,12 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
   useEffect(() => {
     const nextSlide = slides[currentSlide + 1];
 
-    if (!nextSlide?.image) return;
-
-    const img = new Image();
-    img.src = nextSlide.image;
+    [nextSlide?.image, nextSlide?.bg, ...(nextSlide?.layers || []).map((l) => l.src)]
+      .filter(Boolean)
+      .forEach((src) => {
+        const img = new Image();
+        img.src = src;
+      });
   }, [currentSlide, slides]);
 
   useEffect(() => {
@@ -242,18 +252,11 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
   if (showVideoIntro) {
     return (
       <div className="gis-overlay gis-video-intro">
-        <video
-          ref={videoIntroRef}
-          className="gis-intro-video"
-          autoPlay
-          playsInline
-          preload="auto"
+        <WelcomeLayers
+          videoRef={videoIntroRef}
           onEnded={() => setShowVideoIntro(false)}
           onError={() => setShowVideoIntro(false)}
-        >
-          <source src="/videos/ganeshawelcome-new.webm" type="video/webm" />
-          <source src="/videos/ganeshawelcome-new.mp4" type="video/mp4" />
-        </video>
+        />
 
         <button type="button" className="storySkip" onClick={() => setShowVideoIntro(false)}>
           Skip
@@ -292,13 +295,32 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
           </div>
         ) : (
           <>
-            <img
-              key={currentSlide}
-              src={slide.image}
-              alt={slide.alt || 'Ganesha story'}
-              className="gis-image storyScene active"
-              draggable={false}
-            />
+            {slide.bg ? (
+              <div key={currentSlide} className="gis-layered storyScene active" role="img" aria-label={slide.alt}>
+                <div className="gis-layered-box">
+                  <img src={slide.bg} alt="" className="gis-layered-bg" draggable={false} />
+                  {slide.mudSpot && <span className="gis-mud-spot" aria-hidden="true" />}
+                  {slide.layers.map((layer) => (
+                    <img
+                      key={layer.src}
+                      src={layer.src}
+                      alt=""
+                      className="gis-layer"
+                      style={{ left: `${layer.l}%`, top: `${layer.t}%`, width: `${layer.w}%` }}
+                      draggable={false}
+                    />
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <img
+                key={currentSlide}
+                src={slide.image}
+                alt={slide.alt || 'Ganesha story'}
+                className="gis-image storyScene active"
+                draggable={false}
+              />
+            )}
 
             {!storyStarted ? (
               <button type="button" className="storyBeginButton" onClick={beginStory}>

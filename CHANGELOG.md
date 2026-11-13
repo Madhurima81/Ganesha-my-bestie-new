@@ -1,5 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-13 b] - Opening animation + Ganesha intro story (branch staging, NOT committed yet)
+**Touched:** WelcomeLayers.jsx/.css (new), MainWelcomeScreen.jsx, GaneshaIntroStory.jsx/.css, public/videos/welcome-bg.*, public/images/welcome/*, public/intro-story/story-garden-bg.webp, story-s1/s3/s5 files
+**Changed:**
+- Opening animation is now two layers: background video (welcome-bg.mp4/.webm, plays once, holds last frame) + transparent Ganesha GIF that swaps to a still after 2.3s. Used by the welcome screen and the intro story's opening. The supplied MP4 was MPEG-4 Part 2 (browsers can't play it), so it was re-encoded to H.264 + VP9. Old ganeshawelcome-new.* / ganesha-welcome-new.* files are no longer referenced (left in public/videos).
+- Intro story pages 1, 3, 5 share one garden background: p1 Parvati-makes-Ganesha GIF, p3 Parvati + Shiva PNG with the bare beige patch drawn in CSS, p5 family GIF (all GIFs play once). Pages 2 and 4 keep their old pictures. Voice lines replaced with the final script.
+**Open:** pages 2 and 4 still old art; old welcome video files can be deleted; Jest cannot run here (identity-obj-proxy not installed) so the intro tests were not run.
+
 ## [2026-11-13] - Symbol Mountain 8 symbols, Kurumedeva beaver, Sarvada layered scenes, Family Tree GIFs (branch staging)
 **Touched:** new src/zones/symbol-mountain/shared/symbolGifs.js + shared/images/symbol-gifs/*.gif; ProgressPopup.jsx, parentDiscoveryImages.js, NewModakSceneV7.jsx, PondSceneSimplifiedV4.jsx, SymbolMountainSceneV3.jsx, SacredAssemblySceneV8.jsx; KurumedevaGame.jsx + Characters/beaver-walking.gif, beaver-hugging.webp; SarvadaGame.jsx/.css + assets/images/sarvada/layers/*; Familytreegame.jsx + assets/images/ganesha-gifs/*; scene4 Sarvakaryeshu Before boys. Commits: bdf3046c, 96dbdfbf, 969f8814, e912add2, c8d0d7fd (+ the Family Tree Ganesha commit).
 **Changed:**
