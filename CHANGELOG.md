@@ -1,5 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-13] - Recorded voice on iPad: shared pre-unlocked players
+**Touched:** src/lib/audio/voClip.js, src/lib/hooks/useVoiceGuidance.js, src/lib/audio/sfx.js (guardAudio attaches once), src/main.jsx, src/lib/audio/voClip.test.js, docs/KNOWN_PITFALLS.md #68.
+**Changed:** On iPad Chrome only the first Modak recording after a tap played; idle hints and most later lines stayed silent. iOS WebKit only starts an audio element inside a tap and every new `Audio()` needs its own tap, while our lines start on timers. voClip.js now keeps 4 reusable players, unlocks them in the first tap (`installAudioUnlock`, called from main.jsx), and playVoClip plus the three `new Audio(path)` calls in useVoiceGuidance take one via `acquireVoiceAudio`. A refused clip now logs `[voClip] clip blocked or failed` and records it in `window.__voClipLog`.
+**Verified:** audio/hooks/shared tests (20 pass, 2 new). Local run with an iOS-style rule simulated (play() refused when not inside a tap and the element was never unlocked): opening line, later lines and idle hints 44/45 all played, 0 refused.
+**NOT verified:** on a real iPad (the simulation is not Safari). Whether the opening modal's first clip plays on a cold start there.
+**Open:** the symbol reveal lines ("Say with me, ...", "Tap to collect.") and the long "Do you know why I ride Mooshika?" card have no recordings, so they still use the computer voice (unreliable on iPad); they need script lines and clips. Direct-TTS scenes (Ears/Eyes, Tusk BeatPlayer, Shloka River wrappers) are untouched.
+
 ## [2026-11-12 c] - Modak recorded voice (45 clips) wired in
 **Touched:** public/audio/mountain-modak-01..45.mp3 + mountain-pond-01..08.mp3 (new), public/audio/vo-manifest.json, voiceover/script.csv + voClipMap.generated.js (2 hand-added rows: modak-44/45), FlowerJourneyGame2.jsx, GarlandGame3.jsx, docs/KNOWN_PITFALLS.md #67.
 **Changed:** All 45 Modak lines and 8 Pond lines are recordings cut from the ElevenLabs takes. The two mini-games spoke through window.speechSynthesis directly and ignored clips; they now play the recording for an exact-text match (falls back to TTS) and stop it on sidebar open, tab hide and unmount. "Press and hold Mooshika." / "Keep holding until Mooshika settles." were live in NewModakSceneV7 but missing from the script, so they are modak-44/45 (added by hand: generate_script.py inputs content.json/inline.json no longer exist, do not re-run it blindly).

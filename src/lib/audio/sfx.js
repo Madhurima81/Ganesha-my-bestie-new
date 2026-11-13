@@ -133,6 +133,8 @@ function play(name, volumeOverride) {
 // (finished, paused by stopVoice, errored, source cleared) releases the guard.
 function guardAudio(audio) {
   if (!audio || typeof audio.addEventListener !== 'function') return;
+  if (audio.__gmbGuarded) return; // shared voice players are reused: attach once
+  audio.__gmbGuarded = true;
   audio.addEventListener('play', () => { _sanskritEl = audio; });
   const end = () => {
     if (_sanskritEl !== audio) return;

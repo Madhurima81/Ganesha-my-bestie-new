@@ -12,7 +12,7 @@ import {
 } from '../config/content/voiceGuidance';
 
 import { sfx } from '../audio/sfx';
-import { getVoClipUrl, shouldSilenceTts } from '../audio/voClip';
+import { getVoClipUrl, shouldSilenceTts, acquireVoiceAudio } from '../audio/voClip';
 import { getGaneshaVoice, applyGaneshaVoice, prepareGaneshaText } from '../audio/ganeshaVoiceProfile';
 import { ambience } from '../audio/ambience';
 import { createSpeechStartWatcher } from '../utils/speechStartWatch';
@@ -286,7 +286,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
       voiceRef.current = null;
     }
 
-    const audio = new Audio(path);
+    const audio = acquireVoiceAudio(path, voiceVolumeRef.current) || new Audio(path);
     audio.volume = voiceVolumeRef.current;
     applyVoDuck();
 
@@ -562,7 +562,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
     // stay consistent — this is the shared "kill whatever's on the channel" path.
     stopVoice();
 
-    const audio = new Audio(path);
+    const audio = acquireVoiceAudio(path, voiceVolumeRef.current) || new Audio(path);
     audio.volume = voiceVolumeRef.current; // follows the voice volume; the voice toggle mutes this too (voice mute)
     sfx.guardAudio(audio); // no tap/place effect may land on top of a Sanskrit syllable/word
 
@@ -644,7 +644,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
     // stay consistent — this is the shared "kill whatever's on the channel" path.
     stopVoice();
 
-    const audio = new Audio(path);
+    const audio = acquireVoiceAudio(path, voiceVolumeRef.current) || new Audio(path);
     audio.volume = voiceVolumeRef.current; // follows the voice volume; the voice toggle mutes this too (voice mute)
     sfx.guardAudio(audio); // no tap/place effect may land on top of a Sanskrit syllable/word
 
