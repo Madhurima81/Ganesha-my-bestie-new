@@ -2,11 +2,11 @@ import { SYMBOL_MOUNTAIN_GIFS } from '../../../zones/symbol-mountain/shared/symb
 import { SHLOKA_SYMBOL_GIFS } from '../../../zones/shloka-river/shared/shlokaSymbolGifs';
 
 // Approved GMB art for the For Parents thumbnails, keyed by CATALOG id (learningCatalog.js).
-// Symbols show their animated pictures (Modak still the symbol-card icon); shloka words show their animated pictures.
+// Symbols show their animated pictures; shloka words show their animated pictures.
 export const PARENT_DISCOVERY_IMAGES = {
   mooshika: SYMBOL_MOUNTAIN_GIFS.mooshika,
   bigBelly: SYMBOL_MOUNTAIN_GIFS.belly,
-  modak: '/images/icons/symbol-modak-new-opt.webp',
+  modak: SYMBOL_MOUNTAIN_GIFS.modak,
   trunk: SYMBOL_MOUNTAIN_GIFS.trunk,
   lotus: SYMBOL_MOUNTAIN_GIFS.lotus,
   eyes: SYMBOL_MOUNTAIN_GIFS.eyes,

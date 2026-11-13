@@ -76,8 +76,7 @@ import mountainBackground from './assets/images-opt/margin35/eyes-game/symbol_mo
 import ganeshaCharacter from './assets/images/ganesha-character.webp';
 
 // Symbol Icons
-import { symbolEyesColored, symbolEarsColored as symbolEarColored, symbolTuskColored, symbolMooshikaColored, symbolBellyColored, symbolLotusColored, symbolTrunkColored } from '../../shared/symbolGifs'; // animated pictures (Modak keeps its still for now)
-import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
+import { symbolEyesColored, symbolEarsColored as symbolEarColored, symbolTuskColored, symbolMooshikaColored, symbolBellyColored, symbolLotusColored, symbolTrunkColored, symbolModakColored } from '../../shared/symbolGifs'; // animated pictures
 
 
 // Shared countdown duration â€” must match across useResumeCountdown + usePauseAwareTimeout

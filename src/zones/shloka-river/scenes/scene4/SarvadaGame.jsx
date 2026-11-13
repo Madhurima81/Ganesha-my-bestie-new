@@ -19,6 +19,18 @@ import modakSymbolImg from '../../../../zones/symbol-mountain/shared/images/icon
 import morningSceneImg from './assets/images/sarvada/morning-scene.webp';
 import afternoonSceneImg from './assets/images/sarvada/afternoon-scene.webp';
 import nightSceneImg from './assets/images/sarvada/night-scene.webp';
+// All three times of day are layered scenes (new background + animated characters before/after). Morning is 4:3, afternoon and night 16:9.
+import morningFoyer from './assets/images/sarvada/layers/morning-foyer.webp';
+import morningMotherBefore from './assets/images/sarvada/layers/morning-mother-before.gif';
+import morningBoyBefore from './assets/images/sarvada/layers/morning-boy-before.gif';
+import morningMotherAfter from './assets/images/sarvada/layers/morning-mother-after.gif';
+import morningBoyAfter from './assets/images/sarvada/layers/morning-boy-after.gif';
+import afternoonRoom from './assets/images/sarvada/layers/afternoon-playground.webp';
+import afternoonBoyBefore from './assets/images/sarvada/layers/afternoon-before.gif';
+import afternoonBoyAfter from './assets/images/sarvada/layers/afternoon-after.gif';
+import nightRoom from './assets/images/sarvada/layers/night-bedroom.webp';
+import nightBoyBefore from './assets/images/sarvada/layers/night-before.gif';
+import nightBoyAfter from './assets/images/sarvada/layers/night-after.gif';
 
 const SYLLABLES = ['Sar', 'va', 'da'];
 const AUDIO = ['sar', 'va', 'da'];
@@ -35,6 +47,19 @@ const PHASES_CONFIG = [
     id: 'morning',
     bg: morningBg,
     scene: morningSceneImg,
+    // Characters are placed so the mother and boy stand on the rug; the After pair keeps the same feet line.
+    layers: {
+      ratio: '4 / 3',
+      bg: morningFoyer,
+      before: [
+        { src: morningMotherBefore, l: 20.6, t: 42.76, w: 31.84 },
+        { src: morningBoyBefore, l: 41.61, t: 28.34, w: 39.85 },
+      ],
+      after: [
+        { src: morningMotherAfter, l: 26.25, t: 42.96, w: 21.69 },
+        { src: morningBoyAfter, l: 46.99, t: 28.78, w: 29.42 },
+      ],
+    },
     label: 'Morning',
     syllable: 'SAR',
     litCount: 1,
@@ -42,12 +67,19 @@ const PHASES_CONFIG = [
     hiddenSymbol: earsSymbolImg,
     foundLabel: 'You found the Ears!',
     hintVoKey: 'scene14_hint_morning_clue',
-    symbolSpot: { l: 40.5, t: 50.0, w: 10.5 },
+    symbolSpot: { l: 42.5, t: 30.0, w: 18.0 }, // the Ears are hidden in the big plant's leaves
   },
   {
     id: 'afternoon',
     bg: afternoonBg,
     scene: afternoonSceneImg,
+    // l/t/w are % of the 16:9 picture. The After boy swaps in once the symbol is found.
+    layers: {
+      ratio: '16 / 9',
+      bg: afternoonRoom,
+      before: { src: afternoonBoyBefore, l: 14.49, t: 8.17, w: 30.98 },
+      after: { src: afternoonBoyAfter, l: 14.52, t: 8.51, w: 30.32 },
+    },
     label: 'Afternoon',
     syllable: 'VA',
     litCount: 2,
@@ -55,12 +87,18 @@ const PHASES_CONFIG = [
     hiddenSymbol: bellySymbolImg,
     foundLabel: 'You found the Big Belly!',
     hintVoKey: 'scene14_hint_afternoon_clue',
-    symbolSpot: { l: 89.5, t: 48.5, w: 18.0 },
+    symbolSpot: { l: 62.0, t: 36.0, w: 22.0 }, // the belly-shaped slide in the 16:9 picture
   },
   {
     id: 'night',
     bg: nightBg,
     scene: nightSceneImg,
+    layers: {
+      ratio: '16 / 9',
+      bg: nightRoom,
+      before: { src: nightBoyBefore, l: 41.3, t: 14.99, w: 29.43 },
+      after: { src: nightBoyAfter, l: 40.9, t: 13.94, w: 30.02 },
+    },
     label: 'Night',
     syllable: 'DA',
     litCount: 3,
@@ -68,7 +106,7 @@ const PHASES_CONFIG = [
     hiddenSymbol: modakSymbolImg,
     foundLabel: 'You found the Modak!',
     hintVoKey: 'scene14_hint_night_clue',
-    symbolSpot: { l: 34.0, t: 31.5, w: 13.5 },
+    symbolSpot: { l: 38.3, t: 32.0, w: 12.0 }, // the glowing modak-shaped lamp in the 16:9 picture
   },
 ];
 
@@ -84,6 +122,17 @@ const POSE_ASSETS = [
   morningSceneImg,
   afternoonSceneImg,
   nightSceneImg,
+  afternoonRoom,
+  afternoonBoyBefore,
+  afternoonBoyAfter,
+  nightRoom,
+  nightBoyBefore,
+  nightBoyAfter,
+  morningFoyer,
+  morningMotherBefore,
+  morningBoyBefore,
+  morningMotherAfter,
+  morningBoyAfter,
 ];
 
 const NO_PRELOAD_IMAGES = [];
@@ -577,10 +626,10 @@ export default function SarvadaGame({
       const px = ((event.clientX - rect.left) / rect.width) * 100;
       const py = ((event.clientY - rect.top) / rect.height) * 100;
       const s = spots[phaseIndex] || PHASES_CONFIG[phaseIndex].symbolSpot;
-      // Frame is 4:3 — convert the vertical %-of-height delta into %-of-width
+      // Frame is 4:3 (16:9 for the layered scenes) — convert the vertical %-of-height delta into %-of-width
       // units so the hit zone is a true circle, not an ellipse.
       const dx = px - s.l;
-      const dy = (py - s.t) * (3 / 4);
+      const dy = (py - s.t) * (PHASES_CONFIG[phaseIndex].layers?.ratio === '16 / 9' ? 9 / 16 : 3 / 4);
       // A miss gets a tiny neutral ripple at the tap point only — no shake,
       // VO, red, or penalty. For a visual-search game, punishing exploration
       // is too much; but silence also can't tell the child their tap
@@ -672,15 +721,32 @@ export default function SarvadaGame({
       </div>
 
       {showMemory && (
-        <div className="sarvada-memory" key={`memory-${phaseIndex}`}>
+        <div className={`sarvada-memory${cfg.layers?.ratio === '16 / 9' ? ' is-wide' : ''}`} key={`memory-${phaseIndex}`}>
           <div className="sarvada-memory-inner">
-            <div className="sarvada-find-frame">
-              <img
-                className="sarvada-memory-img"
-                src={cfg.scene}
-                alt="memory"
-                draggable={false}
-              />
+            <div className="sarvada-find-frame" style={cfg.layers ? { aspectRatio: cfg.layers.ratio } : undefined}>
+              {cfg.layers ? (
+                <div className="sarvada-layers">
+                  <img className="sarvada-layers-bg" src={cfg.layers.bg} alt="memory" draggable={false} />
+                  {/* key restarts the GIFs when the After state appears */}
+                  {[].concat(symbolFound ? cfg.layers.after : cfg.layers.before).map((layer, i) => (
+                    <img
+                      key={`${symbolFound ? 'after' : 'before'}-${i}`}
+                      className="sarvada-layers-boy"
+                      src={layer.src}
+                      alt=""
+                      draggable={false}
+                      style={{ left: `${layer.l}%`, top: `${layer.t}%`, width: `${layer.w}%` }}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <img
+                  className="sarvada-memory-img"
+                  src={cfg.scene}
+                  alt="memory"
+                  draggable={false}
+                />
+              )}
               {findMode && !symbolFound && (
                 <button
                   className="sarvada-image-tap"
