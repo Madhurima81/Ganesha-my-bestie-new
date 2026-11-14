@@ -86,6 +86,10 @@ import forestBackground from './assets/images/modak-fj-bg.webp';
 import mooshikaTurned from './assets/images/mooshika-turned-game2.webp';
 const mooshikaActive = mooshikaTurned;
 const mooshikaCalm = mooshikaTurned;
+// Play-once "calming down" GIF (distracted -> focused, 6 frames x 250ms). Shown after the settle walk.
+import mooshikaCalmGif from './assets/images/mooshika-calm-once.gif';
+const CALM_WALK_MS = 1800;      // matches .modak-game-mushika-search.walking in ModakScene.css
+const CALM_GIF_MS = 1500;       // one play of the GIF
 import journeyFeather from './assets/images/journey-feather.webp';
 import journeyBerry from './assets/images/journey-berry.webp';
 import journeyAcorn from './assets/images/journey-acorn.webp';
@@ -625,6 +629,7 @@ const NewModakSceneMVPContent = ({
   const completionModalContent = getCompletionModal(zoneId, sceneId);
 
   const [showSparkle, setShowSparkle] = useState(null);
+  const [mooshikaCalmGifOn, setMooshikaCalmGifOn] = useState(false);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
   const [showMandala, setShowMandala] = useState(false);
   const [showCulturalCelebration, setShowCulturalCelebration] = useState(false);
@@ -787,6 +792,11 @@ const NewModakSceneMVPContent = ({
     playDiscovery();
     triggerMiniGesture('thumbsup', 'anchored', 1500, MINI_GESTURE_ANCHORS.calm);
     setShowSparkle('mooshika-calm');
+    // The calming GIF plays once Mooshika has finished walking to his settled spot.
+    const settleStartedAt = Date.now();
+    setMooshikaCalmGifOn(false);
+    new Image().src = mooshikaCalmGif;
+    safeSetTimeout(() => setMooshikaCalmGifOn(true), CALM_WALK_MS);
 
     sceneActions.updateState({
       mooshikaVisible: true,
@@ -822,7 +832,11 @@ const NewModakSceneMVPContent = ({
       affirmation: MODAK_VO.guidePower,
       sidebarTarget: getSidebarTarget('mooshika')
     }), 'live');
-    playVoice('mooshikaCalmed', () => safeSetTimeout(showMooshikaReveal, CALM_REVEAL_GAP_MS));
+    // The reveal card must not cover the GIF: wait for walk + one play (+ a beat) as well as the VO.
+    playVoice('mooshikaCalmed', () => {
+      const gifDoneIn = settleStartedAt + CALM_WALK_MS + CALM_GIF_MS + 250 - Date.now();
+      safeSetTimeout(showMooshikaReveal, Math.max(CALM_REVEAL_GAP_MS, gifDoneIn));
+    });
     safeSetTimeout(showMooshikaReveal, CALM_REVEAL_FALLBACK_MS);
   }, [clearMushikaDartTimer, clearMushikaHoldLoop, expectReveal, idleHintsEnabled, playDiscovery, playRevealBloom, playVoice, safeSetTimeout, sceneActions, showRevealOnce, stopIdleTimer, stopVoice, triggerMiniGesture]);
 
@@ -1771,9 +1785,21 @@ const NewModakSceneMVPContent = ({
                               />
                             )}
                             <img
-                              src={sceneState.phase === PHASES.CALM_REVEAL ? mooshikaCalm : mooshikaActive}
+                              key={sceneState.phase === PHASES.CALM_REVEAL && mooshikaCalmGifOn ? 'calm-gif' : 'still'}
+                              src={
+                                sceneState.phase === PHASES.CALM_REVEAL
+                                  ? (mooshikaCalmGifOn ? mooshikaCalmGif : mooshikaCalm)
+                                  : mooshikaActive
+                              }
                               alt="Mooshika"
-                              style={{ width: '100%', height: '100%', pointerEvents: 'none', userSelect: 'none' }}
+                              // The GIF's mouse sits ~5% left of the still's in its square: nudge so he does not jump.
+                              style={{
+                                width: '100%',
+                                height: '100%',
+                                pointerEvents: 'none',
+                                userSelect: 'none',
+                                ...(sceneState.phase === PHASES.CALM_REVEAL && mooshikaCalmGifOn ? { position: 'relative', left: '5%' } : null)
+                              }}
                             />
                             {showSparkle === 'mooshika-calm' && (
                               <>

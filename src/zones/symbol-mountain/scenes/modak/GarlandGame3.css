@@ -62,6 +62,15 @@
   z-index: 18;
 }
 .g3g-mooshika img { display: block; width: 100%; height: auto; }
+/* Satisfied GIF (418x627 canvas) laid over the square still: same content height, bottoms aligned. */
+.g3g-mooshika img.g3g-mooshika-gif {
+  position: absolute;
+  left: 54%;
+  top: -1%;
+  width: 72%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
 
 .g3g-modak-satisfaction {
   position: absolute;

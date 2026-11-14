@@ -24,6 +24,8 @@ import flowerCream from './assets/images/fj-flower-cream.webp';
 import garlandString from './assets/images/fj-garland-empty.webp';
 import completedGarland from './assets/images/fj-garland-complete.webp';
 import mooshikaBasket from './assets/images/mooshika-turned-game2.webp';
+// Play-once "pleased -> peacefully satisfied" GIF (6 frames x 250ms), shown when the Modak glows.
+import mooshikaSatisfiedGif from './assets/images/mooshika-satisfied-once.gif';
 import ganesha from './assets/images/ganesha-game3-new.webp';
 import forestBackground from './assets/images/modak-fj-bg.webp';
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
@@ -715,9 +717,11 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
       {/* MOOSHIKA — basket empties visually once the 6 flowers have moved
           into the workspace. Stays on screen through the offering so the
           golden Modak has somewhere to glow above. */}
-      {(!isOffered || showModakGlow) && (
+      {(
         <div ref={mooshikaRef} className="g3g-mooshika" style={{ left: `${LAYOUT.mooshika.l}%`, top: `${LAYOUT.mooshika.t}%` }}>
-          <img src={mooshikaBasket} alt="Mooshika" />
+          {/* The still keeps the box size; the GIF is laid over it so Mooshika does not jump or resize. */}
+          <img src={mooshikaBasket} alt="Mooshika" style={showModakGlow ? { visibility: 'hidden' } : undefined} />
+          {showModakGlow && <img src={mooshikaSatisfiedGif} alt="" className="g3g-mooshika-gif" draggable={false} />}
           {showModakGlow && (
             <div className="g3g-modak-satisfaction">
               <div className="g3g-modak-satisfaction-glow" aria-hidden="true" />
