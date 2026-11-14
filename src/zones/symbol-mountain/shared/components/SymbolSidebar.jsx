@@ -10,6 +10,7 @@ import AffirmationCard from '../../../../lib/components/affirmation/AffirmationC
 import { getLearningForKey } from '../../../../lib/config/affirmationLookup';
 import PhoneCollectionDrawer from '../../../../lib/components/collection/PhoneCollectionDrawer';
 
+import { SYMBOL_MOUNTAIN_GIFS } from '../symbolGifs'; // animated symbol pictures, used on the opened card (tiles stay still)
 import symbolBellyColored from '../images/icons/symbol-belly-new-opt.webp';
 import symbolEarColored from '../images/icons/symbol-ears-new-opt.webp';
 import symbolEyesColored from '../images/icons/symbol-eyes-new.webp';
@@ -199,7 +200,7 @@ const SymbolSidebar = ({
         {showPopup && selectedSymbol && (
           <AffirmationCard
             name={symbolInfo[selectedSymbol].title}
-            image={symbolInfo[selectedSymbol].colorIcon}
+            image={SYMBOL_MOUNTAIN_GIFS[selectedSymbol] || symbolInfo[selectedSymbol].colorIcon}
             affirmation={getLearningForKey(selectedSymbol)?.affirmation}
             backLabel="Back"
             onClose={closePopup}
@@ -263,7 +264,7 @@ const SymbolSidebar = ({
       {showPopup && selectedSymbol && (
         <AffirmationCard
           name={symbolInfo[selectedSymbol].title}
-          image={symbolInfo[selectedSymbol].colorIcon}
+          image={SYMBOL_MOUNTAIN_GIFS[selectedSymbol] || symbolInfo[selectedSymbol].colorIcon}
           affirmation={getLearningForKey(selectedSymbol)?.affirmation}
           backLabel="Back"
           onClose={closePopup}

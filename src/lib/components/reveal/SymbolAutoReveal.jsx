@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useGaneshaVoice } from "../../hooks/useGaneshaVoice";
 import { playCardRevealChime } from "../../services/AudioService";
 import { getCollectionTarget } from "../../utils/collectionTarget";
+import { getGifDurationMs } from "../../utils/gifDuration";
 import "./SymbolAutoReveal.css";
 
 /**
@@ -58,16 +59,26 @@ export default function SymbolAutoReveal({
   useEffect(() => {
     // Step 1 -> icon already visible by default
     canScheduleHintRef.current = true;
+    let cancelled = false;
     after(() => setPhase("card"), 380);
-    after(() => setPhase("flip"), 380 + 420 + 280);
-    after(() => setPhase("ready"), 380 + 420 + 280 + 580);
+
+    // A play-once symbol GIF must finish before the card flips (it started playing at t=0).
+    // Non-GIF pictures (or a GIF we cannot read) keep the normal timing.
+    const baseFlipMs = 380 + 420 + 280;
+    getGifDurationMs(symbolImage).then((gifMs) => {
+      if (cancelled) return;
+      const flipMs = Math.min(Math.max(baseFlipMs, gifMs + 300), 6000);
+      after(() => setPhase("flip"), flipMs);
+      after(() => setPhase("ready"), flipMs + 580);
+    });
 
     return () => {
+      cancelled = true;
       canScheduleHintRef.current = false;
       timers.current.forEach(clearTimeout);
       stopSpokenVoice();
     };
-  }, [stopSpokenVoice]);
+  }, [stopSpokenVoice, symbolImage]);
 
   // VO: fires once when card reaches "ready" state.
   useEffect(() => {
