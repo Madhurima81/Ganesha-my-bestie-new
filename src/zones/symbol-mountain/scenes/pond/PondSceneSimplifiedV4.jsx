@@ -422,6 +422,7 @@ const PondSceneContent = ({
 
   const [waterStage, setWaterStage] = useState(0);
   const [leafWaterDone, setLeafWaterDone] = useState(false);
+  const [leafGameKey, setLeafGameKey] = useState(0);
   // ================================================================
 
 
@@ -627,6 +628,7 @@ const PondSceneContent = ({
     setReedsProgress(0);
     setWaterStage(0);
     setLeafWaterDone(false);
+    setLeafGameKey((value) => value + 1);
     setRevealConfig(null);
     resetReveals();
     firstLineStartedRef.current.clear();
@@ -2110,6 +2112,8 @@ const PondSceneContent = ({
               {/* New free-form leaf puzzle: live water reaches the muddy pond.
                   The overlay is active only during the first gameplay beat. */}
               <VakratundaLeafWater
+                key={leafGameKey}
+                paused={pondPaused}
                 active={sceneState.welcomeShown && [PHASES.INITIAL, PHASES.ROCK_MOVING, PHASES.REEDS_ACTIVE].includes(sceneState.phase)}
                 onWaterReached={finishLeafWater}
                 onFirstAttempt={() => { /* First-game VO / hints to be rewritten in next pass. */ }}
