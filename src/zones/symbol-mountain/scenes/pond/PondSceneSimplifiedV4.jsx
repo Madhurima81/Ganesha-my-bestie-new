@@ -6,6 +6,8 @@ import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './PondScene.css';
+import VakratundaLeafWater from './VakratundaLeafWater';
+import muddyPondAsset from './assets/cartoon_muddy_puddle_asset.png';
 import '../../../../lib/styles/zone-themes.css'; // Ensure theme vars are loaded
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal } from '../../../../lib/config/content/openingModals';
@@ -419,6 +421,7 @@ const PondSceneContent = ({
   const reedsStartXRef = useRef(null);
 
   const [waterStage, setWaterStage] = useState(0);
+  const [leafWaterDone, setLeafWaterDone] = useState(false);
   // ================================================================
 
 
@@ -623,6 +626,7 @@ const PondSceneContent = ({
     setRockHoldProgress(0);
     setReedsProgress(0);
     setWaterStage(0);
+    setLeafWaterDone(false);
     setRevealConfig(null);
     resetReveals();
     firstLineStartedRef.current.clear();
@@ -710,8 +714,8 @@ const PondSceneContent = ({
     // BLOOMED = the lotus already bloomed and its card is coming: never say the "hold" prompt
     // again (on Continue it used to play, get cut by the card, then "say it with me").
     if (sceneState?.phase === PHASES.LOTUS_ACTIVE) return 'lotusRound';
-    if (sceneState?.phase === PHASES.INITIAL || sceneState?.phase === PHASES.ROCK_MOVING) return 'rockRound';
-    if (sceneState?.phase === PHASES.REEDS_ACTIVE) return 'reedsRound';
+    if (sceneState?.phase === PHASES.INITIAL || sceneState?.phase === PHASES.ROCK_MOVING) return null; // replacement VO pending
+    if (sceneState?.phase === PHASES.REEDS_ACTIVE) return null; // replacement VO pending
     return null;
   }, [
     sceneState?.phase,
@@ -870,7 +874,7 @@ const PondSceneContent = ({
       PHASES.REEDS_ACTIVE,
       PHASES.LOTUS_ACTIVE
     ];
-    const isHintPhase = hintPhases.includes(sceneState?.phase)
+    const isHintPhase = (sceneState?.phase === PHASES.LOTUS_ACTIVE)
       && sceneState?.welcomeShown
       && !pondPaused
       && !revealConfig
@@ -1113,6 +1117,37 @@ const PondSceneContent = ({
     localStorage.removeItem(`temp_session_${profileId}_symbol-mountain_pond`);
     SimpleSceneManager.clearCurrentScene();
   }, []);
+
+  // NEW VAKRATUNDA MECHANIC: the child's leaves create a water route.
+  // Do not use the original rock-hold / flower-swipe success chain.
+  const finishLeafWater = useCallback(() => {
+    if (sceneStateRef.current?.streamSolved) return;
+    sceneStateRef.current = {
+      ...sceneStateRef.current,
+      streamSolved: true,
+      reedsParted: true,
+      rockMoved: true,
+      phase: PHASES.TRUNK_SOLVED,
+    };
+    setLeafWaterDone(true);
+    setWaterStage(2);
+    sceneActions.updateState({
+      streamSolved: true,
+      rockMoved: true,
+      reedsParted: true,
+      phase: PHASES.TRUNK_SOLVED,
+      progress: { percentage: 50, starsEarned: 0 },
+    });
+    // No old rock/flower VO here. VO and hint copy will be replaced separately.
+    safeSetTimeout(() => {
+      sceneActions.updateState({ lotusUpright: true });
+      expectReveal('trunk', () => getRevealDetails('trunk'), 'live');
+      safeSetTimeout(() => {
+        sceneActions.updateState({ phase: PHASES.TRUNK_REVEAL });
+        showPondReveal('trunk', 'live');
+      }, 950);
+    }, 950);
+  }, [sceneActions, safeSetTimeout, expectReveal, getRevealDetails, showPondReveal]);
 
   const handleRevealComplete = (symbolId) => {
     setRevealConfig(null);
@@ -1695,7 +1730,7 @@ const PondSceneContent = ({
                 />
               )}
 
-              <div
+              {false && <div
                 className="pond-water-stream"
                 aria-hidden="true"
                 onPointerDown={layoutOpen ? (e) => startMainDrag('streamOverlay', e) : undefined}
@@ -1707,13 +1742,13 @@ const PondSceneContent = ({
                   className="pond-water-stream__img"
                   draggable={false}
                 />
-              </div>
+              </div>}
 
               {/* Flow accent — anchored to the actual visible blue stream's own
                   position (the 'water' layout slot), not the streamOverlay
                   decal box above, which doesn't line up with it. Flows out of
                   the stream, along the mud path, toward the flowers/lotus. */}
-              {waterStage > 0 && (
+              {false && waterStage > 0 && (
                 <div
                   className={`pond-water-ripples ${waterStage === 1 ? 'pond-water-ripples--blocked' : 'pond-water-ripples--flowing'}`}
                   style={{
@@ -1724,12 +1759,15 @@ const PondSceneContent = ({
                 />
               )}
 
-              <div
-                className={`pond-mud-pool ${waterStage >= 2 ? 'pond-mud-pool--filled' : ''}`}
+              <img
+                src={muddyPondAsset}
+                className="pond-leaf-mud-asset"
+                alt=""
                 aria-hidden="true"
+                draggable={false}
               />
 
-              <GestureDemo
+              {false && <GestureDemo
                 paused={isSymbolPopupOpen}
                 // Hold demos show the full progress ring, matching drag/swipe
                 // demos that teach the complete action path.
@@ -1751,12 +1789,12 @@ const PondSceneContent = ({
                 // cycle — playing it twice reads as two separate presses.
                 iterations={1}
                 zIndex={28}
-              />
+              />}
 
               <div
                 className={`
                   pond-strength-rock-wrap
-                  ${sceneState.rockMoved ? 'moved' : ''}
+                  ${''}
                 `}
                 onPointerDown={layoutOpen ? (e) => startMainDrag('rock', e) : undefined}
                 style={layoutOpen ? { cursor: 'move' } : undefined}
@@ -1774,14 +1812,14 @@ const PondSceneContent = ({
                     cue. From L2 on, the full GestureDemo below (hand + its
                     own hold ring) takes over; showing both at once was two
                     overlapping rings pulsing at different rates. */}
-                {!sceneState.rockMoved && rockHoldProgress <= 0 && effectiveHintLevel >= 1 && (
+                {false && !sceneState.rockMoved && rockHoldProgress <= 0 && effectiveHintLevel >= 1 && (
                   <div
                     className="pond-hold-hint-ring pond-hold-hint-ring--rock"
                     aria-hidden="true"
                   />
                 )}
 
-                {!sceneState.rockMoved && rockHoldProgress > 0 && (
+                {false && !sceneState.rockMoved && rockHoldProgress > 0 && (
                   <svg
                     viewBox="0 0 100 100"
                     className="pond-rock-strength-ring"
@@ -1803,7 +1841,7 @@ const PondSceneContent = ({
                 )}
               </div>
 
-              {!sceneState.rockMoved && (
+              {false && !sceneState.rockMoved && (
                 <div
                   role="button"
                   aria-label="Press and hold zone for the heavy rock"
@@ -1952,7 +1990,7 @@ const PondSceneContent = ({
                 </div>
               ))}
 
-              <GestureDemo
+              {false && <GestureDemo
                 paused={isSymbolPopupOpen}
                 type="drag"
                 from={pondLayout.reedsCueFrom}
@@ -1974,9 +2012,9 @@ const PondSceneContent = ({
                 replayKey={effectiveHintLevel}
                 iterations={1}
                 zIndex={28}
-              />
+              />}
 
-              {!sceneState.reedsParted && (
+              {false && !sceneState.reedsParted && (
                 <div
                   role="button"
                   aria-label="Gently move the flowers aside"
@@ -2004,7 +2042,7 @@ const PondSceneContent = ({
                   them aside doesn't make them disappear, just clears the way
                   for the water. Only the (invisible) hit-zone above unmounts
                   once parted, since it has no more job to do. */}
-              {['flower1', 'flower2', 'flower3', 'flower4'].map((key, i) => {
+              {false && ['flower1', 'flower2', 'flower3', 'flower4'].map((key, i) => {
                 // L1 hint: the flowers themselves briefly part outward and
                 // return — "these move sideways" — instead of a gold glow.
                 // Only while nothing is actively dragging, so it never
@@ -2032,7 +2070,7 @@ const PondSceneContent = ({
                   />
                 );
               })}
-              {['pebble1', 'pebble2', 'pebble3', 'pebble4'].map((key) => (
+              {false && ['pebble1', 'pebble2', 'pebble3', 'pebble4'].map((key) => (
                 <img
                   key={key}
                   src={pondPebble}
@@ -2067,6 +2105,15 @@ const PondSceneContent = ({
                   touchAction: layoutOpen ? 'none' : undefined,
                 }}
                 onPointerDown={layoutOpen ? (e) => startMainDrag('turtle', e) : undefined}
+              />
+
+              {/* New free-form leaf puzzle: live water reaches the muddy pond.
+                  The overlay is active only during the first gameplay beat. */}
+              <VakratundaLeafWater
+                active={sceneState.welcomeShown && [PHASES.INITIAL, PHASES.ROCK_MOVING, PHASES.REEDS_ACTIVE].includes(sceneState.phase)}
+                onWaterReached={finishLeafWater}
+                onFirstAttempt={() => { /* First-game VO / hints to be rewritten in next pass. */ }}
+                showDebug={SHOW_HIT_ZONES}
               />
 
               {/* Lotus — dormant → upright (Trunk success) → bloomed (Lotus success) */}

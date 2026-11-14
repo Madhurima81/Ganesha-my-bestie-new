@@ -1295,3 +1295,16 @@
     min-height: 68px;
   }
 }
+
+/* === NEW VAKRATUNDA leaf-water gameplay === */
+.pond-leaf-mud-asset {
+  position:absolute;
+  left:57%; top:63%;
+  width:39%; height:auto;
+  z-index:11; pointer-events:none;
+  object-fit:contain;
+}
+/* Keep the heavy rock stationary after the water succeeds. */
+.pond-scene-container .pond-strength-rock-wrap.moved {
+  transform:none;
+}

@@ -1,0 +1,20 @@
+.vak-leaf-game { position:absolute; inset:0; z-index:18; pointer-events:none; }
+.vak-leaf-game__svg { width:100%; height:100%; display:block; overflow:visible; pointer-events:none; }
+.vak-leaf-game__svg image, .vak-leaf-game__svg circle { -webkit-user-drag:none; user-select:none; }
+.vak-leaf-game__svg image[onpointerdown], .vak-leaf-game__rotate { pointer-events:auto; touch-action:none; cursor:grab; }
+.vak-leaf-game__svg g image { pointer-events:auto; touch-action:none; cursor:grab; }
+.vak-leaf-game__svg g > circle[fill="transparent"] { pointer-events:auto; touch-action:none; cursor:grab; }
+.vak-leaf-game__flow { fill:none; stroke:url(#vak-water-blue); stroke-width:19; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }
+.vak-leaf-game__flow-shine { fill:none; stroke:#c6f1fc; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; opacity:.85; pointer-events:none; }
+.vak-leaf-game__tip { fill:#dcf6fd; stroke:#46b4d8; stroke-width:2; pointer-events:none; }
+.vak-leaf-game__contact { fill:none; stroke:#fff2b1; stroke-width:3; animation:vak-leaf-contact 1.3s ease-out infinite; transform-box:fill-box; transform-origin:center; }
+.vak-leaf-game__leaf--used { filter:drop-shadow(0 0 5px rgba(255,217,109,.75)); }
+.vak-leaf-game__rotate { fill:#ffe1a0; stroke:#9d773f; stroke-width:2; }
+.vak-leaf-game__selection { fill:none; stroke:#f5c173; stroke-width:2; stroke-dasharray:6 6; pointer-events:none; }
+.vak-leaf-game__debug { fill:#fa343422; stroke:#e44848; stroke-width:2; stroke-dasharray:8 6; pointer-events:none; }
+.vak-leaf-game__start,.vak-leaf-game__extra { position:absolute; z-index:2; border:0; border-radius:20px; background:#fff2bd; color:#5c482a; padding:9px 16px; font:700 16px 'Baloo 2',sans-serif; cursor:pointer; pointer-events:auto; box-shadow:0 3px 10px #4a3c2526; }
+.vak-leaf-game__start { left:14%; top:51%; }
+.vak-leaf-game__extra { right:8%; bottom:7%; }
+.vak-leaf-game__status{position:absolute;left:10px;bottom:8px;background:#fff9;padding:4px 10px;pointer-events:none;font:12px sans-serif;}
+@keyframes vak-leaf-contact{from{transform:scale(.55);opacity:.8}to{transform:scale(1.55);opacity:0}}
+@media(prefers-reduced-motion:reduce){.vak-leaf-game__contact{animation:none;}}
