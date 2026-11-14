@@ -1,5 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-14] - Session wrap: recorded-voice fix, test checklist, voice reference
+**Touched (all on staging):** 08d14f9b shared pre-unlocked audio players (voClip.js, useVoiceGuidance.js, sfx.js, main.jsx, tests, KNOWN_PITFALLS #68); 57278789 docs/VOICE_MP3_CHECKLIST.html (62 tick boxes: iPad browser/app, Android browser/app, Desktop) plus changelog; 2185280f changelog entry for the ganesha young ElevenLabs voice plus docs/voice-refs/elevenlabs-my-voices-ganesha-young.png.
+**Changed:** see entries 2026-11-13 (iPad voice fix) and 2026-11-13 b (voice prompt, ganesha young is in use). Nothing else in app code.
+**Verified:** voice and shared tests pass (the only failing suite, InteractiveElement.test.jsx, imports a file that no longer exists and is unrelated). iOS tap rule simulated in a local run: opening line, later lines and idle hints all played, 0 refused.
+**NOT verified:** on a real iPad, Android or the installed apps. Not checked: recordings offline; the first-tap unlock when the very first touch is a drag; Pond and Shloka River recorded-voice behaviour on iPad.
+**Open:** (1) Run docs/VOICE_MP3_CHECKLIST.html on the iPad on a fresh load; if a line is silent, send the line and window.__voClipLog. (2) Symbol reveal lines ("Say with me, ...", "Tap to collect.") and the long "Do you know why I ride Mooshika?" card have no recordings and still use the computer voice: add them to voiceover/script.csv and record with ganesha young. (3) Keep one fixed ElevenLabs setting per voice; modak-01..33 and 34..45 differ. (4) Untracked: deliverables/parent-for-parents-after-mooshika.jpg and parent-settings.jpg (not committed). (5) Terms and Copyright pages still carry draft wording.
+
 ## [2026-11-13 b] - New Ganesha voice "ganesha young" created in ElevenLabs
 **What:** a new voice, **ganesha young**, was created in ElevenLabs (Text to Speech > Voices > My voices) in the **rimscal** account. It sits beside two earlier voices in that library, "ganesha young less expressive" and "ganesha cartoon young" (both English). Reference screenshot: docs/voice-refs/elevenlabs-my-voices-ganesha-young.png (the My voices list, taken in the ElevenLabs web app).
 **Voice description used (the prompt to recreate or tune it):**
