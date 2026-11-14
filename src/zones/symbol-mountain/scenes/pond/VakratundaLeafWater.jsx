@@ -7,13 +7,13 @@ import './VakratundaLeafWater.css';
 // Everything is computed from the LIVE water path; there are no leaf slots.
 const VW = 1024;
 const VH = 670;
-const SOURCE = { x: 172, y: 462 };
-const ROCK = { x: 417, y: 455, rx: 87, ry: 65 };
-const POND = { x: 750, y: 489, rx: 124, ry: 66 };
-const STEP = 5;
+const SOURCE = { x: 172, y: 408 };
+const ROCK = { x: 417, y: 401, rx: 87, ry: 65 };
+const POND = { x: 750, y: 435, rx: 124, ry: 66 };
+const STEP = 7;
 const DEFAULT_LEAVES = [
-  { id: 1, x: 285, y: 578, angle: 30 },
-  { id: 2, x: 542, y: 583, angle: -35 },
+  { id: 1, x: 262, y: 494, angle: 30 },
+  { id: 2, x: 540, y: 494, angle: -35 },
 ];
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 const hitsOval = (x, y, oval) =>
@@ -38,14 +38,14 @@ export function simulateVakratundaFlow(leaves) {
   const used = new Set();
   let reason = 'edge';
 
-  for (let i = 0; i < 195; i += 1) {
+  for (let i = 0; i < 150; i += 1) {
     if (remainingSteer <= 0) {
       let closest = null;
       let closestDistance = Infinity;
       leaves.forEach((leaf) => {
         if (used.has(leaf.id)) return;
         const distance = Math.hypot(x - leaf.x, y - leaf.y);
-        if (distance < 43 && distance < closestDistance) {
+        if (distance < 70 && distance < closestDistance) {
           closest = leaf;
           closestDistance = distance;
         }
@@ -53,16 +53,17 @@ export function simulateVakratundaFlow(leaves) {
       if (closest) {
         used.add(closest.id);
         contacts.push({ id: closest.id, x, y });
-        angle = clamp(closest.angle * Math.PI / 180, -1.14, 1.14);
-        remainingSteer = 130;
+        angle = closest.angle * Math.PI / 180;
+        remainingSteer = 155;
       }
     }
     if (remainingSteer > 0) remainingSteer -= STEP;
-    else angle += (0 - angle) * 0.026;
+    else angle += (0 - angle) * 0.055;
+    angle = clamp(angle, -1.18, 1.18);
 
     const nextX = x + Math.cos(angle) * STEP;
     const nextY = y + Math.sin(angle) * STEP;
-    if (nextX >= VW - 8 || nextY < 160 || nextY > VH - 15) {
+    if (nextX >= VW - 8 || nextY < 66 || nextY > VH - 15) {
       reason = 'edge';
       break;
     }
@@ -169,7 +170,7 @@ export default function VakratundaLeafWater({
       if (leaf.id !== drag.id) return leaf;
       const updated = drag.mode === 'rotate'
         ? { ...leaf, angle: clamp(Math.atan2(point.y - leaf.y, point.x - leaf.x) * 180 / Math.PI, -68, 68) }
-        : { ...leaf, x: clamp(point.x - drag.offsetX, 58, VW - 60), y: clamp(point.y - drag.offsetY, 255, VH - 42) };
+        : { ...leaf, x: clamp(point.x - drag.offsetX, 58, VW - 60), y: clamp(point.y - drag.offsetY, 201, VH - 42) };
       if (Math.abs(updated.x - leaf.x) + Math.abs(updated.y - leaf.y) + Math.abs(updated.angle - leaf.angle) >= 0.5) {
         drag.changed = true;
       }
@@ -190,10 +191,11 @@ export default function VakratundaLeafWater({
     setSelected(null);
   }, [hasAdjusted, onFirstAttempt]);
 
-  if (!active) return null;
+  // After success the finished water and leaves stay on screen, frozen.
+  if (!active && !finished) return null;
 
   return (
-    <div className={`vak-leaf-game${paused ? ' vak-leaf-game--paused' : ''}`}>
+    <div className={`vak-leaf-game${paused || finished || !active ? ' vak-leaf-game--paused' : ''}`}>
       <svg
         ref={svgRef}
         className="vak-leaf-game__svg"
@@ -214,29 +216,29 @@ export default function VakratundaLeafWater({
             <stop offset=".68" stopColor="white" />
             <stop offset="1" stopColor="black" />
           </linearGradient>
-          <mask id="vak-source-mask" maskUnits="userSpaceOnUse" x="0" y="350" width="225" height="245">
-            <rect x="0" y="350" width="225" height="245" fill="url(#vak-source-fade)" />
+          <mask id="vak-source-mask" maskUnits="userSpaceOnUse" x="0" y="296" width="225" height="245">
+            <rect x="0" y="296" width="225" height="245" fill="url(#vak-source-fade)" />
           </mask>
-          <clipPath id="vak-source-clip"><rect x="0" y="350" width="225" height="245" /></clipPath>
+          <clipPath id="vak-source-clip"><rect x="0" y="296" width="225" height="245" /></clipPath>
         </defs>
 
         {/* Solid, visible water at rest: no 'Let water flow' button and no 25px teaser line. */}
+        {/* Approved artwork supplies the organic grassy banks ONLY at the source. */}
+        <image
+          href={streamSvg} x="-9" y="296" width="705" height="236"
+          preserveAspectRatio="none" clipPath="url(#vak-source-clip)" mask="url(#vak-source-mask)"
+          pointerEvents="none"
+        />
         <path d={path} className="vak-leaf-game__water-bank-shadow" />
         <path d={path} className="vak-leaf-game__water-body" />
         <path d={path} className="vak-leaf-game__water-inner" />
         <path d={path} className="vak-leaf-game__water-highlight" />
-        {/* Approved artwork supplies the organic grassy banks ONLY at the source. */}
-        <image
-          href={streamSvg} x="-9" y="350" width="705" height="236"
-          preserveAspectRatio="none" clipPath="url(#vak-source-clip)" mask="url(#vak-source-mask)"
-          pointerEvents="none"
-        />
         {flow.contacts.map((contact) => (
           <g key={contact.id} pointerEvents="none">
             <circle cx={contact.x} cy={contact.y} r="15" className="vak-leaf-game__contact" />
           </g>
         ))}
-        <circle cx={tip[0]} cy={tip[1]} r="5" className="vak-leaf-game__tip" />
+        <circle cx={tip[0]} cy={tip[1]} r="9" className="vak-leaf-game__tip" />
         {leaves.map((leaf) => (
           <g key={leaf.id} transform={`translate(${leaf.x} ${leaf.y}) rotate(${leaf.angle})`}>
             {selected === leaf.id && <rect x="-72" y="-37" width="144" height="74" rx="22" className="vak-leaf-game__selection" />}
@@ -255,6 +257,7 @@ export default function VakratundaLeafWater({
               onPointerDown={(event) => beginDrag(event, leaf, 'rotate')}
               onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag}
             />
+            <path d="M-44 -16 L39 -16 M27 -27 L39 -16 L27 -5" className="vak-leaf-game__dir" />
             <text x="77" y="7" textAnchor="middle" fontSize="22" fill="#70491c" pointerEvents="none">↻</text>
           </g>
         ))}
@@ -268,7 +271,7 @@ export default function VakratundaLeafWater({
       {!finished && allowThirdLeaf && !extraAdded && (
         <button type="button" className="vak-leaf-game__extra" onClick={() => {
           setExtraAdded(true);
-          setLeaves((previous) => [...previous, { id: 3, x: 600, y: 604, angle: -28 }]);
+          setLeaves((previous) => [...previous, { id: 3, x: 640, y: 506, angle: -28 }]);
         }}>+ Third leaf</button>
       )}
       {showDebug && <div className="vak-leaf-game__status">

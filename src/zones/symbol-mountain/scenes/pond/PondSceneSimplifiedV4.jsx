@@ -302,11 +302,11 @@ const PondSceneContent = ({
     }
   }, []);
   const DEFAULT_POND_LAYOUT = {
-    rock: { x: 32, y: 58, size: 20.5 },
-    rockHit: { x: 35.6, y: 58.5, size: 13.6 },
+    rock: { x: 32, y: 50, size: 20.5 },
+    rockHit: { x: 35.6, y: 50.5, size: 13.6 },
     flowers: { x: 49.4, y: 63, size: 9 },
-    lotus: { x: 62, y: 58.5, size: 8.5 },
-    lotusHit: { x: 63.1, y: 57.3, size: 7 },
+    lotus: { x: 62, y: 50.5, size: 8.5 },
+    lotusHit: { x: 63.1, y: 49.3, size: 7 },
     reflection: { x: 76, y: 66, size: 20 },
     water: { x: 0, y: 67.8, size: 78 },
     streamOverlay: { x: 0.2, y: 44.1, size: 81 },
@@ -321,7 +321,7 @@ const PondSceneContent = ({
     pebble2: { x: 50, y: 65.7, size: 5.5 },
     pebble3: { x: 50.4, y: 69.3, size: 6 },
     pebble4: { x: 48.2, y: 67.9, size: 5.5 },
-    turtle: { x: 49.8, y: 47, size: 6.5 },
+    turtle: { x: 49.8, y: 39, size: 6.5 },
     // Hand cues are absolute CENTRE points (% of stage), unlike the element x/y above which are
     // box corners. Measured from the checklist screenshots at 1024x670: the flower/pebble cluster
     // is centred near (53, 59) and the lotus bud near (69.5, 52.5).
@@ -329,7 +329,7 @@ const PondSceneContent = ({
     reedsCueToIntro: { x: 60.5, y: 66.5, size: 0 },
     reedsCueToL3: { x: 60.5, y: 66.6, size: 0 },
     reedsCueToL2: { x: 58.4, y: 66.2, size: 0 },
-    lotusCue: { x: 65.1, y: 62.8, size: 0 },
+    lotusCue: { x: 65.1, y: 54.8, size: 0 },
     rockCue: { x: 42.5, y: 68.9, size: 0 },
   };
   const [pondLayout, setPondLayout] = useState(DEFAULT_POND_LAYOUT);

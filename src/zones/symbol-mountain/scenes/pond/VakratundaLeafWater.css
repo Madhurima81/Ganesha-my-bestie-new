@@ -5,12 +5,12 @@
 .vak-leaf-game--paused .vak-leaf-game__svg g image,
 .vak-leaf-game--paused .vak-leaf-game__svg g > circle { pointer-events:none; }
 /* Layers deliberately stay bold enough to read on the bright grassy iPad stage. */
-.vak-leaf-game__water-bank-shadow { fill:none; stroke:rgba(34,115,161,.18); stroke-width:39; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }
-.vak-leaf-game__water-body { fill:none; stroke:url(#vak-water-blue); stroke-width:34; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }
-.vak-leaf-game__water-inner { fill:none; stroke:#76d5f2; stroke-width:21; stroke-linecap:round; stroke-linejoin:round; opacity:.5; pointer-events:none; }
-.vak-leaf-game__water-highlight { fill:none; stroke:#c9f4ff; stroke-width:3.5; stroke-linecap:round; stroke-linejoin:round; opacity:.9; pointer-events:none; stroke-dasharray:80 32 44 52; animation:vak-water-glide 3s linear infinite; }
+.vak-leaf-game__water-bank-shadow { fill:none; stroke:#1f7fb8; stroke-width:50; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }
+.vak-leaf-game__water-body { fill:none; stroke:url(#vak-water-blue); stroke-width:44; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }
+.vak-leaf-game__water-inner { fill:none; stroke:#7fdcf7; stroke-width:24; stroke-linecap:round; stroke-linejoin:round; opacity:.45; pointer-events:none; }
+.vak-leaf-game__water-highlight { fill:none; stroke:#c9f4ff; stroke-width:4; stroke-linecap:round; stroke-linejoin:round; opacity:.95; pointer-events:none; stroke-dasharray:80 32 44 52; animation:vak-water-glide 3s linear infinite; }
 @keyframes vak-water-glide { to { stroke-dashoffset:-208; } }
-.vak-leaf-game__tip { fill:#bcecfb; stroke:#40b5dc; stroke-width:2; pointer-events:none; }
+.vak-leaf-game__tip { fill:#fff; stroke:#1f7fb8; stroke-width:3; filter:drop-shadow(0 0 6px #fff); pointer-events:none; }
 .vak-leaf-game__contact { fill:none; stroke:#fff4c0; stroke-width:3; animation:vak-leaf-contact 1.3s ease-out infinite; transform-box:fill-box; transform-origin:center; }
 .vak-leaf-game__leaf--used { filter:drop-shadow(0 0 5px rgba(255,217,109,.7)); }
 .vak-leaf-game__rotate { fill:#ffe1a0; stroke:#9d773f; stroke-width:2; }
@@ -20,3 +20,5 @@
 .vak-leaf-game__status { position:absolute; left:10px; bottom:8px; background:#fff9; padding:4px 10px; pointer-events:none; font:12px sans-serif; }
 @keyframes vak-leaf-contact { from{transform:scale(.55);opacity:.8} to{transform:scale(1.55);opacity:0} }
 @media(prefers-reduced-motion:reduce){.vak-leaf-game__contact,.vak-leaf-game__water-highlight{animation:none;}}
+
+.vak-leaf-game__dir { fill:none; stroke:#fff9d5; stroke-width:4; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }

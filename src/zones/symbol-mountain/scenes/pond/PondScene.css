@@ -1299,7 +1299,7 @@
 /* === NEW VAKRATUNDA leaf-water gameplay === */
 .pond-leaf-mud-asset {
   position:absolute;
-  left:57%; top:63%;
+  left:57%; top:55%;
   width:39%; height:auto;
   z-index:11; pointer-events:none;
   object-fit:contain;
