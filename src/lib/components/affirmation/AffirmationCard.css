@@ -26,6 +26,8 @@
     0 24px 64px rgba(70, 40, 10, 0.22),
     0 4px 16px rgba(70, 40, 10, 0.1);
   text-align: center;
+  position: relative;
+  cursor: pointer; /* a tap anywhere on the card closes it */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -49,22 +51,17 @@
 }
 .affCard-text {
   margin: 0;
-  max-width: 92%;
+  width: 100%; /* centred across the full card width */
   font-family: 'Baloo 2', cursive;
   font-weight: 500;
   font-size: clamp(17px, 3.4vh, 24px);
   line-height: 1.4;
   color: #5C4633;
 }
-.affCard-line {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  max-width: 100%;
-}
 .affCard-speaker {
-  flex: 0 0 auto;
+  position: absolute; /* top-right, clear of the text */
+  top: 12px;
+  right: 12px;
   width: 60px;
   height: 60px;
   border: 0;
@@ -77,6 +74,13 @@
   -webkit-tap-highlight-color: transparent;
 }
 .affCard-speaker:active { background: rgba(61, 40, 23, 0.14); }
+.affCard-hint {
+  margin: clamp(2px, 0.8vh, 8px) 0 0;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: clamp(13px, 2.4vh, 15px);
+  color: rgba(92, 70, 51, 0.62);
+}
 .affCard-actions {
   display: flex;
   flex-wrap: wrap;

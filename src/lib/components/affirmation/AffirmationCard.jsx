@@ -12,15 +12,16 @@ import './AffirmationCard.css';
  *   name         string   - "Mooshika"
  *   image        string   - icon src
  *   affirmation  string   - canonical text from learningCatalog
- *   backLabel    string   - "Back" (sidebar) / "Back to Mandala"
- *   onClose      function - back button and backdrop tap
+ *   backLabel    string   - no longer shown (no Back button); kept so existing callers still work
+ *   onClose      function - a tap anywhere on the card or backdrop (also Escape)
  *   onChant      function - optional; shows a "Chant Now" button (Shloka River words only)
  */
 export default function AffirmationCard({
   name,
   image,
   affirmation,
-  backLabel = 'Back',
+  // eslint-disable-next-line no-unused-vars
+  backLabel,
   onClose,
   onChant,
 }) {
@@ -51,32 +52,34 @@ export default function AffirmationCard({
         role="dialog"
         aria-modal="true"
         aria-label={`${name} affirmation`}
-        onClick={(e) => e.stopPropagation()}
+        onClick={onClose}
       >
+        <button
+          type="button"
+          className="affCard-speaker"
+          onClick={(e) => { e.stopPropagation(); handleReplay(); }}
+          aria-label={`Hear ${name} again`}
+        >
+          <span aria-hidden="true">&#128266;</span>
+        </button>
+
         {image && <img src={image} alt="" className="affCard-icon" />}
         <h2 className="affCard-name">{name}</h2>
-        <div className="affCard-line">
-          <p className="affCard-text">{affirmation}</p>
-          <button
-            type="button"
-            className="affCard-speaker"
-            onClick={handleReplay}
-            aria-label={`Hear ${name} again`}
-          >
-            <span aria-hidden="true">&#128266;</span>
-          </button>
-        </div>
+        <p className="affCard-text">{affirmation}</p>
 
-        <div className="affCard-actions">
-          {onChant && (
-            <button type="button" className="affCard-btn affCard-btn--chant" onClick={onChant}>
+        {onChant && (
+          <div className="affCard-actions">
+            <button
+              type="button"
+              className="affCard-btn affCard-btn--chant"
+              onClick={(e) => { e.stopPropagation(); onChant(); }}
+            >
               Chant Now
             </button>
-          )}
-          <button type="button" className="affCard-btn" onClick={onClose}>
-            {backLabel}
-          </button>
-        </div>
+          </div>
+        )}
+
+        <p className="affCard-hint" aria-hidden="true">Tap anywhere to close</p>
       </div>
     </div>
   );
