@@ -1,5 +1,16 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-13 b] - New Ganesha voice "ganesha young" created in ElevenLabs
+**What:** a new voice, **ganesha young**, was created in ElevenLabs (Text to Speech > Voices > My voices) in the **rimscal** account. It sits beside two earlier voices in that library, "ganesha young less expressive" and "ganesha cartoon young" (both English). Reference screenshot: docs/voice-refs/elevenlabs-my-voices-ganesha-young.png (the My voices list, taken in the ElevenLabs web app).
+**Voice description used (the prompt to recreate or tune it):**
+> A bright, youthful Indian male animated-character voice, sounding around 22-28 years old. Light-to-medium pitch, clear and airy vocal texture, naturally cheerful and expressive. Soft, friendly, slightly mischievous personality with a gentle smile in the voice. Natural, neutral Indian English with authentic pronunciation of Hindi names, Indian cultural words and festivals.
+>
+> Speaks like a lovable young friend sharing little adventures with children aged 5-10. Curious, affectionate, spontaneous and playful, with lively pitch variation and effortless conversation. Gentle and reassuring in quiet moments, delighted during discoveries.
+>
+> Avoid deep, heavy, bass-rich, booming, gravelly or mature voices. No theatrical storytelling, exaggerated cartoon squeaks, sing-song delivery, commercial narration or artificial excitement.
+**Status:** **ganesha young is the voice currently in use** for the recordings (confirmed by Madhurima, 2026-11-14). The 45 Modak and 8 Pond clips were made with it (ElevenLabs settings s50_sim64 for modak-01..33 and s68_sim56 for modak-34..45; see entry 2026-11-12 c). "ganesha young less expressive" and "ganesha cartoon young" are older voices kept in the same library.
+**Open:** keep every new recording on ganesha young with one fixed set of settings, so all clips sound like one voice (modak-01..33 and 34..45 already differ: listen for it, and re-record the shorter set if it stands out). Check Sanskrit and Indian names (Mooshika, Ganesha, Modak, Vakratunda...) before using it for shloka lines. Re-run docs/VOICE_MP3_CHECKLIST.html on the iPad after new clips land.
+
 ## [2026-11-13] - Recorded voice on iPad: shared pre-unlocked players
 **Touched:** src/lib/audio/voClip.js, src/lib/hooks/useVoiceGuidance.js, src/lib/audio/sfx.js (guardAudio attaches once), src/main.jsx, src/lib/audio/voClip.test.js, docs/KNOWN_PITFALLS.md #68.
 **Changed:** On iPad Chrome only the first Modak recording after a tap played; idle hints and most later lines stayed silent. iOS WebKit only starts an audio element inside a tap and every new `Audio()` needs its own tap, while our lines start on timers. voClip.js now keeps 4 reusable players, unlocks them in the first tap (`installAudioUnlock`, called from main.jsx), and playVoClip plus the three `new Audio(path)` calls in useVoiceGuidance take one via `acquireVoiceAudio`. A refused clip now logs `[voClip] clip blocked or failed` and records it in `window.__voClipLog`.
