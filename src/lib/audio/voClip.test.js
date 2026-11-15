@@ -45,4 +45,52 @@ describe('voClip', () => {
   });
 
   test('normalize', () => { expect(normalizeVoText('  It’s  ON ')).toBe("it's on"); });
+
+  test('first tap unlocks the shared players; later clips reuse them instead of creating new ones', async () => {
+    const instances = [];
+    global.Audio = function () {
+      this.paused = true; this.ended = false;
+      this.play = jest.fn(() => { this.paused = false; return Promise.resolve(); });
+      this.pause = jest.fn(() => { this.paused = true; });
+      this.addEventListener = () => {};
+      instances.push(this);
+    };
+    let fresh; jest.isolateModules(() => { fresh = require('./voClip'); });
+    const { installAudioUnlock, acquireVoiceAudio } = fresh;
+    installAudioUnlock();
+    document.dispatchEvent(new Event('click'));
+    await Promise.resolve(); await Promise.resolve();
+    expect(instances.length).toBe(4);
+    instances.forEach((a) => expect(a.play).toHaveBeenCalledTimes(1)); // silent clip, inside the tap
+
+    const before = instances.length;
+    const a1 = acquireVoiceAudio('/audio/a.mp3', 0.5);
+    expect(instances).toContain(a1);
+    expect(a1.src).toBe('/audio/a.mp3');
+    expect(a1.volume).toBe(0.5);
+    a1.paused = false; // playing: busy
+    const a2 = acquireVoiceAudio('/audio/b.mp3');
+    expect(a2).not.toBe(a1);
+    a1.paused = true; // stopped: free again, reused
+    a1.ended = true;
+    const a3 = acquireVoiceAudio('/audio/c.mp3');
+    expect(instances.length).toBe(before); // never made a new element
+    expect([a1, a2].includes(a3) || instances.includes(a3)).toBe(true);
+  });
+
+  test('a refused clip is logged and still ends the line once', async () => {
+    global.Audio = function () {
+      this.paused = true; this.ended = false;
+      this.play = () => Promise.reject(Object.assign(new Error('blocked'), { name: 'NotAllowedError' }));
+      this.pause = () => {}; this.addEventListener = () => {};
+    };
+    let fresh; jest.isolateModules(() => { fresh = require('./voClip'); });
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const onEnd = jest.fn();
+    fresh.playVoClip('/audio/z.mp3', { onEnd });
+    await Promise.resolve(); await Promise.resolve();
+    expect(onEnd).toHaveBeenCalledTimes(1);
+    expect(window.__voClipLog.some((e) => e.reason === 'NotAllowedError')).toBe(true);
+    warn.mockRestore();
+  });
 });

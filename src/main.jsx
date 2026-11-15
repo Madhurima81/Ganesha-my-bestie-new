@@ -14,7 +14,7 @@ import { cloudSync } from './lib/services/CloudSync'
 import { initAnalytics } from './lib/services/analytics'
 import { initErrorMonitoring } from './lib/services/errorMonitoring'
 import { initAudioService } from './lib/services/AudioService'
-import { primeVoClips } from './lib/audio/voClip'
+import { primeVoClips, installAudioUnlock } from './lib/audio/voClip'
 // Side-effect import: attaches the app-wide `beforeinstallprompt` listener immediately,
 // independent of the onboarding sequence, so return visits (not just first-run
 // onboarding) can still trigger the PWA install nudge.
@@ -23,6 +23,7 @@ import './lib/services/PwaInstallManager'
 // initAudioService() stays eager - MainWelcomeScreen needs it for its own
 // sound toggle on the very first screen, so it can't be deferred.
 initAudioService();      // Preload Howler SFX instances
+installAudioUnlock() // unlock the shared voice players inside the first tap (iPad/iOS only lets unlocked players start later)
 primeVoClips() // reads /audio/vo-manifest.json once; no manifest = no recorded clips = nothing changes
 
 // Sentry/PostHog/Supabase (~310KB gzip combined) were previously initialised

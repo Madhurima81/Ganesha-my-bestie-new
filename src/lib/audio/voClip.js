@@ -34,14 +34,96 @@ export const getVoClipUrlByName = (name) => (name && available.has(name) ? `/aud
 /** Sync: URL of the recording for an exact spoken line, or null (no recording / unknown line). */
 export const getVoClipUrl = (text) => getVoClipUrlByName(VO_CLIP_BY_TEXT[normalizeVoText(text)]);
 
+// ── Shared, pre-unlocked audio players ───────────────────────────────────────
+// iOS/iPadOS WebKit (Safari AND iPad Chrome) only lets an <audio> element start when it begins inside a tap, and
+// every brand-new `new Audio()` needs its own tap. Our lines start on timers (idle hints, the next line of a chain),
+// so fresh elements were refused: the line that follows the tap played, later ones and idle hints stayed silent.
+// Fix: keep a few reusable elements, "unlock" each one inside the first tap, then play every recording by swapping
+// the src of a free one. An unlocked element may start later without a tap. Desktop browsers behave as before.
+const POOL_SIZE = 4;
+const SILENT_WAV = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+const pool = [];
+let unlockInstalled = false;
+
+const vlog = (msg, extra) => {
+  try {
+    const log = (window.__voClipLog = window.__voClipLog || []);
+    log.push({ t: Math.round(performance.now()), msg, ...extra });
+    if (log.length > 60) log.shift();
+  } catch { /* no window */ }
+  console.warn(`[voClip] ${msg}`, extra || '');
+};
+
+function makePoolEntry() {
+  const audio = new Audio();
+  audio.preload = 'auto';
+  const rec = { audio, busy: false, unlocked: false, lastUsed: 0 };
+  const free = () => { rec.busy = false; };
+  audio.addEventListener?.('ended', free);
+  audio.addEventListener?.('error', free);
+  return rec;
+}
+
+function ensurePool() {
+  if (typeof Audio === 'undefined') return;
+  while (pool.length < POOL_SIZE) pool.push(makePoolEntry());
+}
+
+/** Call once at startup. Unlocks the shared players inside the first tap/click/key press, then stops listening. */
+export function installAudioUnlock() {
+  if (unlockInstalled || typeof document === 'undefined') return;
+  unlockInstalled = true;
+  const events = ['touchend', 'pointerup', 'click', 'keydown'];
+  const unlock = () => {
+    ensurePool();
+    pool.forEach((rec) => {
+      if (rec.unlocked || rec.busy) return;
+      const a = rec.audio;
+      try {
+        a.src = SILENT_WAV;
+        const p = a.play();
+        const ok = () => { rec.unlocked = true; try { a.pause(); } catch { /* ignore */ } };
+        if (p && typeof p.then === 'function') p.then(ok, () => {}); else ok();
+      } catch { /* try again on the next tap */ }
+    });
+    if (pool.length && pool.every((r) => r.unlocked || r.busy)) {
+      events.forEach((ev) => document.removeEventListener(ev, unlock, true));
+    }
+  };
+  events.forEach((ev) => document.addEventListener(ev, unlock, true));
+}
+
+/**
+ * A reusable audio element ready to play `url` (volume applied). Prefers a free, unlocked one; falls back to a
+ * plain `new Audio` (fine on desktop). Handlers left by the previous line are cleared. Use it like a normal Audio:
+ * play(), pause(), onended... It is free again once it ends, errors, or is paused for good.
+ */
+export function acquireVoiceAudio(url, volume = 1) {
+  ensurePool();
+  const isFree = (r) => !r.busy || r.audio.paused || r.audio.ended;
+  const byAge = (a, b) => a.lastUsed - b.lastUsed;
+  let rec = pool.filter((r) => isFree(r) && r.unlocked).sort(byAge)[0] || pool.filter(isFree).sort(byAge)[0];
+  if (!rec) {
+    if (typeof Audio === 'undefined') return null;
+    rec = { audio: new Audio(), busy: false, unlocked: false, lastUsed: 0 };
+    vlog('pool exhausted, using a one-off player');
+  }
+  const a = rec.audio;
+  a.onended = null; a.onerror = null; a.onplaying = null;
+  rec.busy = true;
+  rec.lastUsed = Date.now();
+  a.src = url;
+  a.volume = volume;
+  return a;
+}
+
 /**
  * Play a clip URL from getVoClipUrl*. Returns { stop(fireEnd = true) }.
  * onStart fires when audio actually starts; onEnd fires exactly once (finished, errored, or stop(true)).
  * A failed load/play never throws and never stalls the caller: it ends the line like a finished one.
  */
 export function playVoClip(url, { volume = 1, onStart, onEnd } = {}) {
-  const audio = new Audio(url);
-  audio.volume = volume;
+  const audio = acquireVoiceAudio(url, volume) || new Audio(url);
   let done = false;
   const finish = (fire) => {
     if (done) return;
@@ -54,6 +136,7 @@ export function playVoClip(url, { volume = 1, onStart, onEnd } = {}) {
   audio.onerror = () => finish(true);
   audio.play().catch((err) => {
     if (err?.name === 'AbortError') return; // interrupted by stop(); the caller already decided
+    vlog('clip blocked or failed', { url, reason: err?.name || String(err) }); // iPad: NotAllowedError = not unlocked
     finish(true);
   });
   return {

@@ -1,6 +1,42 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
-## [2026-11-13 b] - Opening animation + Ganesha intro story (branch staging, NOT committed yet)
+## [2026-11-14] - Session wrap: recorded-voice fix, test checklist, voice reference
+**Touched (all on staging):** 08d14f9b shared pre-unlocked audio players (voClip.js, useVoiceGuidance.js, sfx.js, main.jsx, tests, KNOWN_PITFALLS #68); 57278789 docs/VOICE_MP3_CHECKLIST.html (62 tick boxes: iPad browser/app, Android browser/app, Desktop) plus changelog; 2185280f changelog entry for the ganesha young ElevenLabs voice plus docs/voice-refs/elevenlabs-my-voices-ganesha-young.png.
+**Changed:** see entries 2026-11-13 (iPad voice fix) and 2026-11-13 b (voice prompt, ganesha young is in use). Nothing else in app code.
+**Verified:** voice and shared tests pass (the only failing suite, InteractiveElement.test.jsx, imports a file that no longer exists and is unrelated). iOS tap rule simulated in a local run: opening line, later lines and idle hints all played, 0 refused.
+**NOT verified:** on a real iPad, Android or the installed apps. Not checked: recordings offline; the first-tap unlock when the very first touch is a drag; Pond and Shloka River recorded-voice behaviour on iPad.
+**Open:** (1) Run docs/VOICE_MP3_CHECKLIST.html on the iPad on a fresh load; if a line is silent, send the line and window.__voClipLog. (2) Symbol reveal lines ("Say with me, ...", "Tap to collect.") and the long "Do you know why I ride Mooshika?" card have no recordings and still use the computer voice: add them to voiceover/script.csv and record with ganesha young. (3) Keep one fixed ElevenLabs setting per voice; modak-01..33 and 34..45 differ. (4) Untracked: deliverables/parent-for-parents-after-mooshika.jpg and parent-settings.jpg (not committed). (5) Terms and Copyright pages still carry draft wording.
+
+## [2026-11-13 b] - New Ganesha voice "ganesha young" created in ElevenLabs
+**What:** a new voice, **ganesha young**, was created in ElevenLabs (Text to Speech > Voices > My voices) in the **rimscal** account. It sits beside two earlier voices in that library, "ganesha young less expressive" and "ganesha cartoon young" (both English). Reference screenshot: docs/voice-refs/elevenlabs-my-voices-ganesha-young.png (the My voices list, taken in the ElevenLabs web app).
+**Voice description used (the prompt to recreate or tune it):**
+> A bright, youthful Indian male animated-character voice, sounding around 22-28 years old. Light-to-medium pitch, clear and airy vocal texture, naturally cheerful and expressive. Soft, friendly, slightly mischievous personality with a gentle smile in the voice. Natural, neutral Indian English with authentic pronunciation of Hindi names, Indian cultural words and festivals.
+>
+> Speaks like a lovable young friend sharing little adventures with children aged 5-10. Curious, affectionate, spontaneous and playful, with lively pitch variation and effortless conversation. Gentle and reassuring in quiet moments, delighted during discoveries.
+>
+> Avoid deep, heavy, bass-rich, booming, gravelly or mature voices. No theatrical storytelling, exaggerated cartoon squeaks, sing-song delivery, commercial narration or artificial excitement.
+**Status:** **ganesha young is the voice currently in use** for the recordings (confirmed by Madhurima, 2026-11-14). The 45 Modak and 8 Pond clips were made with it (ElevenLabs settings s50_sim64 for modak-01..33 and s68_sim56 for modak-34..45; see entry 2026-11-12 c). "ganesha young less expressive" and "ganesha cartoon young" are older voices kept in the same library.
+**Open:** keep every new recording on ganesha young with one fixed set of settings, so all clips sound like one voice (modak-01..33 and 34..45 already differ: listen for it, and re-record the shorter set if it stands out). Check Sanskrit and Indian names (Mooshika, Ganesha, Modak, Vakratunda...) before using it for shloka lines. Re-run docs/VOICE_MP3_CHECKLIST.html on the iPad after new clips land.
+
+## [2026-11-13] - Recorded voice on iPad: shared pre-unlocked players
+**Touched:** src/lib/audio/voClip.js, src/lib/hooks/useVoiceGuidance.js, src/lib/audio/sfx.js (guardAudio attaches once), src/main.jsx, src/lib/audio/voClip.test.js, docs/KNOWN_PITFALLS.md #68.
+**Changed:** On iPad Chrome only the first Modak recording after a tap played; idle hints and most later lines stayed silent. iOS WebKit only starts an audio element inside a tap and every new `Audio()` needs its own tap, while our lines start on timers. voClip.js now keeps 4 reusable players, unlocks them in the first tap (`installAudioUnlock`, called from main.jsx), and playVoClip plus the three `new Audio(path)` calls in useVoiceGuidance take one via `acquireVoiceAudio`. A refused clip now logs `[voClip] clip blocked or failed` and records it in `window.__voClipLog`.
+**Verified:** audio/hooks/shared tests (20 pass, 2 new). Local run with an iOS-style rule simulated (play() refused when not inside a tap and the element was never unlocked): opening line, later lines and idle hints 44/45 all played, 0 refused.
+**NOT verified:** on a real iPad (the simulation is not Safari). Whether the opening modal's first clip plays on a cold start there.
+**Open:** the symbol reveal lines ("Say with me, ...", "Tap to collect.") and the long "Do you know why I ride Mooshika?" card have no recordings, so they still use the computer voice (unreliable on iPad); they need script lines and clips. Direct-TTS scenes (Ears/Eyes, Tusk BeatPlayer, Shloka River wrappers) are untouched.
+**Session summary (13 November):** reported on iPad Chrome: only the first Modak recording played, idle hints silent, later lines patchy. Not reproducible on desktop (every clip played, including idle hints 44/45; recordings and manifest served fine from staging). Cause found as the iOS one-tap-per-player rule (above); fixed in 08d14f9b on staging. The diagnosis is a strong match, not yet confirmed on the iPad.
+**To check on the iPad (fresh load, private tab or relaunch the installed app):** opening line, later Modak lines, idle hint after about 15 s of waiting, Play Again. If a line is still silent, read `window.__voClipLog` (reason NotAllowedError = still locked) and send it. Also not yet done: a recorded-voice check of Pond and the Shloka River scenes on iPad.
+
+## [2026-11-15] - Opening animation, intro story, Modak Mooshika GIFs, cards (branch staging)
+**Touched:** WelcomeLayers, GaneshaIntroStory, NewModakSceneV7, GarlandGame3, AffirmationCard, SymbolSidebar, Shloka AppSidebar, ProgressPopup, SymbolAutoReveal, gifDuration.js
+**Changed (since the opening-animation work below, c3367b90):**
+- Modak scene: Mooshika calming GIF after the settle walk (reveal waits for it); satisfied GIF with the Modak glow; Mooshika no longer disappears while the garland is offered.
+- Shared AffirmationCard: no Back button, tap anywhere closes, speaker top-right, centred text, "Tap anywhere to close" hint.
+- Symbol Mountain sidebar, Shloka River sidebar and the map popups (meaning card, chant practice) show the animated symbols/words on the opened card; tiles stay still.
+- SymbolAutoReveal waits for a play-once GIF to finish before flipping (gifDuration.js reads the GIF's frame delays).
+**Open:** none of this has been play-tested end to end; Jest cannot run here (identity-obj-proxy missing); ZoneConfig Tusk icon and the garland Modak glow still static.
+
+## [2026-11-13 c] - Opening animation + Ganesha intro story (committed c3367b90)
 **Touched:** WelcomeLayers.jsx/.css (new), MainWelcomeScreen.jsx, GaneshaIntroStory.jsx/.css, public/videos/welcome-bg.*, public/images/welcome/*, public/intro-story/story-garden-bg.webp, story-s1/s3/s5 files
 **Changed:**
 - Opening animation is now two layers: background video (welcome-bg.mp4/.webm, plays once, holds last frame) + transparent Ganesha GIF that swaps to a still after 2.3s. Used by the welcome screen and the intro story's opening. The supplied MP4 was MPEG-4 Part 2 (browsers can't play it), so it was re-encoded to H.264 + VP9. Old ganeshawelcome-new.* / ganesha-welcome-new.* files are no longer referenced (left in public/videos).
@@ -30,6 +66,7 @@ Append one entry per work session. Newest on top.
 **Not changed:** opening modal, zone welcome cards and the finale orbs still use the old stills.
 **Verified:** vite build OK after each step. NOT played in the app: only still composites checked.
 **Open:** play every changed scene in the harness for sizing and timing (cow, peacock, bunny, Samaprabha fawn, Mooshika After boy is large). My guess for which GIF is which symbol, Samaprabha most uncertain. Auto-reveal must stay up 2.5 to 3 seconds for the play-once GIFs. Eight GIFs in the For Parents grid may look busy. Trunk: boy is larger in After. Tusk After text previously said "her" (voice recording did not exist; text changed in voiceGuidance.js/webSpeechScripts.js, the generated clip map entry is stale and harmless). Nothing pushed.
+
 
 ## [2026-11-12 c] - Modak recorded voice (45 clips) wired in
 **Touched:** public/audio/mountain-modak-01..45.mp3 + mountain-pond-01..08.mp3 (new), public/audio/vo-manifest.json, voiceover/script.csv + voClipMap.generated.js (2 hand-added rows: modak-44/45), FlowerJourneyGame2.jsx, GarlandGame3.jsx, docs/KNOWN_PITFALLS.md #67.

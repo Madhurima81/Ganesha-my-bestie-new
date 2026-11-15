@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recorded voice checklist</title>
+<style>
+  :root{--ink:#3d2b24;--heading:#5D2E0F;--muted:#846f65;--paper:#fffdf6;--bg:#f7f2ea;--border:#eadfc9;--purple:#7356b4}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito','Segoe UI',sans-serif;line-height:1.5}
+  .wrap{max-width:900px;margin:0 auto;padding:20px 16px 60px}
+  h1{font-family:'Baloo 2','Trebuchet MS',sans-serif;color:var(--heading);font-size:28px;margin:6px 0 2px}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 18px}
+  .bar{position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:2}
+  .track{height:8px;background:#efe7d7;border-radius:99px;overflow:hidden}
+  .fill{height:100%;width:0;background:var(--purple);transition:width .2s}
+  .meta{font-size:12px;color:var(--muted);font-weight:700;margin-top:4px}
+  section{background:var(--paper);border:1px solid var(--border);border-radius:18px;margin:14px 0;padding:6px 16px 10px}
+  h2{font-family:'Baloo 2','Trebuchet MS',sans-serif;color:var(--heading);font-size:19px;margin:10px 0 2px}
+  .why{font-size:13px;color:var(--muted);margin:0 0 6px}
+  .row{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;padding:10px 0;border-top:1px solid #f1e9dc}
+  .row:first-of-type{border-top:0}
+  .txt{flex:1;min-width:0}
+  .t{font-weight:800}
+  .e{font-size:13px;color:#69564d}
+  .ticks{display:flex;gap:6px;flex:none;flex-wrap:wrap;justify-content:flex-end;max-width:340px}
+  .ticks label{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;font-weight:800;color:#4f378b;cursor:pointer;min-width:60px;padding:4px 2px;text-align:center}
+  input[type=checkbox]{width:28px;height:28px;accent-color:var(--purple);margin:0}
+  .note{border:1px solid #eadbbd;background:#fff8e5;border-radius:14px;padding:10px 14px;font-size:13px;margin:12px 0}
+  textarea{width:100%;min-height:70px;border:1px solid #e5d9c7;border-radius:12px;padding:8px 10px;font:inherit;font-size:13px;margin-top:6px}
+  button{border:1px solid #dfd2f4;background:#fffaf0;color:#4f378b;border-radius:99px;height:36px;padding:0 14px;font-weight:800;cursor:pointer}
+  @media (max-width:640px){.row{flex-direction:column}.ticks{align-self:flex-end;max-width:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Recorded voice checklist</h1>
+  <p class="sub">Run this before recordings go into more scenes. Tick each device separately. The iPad runs the full list; Android and desktop get the short version. Ticks are saved in this browser only.</p>
+
+  <div class="bar">
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <div class="meta"><span id="count">0 of 0 done</span> &nbsp;&middot;&nbsp; <button type="button" id="reset">Clear ticks</button></div>
+  </div>
+
+  <div class="note"><strong>Devices:</strong> iPad browser (Safari or Chrome: same engine, test either), iPad installed app, Android browser (Chrome), Android installed app, and Desktop (browser or installed app). The iPad is the strictest.</div>
+
+  <section>
+    <h2>0. Before you start</h2>
+    <p class="why">Every device.</p>
+    <div class="row"><div class="txt"><div class="t">Fresh copy of the newest staging build, device not on silent</div><div class="e">Private tab, or close and reopen the installed app twice. iPad/iPhone ringer off silent, volume up, no Bluetooth speaker.</div></div><div class="ticks"><label><input type="checkbox" data-k="v0i0ib">iPad browser</label><label><input type="checkbox" data-k="v0i0ia">iPad app</label><label><input type="checkbox" data-k="v0i0ab">Android browser</label><label><input type="checkbox" data-k="v0i0aa">Android app</label><label><input type="checkbox" data-k="v0i0db">Desktop</label></div></div>
+  </section>
+  <section>
+    <h2>1. Does the voice play? (Modak scene)</h2>
+    <p class="why">iPad first. If the iPad plays everything, the others almost always do.</p>
+    <div class="row"><div class="txt"><div class="t">Opening line plays by itself on a cold start</div><div class="e">Tap in from the map; &quot;Mooshika has a journey ahead...&quot; speaks within about 2 seconds.</div></div><div class="ticks"><label><input type="checkbox" data-k="v1i0ib">iPad browser</label><label><input type="checkbox" data-k="v1i0ia">iPad app</label><label><input type="checkbox" data-k="v1i0ab">Android browser</label><label><input type="checkbox" data-k="v1i0aa">Android app</label><label><input type="checkbox" data-k="v1i0db">Desktop</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Later lines in the chain all play</div><div class="e">The line after the first one, and the one after that.</div></div><div class="ticks"><label><input type="checkbox" data-k="v1i1ib">iPad browser</label><label><input type="checkbox" data-k="v1i1ia">iPad app</label><label><input type="checkbox" data-k="v1i1ab">Android browser</label><label><input type="checkbox" data-k="v1i1aa">Android app</label><label><input type="checkbox" data-k="v1i1db">Desktop</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Idle hint plays after about 15 seconds of doing nothing</div><div class="e">Hands off. &quot;Press and hold Mooshika.&quot; should speak, then the second hint.</div></div><div class="ticks"><label><input type="checkbox" data-k="v1i2ib">iPad browser</label><label><input type="checkbox" data-k="v1i2ia">iPad app</label><label><input type="checkbox" data-k="v1i2ab">Android browser</label><label><input type="checkbox" data-k="v1i2aa">Android app</label><label><input type="checkbox" data-k="v1i2db">Desktop</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Play Again plays every line from the start</div></div><div class="ticks"><label><input type="checkbox" data-k="v1i3ib">iPad browser</label><label><input type="checkbox" data-k="v1i3ia">iPad app</label><label><input type="checkbox" data-k="v1i3ab">Android browser</label><label><input type="checkbox" data-k="v1i3aa">Android app</label><label><input type="checkbox" data-k="v1i3db">Desktop</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Garland and flower mini-games use the recordings</div><div class="e">Not the computer voice.</div></div><div class="ticks"><label><input type="checkbox" data-k="v1i4ib">iPad browser</label><label><input type="checkbox" data-k="v1i4ia">iPad app</label><label><input type="checkbox" data-k="v1i4db">Desktop</label></div></div>
+  </section>
+  <section>
+    <h2>2. Interruptions</h2>
+    <p class="why">Where voice breaks most.</p>
+    <div class="row"><div class="txt"><div class="t">Open the symbol sidebar mid-line, then close it</div><div class="e">Voice pauses; only the interrupted line replays.</div></div><div class="ticks"><label><input type="checkbox" data-k="v2i0ib">iPad browser</label><label><input type="checkbox" data-k="v2i0ia">iPad app</label><label><input type="checkbox" data-k="v2i0ab">Android browser</label><label><input type="checkbox" data-k="v2i0aa">Android app</label><label><input type="checkbox" data-k="v2i0db">Desktop</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Switch to another app or tab mid-line, then come back</div><div class="e">No stuck voice, no overlap.</div></div><div class="ticks"><label><input type="checkbox" data-k="v2i1ib">iPad browser</label><label><input type="checkbox" data-k="v2i1ia">iPad app</label><label><input type="checkbox" data-k="v2i1ab">Android browser</label><label><input type="checkbox" data-k="v2i1aa">Android app</label><label><input type="checkbox" data-k="v2i1db">Desktop</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Lock the screen mid-line, then unlock</div></div><div class="ticks"><label><input type="checkbox" data-k="v2i2ib">iPad browser</label><label><input type="checkbox" data-k="v2i2ia">iPad app</label><label><input type="checkbox" data-k="v2i2ab">Android browser</label><label><input type="checkbox" data-k="v2i2aa">Android app</label></div></div>
+    <div class="row"><div class="txt"><div class="t">A notification or call sound arrives mid-line</div><div class="e">Voice resumes or the scene carries on; it does not hang.</div></div><div class="ticks"><label><input type="checkbox" data-k="v2i3ib">iPad browser</label><label><input type="checkbox" data-k="v2i3ia">iPad app</label><label><input type="checkbox" data-k="v2i3ab">Android browser</label><label><input type="checkbox" data-k="v2i3aa">Android app</label></div></div>
+  </section>
+  <section>
+    <h2>3. Mute and network</h2>
+    <div class="row"><div class="txt"><div class="t">Sound effects and ambience off in Settings: voice still plays</div></div><div class="ticks"><label><input type="checkbox" data-k="v3i0ib">iPad browser</label><label><input type="checkbox" data-k="v3i0ia">iPad app</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Slow connection: a line may be late but never hangs or skips the next one</div></div><div class="ticks"><label><input type="checkbox" data-k="v3i1ib">iPad browser</label><label><input type="checkbox" data-k="v3i1ia">iPad app</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Offline after one load: do the recordings play?</div><div class="e">Write what happens in Notes (not yet confirmed they are saved offline).</div></div><div class="ticks"><label><input type="checkbox" data-k="v3i2ib">iPad browser</label><label><input type="checkbox" data-k="v3i2ia">iPad app</label><label><input type="checkbox" data-k="v3i2db">Desktop</label></div></div>
+  </section>
+  <section>
+    <h2>4. Quality</h2>
+    <p class="why">Listen as a parent and as a 6-year-old.</p>
+    <div class="row"><div class="txt"><div class="t">One consistent voice, no clipped starts or ends, no clicks between lines</div><div class="e">Clips 1 to 33 and 34 to 45 were made with different voice settings; note any that stand out.</div></div><div class="ticks"><label><input type="checkbox" data-k="v4i0ib">iPad browser</label><label><input type="checkbox" data-k="v4i0db">Desktop</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Nothing speaks in the computer voice</div><div class="e">If you hear it, note which line (it has no recording yet).</div></div><div class="ticks"><label><input type="checkbox" data-k="v4i1ib">iPad browser</label><label><input type="checkbox" data-k="v4i1ia">iPad app</label></div></div>
+  </section>
+  <section>
+    <h2>5. If a line is silent</h2>
+    <p class="why">Collect this before telling anyone. Do not guess.</p>
+    <div class="row"><div class="txt"><div class="t">Note which line, which scene and what you did just before</div><div class="e">Write it in Notes below. If you can, read window.__voClipLog (NotAllowedError = still locked).</div></div><div class="ticks"><label><input type="checkbox" data-k="v5i0any">Done</label></div></div>
+  </section>
+  <section>
+    <h2>6. Before adding recordings to another scene</h2>
+    <p class="why">Once per scene.</p>
+    <div class="row"><div class="txt"><div class="t">Every line is in voiceover/script.csv and the clip map with the exact same text, and the file is in vo-manifest.json</div></div><div class="ticks"><label><input type="checkbox" data-k="v6i0any">Done</label></div></div>
+    <div class="row"><div class="txt"><div class="t">No computer-voice calls left in the scene folder</div><div class="e">Search for SpeechSynthesisUtterance and speechSynthesis.speak.</div></div><div class="ticks"><label><input type="checkbox" data-k="v6i1any">Done</label></div></div>
+    <div class="row"><div class="txt"><div class="t">Run sections 1 and 2 for that scene on the iPad browser and app first</div><div class="e">Then Android and desktop only if the iPad is clean.</div></div><div class="ticks"><label><input type="checkbox" data-k="v6i2ib">iPad browser</label><label><input type="checkbox" data-k="v6i2ia">iPad app</label></div></div>
+  </section>
+  <section>
+    <h2>Notes</h2>
+    <p class="why">Which line, which device, what you did just before, and anything from window.__voClipLog.</p>
+    <textarea id="notes" placeholder="Write here"></textarea>
+  </section>
+</div>
+<script>
+(function(){
+  var KEY='gmb-voice-checklist-v1', boxes=[].slice.call(document.querySelectorAll('input[type=checkbox]')), notes=document.getElementById('notes'), state={};
+  try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+  function paint(){
+    var n=boxes.filter(function(b){return b.checked}).length;
+    document.getElementById('count').textContent=n+' of '+boxes.length+' done';
+    document.getElementById('fill').style.width=(boxes.length?n/boxes.length*100:0)+'%';
+  }
+  boxes.forEach(function(b){
+    b.checked=!!state[b.dataset.k];
+    b.addEventListener('change',function(){state[b.dataset.k]=b.checked;save();paint()});
+  });
+  notes.value=state.__notes||'';
+  notes.addEventListener('input',function(){state.__notes=notes.value;save()});
+  document.getElementById('reset').addEventListener('click',function(){
+    if(!confirm('Clear all ticks and notes?'))return;
+    state={};save();boxes.forEach(function(b){b.checked=false});notes.value='';paint();
+  });
+  paint();
+})();
+</script>
+</body>
+</html>

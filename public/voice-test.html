@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voice test</title>
+<style>
+  body{margin:0;font-family:'Nunito',system-ui,sans-serif;background:#fffdf6;color:#3d2b24}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  h1{font-family:'Baloo 2',system-ui,sans-serif;font-size:24px;margin:4px 0 4px;color:#5D2E0F}
+  p{font-size:14px;margin:4px 0 12px}
+  button{display:block;width:100%;min-height:60px;margin:10px 0;border:0;border-radius:16px;background:#7356b4;color:#fff;font:800 16px/1.2 'Nunito',system-ui,sans-serif;padding:10px 14px}
+  button.alt{background:#2E7D32}
+  #log{white-space:pre-wrap;background:#f3ecff;border-radius:12px;padding:10px;font:13px/1.45 ui-monospace,Menlo,monospace;min-height:120px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Voice test</h1>
+  <p>Volume up, silent switch off. Tap one test, wait about 5 seconds, then read the log and send me a screenshot. Run them in order.</p>
+  <button id="t1">Test 1: play a recording right now (inside the tap)</button>
+  <button id="t2">Test 2: new player, starts 3 seconds after the tap</button>
+  <button id="t3" class="alt">Test 3: what the app does: unlock 4 players, play one 3 seconds later</button>
+  <button id="t4" class="alt">Test 4: unlock with the real recording instead of a silent sound, play 3 seconds later</button>
+  <button id="clr">Clear log</button>
+  <div id="log"></div>
+</div>
+<script>
+(function(){
+  var URL1='/audio/mountain-modak-01.mp3', URL2='/audio/mountain-modak-02.mp3';
+  var SILENT='data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+  var logEl=document.getElementById('log'), t0=Date.now();
+  function log(m){ logEl.textContent += '['+((Date.now()-t0)/1000).toFixed(1)+'s] '+m+'\n'; }
+  log('Device: '+navigator.userAgent);
+  log('Engine note: all iPad/iPhone browsers use Safari rules.\n');
+  function watch(a,name){
+    ['playing','ended','error','stalled','abort'].forEach(function(ev){
+      a.addEventListener(ev,function(){ log(name+' event: '+ev+(ev==='error'&&a.error?(' code '+a.error.code):'')); });
+    });
+  }
+  function tryPlay(a,name){
+    var p; try{ p=a.play(); }catch(e){ log(name+' play() threw '+e.name); return; }
+    if(p&&p.then){ p.then(function(){ log(name+' play() OK'); }, function(e){ log(name+' play() REFUSED: '+e.name+' - '+e.message); }); }
+  }
+  document.getElementById('t1').onclick=function(){
+    log('--- Test 1');
+    var a=new Audio(URL1); watch(a,'T1'); tryPlay(a,'T1');
+  };
+  document.getElementById('t2').onclick=function(){
+    log('--- Test 2 (fresh player, 3 s later)');
+    setTimeout(function(){ var a=new Audio(URL1); watch(a,'T2'); tryPlay(a,'T2'); },3000);
+  };
+  function poolTest(label, unlockSrc, quiet){
+    log('--- '+label);
+    var pool=[]; var i;
+    for(i=0;i<4;i++){
+      (function(n){
+        var a=new Audio(); a.preload='auto'; a.src=unlockSrc; if(quiet) a.muted=true;
+        pool.push(a);
+        var p; try{ p=a.play(); }catch(e){ log('unlock '+n+' threw '+e.name); return; }
+        if(p&&p.then){ p.then(function(){ log('unlock '+n+' OK'); a.pause(); }, function(e){ log('unlock '+n+' REFUSED: '+e.name); }); }
+      })(i);
+    }
+    setTimeout(function(){
+      var a=pool[0]; a.onended=null; a.muted=false; a.src=URL1; a.volume=1; watch(a,label.slice(0,6));
+      log('3 s later: playing a recording on an unlocked player');
+      tryPlay(a,'late play');
+    },3000);
+  }
+  document.getElementById('t3').onclick=function(){ poolTest('Test 3 (silent-sound unlock)', SILENT); };
+  document.getElementById('t4').onclick=function(){ poolTest('Test 4 (recording unlock)', URL2, true); };
+  document.getElementById('clr').onclick=function(){ logEl.textContent=''; t0=Date.now(); };
+})();
+</script>
+</body>
+</html>
