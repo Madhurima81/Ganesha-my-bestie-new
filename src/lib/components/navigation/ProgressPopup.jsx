@@ -6,6 +6,7 @@ import SanskritVoiceRecorder from '../audio/SanskritVoiceRecorder';
 import AffirmationCard from '../affirmation/AffirmationCard';
 import { getLearningForKey } from '../../config/affirmationLookup';
 import { SYMBOL_MOUNTAIN_GIFS } from '../../../zones/symbol-mountain/shared/symbolGifs';
+import { SHLOKA_SYMBOL_GIFS } from '../../../zones/shloka-river/shared/shlokaSymbolGifs';
 import { chantCardContent } from '../../../zones/shloka-river/shared/components/chantCardContent';
 
 const AUDIO_PREF_KEY = 'ganesha_audio_enabled';
@@ -161,7 +162,7 @@ const DetailCard = ({
 
       <div className={`symbol-content ${cardClassName.includes('open') || cardClassName.includes('instant') ? 'open' : ''}`}>
         <div className={`pp-detail-image-wrapper ${isBreathingCueActive ? 'breathe' : ''} ${locked ? 'pp-locked' : ''}`}>
-          <img src={item.image} alt={getDisplayName(item.name)} className="pp-detail-image" />
+          <img src={(type === 'meanings' && SHLOKA_SYMBOL_GIFS[item.id]) || item.image} alt={getDisplayName(item.name)} className="pp-detail-image" />
         </div>
 
         <h2 className="pp-detail-title">{getDisplayName(item.name)}</h2>
@@ -474,7 +475,7 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
           word={chantWordId}
           syllables={chantContent.syllables}
           chantResult={null}
-          appIcon={selectedItem.image}
+          appIcon={chantContent.icon || selectedItem.image}
           savedRecordings={{}}
           allowSkip
           onSkip={closeDetail}
