@@ -7,6 +7,7 @@ import AffirmationCard from '../../../lib/components/affirmation/AffirmationCard
 import { getLearningForKey } from '../../../lib/config/affirmationLookup';
 import PhoneCollectionDrawer from '../../../lib/components/collection/PhoneCollectionDrawer';
 import { playUiTap } from '../../../lib/services/AudioService';
+import { SHLOKA_SYMBOL_GIFS } from './shlokaSymbolGifs'; // animated word pictures, used on the opened card + chant screen (tiles stay still)
 
 // Mantra icons — same images as Meaning Cave (colored only, no gray set)
 import vakratundaIcon    from '../../symbol-mountain/shared/images/icons/symbol-trunk-new-opt.webp';
@@ -173,7 +174,7 @@ const AppSidebar = ({
         {showCard && selectedApp && (
           <AffirmationCard
             name={appInfo[selectedApp].title}
-            image={appInfo[selectedApp].icon}
+            image={SHLOKA_SYMBOL_GIFS[selectedApp] || appInfo[selectedApp].icon}
             affirmation={getLearningForKey(selectedApp)?.affirmation}
             backLabel="Back"
             onChant={() => {
@@ -194,7 +195,7 @@ const AppSidebar = ({
             word={selectedApp}
             syllables={appInfo[selectedApp].syllables}
             chantResult={null}
-            appIcon={appInfo[selectedApp].icon}
+            appIcon={SHLOKA_SYMBOL_GIFS[selectedApp] || appInfo[selectedApp].icon}
             appColor={appInfo[selectedApp].power.color}
             savedRecordings={savedRecordings}
             onSaveRecording={onSaveRecording}
@@ -261,7 +262,7 @@ const AppSidebar = ({
       {showCard && selectedApp && (
         <AffirmationCard
           name={appInfo[selectedApp].title}
-          image={appInfo[selectedApp].icon}
+          image={SHLOKA_SYMBOL_GIFS[selectedApp] || appInfo[selectedApp].icon}
           affirmation={getLearningForKey(selectedApp)?.affirmation}
           backLabel="Back"
           onChant={() => {
@@ -282,7 +283,7 @@ const AppSidebar = ({
           word={selectedApp}
           syllables={appInfo[selectedApp].syllables}
           chantResult={null}
-          appIcon={appInfo[selectedApp].icon}
+          appIcon={SHLOKA_SYMBOL_GIFS[selectedApp] || appInfo[selectedApp].icon}
           appColor={appInfo[selectedApp].power.color}
           savedRecordings={savedRecordings}
           onSaveRecording={onSaveRecording}
