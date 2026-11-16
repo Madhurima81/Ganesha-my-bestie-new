@@ -1192,3 +1192,5 @@
   45%  { opacity: 1; transform: translate(-52%, -61%) rotate(36deg) scale(0.95); }
   100% { opacity: 0; transform: translate(-58%, -76%) rotate(88deg) scale(0.78); }
 }
+
+.kuru-log-bundle__img { display: block; width: 100%; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.18)); }
