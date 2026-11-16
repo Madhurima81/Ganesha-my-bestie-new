@@ -34,14 +34,18 @@ import { getCompletionModal } from '../../../../lib/config/content';
 
 import riverBg from './assets/images/river-finale-bg.webp';
 import neutralBoat from './assets/images/choice-boat-opt.webp';
-import revealVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new-opt.webp';
-import revealMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.webp';
-import revealSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.webp';
-import revealSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.webp';
-import revealNirvighnam from '../../../meaning cave/assets/images/symbols/nirvighnam-symbol.webp';
-import revealKurumedeva from '../../../meaning cave/assets/images/symbols/kurumedeva-symbol.webp';
-import revealSarvakaryeshu from '../../../meaning cave/assets/images/symbols/sarvakaryeshu-symbol.webp';
-import revealSarvada from '../../../meaning cave/assets/images/symbols/sarvada-symbol.webp';
+
+import { SHLOKA_SYMBOL_STILLS } from '../../shared/shlokaSymbolGifs';
+
+// The LAST frame of each word's GIF, so the orbs match the animated cards.
+const revealVakratunda = SHLOKA_SYMBOL_STILLS.vakratunda;
+const revealMahakaya = SHLOKA_SYMBOL_STILLS.mahakaya;
+const revealSuryakoti = SHLOKA_SYMBOL_STILLS.suryakoti;
+const revealSamaprabha = SHLOKA_SYMBOL_STILLS.samaprabha;
+const revealNirvighnam = SHLOKA_SYMBOL_STILLS.nirvighnam;
+const revealKurumedeva = SHLOKA_SYMBOL_STILLS.kurumedeva;
+const revealSarvakaryeshu = SHLOKA_SYMBOL_STILLS.sarvakaryeshu;
+const revealSarvada = SHLOKA_SYMBOL_STILLS.sarvada;
 
 const ORB_APP_IMAGES = {
   vakratunda: revealVakratunda,

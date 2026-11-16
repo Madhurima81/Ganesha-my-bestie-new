@@ -7,27 +7,19 @@ import AffirmationCard from '../../../lib/components/affirmation/AffirmationCard
 import { getLearningForKey } from '../../../lib/config/affirmationLookup';
 import PhoneCollectionDrawer from '../../../lib/components/collection/PhoneCollectionDrawer';
 import { playUiTap } from '../../../lib/services/AudioService';
-import { SHLOKA_SYMBOL_GIFS } from './shlokaSymbolGifs'; // animated word pictures, used on the opened card + chant screen (tiles stay still)
+import { SHLOKA_SYMBOL_GIFS, SHLOKA_SYMBOL_STILLS } from './shlokaSymbolGifs'; // animated word pictures, used on the opened card + chant screen (tiles stay still)
 
 // Mantra icons — same images as Meaning Cave (colored only, no gray set)
-import vakratundaIcon    from '../../symbol-mountain/shared/images/icons/symbol-trunk-new-opt.webp';
-import mahakayaIcon      from '../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
-import suryakotiIcon     from '../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
-import samaprabhaIcon    from '../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
-import nirvighnamIcon    from '../../meaning cave/assets/images/symbols/nirvighnam-symbol.png';
-import kurumedevaIcon    from '../../meaning cave/assets/images/symbols/kurumedeva-symbol.png';
-import sarvakaryeshuIcon from '../../meaning cave/assets/images/symbols/sarvakaryeshu-symbol.png';
-import sarvadaIcon       from '../../meaning cave/assets/images/symbols/sarvada-symbol.png';
 
 const appInfo = {
-  vakratunda:    { title: "Vakratunda",    description: "I can change my plan.", icon: vakratundaIcon,    syllables: ['VA', 'KRA', 'TUN', 'DA'],        power: { color: '#FFD700' } },
-  mahakaya:      { title: "Mahakaya",      description: "I make space.",       icon: mahakayaIcon,      syllables: ['MA', 'HA', 'KA', 'YA'],           power: { color: '#FF6B35' } },
-  suryakoti:     { title: "Suryakoti",     description: "I shine.",            icon: suryakotiIcon,     syllables: ['SUR', 'YA', 'KO', 'TI'],          power: { color: '#FFC107' } },
-  samaprabha:    { title: "Samaprabha",    description: "I stay bright.",      icon: samaprabhaIcon,    syllables: ['SA', 'MA', 'PRA', 'BHA'],         power: { color: '#2196F3' } },
-  kurumedeva:    { title: "Kurumedeva",    description: "I try again.",        icon: kurumedevaIcon,    syllables: ['KU', 'RU', 'ME', 'DEVA'],         power: { color: '#4CAF50' } },
-  nirvighnam:    { title: "Nirvighnam",    description: "I move forward.",     icon: nirvighnamIcon,    syllables: ['NIR', 'VIGH', 'NAM'],             power: { color: '#9C27B0' } },
-  sarvakaryeshu: { title: "Sarvakaryeshu", description: "I do my tasks.",      icon: sarvakaryeshuIcon, syllables: ['SAR', 'VA', 'KAR', 'YE', 'SHU'],  power: { color: '#795548' } },
-  sarvada:       { title: "Sarvada",       description: "I do not give up.",   icon: sarvadaIcon,       syllables: ['SAR', 'VA', 'DA'],                power: { color: '#FF9800' } },
+  vakratunda:    { title: "Vakratunda",    description: "I can change my plan.", icon: SHLOKA_SYMBOL_STILLS.vakratunda,    syllables: ['VA', 'KRA', 'TUN', 'DA'],        power: { color: '#FFD700' } },
+  mahakaya:      { title: "Mahakaya",      description: "I make space.",       icon: SHLOKA_SYMBOL_STILLS.mahakaya,      syllables: ['MA', 'HA', 'KA', 'YA'],           power: { color: '#FF6B35' } },
+  suryakoti:     { title: "Suryakoti",     description: "I shine.",            icon: SHLOKA_SYMBOL_STILLS.suryakoti,     syllables: ['SUR', 'YA', 'KO', 'TI'],          power: { color: '#FFC107' } },
+  samaprabha:    { title: "Samaprabha",    description: "I stay bright.",      icon: SHLOKA_SYMBOL_STILLS.samaprabha,    syllables: ['SA', 'MA', 'PRA', 'BHA'],         power: { color: '#2196F3' } },
+  kurumedeva:    { title: "Kurumedeva",    description: "I try again.",        icon: SHLOKA_SYMBOL_STILLS.kurumedeva,    syllables: ['KU', 'RU', 'ME', 'DEVA'],         power: { color: '#4CAF50' } },
+  nirvighnam:    { title: "Nirvighnam",    description: "I move forward.",     icon: SHLOKA_SYMBOL_STILLS.nirvighnam,    syllables: ['NIR', 'VIGH', 'NAM'],             power: { color: '#9C27B0' } },
+  sarvakaryeshu: { title: "Sarvakaryeshu", description: "I do my tasks.",      icon: SHLOKA_SYMBOL_STILLS.sarvakaryeshu, syllables: ['SAR', 'VA', 'KAR', 'YE', 'SHU'],  power: { color: '#795548' } },
+  sarvada:       { title: "Sarvada",       description: "I do not give up.",   icon: SHLOKA_SYMBOL_STILLS.sarvada,       syllables: ['SAR', 'VA', 'DA'],                power: { color: '#FF9800' } },
 };
 
 const AppSidebar = ({

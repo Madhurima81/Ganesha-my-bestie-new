@@ -12,9 +12,6 @@ import nightBg from './assets/images/sarvada/night-phase.webp';
 
 import boatImg from './assets/images/sarvada/boat.webp';
 import ganeshaPopImg from '/images/ganesha-hi-stand.webp';
-import earsSymbolImg from '../../../../zones/symbol-mountain/shared/images/icons/symbol-ears-new-opt.webp';
-import bellySymbolImg from '../../../../zones/symbol-mountain/shared/images/icons/symbol-belly-new-opt.webp';
-import modakSymbolImg from '../../../../zones/symbol-mountain/shared/images/icons/symbol-modak-new.webp';
 
 import morningSceneImg from './assets/images/sarvada/morning-scene.webp';
 import afternoonSceneImg from './assets/images/sarvada/afternoon-scene.webp';
@@ -31,6 +28,13 @@ import afternoonBoyAfter from './assets/images/sarvada/layers/afternoon-after.gi
 import nightRoom from './assets/images/sarvada/layers/night-bedroom.webp';
 import nightBoyBefore from './assets/images/sarvada/layers/night-before.gif';
 import nightBoyAfter from './assets/images/sarvada/layers/night-after.gif';
+
+import { SYMBOL_MOUNTAIN_STILLS } from '../../../../zones/symbol-mountain/shared/symbolGifs';
+
+// The LAST frame of each symbol's GIF (answer buttons cannot animate).
+const earsSymbolImg = SYMBOL_MOUNTAIN_STILLS.ears;
+const bellySymbolImg = SYMBOL_MOUNTAIN_STILLS.belly;
+const modakSymbolImg = SYMBOL_MOUNTAIN_STILLS.modak;
 
 const SYLLABLES = ['Sar', 'va', 'da'];
 const AUDIO = ['sar', 'va', 'da'];

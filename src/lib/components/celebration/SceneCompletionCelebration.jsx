@@ -10,6 +10,11 @@ import ProfilePillBtn from '../shared/ProfilePillBtn';
 import { getProfilePillBtnStyle } from '../../config/ZoneThemes';
 import { sfx } from '../../audio/sfx';
 import { markHomeFromCompletion } from '../../utils/zoneNavigationState';
+import { SYMBOL_MOUNTAIN_STILLS } from '../../../zones/symbol-mountain/shared/symbolGifs';
+import { SHLOKA_SYMBOL_STILLS } from '../../../zones/shloka-river/shared/shlokaSymbolGifs';
+
+// Small tiles show the LAST frame of the symbol's GIF (so they match it); tapping a tile opens the GIF itself.
+const stillFor = (id, fallback) => SYMBOL_MOUNTAIN_STILLS[id] || SHLOKA_SYMBOL_STILLS[id] || fallback;
 import ModalShell, { ModalGhostLinks, getModalThemeVars } from '../../../zones/shared/components/ModalShell';
 
 const SceneCompletionCelebration = ({
@@ -300,7 +305,7 @@ const SceneCompletionCelebration = ({
               >
                 <div className="game-modal-icon-circle">
                   {symbolImages[symbol]
-                    ? <img src={symbolImages[symbol]} alt={symbol} />
+                    ? <img src={stillFor(symbol, symbolImages[symbol])} alt={symbol} />
                     : <span>{'\u2B50'}</span>}
                 </div>
                 {/* a name only when the symbol has info to show (as in the classic card): keys like "wish-heart" are not names */}
@@ -393,7 +398,7 @@ const SceneCompletionCelebration = ({
                       >
                         <div className="trophy-symbol-glow">
                           {symbolImages[symbol] ?
-                            <img src={symbolImages[symbol]} alt={symbol} className="trophy-symbol-img" /> :
+                            <img src={stillFor(symbol, symbolImages[symbol])} alt={symbol} className="trophy-symbol-img" /> :
                             <span>⭐</span>
                           }
                         </div>
@@ -420,7 +425,7 @@ const SceneCompletionCelebration = ({
                       >
                         <div className="trophy-symbol-glow">
                           {appImages[appId] ?
-                            <img src={appImages[appId]} alt={appId} className="trophy-symbol-img" /> :
+                            <img src={stillFor(appId, appImages[appId])} alt={appId} className="trophy-symbol-img" /> :
                             <span>🎵</span>
                           }
                         </div>

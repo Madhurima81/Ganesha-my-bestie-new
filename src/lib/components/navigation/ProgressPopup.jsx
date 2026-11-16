@@ -5,8 +5,8 @@ import CloseButton from '../../../components/CloseButton';
 import SanskritVoiceRecorder from '../audio/SanskritVoiceRecorder';
 import AffirmationCard from '../affirmation/AffirmationCard';
 import { getLearningForKey } from '../../config/affirmationLookup';
-import { SYMBOL_MOUNTAIN_GIFS } from '../../../zones/symbol-mountain/shared/symbolGifs';
-import { SHLOKA_SYMBOL_GIFS } from '../../../zones/shloka-river/shared/shlokaSymbolGifs';
+import { SYMBOL_MOUNTAIN_GIFS, SYMBOL_MOUNTAIN_STILLS } from '../../../zones/symbol-mountain/shared/symbolGifs';
+import { SHLOKA_SYMBOL_GIFS, SHLOKA_SYMBOL_STILLS } from '../../../zones/shloka-river/shared/shlokaSymbolGifs';
 import { chantCardContent } from '../../../zones/shloka-river/shared/components/chantCardContent';
 
 const AUDIO_PREF_KEY = 'ganesha_audio_enabled';
@@ -565,6 +565,11 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
                   gift: sidebarMeta.gift,
                 }
               : symbol;
+            // Grid tiles show the LAST frame of the GIF (they cannot animate); opening a tile plays the GIF.
+            const tileImage = (type === 'symbols' && SYMBOL_MOUNTAIN_STILLS[symbolId])
+              || (type === 'meanings' && SHLOKA_SYMBOL_STILLS[displayItem.id])
+              || (type === 'chants' && SHLOKA_SYMBOL_STILLS[normalizeChantWordId(displayItem)])
+              || displayItem.image;
             const isUnlocked = checkIsCompleted(displayItem);
             const isLockedHintVisible = lockedTileId === symbolId;
 
@@ -580,7 +585,7 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
               >
                 <div className="pp-image-container">
                   <img
-                    src={displayItem.image}
+                    src={tileImage}
                     alt={getDisplayName(displayItem.name)}
                     className="pp-item-image"
                   />

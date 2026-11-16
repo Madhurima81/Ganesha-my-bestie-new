@@ -9,14 +9,6 @@ import { getVoClipUrl, playVoClip, shouldSilenceTts } from '../../../lib/audio/v
 import { getGaneshaVoice, applyGaneshaVoice, prepareGaneshaText } from '../../../lib/audio/ganeshaVoiceProfile';
 import ProfilePillBtn from '../../../lib/components/shared/ProfilePillBtn';
 import ModalShell, { getModalThemeVars } from './ModalShell';
-import symbolMooshikaIcon from '../../symbol-mountain/shared/images/icons/symbol-mooshika-new.webp';
-import symbolModakIcon from '../../symbol-mountain/shared/images/icons/symbol-modak-new.webp';
-import symbolBellyIcon from '../../symbol-mountain/shared/images/icons/symbol-belly-new-opt.webp';
-import symbolLotusIcon from '../../symbol-mountain/shared/images/icons/symbol-lotus-new-opt.webp';
-import symbolTrunkIcon from '../../symbol-mountain/shared/images/icons/symbol-trunk-new-opt.webp';
-import symbolEyesIcon from '../../symbol-mountain/shared/images/icons/symbol-eyes-new.webp';
-import symbolEarsIcon from '../../symbol-mountain/shared/images/icons/symbol-ears-new-opt.webp';
-import symbolTuskIcon from '../../symbol-mountain/shared/images/icons/broken-tusk-symbol.webp';
 
 const CTA_POST_VO_GAP_MS = 5000;
 const CTA_FALLBACK_TOTAL_MS = 8000;
@@ -24,23 +16,27 @@ const CTA_VO_POLL_INTERVAL_MS = 250;
 const AUDIO_PREF_KEY = 'ganesha_audio_enabled';
 const FALLBACK_SPARKLE = '\u2728';
 
+import { SYMBOL_MOUNTAIN_STILLS } from '../../symbol-mountain/shared/symbolGifs';
+import { SHLOKA_SYMBOL_STILLS } from '../../shloka-river/shared/shlokaSymbolGifs';
+
+// Symbol pictures here are the LAST frame of each symbol's GIF, so they match the animated card.
 const PUBLIC_ICON_MAP = {
-  mooshika: symbolMooshikaIcon,
-  modak: symbolModakIcon,
-  belly: symbolBellyIcon,
-  lotus: symbolLotusIcon,
-  trunk: symbolTrunkIcon,
-  eyes: symbolEyesIcon,
-  ears: symbolEarsIcon,
-  tusk: symbolTuskIcon,
-  vakratunda: '/images/meanings-caveofsecrets/vakratunda-symbol.webp',
-  mahakaya: '/images/meanings-caveofsecrets/mahakaya-symbol.webp',
-  suryakoti: '/images/meanings-caveofsecrets/suryakoti-symbol.webp',
-  samaprabha: '/images/meanings-caveofsecrets/samaprabha-symbol.webp',
-  nirvighnam: '/images/meanings-caveofsecrets/nirvighnam-symbol.webp',
-  kurumedeva: '/images/meanings-caveofsecrets/kurumedeva-symbol.webp',
-  sarvakaryeshu: '/images/meanings-caveofsecrets/sarvakaryeshu-symbol.webp',
-  sarvada: '/images/meanings-caveofsecrets/sarvada-symbol.webp',
+  mooshika: SYMBOL_MOUNTAIN_STILLS.mooshika,
+  modak: SYMBOL_MOUNTAIN_STILLS.modak,
+  belly: SYMBOL_MOUNTAIN_STILLS.belly,
+  lotus: SYMBOL_MOUNTAIN_STILLS.lotus,
+  trunk: SYMBOL_MOUNTAIN_STILLS.trunk,
+  eyes: SYMBOL_MOUNTAIN_STILLS.eyes,
+  ears: SYMBOL_MOUNTAIN_STILLS.ears,
+  tusk: SYMBOL_MOUNTAIN_STILLS.tusk,
+  vakratunda: SHLOKA_SYMBOL_STILLS.vakratunda,
+  mahakaya: SHLOKA_SYMBOL_STILLS.mahakaya,
+  suryakoti: SHLOKA_SYMBOL_STILLS.suryakoti,
+  samaprabha: SHLOKA_SYMBOL_STILLS.samaprabha,
+  nirvighnam: SHLOKA_SYMBOL_STILLS.nirvighnam,
+  kurumedeva: SHLOKA_SYMBOL_STILLS.kurumedeva,
+  sarvakaryeshu: SHLOKA_SYMBOL_STILLS.sarvakaryeshu,
+  sarvada: SHLOKA_SYMBOL_STILLS.sarvada,
   meaning: '/images/icons/meanings-icon.png',
   'story-home': '\u{1F3E0}',
   'story-language': '\u{1F5E3}\uFE0F',

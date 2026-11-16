@@ -10,6 +10,16 @@ import kurumedeva from './images/symbol-gifs/kurumedeva.gif';
 import sarvakaryeshu from './images/symbol-gifs/sarvakaryeshu.gif';
 import sarvada from './images/symbol-gifs/sarvada.gif';
 
+// The LAST frame of each GIF as a still picture (tiles/buttons that cannot animate).
+import vakratundaStill from './images/symbol-gifs/vakratunda-still.webp';
+import mahakayaStill from './images/symbol-gifs/mahakaya-still.webp';
+import suryakotiStill from './images/symbol-gifs/suryakoti-still.webp';
+import samaprabhaStill from './images/symbol-gifs/samaprabha-still.webp';
+import nirvighnamStill from './images/symbol-gifs/nirvighnam-still.webp';
+import kurumedevaStill from './images/symbol-gifs/kurumedeva-still.webp';
+import sarvakaryeshuStill from './images/symbol-gifs/sarvakaryeshu-still.webp';
+import sarvadaStill from './images/symbol-gifs/sarvada-still.webp';
+
 export const symbolVakratunda = vakratunda;
 export const symbolMahakaya = mahakaya;
 export const symbolSuryakoti = suryakoti;
@@ -21,4 +31,15 @@ export const symbolSarvada = sarvada;
 
 export const SHLOKA_SYMBOL_GIFS = {
   vakratunda, mahakaya, suryakoti, samaprabha, nirvighnam, kurumedeva, sarvakaryeshu, sarvada,
+};
+
+export const SHLOKA_SYMBOL_STILLS = {
+  vakratunda: vakratundaStill,
+  mahakaya: mahakayaStill,
+  suryakoti: suryakotiStill,
+  samaprabha: samaprabhaStill,
+  nirvighnam: nirvighnamStill,
+  kurumedeva: kurumedevaStill,
+  sarvakaryeshu: sarvakaryeshuStill,
+  sarvada: sarvadaStill,
 };

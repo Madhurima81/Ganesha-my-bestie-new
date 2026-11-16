@@ -36,12 +36,16 @@ import tuskBeforeImg from './assets/images/sarvakaryeshu/tusk-before.webp';
 import tuskAfterImg from './assets/images/sarvakaryeshu/tusk-after.webp';
 import boatImg from './assets/images-opt/boat-opt.webp';
 
-import trunkIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-trunk-new-opt.webp';
-import tuskIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-tusk-new.webp';
-import modakIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-modak-new.webp';
-import mooshikaIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-mooshika-new.webp';
-import eyesIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-eyes-new.webp';
-import earsIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-ears-new-opt.webp';
+
+import { SYMBOL_MOUNTAIN_STILLS } from '../../../../zones/symbol-mountain/shared/symbolGifs';
+
+// The LAST frame of each symbol's GIF (answer buttons cannot animate).
+const trunkIcon = SYMBOL_MOUNTAIN_STILLS.trunk;
+const tuskIcon = SYMBOL_MOUNTAIN_STILLS.tusk;
+const modakIcon = SYMBOL_MOUNTAIN_STILLS.modak;
+const mooshikaIcon = SYMBOL_MOUNTAIN_STILLS.mooshika;
+const eyesIcon = SYMBOL_MOUNTAIN_STILLS.eyes;
+const earsIcon = SYMBOL_MOUNTAIN_STILLS.ears;
 
 const SYLLABLES = ['Sar', 'va', 'kar', 'yeshu'];
 const AUDIO = ['sar', 'va', 'kar', 'yeshu'];

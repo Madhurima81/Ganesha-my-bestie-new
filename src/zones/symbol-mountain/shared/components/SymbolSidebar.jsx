@@ -10,25 +10,17 @@ import AffirmationCard from '../../../../lib/components/affirmation/AffirmationC
 import { getLearningForKey } from '../../../../lib/config/affirmationLookup';
 import PhoneCollectionDrawer from '../../../../lib/components/collection/PhoneCollectionDrawer';
 
-import { SYMBOL_MOUNTAIN_GIFS } from '../symbolGifs'; // animated symbol pictures, used on the opened card (tiles stay still)
-import symbolBellyColored from '../images/icons/symbol-belly-new-opt.webp';
-import symbolEarColored from '../images/icons/symbol-ears-new-opt.webp';
-import symbolEyesColored from '../images/icons/symbol-eyes-new.webp';
-import symbolLotusColored from '../images/icons/symbol-lotus-new-opt.webp';
-import symbolModakColored from '../images/icons/symbol-modak-new.webp';
-import symbolMooshikaColored from '../images/icons/symbol-mooshika-new.webp';
-import symbolTrunkColored from '../images/icons/symbol-trunk-new-opt.webp';
-import symbolTuskColored from '../images/icons/broken-tusk-symbol.webp';
+import { SYMBOL_MOUNTAIN_GIFS, SYMBOL_MOUNTAIN_STILLS } from '../symbolGifs'; // tiles/drawer use the GIF's last frame (SYMBOL_MOUNTAIN_STILLS); the opened card plays the GIF
 
 const symbolInfo = {
-  modak: { title: 'Modak', colorIcon: symbolModakColored },
-  mooshika: { title: 'Mooshika', colorIcon: symbolMooshikaColored },
-  belly: { title: 'Big Belly', colorIcon: symbolBellyColored },
-  lotus: { title: 'Lotus', colorIcon: symbolLotusColored },
-  trunk: { title: 'Trunk', colorIcon: symbolTrunkColored },
-  eyes: { title: 'Eyes', colorIcon: symbolEyesColored },
-  ear: { title: 'Ears', colorIcon: symbolEarColored },
-  tusk: { title: 'Tusk', colorIcon: symbolTuskColored },
+  modak: { title: 'Modak', colorIcon: SYMBOL_MOUNTAIN_STILLS.modak },
+  mooshika: { title: 'Mooshika', colorIcon: SYMBOL_MOUNTAIN_STILLS.mooshika },
+  belly: { title: 'Big Belly', colorIcon: SYMBOL_MOUNTAIN_STILLS.belly },
+  lotus: { title: 'Lotus', colorIcon: SYMBOL_MOUNTAIN_STILLS.lotus },
+  trunk: { title: 'Trunk', colorIcon: SYMBOL_MOUNTAIN_STILLS.trunk },
+  eyes: { title: 'Eyes', colorIcon: SYMBOL_MOUNTAIN_STILLS.eyes },
+  ear: { title: 'Ears', colorIcon: SYMBOL_MOUNTAIN_STILLS.ear },
+  tusk: { title: 'Tusk', colorIcon: SYMBOL_MOUNTAIN_STILLS.tusk },
 };
 
 // Pond's actual discovery order is trunk (reeds solved) then lotus (bloom) —
