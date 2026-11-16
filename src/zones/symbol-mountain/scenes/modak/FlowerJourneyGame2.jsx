@@ -21,8 +21,8 @@ import './FlowerJourneyGame2.css';
 
 import forestBackground from './assets/images/modak-fj-bg.webp';
 // Mooshika is the looping calm GIF (same one as the end of beat 1), so she stays alive through the flower game.
-import mooshikaTurnedGif from './assets/images/mooshika-calm-loop.gif';
-import mooshikaTurnedStill from './assets/images/mooshika-calm-still.webp'; // shown while a symbol reveal / panel is up (the GIF would distract)
+import mooshikaTurnedGif from './assets/images/mooshika-blink.gif'; // plain blink (2.5 s rest); the calm GIF is only for the calm moment in beat 1
+import mooshikaTurnedStill from './assets/images/mooshika-blink-still.webp'; // shown while a symbol reveal / panel is up (the GIF would distract)
 const mooshikaTurned = mooshikaTurnedGif;
 import bushClosed from './assets/images/fj-bush-closed-new.webp';
 import bushOpen from './assets/images/fj-bush-open-new.webp';
@@ -38,8 +38,7 @@ import emotionWorried from './assets/images/emotion-worried-game3-opt.webp';
 import emotionPleased from './assets/images/emotion-pleased-game3-opt.webp';
 import emotionExcited from './assets/images/emotion-excited-game3-opt.webp';
 import emotionRelieved from './assets/images/emotion-relieved-game3-opt.webp';
-import { GANESHA_POSE_ASSETS } from '../../../../lib/config/ganeshaUsageSystem';
-const ganeshaArt = GANESHA_POSE_ASSETS.sitModakBlink; // blinking Ganesha
+import ganeshaArt from './assets/images/ganesha-garland-blink.gif'; // the original (open-palm, no modak) Ganesha, blinking with a 2.5 s rest
 
 const PHASES = {
   FLOWER_BUSH: 'flower_bush',
