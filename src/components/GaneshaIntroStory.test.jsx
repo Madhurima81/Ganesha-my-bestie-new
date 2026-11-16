@@ -27,8 +27,7 @@ const activeDot = (container) =>
 
 function startStory() {
   const view = render(<GaneshaIntroStory profileId="p1" onComplete={jest.fn()} />);
-  fireEvent.click(screen.getByText('Skip'));            // skip the opening video
-  fireEvent.click(screen.getByText('Tap to begin'));
+  fireEvent.click(screen.getByText('Skip'));            // skip the opening video; page 1 starts by itself
   act(() => { jest.advanceTimersByTime(200); });         // first voice line starts
   return view;
 }
@@ -87,7 +86,6 @@ test('last story page leads to the end screen, which never auto-finishes', () =>
   const onComplete = jest.fn();
   const { container } = render(<GaneshaIntroStory profileId="p1" onComplete={onComplete} />);
   fireEvent.click(screen.getByText('Skip'));
-  fireEvent.click(screen.getByText('Tap to begin'));
   for (let i = 0; i < 5; i += 1) {
     act(() => { jest.advanceTimersByTime(200); });
     act(() => { spoken[spoken.length - 1].onend(); });

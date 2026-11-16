@@ -9,10 +9,15 @@ const AUTO_ADVANCE_PAUSE_MS = 2500;     // breathing room after the voice ends
 const AUTO_ADVANCE_SILENT_MS = 5500;    // muted / no speech: how long a page stays
 const AUTO_ADVANCE_WATCHDOG_MS = 8000;  // voice never reported its end: advance anyway (+90ms per character)
 
+const OPENING_VO = "Hi! I'm Ganesha. Come, let me tell you how my story began!";
+const OPENING_TITLE = 'How My Story Began';
+const TITLE_FADE_IN_MS = 5200;          // title appears near the end of the 8s sunray opening
+
 const GaneshaIntroStory = ({ profileId, onComplete }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showVideoIntro, setShowVideoIntro] = useState(true);
   const [storyStarted, setStoryStarted] = useState(false);
+  const [showTitle, setShowTitle] = useState(false);
 
   const videoIntroRef = useRef(null);
   const speechTimerRef = useRef(null);
@@ -201,10 +206,13 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
     };
   }, []);
 
-  const beginStory = () => {
+  // No "Tap to begin": once the sunray opening ends (or is skipped) page 1 starts by itself.
+  // The child already tapped (profile icon / Mooshika ride / Skip), so voice is allowed.
+  useEffect(() => {
+    if (showVideoIntro || storyStarted) return;
     unlockSpeechFromGesture();
     setStoryStarted(true);
-  };
+  }, [showVideoIntro, storyStarted]);
 
   const handleNext = () => {
     unlockSpeechFromGesture();
@@ -249,6 +257,32 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
     return () => clearTimeout(safetyCap);
   }, [showVideoIntro]);
 
+  // Opening: Ganesha greets the child over the sunray video, then the title fades in near the end.
+  useEffect(() => {
+    if (!showVideoIntro) return undefined;
+    const titleTimer = setTimeout(() => setShowTitle(true), TITLE_FADE_IN_MS);
+    const voTimer = setTimeout(() => {
+      try {
+        if (localStorage.getItem('ganesha_audio_enabled') === 'false') return;
+        if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
+        const u = new window.SpeechSynthesisUtterance(OPENING_VO);
+        const voices = window.speechSynthesis.getVoices?.() || [];
+        const v =
+          voices.find((x) => /female|zira|samantha|veena/i.test(x.name)) ||
+          voices.find((x) => /en-IN|en-GB|en-US/i.test(x.lang));
+        if (v) u.voice = v;
+        u.rate = 0.9;
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.resume?.();
+        window.speechSynthesis.speak(u);
+      } catch { /* the opening still plays silently */ }
+    }, 400);
+    return () => {
+      clearTimeout(titleTimer);
+      clearTimeout(voTimer);
+    };
+  }, [showVideoIntro]);
+
   if (showVideoIntro) {
     return (
       <div className="gis-overlay gis-video-intro">
@@ -257,6 +291,8 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
           onEnded={() => setShowVideoIntro(false)}
           onError={() => setShowVideoIntro(false)}
         />
+
+        {showTitle && <h1 className="gisOpeningTitle">{OPENING_TITLE}</h1>}
 
         <button type="button" className="storySkip" onClick={() => setShowVideoIntro(false)}>
           Skip
@@ -322,11 +358,7 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
               />
             )}
 
-            {!storyStarted ? (
-              <button type="button" className="storyBeginButton" onClick={beginStory}>
-                Tap to begin
-              </button>
-            ) : (
+            {storyStarted && (
               <>
                 <div className="gis-dots" aria-hidden="true">
                   {slides.map((item, index) =>

@@ -524,3 +524,25 @@
     font-size: 18px;
   }
 }
+
+/* Opening title: static after a gentle fade-in, above Ganesha, dark purple for contrast on the sunrays */
+.gis-video-intro .gisOpeningTitle {
+  position: absolute;
+  top: clamp(14px, 6vh, 56px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  text-align: center;
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 800;
+  font-size: clamp(28px, 6vw, 56px);
+  color: #3b1f6e;
+  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+  z-index: 5;
+  animation: gisOpeningTitleFade 1.2s ease-out both;
+}
+@keyframes gisOpeningTitleFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
