@@ -117,6 +117,9 @@ mountain-modak-42.mp3,symbol-mountain,modak,feedback,You kept trying and found j
 mountain-modak-43.mp3,symbol-mountain,modak,instruction,Tap the symbols to learn about them.,"P2 | same line also used in: pond, symbol, final-scene | source: symbol-mountain/shared/components/SymbolSidebar.jsx:96 (+3 more)"
 mountain-modak-44.mp3,symbol-mountain,modak,instruction,Press and hold Mooshika.,P2 | added by hand 2026-11-12 (generator inputs gone) | source: symbol-mountain/scenes/modak/NewModakSceneV7.jsx:258
 mountain-modak-45.mp3,symbol-mountain,modak,instruction,Keep holding until Mooshika settles.,P2 | added by hand 2026-11-12 (generator inputs gone) | source: symbol-mountain/scenes/modak/NewModakSceneV7.jsx:259
+mountain-modak-46.mp3,symbol-mountain,modak,instruction,"Say with me, I can keep going, one small step at a time.",P2 | added by hand 2026-11-16 (generator inputs gone) | source: lib/components/reveal/SymbolAutoReveal.jsx:99 (Mooshika card)
+mountain-modak-47.mp3,symbol-mountain,modak,instruction,"Say with me, I can have lots of feelings and keep going.",P2 | added by hand 2026-11-16 (generator inputs gone) | source: lib/components/reveal/SymbolAutoReveal.jsx:99 (Big Belly card)
+mountain-modak-48.mp3,symbol-mountain,modak,instruction,"Say with me, I can learn, keep trying, and find joy.",P2 | added by hand 2026-11-16 (generator inputs gone) | source: lib/components/reveal/SymbolAutoReveal.jsx:99 (Modak card)
 mountain-pond-01.mp3,symbol-mountain,pond,story,The lotus needs water to bloom. Let’s help the water reach it.,P2 | source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:102
 mountain-pond-02.mp3,symbol-mountain,pond,instruction,The rock is blocking the stream. Press and hold to move it.,P2 | source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:102
 mountain-pond-03.mp3,symbol-mountain,pond,instruction,Keep holding.,P2 | source: symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx:102
@@ -162,6 +165,15 @@ mountain-symbols-26.mp3,symbol-mountain,symbol,instruction,Add the leaf to the n
 mountain-symbols-27.mp3,symbol-mountain,symbol,story,And the bent feather?,P2 | source: symbol-mountain/scenes/tusk/tuskNestFlow.json/beats/3/before/audio/voText
 mountain-symbols-28.mp3,symbol-mountain,symbol,feedback,You did it! All those little things helped rebuild the nest.,P2 | source: symbol-mountain/scenes/tusk/tuskNestFlow.json/beats/3/after/audio/voText
 mountain-symbols-29.mp3,symbol-mountain,symbol,instruction,Add the feather to the nest.,P2 | source: symbol-mountain/scenes/tusk/tuskNestFlow.json/beats/3/hints/l2VoText
+mountain-symbols-30.mp3,symbol-mountain,symbol,instruction,Elephant is thirsty. Listen for water.,P2 | added by hand 2026-11-16 (generator inputs gone) | source: EarsSoundMatchGame.jsx ROUNDS[elephant].prompt
+mountain-symbols-31.mp3,symbol-mountain,symbol,instruction,Listen for the water drip.,P2 | added by hand 2026-11-16 (generator inputs gone) | source: EarsSoundMatchGame.jsx ROUNDS[elephant].hintClue
+mountain-symbols-32.mp3,symbol-mountain,symbol,instruction,Where did you hear the water?,P2 | added by hand 2026-11-16 (generator inputs gone) | source: EarsSoundMatchGame.jsx ROUNDS[elephant].choosePrompt
+mountain-symbols-33.mp3,symbol-mountain,symbol,instruction,Cow is hungry. Listen for the grass.,P2 | added by hand 2026-11-16 (generator inputs gone) | source: EarsSoundMatchGame.jsx ROUNDS[cow].prompt
+mountain-symbols-34.mp3,symbol-mountain,symbol,instruction,Listen for the grass rustle.,P2 | added by hand 2026-11-16 (generator inputs gone) | source: EarsSoundMatchGame.jsx ROUNDS[cow].hintClue
+mountain-symbols-35.mp3,symbol-mountain,symbol,instruction,Where did you hear the grass?,P2 | added by hand 2026-11-16 (generator inputs gone) | source: EarsSoundMatchGame.jsx ROUNDS[cow].choosePrompt
+mountain-symbols-36.mp3,symbol-mountain,symbol,instruction,"Say with me, I can focus on what matters.",P2 | added by hand 2026-11-16 (generator inputs gone) | source: SymbolAutoReveal.jsx:99 (Eyes card)
+mountain-symbols-37.mp3,symbol-mountain,symbol,instruction,"Say with me, I can listen for what helps me.",P2 | added by hand 2026-11-16 (generator inputs gone) | source: SymbolAutoReveal.jsx:99 (Ears card)
+mountain-symbols-38.mp3,symbol-mountain,symbol,instruction,"Say with me, I can use what I have for something important.",P2 | added by hand 2026-11-16 (generator inputs gone) | source: SymbolAutoReveal.jsx:99 (Tusk card)
 mountain-final-01.mp3,symbol-mountain,final-scene,feedback,You found all eight symbols. Let’s see what you remember.,P2 | source: voiceGuidance.js[symbol-mountain.final-scene.openingModalPrompt]
 mountain-final-02.mp3,symbol-mountain,final-scene,story,Eyes. I can focus on what matters.,P2 | source: voiceGuidance.js[symbol-mountain.final-scene.cardEyes]
 mountain-final-03.mp3,symbol-mountain,final-scene,story,Ears. I can listen for what helps me.,P2 | source: voiceGuidance.js[symbol-mountain.final-scene.cardEars]

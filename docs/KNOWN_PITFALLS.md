@@ -627,6 +627,12 @@ Object.keys(localStorage).filter(k => k.includes('final-scene')).map(k => [k, JS
 - **Fix:** `voClip.js` keeps 4 reusable players, unlocks them inside the first tap (`installAudioUnlock()` from main.jsx), and every recorded line (`playVoClip`, the three `new Audio(path)` calls in `useVoiceGuidance`) takes one with `acquireVoiceAudio(url, volume)`. A refused clip now logs `[voClip] clip blocked or failed` and goes into `window.__voClipLog`.
 - **Rules:** never `new Audio(url).play()` for a spoken line outside a tap; use `acquireVoiceAudio` or `playVoClip`. Test recorded voice on a real iPad, not only desktop (desktop ignores this rule). `guardAudio` attaches once per element (`__gmbGuarded`) because the elements are reused.
 
+## 69. A recorded success line must not be judged by the computer-voice 1.5 s rule
+- **Symptom risk (Ears, 2026-11-16):** `SUCCESS_LINE_MIN_MS = 1500` says a success line counts as done only if it finished AND at least 1.5 s played. That rule exists because a cancelled Web Speech utterance fires `ended` almost instantly. The recorded 'Elephant found water.' / 'Cow found grass.' clips are only ~1.66 s, so on a slow iPad the timing could come out under 1.5 s and Continue would replay a line the child had heard.
+- **Fix:** `lib/audio/successLine.js` `isSuccessLineDone(lineResult, minMs)`: a recording counts as done when it STARTED and ended normally (`recorded: true, played: true`); the elapsed rule stays for Web Speech only. A stop (sidebar, tab hide, leaving) never fires a recording's end, and a clip that never started (blocked) is not done.
+- **Rules:** any game that saves a `...SuccessDone` marker must use this helper once it plays recordings (Eyes still uses the 1.5 s rule: its clips are over 3 s). Test with a fake Audio, see `EarsSoundMatchGame.test.jsx` and `BeatPlayerGame.recordedVoice.test.jsx`. jest now stubs css/webp/audio and `import.meta.env` (`jest.viteTransform.cjs`) so game components can be loaded in tests.
+- **Also wired in the same pass:** Eyes, Ears and the shared `BeatPlayerGame` (Tusk) play recordings and stop them on pause / tab hide / unmount (they were direct Web Speech, see #67).
+
 ## Before you call a scene "done"
 1. `npm run check:css` — no new clashes. 2. `vite build` passes. 3. The scene's checklist
 (`http://localhost:5173/?unlockall=1`) passes, including Replay and "Continue from the completion modal".
