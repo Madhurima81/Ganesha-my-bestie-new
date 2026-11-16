@@ -1161,3 +1161,34 @@
 .kuru-game.is-paused *::after {
   animation-play-state: paused !important;
 }
+
+/* Elephant help beat (lift -> carry -> place -> flip): keep the generic helping bob off the action sprites. */
+.kuru-friend--elephant-action > .pose-image,
+.kuru-friend--elephant-action img {
+  animation: none !important;
+}
+.kuru-friend--elephant-carrying { z-index: 34; }
+
+.kuru-log-bundle {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 31;
+  pointer-events: none;
+}
+.kuru-log-bundle__log {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  transform-origin: center center;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.18));
+}
+.kuru-log-bundle__log--1 { transform: translate(-50%, -50%) rotate(-3deg); }
+.kuru-log-bundle__log--2 { transform: translate(-48%, -57%) rotate(-3deg); }
+.kuru-log-bundle__log--3 { transform: translate(-52%, -43%) rotate(-3deg); }
+.kuru-log-bundle.is-flipping { animation: kuruLogBundleFlip 550ms cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+@keyframes kuruLogBundleFlip {
+  0%   { opacity: 1; transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+  45%  { opacity: 1; transform: translate(-52%, -61%) rotate(36deg) scale(0.95); }
+  100% { opacity: 0; transform: translate(-58%, -76%) rotate(88deg) scale(0.78); }
+}

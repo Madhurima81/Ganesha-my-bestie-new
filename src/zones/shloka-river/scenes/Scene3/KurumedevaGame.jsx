@@ -16,6 +16,8 @@ import bgImg from './assets/images/nirvighnam/bg.webp';
 // 3 planks on top to finish the bridge.
 import elephantIdleBananaImg from './assets/images/bridge/Characters/elephant-idle-banana.webp';
 import elephantHelpingImg from './assets/images/bridge/Characters/elephant-lift.webp';
+import elephantLiftLogsAnim from './assets/images/bridge/Characters/elephant-lift-logs.webp'; // plays once, holds last frame
+import elephantCarryLogsImg from './assets/images/bridge/Characters/elephant-carry-logs.webp'; // static: logs held in trunk
 import elephantHappyImg from './assets/images/bridge/Characters/elephant-happy.webp';
 import helpBubbleElephantImg from './assets/images/bridge/Characters/help-bubble-elephant-logs.webp';
 import monkeyPlayingTwigImg from './assets/images/bridge/Characters/monkey-playing-twig.webp';
@@ -104,6 +106,9 @@ const BEAVER_CROSSING_W = 6.5;
 const BEAVER_REUNION_W = 8.5;
 // Where each friend walks when asked for help. Elephant arrives beside the
 // bridge/logs; Monkey arrives on the bridge for the tying beat.
+// Where Elephant ends up after carrying the logs / where the small log bundle flips. Tune in debug.
+const ELEPHANT_DROP_SPOT = { l: KURUMEDEVA_LAYOUT.bridge.l - 12, t: KURUMEDEVA_LAYOUT.bridge.t + 1.8 };
+const ELEPHANT_FLIP_SPOT = { l: KURUMEDEVA_LAYOUT.bridge.l - 5.5, t: KURUMEDEVA_LAYOUT.bridge.t + 1.4 };
 const HELPER_SPOTS = [
   { l: 24, t: 68 },
   { l: 56.6, t: 68 },
@@ -113,12 +118,19 @@ const WAIT_SPOTS = [
   { l: 7.7, t: 62.2 },
 ];
 const WALK_TO_MS = 1000; // amble to the bridge
-const LOG_FLY_MS = 650; // logs sliding from the pile onto the bridge
 const VINE_REVEAL_DELAY_MS = 950;
 // Pause after Elephant's logs land — long enough for the vine reveal to
 // read as a beat before "ask Monkey" — but the swap itself is instant
 // (single crossfade), no sliding/wobbling.
 const POST_LOG_PAUSE_MS = 900;
+// Elephant help beat: lift -> carry -> place -> small flip -> step1 bridge appears.
+const ELEPHANT_LIFT_MS = 2000; // lift GIF = 8 frames x 250ms
+const ELEPHANT_CARRY_MS = 850;
+const ELEPHANT_PLACE_MS = 900;
+const ELEPHANT_FLIP_MS = 550;
+// TODO: swap in a real "place logs" GIF; until it exists, placing just holds the carry pose.
+const elephantPlaceLogsAnim = elephantCarryLogsImg;
+const MINI_LOG_BUNDLE_W = 12.5;
 const HELP_SETTLE_MS = 900; // stand and help before the bridge art updates
 
 // Vine — appears next to Beaver once Elephant's logs land, near her own
@@ -352,7 +364,7 @@ export default function KurumedevaGame({
   const [helpDelivered, setHelpDelivered] = useState(false);
   const [isRoundSettling, setIsRoundSettling] = useState(false);
   const [walkingIndex, setWalkingIndex] = useState(null);
-  const [logsFlying, setLogsFlying] = useState(false);
+  const [elephantPhase, setElephantPhase] = useState('idle'); // idle | lifting | carrying | placing | flipping
   const [bridgeWobbling, setBridgeWobbling] = useState(false);
   const [vineReady, setVineReady] = useState(seedRounds === 1);
 
@@ -581,7 +593,7 @@ export default function KurumedevaGame({
       setHelpDelivered(false);
       setIsRoundSettling(false);
       setWalkingIndex(null);
-      setLogsFlying(false);
+      setElephantPhase('idle');
       setBridgeWobbling(false);
       setVineReady(false);
       setPlaceActive(false);
@@ -693,20 +705,31 @@ export default function KurumedevaGame({
         // one audio channel (whichever started second cut the other off).
         // It's chained after that syllable finishes instead (onSyllableLit
         // below), same fix as Nirvighnam's obstacle-intro race.
-        setLogsFlying(true);
-        safeAfter(LOG_FLY_MS, () => {
-          setLogsFlying(false);
+        setElephantPhase('lifting');
+
+        safeAfter(ELEPHANT_LIFT_MS, () => {
+          setElephantPhase('carrying');
+          setFriendPositions((prev) => {
+            const next = [...prev];
+            next[0] = ELEPHANT_DROP_SPOT;
+            return next;
+          });
+        });
+
+        safeAfter(ELEPHANT_LIFT_MS + ELEPHANT_CARRY_MS, () => setElephantPhase('placing'));
+        safeAfter(ELEPHANT_LIFT_MS + ELEPHANT_CARRY_MS + ELEPHANT_PLACE_MS, () => setElephantPhase('flipping'));
+
+        const ELEPHANT_DONE_MS = ELEPHANT_LIFT_MS + ELEPHANT_CARRY_MS + ELEPHANT_PLACE_MS + ELEPHANT_FLIP_MS;
+        safeAfter(ELEPHANT_DONE_MS, () => {
+          setElephantPhase('idle');
           setBridgeStep(1);
           setBridgeWobbling(true);
           setLitCount(SYLLABLES_LIT_AFTER_STEP[0]);
           window.setTimeout(() => onMicroWin?.(), 0);
-        });
-
-        safeAfter(LOG_FLY_MS + VINE_REVEAL_DELAY_MS, () => {
           setVineReady(true);
         });
 
-        safeAfter(LOG_FLY_MS + VINE_REVEAL_DELAY_MS + POST_LOG_PAUSE_MS, () => {
+        safeAfter(ELEPHANT_DONE_MS + POST_LOG_PAUSE_MS, () => {
           setFriendStep(1);
           setHelpDelivered(false);
           setHelpTokenPos(HELP_TOKEN_HOME);
@@ -1332,32 +1355,28 @@ export default function KurumedevaGame({
 
         {/* Resting logs — visible before Elephant helps. During the help beat,
             they slide toward the bridge and fade just before step1 appears. */}
-        {!debugMode && phase === 'play' && (bridgeStep === 0 || logsFlying) && LOG_PILE_SLOTS.map((slot, i) => {
-          const target = logsFlying
-            ? {
-              l: KURUMEDEVA_LAYOUT.bridge.l - 7 + i * 6,
-              t: KURUMEDEVA_LAYOUT.bridge.t - 1 + i * 1.2,
-            }
-            : slot;
-          return (
-            <div
-              key={`log-pile-${i}`}
-              className="kuru-log-piece is-log"
-              style={{
-                left: `${target.l}%`,
-                top: `${target.t}%`,
-                width: `${LOG_PILE_W}%`,
-                pointerEvents: 'none',
-                opacity: logsFlying ? 0.25 : 1,
-                transition: logsFlying
-                  ? `left ${LOG_FLY_MS}ms ease-in, top ${LOG_FLY_MS}ms ease-in, opacity ${LOG_FLY_MS}ms ease-in`
-                  : undefined,
-              }}
-            >
-              <img src={logPieceObj} alt="" draggable={false} />
-            </div>
-          );
-        })}
+        {!debugMode && phase === 'play' && bridgeStep === 0 && elephantPhase === 'idle' && LOG_PILE_SLOTS.map((slot, i) => (
+          <div
+            key={`log-pile-${i}`}
+            className="kuru-log-piece is-log"
+            style={{ left: `${slot.l}%`, top: `${slot.t}%`, width: `${LOG_PILE_W}%`, pointerEvents: 'none' }}
+          >
+            <img src={logPieceObj} alt="" draggable={false} />
+          </div>
+        ))}
+
+        {/* Small log bundle flips just before step1 appears (Elephant help beat). */}
+        {!debugMode && phase === 'play' && elephantPhase === 'flipping' && (
+          <div
+            className="kuru-log-bundle is-flipping"
+            style={{ left: `${ELEPHANT_FLIP_SPOT.l}%`, top: `${ELEPHANT_FLIP_SPOT.t}%`, width: `${MINI_LOG_BUNDLE_W}%` }}
+            aria-hidden="true"
+          >
+            <img className="kuru-log-bundle__log kuru-log-bundle__log--1" src={logPieceObj} alt="" draggable={false} />
+            <img className="kuru-log-bundle__log kuru-log-bundle__log--2" src={logPieceObj} alt="" draggable={false} />
+            <img className="kuru-log-bundle__log kuru-log-bundle__log--3" src={logPieceObj} alt="" draggable={false} />
+          </div>
+        )}
 
         {bridgeImg && (
           <div
@@ -1511,9 +1530,16 @@ export default function KurumedevaGame({
           const isHelped = imgState === 'empty' && index <= friendStep;
           const isCrossing = phase === 'crossing' || phase === 'done';
           const isWalking = walkingIndex === index;
-          const friendSprite = imgState === 'carry'
+          let friendSprite = imgState === 'carry'
             ? friend.carryImg
             : isHelping ? friend.helpingImg : friend.emptyImg;
+          if (index === 0) {
+            if (elephantPhase === 'lifting') friendSprite = elephantLiftLogsAnim;
+            else if (elephantPhase === 'carrying' || elephantPhase === 'flipping') friendSprite = elephantCarryLogsImg;
+            else if (elephantPhase === 'placing') friendSprite = elephantPlaceLogsAnim;
+          }
+          const elephantAnimating = index === 0 && elephantPhase !== 'idle';
+          const elephantCarrying = index === 0 && elephantPhase === 'carrying';
 
           return (
             <div
@@ -1529,12 +1555,17 @@ export default function KurumedevaGame({
                 ${isCrossing ? 'kuru-friend--crossing' : ''}
                 ${isWalking ? 'is-walking' : ''}
                 ${isCurrent && imgState === 'carry' && canAsk && targetGlow ? 'hint-glow' : ''}
+                ${elephantAnimating ? 'kuru-friend--elephant-action' : ''}
+                ${elephantCarrying ? 'kuru-friend--elephant-carrying' : ''}
               `}
               style={{
                 left: `${pos.l}%`,
                 top: `${pos.t}%`,
                 width: `${friend.w * KURU_HIT_SCALE}%`,
                 scale: friend.flip ? '-1 1' : '1 1',
+                transition: elephantCarrying
+                  ? `left ${ELEPHANT_CARRY_MS}ms cubic-bezier(0.22, 1, 0.36, 1), top ${ELEPHANT_CARRY_MS}ms cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease, transform 0.5s ease`
+                  : undefined,
               }}
             >
               <PoseImage
