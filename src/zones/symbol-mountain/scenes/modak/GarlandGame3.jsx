@@ -28,7 +28,9 @@ import mooshikaBasket from './assets/images/mooshika-calm-loop.gif';
 import mooshikaBasketStill from './assets/images/mooshika-calm-still.webp'; // shown while a symbol reveal / panel is up (the GIF would distract)
 // Play-once "pleased -> peacefully satisfied" GIF (6 frames x 250ms), shown when the Modak glows.
 import mooshikaSatisfiedGif from './assets/images/mooshika-satisfied-once.gif';
-import ganesha from './assets/images/ganesha-game3-new.webp';
+import { GANESHA_POSE_ASSETS } from '../../../../lib/config/ganeshaUsageSystem';
+// Blinking Ganesha (2.5 s rest between blinks), the same sitting Ganesha as the closing modal.
+const ganesha = GANESHA_POSE_ASSETS.sitModakBlink;
 import forestBackground from './assets/images/modak-fj-bg.webp';
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
 

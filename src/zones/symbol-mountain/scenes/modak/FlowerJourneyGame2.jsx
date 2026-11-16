@@ -38,7 +38,8 @@ import emotionWorried from './assets/images/emotion-worried-game3-opt.webp';
 import emotionPleased from './assets/images/emotion-pleased-game3-opt.webp';
 import emotionExcited from './assets/images/emotion-excited-game3-opt.webp';
 import emotionRelieved from './assets/images/emotion-relieved-game3-opt.webp';
-import ganeshaArt from './assets/images/ganesha-game3-new.webp';
+import { GANESHA_POSE_ASSETS } from '../../../../lib/config/ganeshaUsageSystem';
+const ganeshaArt = GANESHA_POSE_ASSETS.sitModakBlink; // blinking Ganesha
 
 const PHASES = {
   FLOWER_BUSH: 'flower_bush',

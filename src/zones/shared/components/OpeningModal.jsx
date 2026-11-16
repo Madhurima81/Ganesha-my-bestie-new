@@ -360,7 +360,7 @@ const OpeningModal = ({
   if (!hasContent || !visible) return null;
 
   // Same standing Ganesha in every zone's opening modal.
-  const openingGaneshaAsset = GANESHA_POSE_ASSETS.standPoint;
+  const openingGaneshaAsset = GANESHA_POSE_ASSETS.standPointBlink;
 
   return (
     <ModalShell

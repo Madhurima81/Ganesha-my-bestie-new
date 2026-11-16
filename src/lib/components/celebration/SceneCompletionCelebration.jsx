@@ -78,7 +78,7 @@ const SceneCompletionCelebration = ({
 
   // Warm closing artwork while the scene is still being played.
   usePreloadPoses([
-    GANESHA_POSE_ASSETS.sitModak, badgeImage,
+    GANESHA_POSE_ASSETS.sitModakBlink, badgeImage,
     ...Object.values(symbolImages), ...Object.values(appImages),
     ...(isZoneFinalCompletionBadge ? [finalBadgeConfig[resolvedZoneId]?.icon] : []),
   ].filter(Boolean));
@@ -270,7 +270,7 @@ const SceneCompletionCelebration = ({
           style={getModalThemeVars(resolvedZoneId)}
           cardClassName={`game-modal-card--closing${isExiting ? ' exiting' : ''}`}
           fitTitle
-          character={{ src: GANESHA_POSE_ASSETS.sitModak, alt: 'Ganesha' }}
+          character={{ src: GANESHA_POSE_ASSETS.sitModakBlink, alt: 'Ganesha' }}
           title={completionTitle || '\u{1F31F} You Did It!'}
           subtitle={cleanedSubtitle}
           icons={sharedHasZoneBadge ? (
@@ -345,7 +345,7 @@ const SceneCompletionCelebration = ({
         <div className="completion-ganesha-left" aria-hidden="true">
           <img
             className="completion-ganesha"
-            src={GANESHA_POSE_ASSETS.sitModak}
+            src={GANESHA_POSE_ASSETS.sitModakBlink}
             alt="Ganesha"
             style={{
               width: 'min(470px, 100%)',
