@@ -480,7 +480,7 @@ const CleanProfileSelector = ({
           setTransitionStage(null);
           setPendingProfile(null);
           setIsCreatingProfile(false);
-          onProfileSelect(id);
+          onProfileSelect(id, { isNew: true });
         }}
       />
     );

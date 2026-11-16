@@ -1740,9 +1740,17 @@ chants: result?.chants || result?.chantedVerses || {},
       {currentView === 'profile-selector' && (
         <div className="view-transition">
           <CleanProfileSelector
-            onProfileSelect={(profileId) => {
+            onProfileSelect={(profileId, opts) => {
               GameStateManager.setActiveProfile(profileId);
-              setCurrentView('profile-welcome');  // go to dashboard, not map
+              if (opts?.isNew) {
+                // Just created + Mooshika ride finished: straight into the intro story,
+                // not back to the welcome screen's Start Adventure button.
+                setIntroStoryReturnView('map');
+                setShowIntroStory(!localStorage.getItem(`ganeshaStoryShown_${profileId}`));
+                setCurrentView('map');
+                return;
+              }
+              setCurrentView('profile-welcome');  // existing profile: go to dashboard, not map
             }}
             onBackToMap={() => setCurrentView('map')}
             // Opened from Parent Dashboard > Settings: the parent can return there (already unlocked)
