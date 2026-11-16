@@ -43,7 +43,7 @@ import beaverIdleWorriedImg from './assets/images/bridge/Characters/beaver-idle-
 // Beaver's own helping pose differs per round — matches the beat player's
 // beaver-lift (with Elephant) vs beaver-tie (with Monkey).
 import beaverTieImg from './assets/images/bridge/Characters/beaver-tie.webp';
-import beaverPlacingPlankImg from './assets/images/bridge/Characters/beaver-placing-plank.webp';
+import beaverPickPlankAnim from './assets/images/bridge/Characters/beaver-pick-plank.webp'; // plays once, holds last frame (beaver holding the plank)
 // Crossing = looping walk cycle (the beaver keeps walking while it crosses); reunion = hug that plays once and holds.
 import beaverCrossingImg from './assets/images/bridge/Characters/beaver-walking.gif';
 import babyBeaverWavingImg from './assets/images/bridge/Characters/baby-beaver-waving.webp';
@@ -102,7 +102,8 @@ const FRIEND_DROP_RADIUS = {
   monkey: 7,
 };
 const getFriendDropRadius = (friend) => FRIEND_DROP_RADIUS[friend.id] ?? Math.max(6, friend.w * 0.55);
-const BEAVER_CROSSING_W = 6.5;
+// The walking GIF only fills ~86% of its square canvas (the play poses fill ~96% of a 10% box), so it needs 11.2 to look the same size.
+const BEAVER_CROSSING_W = 11.2;
 const BEAVER_REUNION_W = 8.5;
 // Where each friend walks when asked for help. Elephant arrives beside the
 // bridge/logs; Monkey arrives on the bridge for the tying beat.
@@ -125,12 +126,15 @@ const VINE_REVEAL_DELAY_MS = 950;
 const ELEPHANT_RETURN_MS = 1000;
 const POST_LOG_PAUSE_MS = 900;
 // Elephant help beat: lift -> carry -> place -> small flip -> step1 bridge appears.
-const ELEPHANT_LIFT_MS = 3200; // lift GIF = 8 frames x 400ms (slowed so the lift reads)
+const ELEPHANT_LIFT_MS = 2400; // lift GIF = 8 frames x 300ms (slow enough that the lift reads)
 const ELEPHANT_CARRY_MS = 850; // carry + place share ONE 8x220ms GIF (1760ms)
 const ELEPHANT_PLACE_MS = 910;
 const ELEPHANT_FLIP_MS = 550; // bundle flips into the bridge; THEN Elephant walks back (ELEPHANT_RETURN_MS)
 // TODO: swap in a real "place logs" GIF; until it exists, placing just holds the carry pose.
 const MINI_LOG_BUNDLE_W = 12.5;
+// Beaver stands here while he picks up the first plank (GIF), THEN planks become draggable. Tune in Layout Debug (Phase 2).
+const BEAVER_PICK_SPOT = { l: KURUMEDEVA_LAYOUT.beaverPath[0].l, t: KURUMEDEVA_LAYOUT.beaverPath[0].t };
+const PLANK_PICK_MS = 1320; // pick GIF = 6 frames x 220ms
 const MONKEY_TIE_MS = 1800; // monkey-tie GIF = 8 frames x 220ms; he stays on the bridge for it, then goes back to his spot // stand and help before the bridge art updates
 
 // Vine — appears next to Beaver once Elephant's logs land, near her own
@@ -155,7 +159,7 @@ const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(wind
 // Disappear once he helps (the bridge art takes over). Each is independently
 // positioned (fine-tune in the Layout Debug panel); all 3 share one size.
 const LOG_PILE_SLOTS = [
-  { l: 17.3, t: 72.9 },
+  { l: 28.9, t: 69.2 },
   { l: 17.7, t: 71.8 },
   { l: 17.4, t: 72.1 },
 ];
@@ -186,6 +190,7 @@ const DEBUG_PANEL_KEYS = [
   ['plankSlot0', 'Plank place 1  (+ plank size)'],
   ['plankSlot1', 'Plank place 2'],
   ['plankSlot2', 'Plank place 3'],
+  ['beaverPick', 'Beaver position while picking the plank (GIF)'],
   ['beaverPath0', 'Beaver walk 0 / start'],
   ['beaverPath1', 'Beaver walk 1'],
   ['beaverPath2', 'Beaver walk 2'],
@@ -203,6 +208,7 @@ function debugArtFor(key, pos, layout) {
   const wOf = (k, fallback) => (layout && layout[k] && layout[k].w != null ? layout[k].w : fallback);
   if (key.startsWith('friend')) return { src: FRIENDS[tail]?.carryImg, w: pos.w || 10, r: 0, flip };
   if (key.startsWith('helper')) return { src: FRIENDS[tail]?.emptyImg, w: FRIENDS[tail]?.w || 10, r: 0, flip };
+  if (key === 'beaverPick') return { src: beaverPickPlankAnim, w: KURUMEDEVA_LAYOUT.beaver.w, r: 0, flip };
   if (key === 'elephantDrop') return { src: elephantCarryPlaceAnim, w: FRIENDS[0]?.w || 10, r: 0, flip: !!FRIENDS[0]?.flip };
   if (key === 'elephantFlip') return { src: logsStackedObj, w: wOf('elephantFlip', MINI_LOG_BUNDLE_W), r: 0 };
   if (key.startsWith('wait')) return { src: FRIENDS[tail]?.emptyImg, w: FRIENDS[tail]?.w || 10, r: 0, flip };
@@ -222,7 +228,7 @@ const DEBUG_PHASES = [
   { label: 'Phase 1 — Helper positions on bridge', keys: ['helper0', 'helper1'] },
   { label: 'Phase 1a — Elephant carry stop + log flip', keys: ['friend0', 'logPile0', 'helper0', 'elephantDrop', 'elephantFlip', 'bridge', 'beaverPath0'] },
   { label: 'Phase 1b — Final wait positions', keys: ['wait0', 'wait1'] },
-  { label: 'Phase 2 — Plank wait/place positions', keys: ['plankPile', 'plankSlot0', 'plankSlot1', 'plankSlot2'] },
+  { label: 'Phase 2 — Plank wait/place positions', keys: ['beaverPick', 'plankPile', 'plankSlot0', 'plankSlot1', 'plankSlot2'] },
   { label: 'Phase 3 — Beaver bridge-side walk', keys: ['beaverPath0', 'beaverPath1', 'beaverPath2', 'beaverPath3'] },
   { label: 'Phase 4 — Final Beaver walk only', keys: ['wait0', 'wait1', 'beaverPath0', 'beaverPath1', 'beaverPath2', 'beaverPath3'] },
 ];
@@ -238,6 +244,7 @@ function buildDebugLayout() {
   WAIT_SPOTS.forEach((spot, index) => {
     layout[`wait${index}`] = { l: spot.l, t: spot.t };
   });
+  layout.beaverPick = { l: BEAVER_PICK_SPOT.l, t: BEAVER_PICK_SPOT.t };
   layout.elephantDrop = { l: ELEPHANT_DROP_SPOT.l, t: ELEPHANT_DROP_SPOT.t };
   layout.elephantFlip = { l: ELEPHANT_FLIP_SPOT.l, t: ELEPHANT_FLIP_SPOT.t, w: MINI_LOG_BUNDLE_W };
   LOG_PILE_SLOTS.forEach((slot, index) => {
@@ -296,7 +303,7 @@ const POSE_ASSETS = [
   beaverAskingImg,
   beaverIdleWorriedImg,
   beaverTieImg,
-  beaverPlacingPlankImg,
+  beaverPickPlankAnim,
   beaverCrossingImg,
   babyBeaverWavingImg,
   beaverBabyReunionImg,
@@ -379,6 +386,7 @@ export default function KurumedevaGame({
 
   // Plank round — drag 3 planks onto the finished bridge.
   const [placeActive, setPlaceActive] = useState(seedRounds >= 2 && !resumeAtCrossing);
+  const [plankPickDone, setPlankPickDone] = useState(false); // beaver's pick-up GIF finished -> planks may be dragged
   const [placedCount, setPlacedCount] = useState(resumeAtCrossing ? PLANK_SLOTS.length : 0);
   const [pieceDragActive, setPieceDragActive] = useState(false);
   const [pieceDragPos, setPieceDragPos] = useState(null);
@@ -794,13 +802,22 @@ export default function KurumedevaGame({
     });
   }, [onBeatComplete, debugLayout.elephantDrop, friendImgStates, friendPositions, friendStep, isPaused, isRoundSettling, markInteraction, onMicroWin, placeActive, playSceneLine, safeAfter, stopSceneVoice]);
 
+  // Plank round opens with Beaver picking up a plank (GIF); only then can planks be dragged.
+  useEffect(() => {
+    if (!placeActive) { setPlankPickDone(false); return undefined; }
+    setPlankPickDone(false);
+    setBeaverPos({ l: debugLayout.beaverPick.l, t: debugLayout.beaverPick.t });
+    pausableAfter(PLANK_PICK_MS, () => setPlankPickDone(true));
+    return undefined;
+  }, [placeActive, pausableAfter, debugLayout.beaverPick.l, debugLayout.beaverPick.t]);
+
   // --- Plank drag handlers: pull a plank from the pile into the gap --------
   const placeNextPiece = useCallback(() => {
     setPlacedCount((n) => Math.min(PLANK_SLOTS.length, n + 1));
   }, []);
 
   const handlePiecePointerDown = useCallback((event) => {
-    if (isPaused || !placeActive || placedCount >= PLANK_SLOTS.length) return;
+    if (isPaused || !placeActive || !plankPickDone || placedCount >= PLANK_SLOTS.length) return;
     event.preventDefault();
     event.stopPropagation();
     stopSceneVoice?.();
@@ -812,7 +829,7 @@ export default function KurumedevaGame({
     const grab = getStagePoint(event);
     dragStartRef.current = grab;
     setPieceDragPos(grab);
-  }, [getStagePoint, isPaused, placeActive, placedCount, markAttempt, stopSceneVoice]);
+  }, [getStagePoint, isPaused, placeActive, plankPickDone, placedCount, markAttempt, stopSceneVoice]);
 
   const handlePiecePointerMove = useCallback((event) => {
     if (pieceDragRef.current !== event.pointerId || !pieceDragActive) return;
@@ -1124,6 +1141,10 @@ export default function KurumedevaGame({
           l: round1(debugLayout[`helper${index}`].l),
           t: round1(debugLayout[`helper${index}`].t),
         })),
+        BEAVER_PICK_SPOT: {
+          l: round1(debugLayout.beaverPick.l),
+          t: round1(debugLayout.beaverPick.t),
+        },
         ELEPHANT_DROP_SPOT: {
           l: round1(debugLayout.elephantDrop.l),
           t: round1(debugLayout.elephantDrop.t),
@@ -1234,6 +1255,7 @@ export default function KurumedevaGame({
     // Teaching beats only, and only until the child has really dragged one.
     if (!isTeachableBeat || learnedForBeat) return null;
     if (placeActive) {
+      if (!plankPickDone) return null; // Beaver is still picking up the plank
       const s = PLANK_SLOTS[Math.min(placedCount, PLANK_SLOTS.length - 1)];
       const from = { x: PLANK_PILE.l, y: PLANK_PILE.t };
       const full = hintLevel >= 3 || (kuruIntroGesture && hintBeat === 'plank-0');
@@ -1266,7 +1288,7 @@ export default function KurumedevaGame({
     : phase === 'crossing'
       ? beaverCrossingImg
       : placeActive
-        ? beaverPlacingPlankImg
+        ? beaverPickPlankAnim
         : isHelpingInProgress
           ? (friendStep === 0 ? beaverIdleWorriedImg : beaverTieImg) // Elephant does the lifting; Beaver just watches
           : canAsk
@@ -1526,7 +1548,7 @@ export default function KurumedevaGame({
             scale: (phase !== 'done' && KURUMEDEVA_LAYOUT.beaver.flip) ? '-1 1' : '1 1',
           }}
         >
-          <PoseImage src={beaverImg} alt="Beaver" draggable={false} />
+          <PoseImage key={placeActive ? 'pick' : 'pose'} src={beaverImg} alt="Beaver" draggable={false} />
         </div>
 
         {phase !== 'done' && (
