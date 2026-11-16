@@ -1,5 +1,14 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-16] - Opening flow: profile -> Mooshika -> sunray story, brand welcome -> device choice
+**Touched (all on staging, pushed):** e1361b90 App.jsx, CleanProfileSelector.jsx; c4b4e8e7 GaneshaIntroStory.jsx/.css/.test.jsx, MainWelcomeScreen.jsx, DeviceChoiceModal.css, public/images/welcome/ganesha-welcome.gif + ganesha-welcome-still.png.
+**Changed:**
+- New profile from the profile picker: after the Mooshika ride it goes straight to the intro story and map (`onProfileSelect(id, { isNew: true })`), no second "Start Adventure" on the welcome screen. Existing-profile picks still go to profile-welcome.
+- Intro story: "Tap to begin" removed. After the sunray opening (or Skip) page 1 starts by itself with its voice. Opening says "Hi! I'm Ganesha. Come, let me tell you how my story began!" (computer voice for now) and the title "How My Story Began" fades in at ~5.2s (Baloo 2, dark purple, static).
+- First-run welcome: Begin button removed. Title + Ganesha show ~1.5s, fade out 350ms, then the device-choice modal fades in 300ms. Returning visits skip the splash (localStorage `gmb_brand_welcome_seen`). Device modal card bounce replaced by a 300ms fade (also affects the landing page).
+- New welcome Ganesha GIF (from Downloads) and its still replaced with the GIF's last frame so the swap does not jump. Old files saved in scratch/.
+**Verified:** `vite build` passes. NOT verified: in a browser or on iPad (splash timing, title over sunlight, first voice line on iOS). GaneshaIntroStory.test.jsx fails to load at baseline (jest/CSS import), so the removed "Tap to begin" clicks were never run.
+**Open:** (1) Record the opening line with ganesha young (still computer voice). (2) Tune title timing (5.2s guess) against the 8s video. (3) Pond files modified by another session, left uncommitted. (4) Fix or retire the broken intro-story jest suite.
 ## [2026-11-14] - Session wrap: recorded-voice fix, test checklist, voice reference
 **Touched (all on staging):** 08d14f9b shared pre-unlocked audio players (voClip.js, useVoiceGuidance.js, sfx.js, main.jsx, tests, KNOWN_PITFALLS #68); 57278789 docs/VOICE_MP3_CHECKLIST.html (62 tick boxes: iPad browser/app, Android browser/app, Desktop) plus changelog; 2185280f changelog entry for the ganesha young ElevenLabs voice plus docs/voice-refs/elevenlabs-my-voices-ganesha-young.png.
 **Changed:** see entries 2026-11-13 (iPad voice fix) and 2026-11-13 b (voice prompt, ganesha young is in use). Nothing else in app code.
