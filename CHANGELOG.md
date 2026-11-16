@@ -34,6 +34,7 @@ Append one entry per work session. Newest on top.
 - Shared AffirmationCard: no Back button, tap anywhere closes, speaker top-right, centred text, "Tap anywhere to close" hint.
 - Symbol Mountain sidebar, Shloka River sidebar and the map popups (meaning card, chant practice) show the animated symbols/words on the opened card; tiles stay still.
 - SymbolAutoReveal waits for a play-once GIF to finish before flipping (gifDuration.js reads the GIF's frame delays).
+- Animal calls (cow, elephant, monkey, peacock) added as shared SFX roles: played with the Tusk success GIFs (Ears: elephant, cow; Eyes: peacock, monkey) and when each animal boards the Mahakaya raft (after the syllable, never over Sanskrit; skipped if the finale word has started). The 8 Tusk/Mahakaya animal GIFs now play once.
 **Open:** none of this has been play-tested end to end; Jest cannot run here (identity-obj-proxy missing); ZoneConfig Tusk icon and the garland Modak glow still static.
 
 ## [2026-11-13 c] - Opening animation + Ganesha intro story (committed c3367b90)
