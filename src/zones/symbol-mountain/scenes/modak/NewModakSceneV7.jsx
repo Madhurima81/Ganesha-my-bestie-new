@@ -86,10 +86,12 @@ import forestBackground from './assets/images/modak-fj-bg.webp';
 import mooshikaTurned from './assets/images/mooshika-turned-game2.webp';
 const mooshikaActive = mooshikaTurned;
 const mooshikaCalm = mooshikaTurned;
-// Play-once "calming down" GIF (distracted -> focused, 6 frames x 250ms). Shown after the settle walk.
-import mooshikaCalmGif from './assets/images/mooshika-calm-once.gif';
+// "Calming down" GIF: only Mooshika's eyes/expression change, so it LOOPS (6 frames x 250ms). Shown after the settle walk;
+// the same GIF is Mooshika in the flower and garland games.
+import mooshikaCalmGif from './assets/images/mooshika-calm-loop.gif';
+import mooshikaCalmStill from './assets/images/mooshika-calm-still.webp'; // last frame of the calm GIF: Mooshika holds still while a symbol reveal is up
 const CALM_WALK_MS = 1800;      // matches .modak-game-mushika-search.walking in ModakScene.css
-const CALM_GIF_MS = 1500;       // one play of the GIF
+const CALM_GIF_MS = 1500;       // one pass of the GIF: the reveal card waits for it
 import journeyFeather from './assets/images/journey-feather.webp';
 import journeyBerry from './assets/images/journey-berry.webp';
 import journeyAcorn from './assets/images/journey-acorn.webp';
@@ -1785,10 +1787,10 @@ const NewModakSceneMVPContent = ({
                               />
                             )}
                             <img
-                              key={sceneState.phase === PHASES.CALM_REVEAL && mooshikaCalmGifOn ? 'calm-gif' : 'still'}
+                              key={sceneState.phase === PHASES.CALM_REVEAL && mooshikaCalmGifOn ? (revealConfig ? 'calm-still' : 'calm-gif') : 'still'}
                               src={
                                 sceneState.phase === PHASES.CALM_REVEAL
-                                  ? (mooshikaCalmGifOn ? mooshikaCalmGif : mooshikaCalm)
+                                  ? (mooshikaCalmGifOn ? (revealConfig ? mooshikaCalmStill : mooshikaCalmGif) : mooshikaCalm)
                                   : mooshikaActive
                               }
                               alt="Mooshika"
@@ -1819,6 +1821,7 @@ const NewModakSceneMVPContent = ({
                       isActive
                       isPaused={isSymbolPopupOpen}
                       isAudioOn={isAudioOn}
+                      freezeMooshika={isSymbolPopupOpen || !!revealConfig}
                       onFlowersUpdate={handleGame2FlowersUpdate}
                       onComplete={handleGame2Complete}
                       stopVoice={stopVoice}
@@ -1836,6 +1839,7 @@ const NewModakSceneMVPContent = ({
                       isActive
                       isPaused={isSymbolPopupOpen}
                       isAudioOn={isAudioOn}
+                      freezeMooshika={isSymbolPopupOpen || !!revealConfig}
                       onComplete={handleGame3Complete}
                       initialBuilt={Boolean(sceneState.garlandBuilt)}
                       onBuildComplete={() => sceneActions.checkpoint({ garlandBuilt: true })}

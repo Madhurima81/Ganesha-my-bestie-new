@@ -23,7 +23,9 @@ import flowerPink from './assets/images/fj-flower-coral.webp';
 import flowerCream from './assets/images/fj-flower-cream.webp';
 import garlandString from './assets/images/fj-garland-empty.webp';
 import completedGarland from './assets/images/fj-garland-complete.webp';
-import mooshikaBasket from './assets/images/mooshika-turned-game2.webp';
+// Mooshika is the looping calm GIF until the Modak glows, then the satisfied GIF takes over.
+import mooshikaBasket from './assets/images/mooshika-calm-loop.gif';
+import mooshikaBasketStill from './assets/images/mooshika-calm-still.webp'; // shown while a symbol reveal / panel is up (the GIF would distract)
 // Play-once "pleased -> peacefully satisfied" GIF (6 frames x 250ms), shown when the Modak glows.
 import mooshikaSatisfiedGif from './assets/images/mooshika-satisfied-once.gif';
 import ganesha from './assets/images/ganesha-game3-new.webp';
@@ -94,7 +96,7 @@ const isPointInsideExpandedOval = (event, rect, pad = { x: 0, top: 0, bottom: 0 
   return (dx * dx) + (dy * dy) <= 1;
 };
 
-export default function GarlandGame3({ isActive = true, isPaused = false, isAudioOn = true, onComplete, stopVoice, onLineSpoken, initialBuilt = false, onBuildComplete }) {
+export default function GarlandGame3({ isActive = true, isPaused = false, isAudioOn = true, freezeMooshika = false, onComplete, stopVoice, onLineSpoken, initialBuilt = false, onBuildComplete }) {
   usePreloadPoses(SCENE_IMAGES);
   // Continue after the garland was already built: resume at the carry step
   // (READY), not the build. Only read at mount.
@@ -720,7 +722,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
       {(
         <div ref={mooshikaRef} className="g3g-mooshika" style={{ left: `${LAYOUT.mooshika.l}%`, top: `${LAYOUT.mooshika.t}%` }}>
           {/* The still keeps the box size; the GIF is laid over it so Mooshika does not jump or resize. */}
-          <img src={mooshikaBasket} alt="Mooshika" style={showModakGlow ? { visibility: 'hidden' } : undefined} />
+          <img src={freezeMooshika && !showModakGlow ? mooshikaBasketStill : mooshikaBasket} alt="Mooshika" style={showModakGlow ? { visibility: 'hidden' } : undefined} />
           {showModakGlow && <img src={mooshikaSatisfiedGif} alt="" className="g3g-mooshika-gif" draggable={false} />}
           {showModakGlow && (
             <div className="g3g-modak-satisfaction">

@@ -20,7 +20,10 @@ import { getVoClipUrl, playVoClip } from '../../../../lib/audio/voClip';
 import './FlowerJourneyGame2.css';
 
 import forestBackground from './assets/images/modak-fj-bg.webp';
-import mooshikaTurned from './assets/images/mooshika-turned-game2.webp';
+// Mooshika is the looping calm GIF (same one as the end of beat 1), so she stays alive through the flower game.
+import mooshikaTurnedGif from './assets/images/mooshika-calm-loop.gif';
+import mooshikaTurnedStill from './assets/images/mooshika-calm-still.webp'; // shown while a symbol reveal / panel is up (the GIF would distract)
+const mooshikaTurned = mooshikaTurnedGif;
 import bushClosed from './assets/images/fj-bush-closed-new.webp';
 import bushOpen from './assets/images/fj-bush-open-new.webp';
 import branchArt from './assets/images/fj-branch-new.webp';
@@ -172,6 +175,7 @@ const VO = {
 const SCENE_IMAGES = [
   forestBackground,
   mooshikaTurned,
+  mooshikaTurnedStill,
   bushClosed,
   bushOpen,
   branchArt,
@@ -193,6 +197,7 @@ export default function FlowerJourneyGame2({
   isActive = true,
   isPaused: isPausedProp = false,
   isAudioOn = true,
+  freezeMooshika = false,
   onFlowersUpdate,
   onComplete,
   stopVoice,
@@ -1609,7 +1614,7 @@ export default function FlowerJourneyGame2({
                 onPointerCancel={handleMarshPointerCancel}
                 aria-label="Guide Mooshika across the stepping stones"
               >
-                <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} />
+                <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} frozen={freezeMooshika} />
                 {(emotion === 'worried' || dbgShowEmojis) && (
                   <img src={emotionWorried} alt="Nervous" className="fjg2-emotion fjg2-emotion--anchored" style={anchoredEmojiStyle('emojiMarsh')} {...emojiEditProps('emojiMarsh')} />
                 )}
@@ -1659,7 +1664,7 @@ export default function FlowerJourneyGame2({
           className={`fjg2-mooshika-shared ${isBushPhase && bushIntroReaction ? 'fjg2-mooshika-shared--thorn-reaction' : ''} ${isBranchPhase && branchIntroReaction ? 'fjg2-mooshika-shared--reach-high' : ''}`}
           style={{ left: `${LAYOUT[mooshikaPhaseKey].l}%`, top: `${LAYOUT[mooshikaPhaseKey].t}%`, '--layout-scale': (LAYOUT[mooshikaPhaseKey].s || 100) / 100 }}
         >
-          <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} />
+          <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} frozen={freezeMooshika} />
           {isBushPhase && (emotion === 'angry' || dbgShowEmojis) && (
             <img src={emotionAngry} alt="Upset" className="fjg2-emotion fjg2-emotion--anchored" style={anchoredEmojiStyle('emojiBush')} {...emojiEditProps('emojiBush')} />
           )}
@@ -1729,7 +1734,7 @@ export default function FlowerJourneyGame2({
             className="fjg2-belly-mooshika"
             style={{ left: `${LAYOUT.mooshikaBelly.l}%`, top: `${LAYOUT.mooshikaBelly.t}%`, '--layout-scale': (LAYOUT.mooshikaBelly.s || 100) / 100 }}
           >
-            <MooshikaWithBasket flowerCount={6} basketRef={basketTargetRef} />
+            <MooshikaWithBasket flowerCount={6} basketRef={basketTargetRef} frozen={freezeMooshika} />
             {(bellyBeat >= 1 || dbgShowEmojis) && <img src={emotionAngry} alt="Upset" className="fjg2-belly-emotion fjg2-belly-emotion--upset" style={bellyEmojiStyle('bellyUpset')} {...emojiEditProps('bellyUpset')} />}
             {(bellyBeat >= 2 || dbgShowEmojis) && <img src={emotionSad} alt="Sad" className="fjg2-belly-emotion fjg2-belly-emotion--sad" style={bellyEmojiStyle('bellySad')} {...emojiEditProps('bellySad')} />}
             {(bellyBeat >= 3 || dbgShowEmojis) && <img src={emotionWorried} alt="Nervous" className="fjg2-belly-emotion fjg2-belly-emotion--nervous" style={bellyEmojiStyle('bellyNervous')} {...emojiEditProps('bellyNervous')} />}
@@ -1937,10 +1942,10 @@ export default function FlowerJourneyGame2({
   );
 }
 
-function MooshikaWithBasket({ flowerCount = 0, basketRef }) {
+function MooshikaWithBasket({ flowerCount = 0, basketRef, frozen = false }) {
   return (
     <div className="fjg2-basket-character">
-      <img src={mooshikaTurned} alt="Mooshika" className="fjg2-basket-character__mouse" />
+      <img src={frozen ? mooshikaTurnedStill : mooshikaTurned} alt="Mooshika" className="fjg2-basket-character__mouse" />
       <div ref={basketRef} className={`fjg2-basket-flowers fjg2-basket-flowers--${flowerCount}`} aria-hidden="true">
         {flowerCount >= 2 && (
           <>
