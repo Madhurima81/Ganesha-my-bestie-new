@@ -22,13 +22,15 @@
   <button id="t2">Test 2: new player, starts 3 seconds after the tap</button>
   <button id="t3" class="alt">Test 3: what the app does: unlock 4 players, play one 3 seconds later</button>
   <button id="t4" class="alt">Test 4: unlock with the real recording instead of a silent sound, play 3 seconds later</button>
+  <button id="t5">Test 5: new player, starts 20 seconds after the tap</button>
+  <button id="t6" class="alt">Test 6: unlock 4 players (valid silent sound), play one 20 seconds later</button>
   <button id="clr">Clear log</button>
   <div id="log"></div>
 </div>
 <script>
 (function(){
   var URL1='/audio/mountain-modak-01.mp3', URL2='/audio/mountain-modak-02.mp3';
-  var SILENT='data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+  var SILENT='data:audio/wav;base64,UklGRmQGAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YUAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
   var logEl=document.getElementById('log'), t0=Date.now();
   function log(m){ logEl.textContent += '['+((Date.now()-t0)/1000).toFixed(1)+'s] '+m+'\n'; }
   log('Device: '+navigator.userAgent);
@@ -50,7 +52,8 @@
     log('--- Test 2 (fresh player, 3 s later)');
     setTimeout(function(){ var a=new Audio(URL1); watch(a,'T2'); tryPlay(a,'T2'); },3000);
   };
-  function poolTest(label, unlockSrc, quiet){
+  function poolTest(label, unlockSrc, quiet, delay){
+    delay = delay || 3000;
     log('--- '+label);
     var pool=[]; var i;
     for(i=0;i<4;i++){
@@ -58,17 +61,24 @@
         var a=new Audio(); a.preload='auto'; a.src=unlockSrc; if(quiet) a.muted=true;
         pool.push(a);
         var p; try{ p=a.play(); }catch(e){ log('unlock '+n+' threw '+e.name); return; }
-        if(p&&p.then){ p.then(function(){ log('unlock '+n+' OK'); a.pause(); }, function(e){ log('unlock '+n+' REFUSED: '+e.name); }); }
+        var settled=false;
+        if(p&&p.then){ p.then(function(){ settled=true; log('unlock '+n+' OK'); if(a.src===unlockSrc) a.pause(); }, function(e){ settled=true; log('unlock '+n+' REFUSED: '+e.name); }); }
+        setTimeout(function(){ if(!settled) log('unlock '+n+' still pending after 2 s (never finished)'); },2000);
       })(i);
     }
     setTimeout(function(){
       var a=pool[0]; a.onended=null; a.muted=false; a.src=URL1; a.volume=1; watch(a,label.slice(0,6));
-      log('3 s later: playing a recording on an unlocked player');
+      log((delay/1000)+' s later: playing a recording on an unlocked player');
       tryPlay(a,'late play');
-    },3000);
+    },delay);
   }
-  document.getElementById('t3').onclick=function(){ poolTest('Test 3 (silent-sound unlock)', SILENT); };
-  document.getElementById('t4').onclick=function(){ poolTest('Test 4 (recording unlock)', URL2, true); };
+  document.getElementById('t3').onclick=function(){ poolTest('Test 3 (silent-sound unlock)', SILENT, false, 3000); };
+  document.getElementById('t4').onclick=function(){ poolTest('Test 4 (recording unlock)', URL2, true, 3000); };
+  document.getElementById('t5').onclick=function(){
+    log('--- Test 5 (fresh player, 20 s later; do NOT touch the screen)');
+    setTimeout(function(){ var a=new Audio(URL1); watch(a,'T5'); tryPlay(a,'T5'); },20000);
+  };
+  document.getElementById('t6').onclick=function(){ poolTest('Test 6 (valid silent sound, 20 s)', SILENT, false, 20000); };
   document.getElementById('clr').onclick=function(){ logEl.textContent=''; t0=Date.now(); };
 })();
 </script>
