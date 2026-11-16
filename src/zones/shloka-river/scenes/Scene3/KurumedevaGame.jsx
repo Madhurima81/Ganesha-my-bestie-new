@@ -131,7 +131,7 @@ const ELEPHANT_PLACE_MS = 910;
 const ELEPHANT_FLIP_MS = 550; // bundle flips into the bridge; THEN Elephant walks back (ELEPHANT_RETURN_MS)
 // TODO: swap in a real "place logs" GIF; until it exists, placing just holds the carry pose.
 const MINI_LOG_BUNDLE_W = 12.5;
-const HELP_SETTLE_MS = 900; // stand and help before the bridge art updates
+const MONKEY_TIE_MS = 1800; // monkey-tie GIF = 8 frames x 220ms; he stays on the bridge for it, then goes back to his spot // stand and help before the bridge art updates
 
 // Vine — appears next to Beaver once Elephant's logs land, near her own
 // starting spot (BEAVER_PATH[0]).
@@ -770,7 +770,7 @@ export default function KurumedevaGame({
       // kuru_rope_after is chained after the "me" syllable finishes (see
       // onSyllableLit below) — same race as kuru_logs_after above.
 
-      safeAfter(HELP_SETTLE_MS, () => {
+      safeAfter(MONKEY_TIE_MS, () => {
         setFriendImgStates((prev) => {
           const next = [...prev];
           next[1] = 'carry';
@@ -1594,7 +1594,7 @@ export default function KurumedevaGame({
               }}
             >
               <PoseImage
-                key={elephantAnimating ? friendSprite : 'pose'} // remount on action swaps: no crossfade, so no "two elephants"
+                key={elephantAnimating || (index === 1 && isHelping) ? friendSprite : 'pose'} // remount on action swaps: no crossfade, so no "two elephants"
                 src={friendSprite}
                 alt={friend.label}
                 draggable={false}
