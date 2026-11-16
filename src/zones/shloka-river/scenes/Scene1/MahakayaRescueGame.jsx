@@ -678,12 +678,24 @@ export default function MahakayaRescueGame({
   };
   tryFinaleRef.current = tryStartFinale;
 
+  // The animal that just boarded makes its call, but only once the syllable has finished (never over Sanskrit),
+  // and not once the finale word has started. Pausable timers, so the sidebar cannot let it fire behind the panel.
+  const playAnimalCallWhenQuiet = (animalId, tries = 0) => {
+    if (!animalId) return;
+    after(tries === 0 ? 800 : 250, () => {
+      if (finaleRef.current.started) return;
+      if (syllablesBusy() && tries < 12) { playAnimalCallWhenQuiet(animalId, tries + 1); return; }
+      playSfx?.(`animal${animalId.charAt(0).toUpperCase()}${animalId.slice(1)}`);
+    });
+  };
+
   const completeRound = () => {
     const nextCompleted = Math.min(TOTAL_LOGS, completedLogsRef.current + 1);
     completedLogsRef.current = nextCompleted;
     setCompletedLogs(nextCompleted);
     onMicroWin?.();
     playSfx?.('place'); // log lands: soft thud; the syllable (after the hold below) is the reward
+    playAnimalCallWhenQuiet(ANIMALS[JOIN_SEQUENCE[nextCompleted - 1]]?.id);
     draggingRef.current = null;
     setDragging(null);
 

@@ -42,6 +42,11 @@ export const ROLES = {
   emotionalGlow:{ src: `${SFX_DIR}sfx-emotional-glow.wav`, vol: 0.47, priority: 3, fallback: synthGlow },
   celebration: { src: `${SFX_DIR}sfx-celebration.wav`,    vol: 0.43, priority: 4, fallback: synthTwinkle },
   zoneComplete:{ src: `${SFX_DIR}sfx-celebration.wav`,    vol: 0.48, priority: 5, fallback: synthTwinkle },   // TODO own sound
+  // Animal calls (recorded, 1.6-2.7s). Played when an animal is rescued / boards; never over Sanskrit (see DROP_DURING_SANSKRIT).
+  animalCow:      { src: '/audio/sound-cow.webm',      vol: 0.7, priority: 0, fallback: () => {} },
+  animalElephant: { src: '/audio/sound-elephant.webm', vol: 0.7, priority: 0, fallback: () => {} },
+  animalMonkey:   { src: '/audio/sound-monkey.webm',   vol: 0.7, priority: 0, fallback: () => {} },
+  animalPeacock:  { src: '/audio/sound-peacock.webm',  vol: 0.7, priority: 0, fallback: () => {} },
   frogHop:     { src: `${ROLE2_DIR}sfx-frog-hop.mp3`,     vol: 0.35, priority: 0, fallback: synthTap },
   // The file runs 3.0s; the cue is capped to 1.1s with a natural 0.45s fade so the full word never plays under it.
   frogReunion: { src: `${ROLE2_DIR}sfx-frog-reunion.mp3`, vol: 0.40, priority: 1, fallback: synthChime, maxMs: 1100, fadeMs: 450 },
@@ -56,7 +61,7 @@ const VO_DUCK_FACTOR = 0.7;
 
 // Sanskrit safety net: while a syllable/word is being spoken, small effects must not land on top of it.
 // They are DROPPED, never held or replayed afterwards (a late "place" or error cue would be confusing).
-const DROP_DURING_SANSKRIT = new Set(['tap', 'select', 'idleHint', 'softWrong', 'place']);
+const DROP_DURING_SANSKRIT = new Set(['tap', 'select', 'idleHint', 'softWrong', 'place', 'animalCow', 'animalElephant', 'animalMonkey', 'animalPeacock']);
 // Reward effects are skipped during Sanskrit so pronunciation stays clear.
 const REWARD_DURING_SANSKRIT = new Set(['correct', 'discovery', 'bloom', 'powerUnlock', 'emotionalGlow', 'celebration', 'zoneComplete', 'frogReunion']);
 let _sanskritEl = null;       // the <audio> currently speaking a syllable/word

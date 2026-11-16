@@ -21,6 +21,10 @@ import featherFoundImg from './assets/images-opt/margin35/eyes-game-v2/peacock_f
 import mangoFoundImg from './assets/images-opt/margin35/eyes-game/mango.webp';
 import yellowFlowerClusterImg from './assets/images-opt/margin35/eyes-game-v2/yellow_flower_cluster.webp';
 import { ANIMAL_POSITIONS } from './animalPositions';
+import { sfx } from '../../../../lib/audio/sfx';
+
+// The animal's own call, played the moment its happy GIF appears (feather -> peacock, mango -> monkey).
+const ANIMAL_CALL_ROLE = { feather: 'animalPeacock', mango: 'animalMonkey' };
 
 const FLOW = {
   SEARCH: 'search',
@@ -907,7 +911,10 @@ const EyesPopUpGame = ({
     // resolved animal.
     schedule(() => setCenteredTargets((prev) => [...prev, target.id]), 700); // hold, then start gliding to center
     schedule(() => setCarriedTargets((prev) => [...prev, target.id]), 2100); // 700 + 900 glide + 500 pause at center
-    schedule(() => setDeliveredTargets((prev) => [...prev, target.id]), 3000); // 2100 + 900 glide to animal
+    schedule(() => {
+      setDeliveredTargets((prev) => [...prev, target.id]);
+      sfx.play(ANIMAL_CALL_ROLE[target.id]);
+    }, 3000); // 2100 + 900 glide to animal
     schedule(() => setGoneTargets((prev) => [...prev, target.id]), 3600); // 3000 + 600 hold after pose change
   }, [debugMode, flow, foundIds, markSuccessDoneIfFinished, registerMiss, schedule, speak]);
 

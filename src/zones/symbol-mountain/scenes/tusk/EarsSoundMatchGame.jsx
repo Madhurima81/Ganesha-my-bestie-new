@@ -31,6 +31,10 @@ import soundBirdAmbient from './assets/audio/ear_bird_forest_ambient.wav';
 import decoyWind from './assets/audio/dragon-studio-wind-gust-386158.mp3';
 import decoyRustle from './assets/audio/dragon-studio-dry-grass-rustling-478361.mp3';
 import { ANIMAL_POSITIONS } from './animalPositions';
+import { sfx } from '../../../../lib/audio/sfx';
+
+// The animal's own call, played as its happy GIF starts (not on a Continue replay).
+const ANIMAL_CALL_ROLE = { elephant: 'animalElephant', cow: 'animalCow' };
 
 const PHASE = {
   LISTENING: 'listening',
@@ -932,6 +936,7 @@ const EarsSoundMatchGame = ({
     setRevealFrameByAnimal((prev) => ({ ...prev, [animalRound.id]: 0 }));
     // Report when the success line has finished, so Continue only replays it if it was cut off.
     if (!options.skipSuccess) {
+      schedule(() => sfx.play(ANIMAL_CALL_ROLE[animalRound.id]), 350);
       speak(VO_TEXTS[animalRound.id], (lineResult) => {
         markSuccessDoneIfFinished(lineResult, ROUNDS.indexOf(animalRound) + 1);
       }, { label: `success:${animalRound.id}` });

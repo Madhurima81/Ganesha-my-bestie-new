@@ -6,6 +6,7 @@ export const ROLE_IDS = [
   'tap', 'select', 'place', 'softWrong', 'idleHint', 'transition',
   'correct', 'discovery', 'bloom', 'powerUnlock', 'emotionalGlow',
   'celebration', 'zoneComplete', 'frogHop', 'frogReunion',
+  'animalCow', 'animalElephant', 'animalMonkey', 'animalPeacock',
 ];
 
 // Old key names -> role. Lets every existing scene keep working untouched.
