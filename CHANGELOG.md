@@ -1,5 +1,15 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-16] - Kurumedeva: Elephant, Monkey and Beaver help beats use the new GIFs
+**Touched (all on staging, pushed):** 784800d7, 2f6d263a, 59313f37, f0eb1498 - Scene3/KurumedevaGame.jsx/.css, scene3LayoutConfig.js, bridge/Characters + bridge/Bridge assets
+**Changed:**
+- Elephant help beat: lift GIF (300ms/frame, ~2.4s) -> carry + set-down GIF (plays once) -> stacked-logs bundle flips into the step 1 bridge -> THEN Elephant walks back to where he landed after the help-bubble drop. Sprite swaps remount `PoseImage` (key) so there is no crossfade and no "two elephants".
+- Bank logs are now one stacked-logs image (`logs-stacked.webp`, 13% wide, moved to 28.9/69.2). Old static `elephant-carry-logs.webp` removed.
+- Monkey uses the vine-knot GIF (`monkey-tie.webp`) for the whole tie (1.8s), then goes back to his wait spot.
+- Beaver: worried idle pose (not the strained lift) while Elephant works. Plank round opens with the pick-plank GIF at BEAVER_PICK_SPOT; planks (and the drag hand cue) unlock only after it ends (1.32s). Walking Beaver width 6.5 -> 11.2 so he matches the play size.
+- Layout Debug: new markers for Elephant carry stop, log-bundle flip spot, Beaver pick spot; Phase 1a shows Elephant start + bank logs. Copy Layout JSON exports ELEPHANT_DROP_SPOT, ELEPHANT_FLIP_SPOT, BEAVER_PICK_SPOT. Layout values updated from the pasted JSON (Elephant start 22, Beaver start 37/56.8, help token home 44.1/48.3).
+**Verified:** eslint 0 errors; Elephant, Monkey and plank-round beats traced in the browser pane (phase order and timings match). NOT verified: Beaver walking size after the width change, plank drag after the pick GIF, iPad.
+**Open:** (1) Elephant "place" and Monkey rope timing are guesses; rope appears when the Monkey GIF starts. (2) Blink for Elephant/Monkey at start not done (no blink files). (3) Beaver tie pose during the Monkey beat unchanged. (4) Pond/Modak/other-session files still uncommitted.
 ## [2026-11-16] - Opening flow: profile -> Mooshika -> sunray story, brand welcome -> device choice
 **Touched (all on staging, pushed):** e1361b90 App.jsx, CleanProfileSelector.jsx; c4b4e8e7 GaneshaIntroStory.jsx/.css/.test.jsx, MainWelcomeScreen.jsx, DeviceChoiceModal.css, public/images/welcome/ganesha-welcome.gif + ganesha-welcome-still.png.
 **Changed:**
