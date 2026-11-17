@@ -13,7 +13,8 @@
 
 .about-me-ganesha-host--left-bottom {
   left: clamp(18px, 3vw, 48px);
-  bottom: clamp(28px, 5vh, 72px);
+  /* raised a little so his feet clear the bottom edge (was clamp(28px, 5vh, 72px)) */
+  bottom: clamp(52px, 9vh, 104px);
 }
 
 .about-me-ganesha-host--left-middle {

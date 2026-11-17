@@ -27,7 +27,7 @@ import OpeningModal from '../../shared/components/OpeningModal';
 import foodBg from './assets/images/fav_background.webp';
 
 const GANESHA_POSES = {
-  idle: '/images/ganesha-favorite-idle.png',
+  idle: '/images/ganesha-favorite-idle-blink.webp', // idle Ganesha blinks (2.5 s rest between blinks)
   blink: '/images/ganesha-favorite-blink-anim.webp',
   happy: '/images/ganesha-favorite-happy-anim.webp',
 };
