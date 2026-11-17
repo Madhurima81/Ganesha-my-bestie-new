@@ -9,7 +9,7 @@ import './SuryakotiGame.css';
 
 import sharedSceneBg from '../assets/images-opt/saurakoti-bg-opt.webp';
 import sunImg from '../assets/images/Suryakoti/sun-zip-opt.webp';
-import bunnySadImg from '../assets/images-opt/Suryakoti/bunny-sad-zip-opt.webp';
+import bunnySadImg from '../assets/images-opt/Suryakoti/bunny-sad-blink.webp'; // sad bunny, blinks (2.5 s rest)
 import bunnyHappyImg from '../assets/images-opt/Suryakoti/bunny-happy.gif';
 import burrowImg from '../assets/images-opt/Suryakoti/burrow-zip-opt.webp';
 

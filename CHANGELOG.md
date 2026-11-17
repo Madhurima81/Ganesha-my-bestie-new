@@ -73,6 +73,7 @@ Append one entry per work session. Newest on top.
 - Mahakaya: the four boarded animals (cow, elephant, monkey, peacock) loop again, with a 2.5 s rest on the last frame between loops (baked into the GIFs), until the raft arrives and the reveal card shows. (They had been play-once.) Tusk success GIFs stay play-once.
 - Idle animals blink (animated WebP, fitted to the old stills' size/position, 2.5 s rest between blinks): Mahakaya waiting elephant/cow/monkey/peacock, Tusk nest game monkey/cow/peacock (elephant still static), Samaprabha worried fawn, Nirvighnam sad turtle. Old stills left in place. No blink yet for frog, bunny, beaver, Kurumedeva, or About Me animals (different art).
 - Pond: the decorative sad turtle is now the Nirvighnam turtle, blinking (`pond-turtle-blink.webp`, 2.5 s rest), fitted to the old picture's box. The old brown-shell picture is still in the folder.
+- More idle blinks (eyes-only WebP fitted to the old stills, 2.5 s rest): Suryakoti sad bunny, Tusk nest elephant (all 4 nest animals blink now), Kurumedeva elephant-with-banana, monkey-with-twig and beaver-asking. Samaprabha: worried fawn blinks until the game is done, then the happy fawn-walk GIF plays once (no loop) and rests on its last frame. Script: scripts/fit_blink_to_static.py.
 **Open:** none of this has been play-tested end to end; Jest cannot run here (identity-obj-proxy missing); ZoneConfig Tusk icon and the garland Modak glow still static.
 
 ## [2026-11-13 c] - Opening animation + Ganesha intro story (committed c3367b90)

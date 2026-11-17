@@ -177,8 +177,10 @@ function pointInsideClue(point, clue) {
 }
 
 function Animal({ animalState, style }) {
+  // Worried (blinking) until the game is done; then the happy GIF plays once (relieved -> walking keeps the same
+  // file, so it is not restarted) and rests on its last frame.
   const src =
-    animalState === 'walking'
+    animalState === 'walking' || animalState === 'relieved'
       ? fawnWalkImg
       : animalState === 'worried' || animalState === 'curious'
         ? fawnWorriedImg

@@ -14,14 +14,14 @@ import bgImg from './assets/images/nirvighnam/bg.webp';
 // asks Elephant for help (logs appear), asks Monkey for help (rope appears,
 // same image — the pack has no separate "tied" art), then Beaver alone lays
 // 3 planks on top to finish the bridge.
-import elephantIdleBananaImg from './assets/images/bridge/Characters/elephant-idle-banana.webp';
+import elephantIdleBananaImg from './assets/images/bridge/Characters/elephant-idle-banana-blink.webp'; // blinks (2.5 s rest)
 import elephantHelpingImg from './assets/images/bridge/Characters/elephant-lift.webp';
 import elephantLiftLogsAnim from './assets/images/bridge/Characters/elephant-lift-logs.webp'; // plays once, holds last frame
 import elephantCarryPlaceAnim from './assets/images/bridge/Characters/elephant-carry-place-logs.webp'; // plays once: carries logs, sets them down, holds last frame
 import logsStackedObj from './assets/images/bridge/Bridge/logs-stacked.webp';
 import elephantHappyImg from './assets/images/bridge/Characters/elephant-happy.webp';
 import helpBubbleElephantImg from './assets/images/bridge/Characters/help-bubble-elephant-logs.webp';
-import monkeyPlayingTwigImg from './assets/images/bridge/Characters/monkey-playing-twig.webp';
+import monkeyPlayingTwigImg from './assets/images/bridge/Characters/monkey-playing-twig-blink.webp'; // blinks (2.5 s rest)
 import monkeyHelpingImg from './assets/images/bridge/Characters/monkey-tie.webp';
 import monkeyHappyImg from './assets/images/bridge/Characters/monkey-happy.webp';
 import helpBubbleMonkeyImg from './assets/images/Kurumedeva/help-vine.webp';
@@ -38,7 +38,7 @@ import logPieceObj from './assets/images/Kurumedeva/log-turtle.webp';
 import bridgeStep1Img from './assets/images/Kurumedeva/step1.webp';
 import bridgeStep2Img from './assets/images/Kurumedeva/step2.webp';
 
-import beaverAskingImg from './assets/images/bridge/Characters/beaver-asking.webp';
+import beaverAskingImg from './assets/images/bridge/Characters/beaver-asking-blink.webp'; // blinks (2.5 s rest)
 import beaverIdleWorriedImg from './assets/images/bridge/Characters/beaver-idle-worried.webp';
 // Beaver's own helping pose differs per round — matches the beat player's
 // beaver-lift (with Elephant) vs beaver-tie (with Monkey).
