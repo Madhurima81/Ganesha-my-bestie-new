@@ -20,10 +20,15 @@ def frames(path):
     return fr, du
 
 
+def solid_bbox(img, thr=24):
+    # bounding box of the clearly visible pixels: faint specks / halos must not inflate the measured size
+    return img.getchannel('A').point(lambda v: 255 if v > thr else 0).getbbox()
+
+
 def union_bbox(fr):
     b = None
     for f in fr:
-        x = f.getchannel('A').getbbox()
+        x = solid_bbox(f)
         b = x if b is None else (min(b[0], x[0]), min(b[1], x[1]), max(b[2], x[2]), max(b[3], x[3]))
     return b
 
@@ -32,7 +37,7 @@ def fit(blink, static, out, k=1.0, rest=2500):
     fr, du = frames(blink)
     st = Image.open(static).convert('RGBA')
     W, H = st.size
-    sb, fb = st.getchannel('A').getbbox(), union_bbox(fr)
+    sb, fb = solid_bbox(st), union_bbox(fr)
     sw, sh, fw, fh = sb[2] - sb[0], sb[3] - sb[1], fb[2] - fb[0], fb[3] - fb[1]
     s = min(sh / fh, sw / fw) * k
     cw, ch = int(round(W * k)), int(round(H * k))

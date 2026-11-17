@@ -20,10 +20,10 @@ import hiddenSpringImg from './assets/images-opt/margin35/ears-game-v2/hidden_sp
 import revealedSpringImg from './assets/images-opt/margin35/ears-game-v2/revealed_spring.webp';
 import hiddenGrassBushImg from './assets/images-opt/margin35/ears-game-v2/hidden_grass_bush.webp';
 import revealedGrassBushImg from './assets/images-opt/margin35/ears-game-v2/revealed_grass_bush.webp';
-import elephantThirstyImg from './assets/images-opt/margin35/ears-game-v2/elephant_thirsty.webp';
+import elephantThirstyImg from './assets/images-opt/margin35/ears-game-v2/elephant_thirsty_blink.webp'; // blinks (2.5 s rest)
 import elephantDrinkingImg from './assets/images-opt/margin35/ears-game-v2/elephant_drinking.webp';
 import elephantHappyWaterImg from './assets/images-opt/margin35/success-gifs/elephant_happy_water.gif';
-import cowTiredImg from './assets/images-opt/margin35/ears-game-v2/cow_tired.webp';
+import cowTiredImg from './assets/images-opt/margin35/ears-game-v2/cow_tired_blink.webp'; // blinks (2.5 s rest); cow_hungry has no blink yet
 import cowHungryImg from './assets/images-opt/margin35/ears-game-v2/cow_hungry.webp';
 import cowEatingGrassImg from './assets/images-opt/margin35/ears-game-v2/cow_eating_grass.webp';
 import cowHappyChewingImg from './assets/images-opt/margin35/success-gifs/cow_happy_chewing.gif';

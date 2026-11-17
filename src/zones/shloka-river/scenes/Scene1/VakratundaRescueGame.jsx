@@ -8,7 +8,8 @@ import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
 import { getLineCue } from '../../../../lib/config/content/voiceCues';
 import './VakratundaRescueGame.css';
 
-import frogSwim from './assets/images/vakratunda/frog-baby.webp';
+import frogSwim from './assets/images/vakratunda/frog-baby-blink.webp'; // sad frog, blinks (2.5 s rest) until he reaches his family
+import frogFamilyBlink from './assets/images/vakratunda/frog-family-blink.webp'; // waiting family, blinks (2.5 s rest)
 import frogHappy from './assets/images/vakratunda/frog-happy.gif';
 import frogFamily from './assets/images/vakratunda/frog-family.gif';
 import waterRipples from './assets/images/water-ripples.gif';
@@ -284,6 +285,7 @@ const POSE_ASSETS = [
   frogSwim,
   frogHappy,
   frogFamily,
+  frogFamilyBlink,
   lilypad,
   stoneImg,
   logPileImg,
@@ -1202,7 +1204,8 @@ export default function VakratundaRescueGame({
         onPointerUp={endDebugDrag}
         onPointerCancel={endDebugDrag}
       >
-        <PoseImage src={litCount >= 4 ? frogHappy : frogSwim} alt="" />
+        {/* The happy GIFs (frog and family) start together, only once the frog has reached his family. */}
+        <PoseImage src={phase === 'reunion' ? frogHappy : frogSwim} alt="" />
       </div>
 
       <div
@@ -1224,7 +1227,7 @@ export default function VakratundaRescueGame({
         onPointerUp={endDebugDrag}
         onPointerCancel={endDebugDrag}
       >
-        <img src={frogFamily} alt="" />
+        <img src={phase === 'reunion' ? frogFamily : frogFamilyBlink} alt="" />
       </div>
 
       {obstacles.map((obstacle) => (
