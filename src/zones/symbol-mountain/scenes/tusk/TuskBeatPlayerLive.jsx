@@ -10,7 +10,7 @@ import monkeyIdle from './assets/images-opt/tusk-margin35/monkey-blink.webp';
 import cowIdle from './assets/images-opt/tusk-margin35/cow-blink.webp';
 import elephantIdle from './assets/images-opt/tusk-margin35/elephant-blink.webp';
 import peacockIdle from './assets/images-opt/tusk-margin35/peacock-blink.webp';
-import bunnyHelping from './assets/images-opt/margin35/success-gifs/bunny_helping.gif';
+import bunnyHelping from './assets/images-opt/margin35/success-gifs/bunny_helping-anim.webp';
 import bgImg from './assets/images/tusk-giving/symbol_mountain_3_bg.webp';
 
 // Nest-rebuild items — the four imperfect-but-useful things each animal

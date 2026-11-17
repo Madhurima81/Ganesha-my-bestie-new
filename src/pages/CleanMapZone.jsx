@@ -933,7 +933,7 @@ const getMapGaneshaState = (allProgress, unlockingZones, overlayItems = {}, show
   };
 };
 
-const MAP_POINT_LEFT_GIF = '/images/ganesha/ganesha-map-point-left.gif';
+const MAP_POINT_LEFT_GIF = '/images/ganesha/ganesha-map-point-left-anim.webp';
 const MAP_POINT_LEFT_IDLE = '/images/ganesha/ganesha-map-point-left-idle.png';
 const MAP_POINT_MS = 1050; // six 180ms frames; swap out before the GIF loops
 

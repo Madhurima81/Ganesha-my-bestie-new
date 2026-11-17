@@ -24,8 +24,8 @@ import AboutMeGaneshaHost from '../components/AboutMeGaneshaHost';
 import bgImage from './assets/images/name_background.webp';
 const GANESHA_POSES = {
   idle: '/images/ganesha-favorite-idle.png',
-  blink: '/images/ganesha-favorite-blink.gif',
-  happy: '/images/ganesha-favorite-happy.gif',
+  blink: '/images/ganesha-favorite-blink-anim.webp',
+  happy: '/images/ganesha-favorite-happy-anim.webp',
 };
 import OpeningModal from '../../shared/components/OpeningModal';
 import SceneManager from '../../../lib/components/scenes/SceneManager';

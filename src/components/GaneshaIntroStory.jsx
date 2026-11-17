@@ -33,7 +33,7 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
     () => [
       {
         bg: GARDEN_BG,
-        layers: [{ src: '/intro-story/story-s1-parvati-creates.gif', l: 35.1, t: 23.4, w: 24.6 }],
+        layers: [{ src: '/intro-story/story-s1-parvati-creates-anim.webp', l: 35.1, t: 23.4, w: 24.6 }],
         alt: 'Parvati making young Ganesha from mud',
         vo: 'My mom, Parvati, made me from mud, with lots of love!'
       },

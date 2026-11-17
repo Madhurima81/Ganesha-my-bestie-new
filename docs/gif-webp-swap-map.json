@@ -1,0 +1,515 @@
+[
+ {
+  "gif": "public/images/ganesha-favorite-blink.gif",
+  "webp": "public/images/ganesha-favorite-blink-anim.webp",
+  "gif_kb": 161.451171875,
+  "webp_kb": 84.025390625,
+  "frames": 6,
+  "loop": "loop",
+  "ok": true
+ },
+ {
+  "gif": "public/images/ganesha-favorite-happy.gif",
+  "webp": "public/images/ganesha-favorite-happy-anim.webp",
+  "gif_kb": 259.337890625,
+  "webp_kb": 80.4375,
+  "frames": 6,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "public/images/ganesha-poses/sit-modak-blink.gif",
+  "webp": "public/images/ganesha-poses/sit-modak-blink-anim.webp",
+  "gif_kb": 237.53515625,
+  "webp_kb": 110.353515625,
+  "frames": 6,
+  "loop": "loop",
+  "ok": true
+ },
+ {
+  "gif": "public/images/ganesha-poses/stand-namaste-blink.gif",
+  "webp": "public/images/ganesha-poses/stand-namaste-blink-anim.webp",
+  "gif_kb": 193.7353515625,
+  "webp_kb": 85.494140625,
+  "frames": 6,
+  "loop": "loop",
+  "ok": true
+ },
+ {
+  "gif": "public/images/ganesha-poses/stand-point-blink.gif",
+  "webp": "public/images/ganesha-poses/stand-point-blink-anim.webp",
+  "gif_kb": 166.79296875,
+  "webp_kb": 106.875,
+  "frames": 6,
+  "loop": "loop",
+  "ok": true
+ },
+ {
+  "gif": "public/images/ganesha/ganesha-map-point-left.gif",
+  "webp": "public/images/ganesha/ganesha-map-point-left-anim.webp",
+  "gif_kb": 248.5107421875,
+  "webp_kb": 106.625,
+  "frames": 6,
+  "loop": "loop",
+  "ok": true
+ },
+ {
+  "gif": "public/images/welcome/ganesha-welcome.gif",
+  "webp": "public/images/welcome/ganesha-welcome-anim.webp",
+  "gif_kb": 235.7353515625,
+  "webp_kb": 108.220703125,
+  "frames": 9,
+  "loop": "loop",
+  "ok": true
+ },
+ {
+  "gif": "public/intro-story/story-s1-parvati-creates.gif",
+  "webp": "public/intro-story/story-s1-parvati-creates-anim.webp",
+  "gif_kb": 252.302734375,
+  "webp_kb": 89.8828125,
+  "frames": 8,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/about-me-hut/family-tree/assets/images/ganesha-gifs/shiva.gif",
+  "webp": "src/zones/about-me-hut/family-tree/assets/images/ganesha-gifs/shiva-anim.webp",
+  "gif_kb": 217.8193359375,
+  "webp_kb": 107.70703125,
+  "frames": 6,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/Scene1/assets/images/mahakaya/aboard-cow.gif",
+  "webp": "src/zones/shloka-river/scenes/Scene1/assets/images/mahakaya/aboard-cow-anim.webp",
+  "gif_kb": 223.2490234375,
+  "webp_kb": 71.642578125,
+  "frames": 6,
+  "loop": "loop",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/Scene1/assets/images/mahakaya/aboard-elephant.gif",
+  "webp": "src/zones/shloka-river/scenes/Scene1/assets/images/mahakaya/aboard-elephant-anim.webp",
+  "gif_kb": 176.96484375,
+  "webp_kb": 36.744140625,
+  "frames": 6,
+  "loop": "loop",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/Scene1/assets/images/mahakaya/aboard-monkey.gif",
+  "webp": "src/zones/shloka-river/scenes/Scene1/assets/images/mahakaya/aboard-monkey-anim.webp",
+  "gif_kb": 278.505859375,
+  "webp_kb": 77.525390625,
+  "frames": 6,
+  "loop": "loop",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/frog-family.gif",
+  "webp": "src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/frog-family-anim.webp",
+  "gif_kb": 210.978515625,
+  "webp_kb": 63.23828125,
+  "frames": 6,
+  "loop": "loop",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/frog-happy.gif",
+  "webp": "src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/frog-happy-anim.webp",
+  "gif_kb": 239.533203125,
+  "webp_kb": 55.296875,
+  "frames": 6,
+  "loop": "loop",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/Scene1/assets/images/water-ripples.gif",
+  "webp": "src/zones/shloka-river/scenes/Scene1/assets/images/water-ripples-anim.webp",
+  "gif_kb": 94.744140625,
+  "webp_kb": 20.443359375,
+  "frames": 6,
+  "loop": "loop",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/Scene2/assets/images-opt/Samaprabha/fawn-walk.gif",
+  "webp": "src/zones/shloka-river/scenes/Scene2/assets/images-opt/Samaprabha/fawn-walk-anim.webp",
+  "gif_kb": 184.623046875,
+  "webp_kb": 56.677734375,
+  "frames": 16,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/Scene2/assets/images-opt/Suryakoti/bunny-happy.gif",
+  "webp": "src/zones/shloka-river/scenes/Scene2/assets/images-opt/Suryakoti/bunny-happy-anim.webp",
+  "gif_kb": 172.90625,
+  "webp_kb": 45.919921875,
+  "frames": 6,
+  "loop": "loop",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/Scene3/assets/images-opt/nirvighnam/turtle-swim.gif",
+  "webp": "src/zones/shloka-river/scenes/Scene3/assets/images-opt/nirvighnam/turtle-swim-anim.webp",
+  "gif_kb": 229.5380859375,
+  "webp_kb": 42.39453125,
+  "frames": 8,
+  "loop": "loop",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/Scene3/assets/images-opt/nirvighnam/turtle-walk.gif",
+  "webp": "src/zones/shloka-river/scenes/Scene3/assets/images-opt/nirvighnam/turtle-walk-anim.webp",
+  "gif_kb": 260.7568359375,
+  "webp_kb": 48.048828125,
+  "frames": 9,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/beaver-walking.gif",
+  "webp": "src/zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/beaver-walking-anim.webp",
+  "gif_kb": 276.01171875,
+  "webp_kb": 78.3828125,
+  "frames": 12,
+  "loop": "loop",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/scene4/assets/images/sarvada/layers/afternoon-after.gif",
+  "webp": "src/zones/shloka-river/scenes/scene4/assets/images/sarvada/layers/afternoon-after-anim.webp",
+  "gif_kb": 86.34765625,
+  "webp_kb": 52.708984375,
+  "frames": 5,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/scene4/assets/images/sarvada/layers/afternoon-before.gif",
+  "webp": "src/zones/shloka-river/scenes/scene4/assets/images/sarvada/layers/afternoon-before-anim.webp",
+  "gif_kb": 130.1884765625,
+  "webp_kb": 80.7734375,
+  "frames": 7,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/scene4/assets/images/sarvada/layers/morning-boy-after.gif",
+  "webp": "src/zones/shloka-river/scenes/scene4/assets/images/sarvada/layers/morning-boy-after-anim.webp",
+  "gif_kb": 104.0869140625,
+  "webp_kb": 65.04296875,
+  "frames": 4,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/scene4/assets/images/sarvada/layers/morning-boy-before.gif",
+  "webp": "src/zones/shloka-river/scenes/scene4/assets/images/sarvada/layers/morning-boy-before-anim.webp",
+  "gif_kb": 191.30078125,
+  "webp_kb": 86.962890625,
+  "frames": 6,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/scene4/assets/images/sarvada/layers/morning-mother-after.gif",
+  "webp": "src/zones/shloka-river/scenes/scene4/assets/images/sarvada/layers/morning-mother-after-anim.webp",
+  "gif_kb": 327.0419921875,
+  "webp_kb": 125.029296875,
+  "frames": 6,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/scene4/assets/images/sarvada/layers/morning-mother-before.gif",
+  "webp": "src/zones/shloka-river/scenes/scene4/assets/images/sarvada/layers/morning-mother-before-anim.webp",
+  "gif_kb": 264.4990234375,
+  "webp_kb": 86.580078125,
+  "frames": 6,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/scene4/assets/images/sarvada/layers/night-after.gif",
+  "webp": "src/zones/shloka-river/scenes/scene4/assets/images/sarvada/layers/night-after-anim.webp",
+  "gif_kb": 107.720703125,
+  "webp_kb": 72.19140625,
+  "frames": 7,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/scene4/assets/images/sarvada/layers/night-before.gif",
+  "webp": "src/zones/shloka-river/scenes/scene4/assets/images/sarvada/layers/night-before-anim.webp",
+  "gif_kb": 100.4560546875,
+  "webp_kb": 64.365234375,
+  "frames": 6,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/scene4/assets/images/sarvakaryeshu/mooshika-layers/boy-after.gif",
+  "webp": "src/zones/shloka-river/scenes/scene4/assets/images/sarvakaryeshu/mooshika-layers/boy-after-anim.webp",
+  "gif_kb": 192.0107421875,
+  "webp_kb": 99.041015625,
+  "frames": 6,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/scene4/assets/images/sarvakaryeshu/mooshika-layers/boy-before.gif",
+  "webp": "src/zones/shloka-river/scenes/scene4/assets/images/sarvakaryeshu/mooshika-layers/boy-before-anim.webp",
+  "gif_kb": 203.0703125,
+  "webp_kb": 82.453125,
+  "frames": 6,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/scene4/assets/images/sarvakaryeshu/trunk-layers/boy-after.gif",
+  "webp": "src/zones/shloka-river/scenes/scene4/assets/images/sarvakaryeshu/trunk-layers/boy-after-anim.webp",
+  "gif_kb": 214.8271484375,
+  "webp_kb": 124.8828125,
+  "frames": 6,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/scene4/assets/images/sarvakaryeshu/trunk-layers/boy-before.gif",
+  "webp": "src/zones/shloka-river/scenes/scene4/assets/images/sarvakaryeshu/trunk-layers/boy-before-anim.webp",
+  "gif_kb": 177.5390625,
+  "webp_kb": 80.171875,
+  "frames": 6,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/scene4/assets/images/sarvakaryeshu/tusk-layers/boy-after.gif",
+  "webp": "src/zones/shloka-river/scenes/scene4/assets/images/sarvakaryeshu/tusk-layers/boy-after-anim.webp",
+  "gif_kb": 213.375,
+  "webp_kb": 101.30859375,
+  "frames": 5,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/scenes/scene4/assets/images/sarvakaryeshu/tusk-layers/boy-before.gif",
+  "webp": "src/zones/shloka-river/scenes/scene4/assets/images/sarvakaryeshu/tusk-layers/boy-before-anim.webp",
+  "gif_kb": 283.6201171875,
+  "webp_kb": 95.56640625,
+  "frames": 6,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/shared/images/symbol-gifs/kurumedeva.gif",
+  "webp": "src/zones/shloka-river/shared/images/symbol-gifs/kurumedeva-anim.webp",
+  "gif_kb": 213.08984375,
+  "webp_kb": 63.033203125,
+  "frames": 8,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/shared/images/symbol-gifs/mahakaya.gif",
+  "webp": "src/zones/shloka-river/shared/images/symbol-gifs/mahakaya-anim.webp",
+  "gif_kb": 294.0986328125,
+  "webp_kb": 76.71875,
+  "frames": 8,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/shared/images/symbol-gifs/nirvighnam.gif",
+  "webp": "src/zones/shloka-river/shared/images/symbol-gifs/nirvighnam-anim.webp",
+  "gif_kb": 161.3515625,
+  "webp_kb": 43.572265625,
+  "frames": 8,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/shared/images/symbol-gifs/sarvada.gif",
+  "webp": "src/zones/shloka-river/shared/images/symbol-gifs/sarvada-anim.webp",
+  "gif_kb": 117.46875,
+  "webp_kb": 50.328125,
+  "frames": 8,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/shared/images/symbol-gifs/sarvakaryeshu.gif",
+  "webp": "src/zones/shloka-river/shared/images/symbol-gifs/sarvakaryeshu-anim.webp",
+  "gif_kb": 218.9599609375,
+  "webp_kb": 102.19140625,
+  "frames": 8,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/shared/images/symbol-gifs/suryakoti.gif",
+  "webp": "src/zones/shloka-river/shared/images/symbol-gifs/suryakoti-anim.webp",
+  "gif_kb": 159.11328125,
+  "webp_kb": 49.05078125,
+  "frames": 8,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/shloka-river/shared/images/symbol-gifs/vakratunda.gif",
+  "webp": "src/zones/shloka-river/shared/images/symbol-gifs/vakratunda-anim.webp",
+  "gif_kb": 191.9580078125,
+  "webp_kb": 65.34765625,
+  "frames": 8,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/symbol-mountain/scenes/modak/assets/images/ganesha-garland-blink.gif",
+  "webp": "src/zones/symbol-mountain/scenes/modak/assets/images/ganesha-garland-blink-anim.webp",
+  "gif_kb": 254.62890625,
+  "webp_kb": 121.34765625,
+  "frames": 6,
+  "loop": "loop",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/symbol-mountain/scenes/modak/assets/images/mooshika-blink.gif",
+  "webp": "src/zones/symbol-mountain/scenes/modak/assets/images/mooshika-blink-anim.webp",
+  "gif_kb": 192.8974609375,
+  "webp_kb": 52.50390625,
+  "frames": 6,
+  "loop": "loop",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/symbol-mountain/scenes/modak/assets/images/mooshika-calm-loop.gif",
+  "webp": "src/zones/symbol-mountain/scenes/modak/assets/images/mooshika-calm-loop-anim.webp",
+  "gif_kb": 197.66015625,
+  "webp_kb": 48.9765625,
+  "frames": 6,
+  "loop": "loop",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/symbol-mountain/scenes/modak/assets/images/mooshika-satisfied-once.gif",
+  "webp": "src/zones/symbol-mountain/scenes/modak/assets/images/mooshika-satisfied-once-anim.webp",
+  "gif_kb": 236.705078125,
+  "webp_kb": 50.5625,
+  "frames": 6,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/symbol-mountain/scenes/tusk/assets/images-opt/margin35/success-gifs/bunny_helping.gif",
+  "webp": "src/zones/symbol-mountain/scenes/tusk/assets/images-opt/margin35/success-gifs/bunny_helping-anim.webp",
+  "gif_kb": 252.490234375,
+  "webp_kb": 86.333984375,
+  "frames": 6,
+  "loop": "loop",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/symbol-mountain/scenes/tusk/assets/images-opt/margin35/success-gifs/cow_happy_chewing.gif",
+  "webp": "src/zones/symbol-mountain/scenes/tusk/assets/images-opt/margin35/success-gifs/cow_happy_chewing-anim.webp",
+  "gif_kb": 217.537109375,
+  "webp_kb": 86.12890625,
+  "frames": 6,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/symbol-mountain/scenes/tusk/assets/images-opt/margin35/success-gifs/elephant_happy_water.gif",
+  "webp": "src/zones/symbol-mountain/scenes/tusk/assets/images-opt/margin35/success-gifs/elephant_happy_water-anim.webp",
+  "gif_kb": 233.193359375,
+  "webp_kb": 65.140625,
+  "frames": 6,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/symbol-mountain/scenes/tusk/assets/images-opt/margin35/success-gifs/monkey_happy_mango.gif",
+  "webp": "src/zones/symbol-mountain/scenes/tusk/assets/images-opt/margin35/success-gifs/monkey_happy_mango-anim.webp",
+  "gif_kb": 275.20703125,
+  "webp_kb": 112.841796875,
+  "frames": 6,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/symbol-mountain/shared/images/symbol-gifs/belly.gif",
+  "webp": "src/zones/symbol-mountain/shared/images/symbol-gifs/belly-anim.webp",
+  "gif_kb": 217.71484375,
+  "webp_kb": 70.138671875,
+  "frames": 8,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/symbol-mountain/shared/images/symbol-gifs/ears.gif",
+  "webp": "src/zones/symbol-mountain/shared/images/symbol-gifs/ears-anim.webp",
+  "gif_kb": 207.0869140625,
+  "webp_kb": 98.181640625,
+  "frames": 8,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/symbol-mountain/shared/images/symbol-gifs/eyes.gif",
+  "webp": "src/zones/symbol-mountain/shared/images/symbol-gifs/eyes-anim.webp",
+  "gif_kb": 158.0625,
+  "webp_kb": 82.66015625,
+  "frames": 6,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/symbol-mountain/shared/images/symbol-gifs/lotus.gif",
+  "webp": "src/zones/symbol-mountain/shared/images/symbol-gifs/lotus-anim.webp",
+  "gif_kb": 156.5673828125,
+  "webp_kb": 43.8515625,
+  "frames": 8,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/symbol-mountain/shared/images/symbol-gifs/modak.gif",
+  "webp": "src/zones/symbol-mountain/shared/images/symbol-gifs/modak-anim.webp",
+  "gif_kb": 136.466796875,
+  "webp_kb": 63.8359375,
+  "frames": 8,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/symbol-mountain/shared/images/symbol-gifs/mooshika.gif",
+  "webp": "src/zones/symbol-mountain/shared/images/symbol-gifs/mooshika-anim.webp",
+  "gif_kb": 92.09765625,
+  "webp_kb": 57.744140625,
+  "frames": 12,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/symbol-mountain/shared/images/symbol-gifs/trunk.gif",
+  "webp": "src/zones/symbol-mountain/shared/images/symbol-gifs/trunk-anim.webp",
+  "gif_kb": 188.1171875,
+  "webp_kb": 60.5859375,
+  "frames": 8,
+  "loop": "once",
+  "ok": true
+ },
+ {
+  "gif": "src/zones/symbol-mountain/shared/images/symbol-gifs/tusk.gif",
+  "webp": "src/zones/symbol-mountain/shared/images/symbol-gifs/tusk-anim.webp",
+  "gif_kb": 357.8955078125,
+  "webp_kb": 95.931640625,
+  "frames": 6,
+  "loop": "once",
+  "ok": true
+ }
+]

@@ -19,12 +19,12 @@ import elephantCalf from './assets/images/mahakaya/waiting-elephant-blink.webp';
 import peacockSymbolMountain from './assets/images/mahakaya/waiting-peacock-blink.webp';
 import cowSymbolMountain from './assets/images/mahakaya/waiting-cow-blink.webp';
 import monkeySymbolMountain from './assets/images/mahakaya/waiting-monkey-blink.webp';
-import waterRipples from './assets/images/water-ripples.gif';
+import waterRipples from './assets/images/water-ripples-anim.webp';
 // Animated versions shown once each animal has landed on the raft.
-import elephantAboard from './assets/images/mahakaya/aboard-elephant.gif';
+import elephantAboard from './assets/images/mahakaya/aboard-elephant-anim.webp';
 import peacockAboard from './assets/images/mahakaya/aboard-peacock.gif';
-import cowAboard from './assets/images/mahakaya/aboard-cow.gif';
-import monkeyAboard from './assets/images/mahakaya/aboard-monkey.gif';
+import cowAboard from './assets/images/mahakaya/aboard-cow-anim.webp';
+import monkeyAboard from './assets/images/mahakaya/aboard-monkey-anim.webp';
 
 const SYLLABLES = ['Ma', 'ha', 'ka', 'ya'];
 const AUDIO = { syllables: ['ma', 'ha', 'ka', 'ya'] };

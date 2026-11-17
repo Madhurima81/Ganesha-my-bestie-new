@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import './WelcomeLayers.css';
 
-const GANESHA_GIF = '/images/welcome/ganesha-welcome.gif';
+const GANESHA_GIF = '/images/welcome/ganesha-welcome-anim.webp';
 const GANESHA_STILL = '/images/welcome/ganesha-welcome-still.png';
 const POSTER = '/images/welcome/welcome-bg-poster.webp';
 const STILL_AFTER_MS = 2300;

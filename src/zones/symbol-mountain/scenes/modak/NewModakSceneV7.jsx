@@ -88,7 +88,7 @@ const mooshikaActive = mooshikaTurned;
 const mooshikaCalm = mooshikaTurned;
 // "Calming down" GIF: only Mooshika's eyes/expression change, so it LOOPS (6 frames x 250ms). Shown after the settle walk;
 // the same GIF is Mooshika in the flower and garland games.
-import mooshikaCalmGif from './assets/images/mooshika-calm-loop.gif';
+import mooshikaCalmGif from './assets/images/mooshika-calm-loop-anim.webp';
 import mooshikaCalmStill from './assets/images/mooshika-calm-still.webp'; // last frame of the calm GIF: Mooshika holds still while a symbol reveal is up
 const CALM_WALK_MS = 1800;      // matches .modak-game-mushika-search.walking in ModakScene.css
 const CALM_GIF_MS = 1500;       // one pass of the GIF: the reveal card waits for it

@@ -1,14 +1,14 @@
 // Animated pictures for the 8 Symbol Mountain symbols.
 // One source of truth: the symbol auto-reveal, mandala, closing modal, sidebar/mandala cards and For Parents all
 // import from here. Each GIF plays once and rests on its last frame.
-import mooshika from './images/symbol-gifs/mooshika.gif';
-import trunk from './images/symbol-gifs/trunk.gif';
-import belly from './images/symbol-gifs/belly.gif';
-import eyes from './images/symbol-gifs/eyes.gif';
-import ears from './images/symbol-gifs/ears.gif';
-import tusk from './images/symbol-gifs/tusk.gif';
-import lotus from './images/symbol-gifs/lotus.gif';
-import modak from './images/symbol-gifs/modak.gif';
+import mooshika from './images/symbol-gifs/mooshika-anim.webp';
+import trunk from './images/symbol-gifs/trunk-anim.webp';
+import belly from './images/symbol-gifs/belly-anim.webp';
+import eyes from './images/symbol-gifs/eyes-anim.webp';
+import ears from './images/symbol-gifs/ears-anim.webp';
+import tusk from './images/symbol-gifs/tusk-anim.webp';
+import lotus from './images/symbol-gifs/lotus-anim.webp';
+import modak from './images/symbol-gifs/modak-anim.webp';
 
 // The LAST frame of each GIF as a still picture, so tiles/buttons that cannot animate match the GIF they open.
 import mooshikaStill from './images/symbol-gifs/mooshika-still.webp';

@@ -20,16 +20,16 @@ import eyesBoyAfter from './assets/images/sarvakaryeshu/eyes-layers/boy-after.gi
 // Trunk round: a different garden picture for each state (before: boy hauling the sack; after: boy planting), each with its own animated boy.
 import trunkBgBefore from './assets/images/sarvakaryeshu/trunk-layers/garden-bg-before.webp';
 import trunkBgAfter from './assets/images/sarvakaryeshu/trunk-layers/garden-bg-after.webp';
-import trunkBoyBefore from './assets/images/sarvakaryeshu/trunk-layers/boy-before.gif';
-import trunkBoyAfter from './assets/images/sarvakaryeshu/trunk-layers/boy-after.gif';
+import trunkBoyBefore from './assets/images/sarvakaryeshu/trunk-layers/boy-before-anim.webp';
+import trunkBoyAfter from './assets/images/sarvakaryeshu/trunk-layers/boy-after-anim.webp';
 // Tusk round: one desk room, a worried boy with the broken crayon before and a happy colouring boy after.
 import tuskRoomBg from './assets/images/sarvakaryeshu/tusk-layers/playroom-desk-bg.webp';
-import tuskBoyBefore from './assets/images/sarvakaryeshu/tusk-layers/boy-before.gif';
-import tuskBoyAfter from './assets/images/sarvakaryeshu/tusk-layers/boy-after.gif';
+import tuskBoyBefore from './assets/images/sarvakaryeshu/tusk-layers/boy-before-anim.webp';
+import tuskBoyAfter from './assets/images/sarvakaryeshu/tusk-layers/boy-after-anim.webp';
 // Mooshika round: messy bedroom, a worried boy (animated) before and a boy tidying a red block into the bin after (plays once).
 import mooshikaRoomBg from './assets/images/sarvakaryeshu/mooshika-layers/bedroom-bg.webp';
-import mooshikaBoyBefore from './assets/images/sarvakaryeshu/mooshika-layers/boy-before.gif';
-import mooshikaBoyAfter from './assets/images/sarvakaryeshu/mooshika-layers/boy-after.gif';
+import mooshikaBoyBefore from './assets/images/sarvakaryeshu/mooshika-layers/boy-before-anim.webp';
+import mooshikaBoyAfter from './assets/images/sarvakaryeshu/mooshika-layers/boy-after-anim.webp';
 import trunkBeforeImg from './assets/images/sarvakaryeshu/trunk-before.webp';
 import trunkAfterImg from './assets/images/sarvakaryeshu/trunk-after.webp';
 import tuskBeforeImg from './assets/images/sarvakaryeshu/tusk-before.webp';

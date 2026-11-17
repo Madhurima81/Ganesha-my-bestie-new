@@ -12,8 +12,8 @@ import './NirvighnamGame.css';
 import sharedSceneBg from './assets/images-opt/saurakoti-bg-opt.webp';
 import turtleSadImg from './assets/images-opt/nirvighnam/turtle-sad-blink.webp'; // sad turtle, blinks (2.5 s rest)
 import turtleHappyImg from './assets/images-opt/nirvighnam/nir-turtle-happy-opt.webp';
-import turtleSwimImg from './assets/images-opt/nirvighnam/turtle-swim.gif';
-import turtleWalkImg from './assets/images-opt/nirvighnam/turtle-walk.gif';
+import turtleSwimImg from './assets/images-opt/nirvighnam/turtle-swim-anim.webp';
+import turtleWalkImg from './assets/images-opt/nirvighnam/turtle-walk-anim.webp';
 import nestImg from './assets/images-opt/nirvighnam/nest-opt.webp';
 import stoneImg from './assets/images/nirvighnam/stone-opt.webp';
 import branchImg from './assets/images/nirvighnam/branch-opt.webp';

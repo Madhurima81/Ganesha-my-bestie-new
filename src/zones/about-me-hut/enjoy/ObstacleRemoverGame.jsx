@@ -43,7 +43,7 @@ import '../../../lib/styles/animations.css';
 // Import images
 const GANESHA_POSES = {
   idle: '/images/ganesha-favorite-idle.png',
-  happy: '/images/ganesha-favorite-happy.gif',
+  happy: '/images/ganesha-favorite-happy-anim.webp',
 };
 import dreamsBg from './assets/images/dream_background.webp';
 

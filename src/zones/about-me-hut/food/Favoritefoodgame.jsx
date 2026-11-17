@@ -28,8 +28,8 @@ import foodBg from './assets/images/fav_background.webp';
 
 const GANESHA_POSES = {
   idle: '/images/ganesha-favorite-idle.png',
-  blink: '/images/ganesha-favorite-blink.gif',
-  happy: '/images/ganesha-favorite-happy.gif',
+  blink: '/images/ganesha-favorite-blink-anim.webp',
+  happy: '/images/ganesha-favorite-happy-anim.webp',
 };
 
 // Food images

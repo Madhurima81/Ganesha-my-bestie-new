@@ -14,7 +14,7 @@ import './EyesPopUpGame.css';
 import bgImg from './assets/images-opt/margin35/eyes-game/symbol_mountain_3_bg.webp';
 import monkeyWorriedImg from './assets/images-opt/margin35/eyes-game-v2/monkey_hungry_worried_blink.webp'; // blinks (2.5 s rest)
 import peacockWorriedImg from './assets/images-opt/margin35/eyes-game-v2/peacock_worried_missing_feather_blink.webp'; // blinks (2.5 s rest)
-import monkeyHappyImg from './assets/images-opt/margin35/success-gifs/monkey_happy_mango.gif';
+import monkeyHappyImg from './assets/images-opt/margin35/success-gifs/monkey_happy_mango-anim.webp';
 import peacockHappyImg from './assets/images-opt/margin35/success-gifs/peacock_happy_feather.gif';
 import newFeatherBushImg from './assets/images-opt/margin35/eyes-game-v2/new_feather_bush.webp';
 import newMangoBushImg from './assets/images-opt/margin35/eyes-game-v2/new_mango_bush.webp';

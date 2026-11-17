@@ -18,16 +18,16 @@ import afternoonSceneImg from './assets/images/sarvada/afternoon-scene.webp';
 import nightSceneImg from './assets/images/sarvada/night-scene.webp';
 // All three times of day are layered scenes (new background + animated characters before/after). Morning is 4:3, afternoon and night 16:9.
 import morningFoyer from './assets/images/sarvada/layers/morning-foyer.webp';
-import morningMotherBefore from './assets/images/sarvada/layers/morning-mother-before.gif';
-import morningBoyBefore from './assets/images/sarvada/layers/morning-boy-before.gif';
-import morningMotherAfter from './assets/images/sarvada/layers/morning-mother-after.gif';
-import morningBoyAfter from './assets/images/sarvada/layers/morning-boy-after.gif';
+import morningMotherBefore from './assets/images/sarvada/layers/morning-mother-before-anim.webp';
+import morningBoyBefore from './assets/images/sarvada/layers/morning-boy-before-anim.webp';
+import morningMotherAfter from './assets/images/sarvada/layers/morning-mother-after-anim.webp';
+import morningBoyAfter from './assets/images/sarvada/layers/morning-boy-after-anim.webp';
 import afternoonRoom from './assets/images/sarvada/layers/afternoon-playground.webp';
-import afternoonBoyBefore from './assets/images/sarvada/layers/afternoon-before.gif';
-import afternoonBoyAfter from './assets/images/sarvada/layers/afternoon-after.gif';
+import afternoonBoyBefore from './assets/images/sarvada/layers/afternoon-before-anim.webp';
+import afternoonBoyAfter from './assets/images/sarvada/layers/afternoon-after-anim.webp';
 import nightRoom from './assets/images/sarvada/layers/night-bedroom.webp';
-import nightBoyBefore from './assets/images/sarvada/layers/night-before.gif';
-import nightBoyAfter from './assets/images/sarvada/layers/night-after.gif';
+import nightBoyBefore from './assets/images/sarvada/layers/night-before-anim.webp';
+import nightBoyAfter from './assets/images/sarvada/layers/night-after-anim.webp';
 
 import { SYMBOL_MOUNTAIN_STILLS } from '../../../../zones/symbol-mountain/shared/symbolGifs';
 

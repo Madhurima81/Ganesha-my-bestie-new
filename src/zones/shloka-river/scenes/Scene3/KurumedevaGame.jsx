@@ -45,7 +45,7 @@ import beaverIdleWorriedImg from './assets/images/bridge/Characters/beaver-idle-
 import beaverTieImg from './assets/images/bridge/Characters/beaver-tie.webp';
 import beaverPickPlankAnim from './assets/images/bridge/Characters/beaver-pick-plank.webp'; // plays once, holds last frame (beaver holding the plank)
 // Crossing = looping walk cycle (the beaver keeps walking while it crosses); reunion = hug that plays once and holds.
-import beaverCrossingImg from './assets/images/bridge/Characters/beaver-walking.gif';
+import beaverCrossingImg from './assets/images/bridge/Characters/beaver-walking-anim.webp';
 import babyBeaverWavingImg from './assets/images/bridge/Characters/baby-beaver-waving.webp';
 import beaverBabyReunionImg from './assets/images/bridge/Characters/beaver-hugging.webp';
 import helpHandIconImg from './assets/images/Kurumedeva/help-hand-icon.webp';

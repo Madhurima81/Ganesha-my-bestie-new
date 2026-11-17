@@ -10,7 +10,7 @@ import './SamaprabhaGame.css';
 import bgImg from '../assets/images/Samaprabha/samaprabha-bg.webp';
 import fawnWorriedImg from '../assets/images-opt/Samaprabha/fawn-worried-blink.webp'; // worried fawn, blinks (2.5 s rest)
 import fawnHappyImg from '../assets/images/Samaprabha/fawn-happy.webp';
-import fawnWalkImg from '../assets/images-opt/Samaprabha/fawn-walk.gif';
+import fawnWalkImg from '../assets/images-opt/Samaprabha/fawn-walk-anim.webp';
 import branchImg from '../assets/images-opt/Samaprabha/reveal-branch-new-opt.webp';
 import reedsLeavesImg from '../assets/images-opt/Samaprabha/reveal-reeds-leaves-opt.webp';
 import stumpImg from '../assets/images-opt/Samaprabha/reveal-stump-opt.webp';

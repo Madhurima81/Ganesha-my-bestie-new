@@ -10,9 +10,9 @@ import './VakratundaRescueGame.css';
 
 import frogSwim from './assets/images/vakratunda/frog-baby-blink.webp'; // sad frog, blinks (2.5 s rest) until he reaches his family
 import frogFamilyBlink from './assets/images/vakratunda/frog-family-blink.webp'; // waiting family, blinks (2.5 s rest)
-import frogHappy from './assets/images/vakratunda/frog-happy.gif';
-import frogFamily from './assets/images/vakratunda/frog-family.gif';
-import waterRipples from './assets/images/water-ripples.gif';
+import frogHappy from './assets/images/vakratunda/frog-happy-anim.webp';
+import frogFamily from './assets/images/vakratunda/frog-family-anim.webp';
+import waterRipples from './assets/images/water-ripples-anim.webp';
 import lilypad from './assets/images/vakratunda/lilypad.webp';
 import stoneImg from './assets/images/vakratunda/18-opt.webp';
 import logPileImg from './assets/images/vakratunda/19-opt.webp';

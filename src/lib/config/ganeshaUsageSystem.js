@@ -8,9 +8,9 @@ export const GANESHA_POSE_ASSETS = {
   standCelebrate: '/images/ganesha-poses/stand-celebrate.webp',
   celebrate: '/images/ganesha-poses/celebrate.webp',
   // Blinking GIFs (2.5 s rest on eyes-open between blinks): closing modal + loading, opening modal, end of the intro story.
-  sitModakBlink: '/images/ganesha-poses/sit-modak-blink.gif',
-  standPointBlink: '/images/ganesha-poses/stand-point-blink.gif',
-  standNamasteBlink: '/images/ganesha-poses/stand-namaste-blink.gif'
+  sitModakBlink: '/images/ganesha-poses/sit-modak-blink-anim.webp',
+  standPointBlink: '/images/ganesha-poses/stand-point-blink-anim.webp',
+  standNamasteBlink: '/images/ganesha-poses/stand-namaste-blink-anim.webp'
 };
 
 export const GANESHA_USAGE_SYSTEM = {

@@ -24,11 +24,11 @@ import flowerCream from './assets/images/fj-flower-cream.webp';
 import garlandString from './assets/images/fj-garland-empty.webp';
 import completedGarland from './assets/images/fj-garland-complete.webp';
 // Mooshika is the looping calm GIF until the Modak glows, then the satisfied GIF takes over.
-import mooshikaBasket from './assets/images/mooshika-blink.gif'; // plain blink (2.5 s rest between blinks); the calm GIF is only for the calm moment in beat 1
+import mooshikaBasket from './assets/images/mooshika-blink-anim.webp'; // plain blink (2.5 s rest between blinks); the calm GIF is only for the calm moment in beat 1
 import mooshikaBasketStill from './assets/images/mooshika-blink-still.webp'; // shown while a symbol reveal / panel is up (the GIF would distract)
 // Play-once "pleased -> peacefully satisfied" GIF (6 frames x 250ms), shown when the Modak glows.
-import mooshikaSatisfiedGif from './assets/images/mooshika-satisfied-once.gif';
-import ganesha from './assets/images/ganesha-garland-blink.gif'; // the original (open-palm, no modak) Ganesha, blinking with a 2.5 s rest
+import mooshikaSatisfiedGif from './assets/images/mooshika-satisfied-once-anim.webp';
+import ganesha from './assets/images/ganesha-garland-blink-anim.webp'; // the original (open-palm, no modak) Ganesha, blinking with a 2.5 s rest
 import forestBackground from './assets/images/modak-fj-bg.webp';
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
 
