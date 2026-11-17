@@ -4,9 +4,9 @@ import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation
 // Rock teaches the hold mechanic once. Flowers teach the drag mechanic once.
 // Lotus gets its own intro hold demo, then uses visual reminders only.
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import './PondScene.css';
-import VakratundaLeafWater from './VakratundaLeafWater';
+import VakratundaLeafWater, { layoutToLeafGeometry, layoutToLeafStarts } from './VakratundaLeafWater';
 import muddyPondAsset from './assets/cartoon_muddy_puddle_asset.png';
 import '../../../../lib/styles/zone-themes.css'; // Ensure theme vars are loaded
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
@@ -302,11 +302,11 @@ const PondSceneContent = ({
     }
   }, []);
   const DEFAULT_POND_LAYOUT = {
-    rock: { x: 32, y: 50, size: 20.5 },
+    rock: { x: 32, y: 51.5, size: 28 },
     rockHit: { x: 35.6, y: 50.5, size: 13.6 },
     flowers: { x: 49.4, y: 63, size: 9 },
-    lotus: { x: 62, y: 50.5, size: 8.5 },
-    lotusHit: { x: 63.1, y: 49.3, size: 7 },
+    lotus: { x: 71, y: 54, size: 8.5 },
+    lotusHit: { x: 70.5, y: 53, size: 7 },
     reflection: { x: 76, y: 66, size: 20 },
     water: { x: 0, y: 67.8, size: 78 },
     streamOverlay: { x: 0.2, y: 44.1, size: 81 },
@@ -329,10 +329,21 @@ const PondSceneContent = ({
     reedsCueToIntro: { x: 60.5, y: 66.5, size: 0 },
     reedsCueToL3: { x: 60.5, y: 66.6, size: 0 },
     reedsCueToL2: { x: 58.4, y: 66.2, size: 0 },
-    lotusCue: { x: 65.1, y: 54.8, size: 0 },
+    lotusCue: { x: 74.2, y: 58.4, size: 0 },
     rockCue: { x: 42.5, y: 68.9, size: 0 },
+    // Leaf-water game (stage % — same stage as everything else). Source/rock/pond are the
+    // CENTRES the water physics uses; size on rock/pond = horizontal radius as % of stage width.
+    leafSource: { x: 18.2, y: 65.5, size: 0 },
+    leafRock: { x: 46.5, y: 65.3, size: 11 },
+    leafPond: { x: 74.8, y: 63.7, size: 8.5 },
+    leaf1: { x: 37.1, y: 39.2, size: 0 },
+    leaf2: { x: 62.4, y: 42.2, size: 0 },
+    leaf3: { x: 71.8, y: 46.3, size: 0 },
+    mud: { x: 57, y: 55, size: 39 },
   };
   const [pondLayout, setPondLayout] = useState(DEFAULT_POND_LAYOUT);
+  const leafGeometry = useMemo(() => layoutToLeafGeometry(pondLayout), [pondLayout]);
+  const leafStarts = useMemo(() => layoutToLeafStarts(pondLayout), [pondLayout]);
   const pondStageRef = useRef(null);
   const elementDragRef = useRef(null); // { key, offsetX, offsetY }
 
@@ -1764,6 +1775,7 @@ const PondSceneContent = ({
               <img
                 src={muddyPondAsset}
                 className="pond-leaf-mud-asset"
+                style={{ left: `${pondLayout.mud.x}%`, top: `${pondLayout.mud.y}%`, width: `${pondLayout.mud.size}%` }}
                 alt=""
                 aria-hidden="true"
                 draggable={false}
@@ -1886,45 +1898,29 @@ const PondSceneContent = ({
                       </p>
                       <label>Element
                         <select value={layoutKey} onChange={(e) => setLayoutKey(e.target.value)}>
-                          <optgroup label="Main">
-                            <option value="rock">Rock</option>
-                            <option value="rockHit">Rock hit-zone (invisible)</option>
-                            <option value="flowers">Reeds hit-zone (invisible)</option>
-                            <option value="lotus">Lotus</option>
-                            <option value="lotusHit">Lotus hit-zone (invisible)</option>
-                            <option value="reflection">Reflection</option>
-                            <option value="water">Water</option>
-                            <option value="streamOverlay">Stream overlay</option>
-                          </optgroup>
-                          <optgroup label="Group">
-                            <option value="cluster">Flowers + pebbles (all 8 together)</option>
-                          </optgroup>
-                          <optgroup label="Flowers (independent)">
-                            <option value="flower1">Flower 1</option>
-                            <option value="flower2">Flower 2</option>
-                            <option value="flower3">Flower 3</option>
-                            <option value="flower4">Flower 4</option>
-                          </optgroup>
-                          <optgroup label="Pebbles (independent)">
-                            <option value="pebble1">Pebble 1</option>
-                            <option value="pebble2">Pebble 2</option>
-                            <option value="pebble3">Pebble 3</option>
-                            <option value="pebble4">Pebble 4</option>
-                          </optgroup>
-                          <optgroup label="Other">
+                          <optgroup label="1 · Physical objects">
+                            <option value="rock">Rock (picture)</option>
+                            <option value="lotus">Lotus (picture)</option>
+                            <option value="lotusHit">Lotus hold zone</option>
                             <option value="turtle">Sad turtle</option>
+                            <option value="mud">Muddy pond (picture)</option>
                           </optgroup>
-                          <optgroup label="Hand cues">
-                            <option value="reedsCueFrom">Reeds hand start</option>
-                            <option value="reedsCueToIntro">Reeds hand end (intro)</option>
-                            <option value="reedsCueToL3">Reeds hand end (strong hint)</option>
-                            <option value="reedsCueToL2">Reeds hand end (soft hint)</option>
+                          <optgroup label="2 · Game start">
+                            <option value="leafSource">Water source (stream start)</option>
+                            <option value="leaf1">Leaf 1 start</option>
+                            <option value="leaf2">Leaf 2 start</option>
+                            <option value="leaf3">Leaf 3 start</option>
+                          </optgroup>
+                          <optgroup label="3 · Game target &amp; blocker">
+                            <option value="leafRock">Rock blocker (oval)</option>
+                            <option value="leafPond">Pond target (oval)</option>
+                          </optgroup>
+                          <optgroup label="4 · Hand cue">
                             <option value="lotusCue">Lotus hand hold point</option>
-                            <option value="rockCue">Rock hand hold point</option>
                           </optgroup>
                         </select>
                       </label>
-                      {(layoutKey.endsWith('Cue') || layoutKey.startsWith('reedsCue') ? ['x', 'y'] : ['x', 'y', 'size']).map((field) => (
+                      {(layoutKey.endsWith('Cue') || layoutKey.startsWith('reedsCue') || ['leafSource', 'leaf1', 'leaf2', 'leaf3'].includes(layoutKey) ? ['x', 'y'] : ['x', 'y', 'size']).map((field) => (
                         <label key={field}>{field.toUpperCase()}
                           <input type="range" min="0" max="100" step="0.5" value={activeLayout[field]} onChange={(e) => updatePondLayout(field, e.target.value)} />
                           <input type="number" min="0" max="100" step="0.5" value={activeLayout[field]} onChange={(e) => updatePondLayout(field, e.target.value)} />
@@ -1963,12 +1959,14 @@ const PondSceneContent = ({
               {/* Layout debug only: the hand cue points have no element of their own, so show a
                   draggable dot for each (the label says which one) to place the hand by eye. */}
               {layoutOpen && [
-                ['reedsCueFrom', 'reeds start'],
-                ['reedsCueToIntro', 'reeds end (intro)'],
-                ['reedsCueToL3', 'reeds end (strong)'],
-                ['reedsCueToL2', 'reeds end (soft)'],
+                ['leafSource', 'water source'],
+                ['leafRock', 'rock blocker'],
+                ['leafPond', 'pond target'],
+                ['leaf1', 'leaf 1'],
+                ['leaf2', 'leaf 2'],
+                ['leaf3', 'leaf 3'],
+                ['mud', 'mud corner'],
                 ['lotusCue', 'lotus hold'],
-                ['rockCue', 'rock hold'],
               ].map(([key, label]) => (
                 <div
                   key={key}
@@ -2117,7 +2115,9 @@ const PondSceneContent = ({
                 active={sceneState.welcomeShown && [PHASES.INITIAL, PHASES.ROCK_MOVING, PHASES.REEDS_ACTIVE].includes(sceneState.phase)}
                 onWaterReached={finishLeafWater}
                 onFirstAttempt={() => { /* First-game VO / hints to be rewritten in next pass. */ }}
-                showDebug={SHOW_HIT_ZONES}
+                geometry={leafGeometry}
+                leafStarts={leafStarts}
+                showDebug={SHOW_HIT_ZONES || layoutOpen}
               />
 
               {/* Lotus — dormant → upright (Trunk success) → bloomed (Lotus success) */}

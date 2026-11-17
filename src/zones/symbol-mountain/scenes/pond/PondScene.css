@@ -1098,7 +1098,8 @@
   /* Must beat SymbolSidebar (2000), the game-test annotation overlay (90000),
      and the game-test toolbar (99999) so this dev-only panel stays movable. */
   z-index: 100000;
-  width: 210px;
+  width: 290px;
+  max-width: calc(100vw - 24px);
   font: 600 12px/1.2 sans-serif;
   display: flex;
   align-items: center;
@@ -1147,11 +1148,13 @@
 }
 .pond-layout-panel__body label {
   display: grid;
-  grid-template-columns: 42px 1fr 52px;
+  grid-template-columns: 34px minmax(0, 1fr) 58px;
   align-items: center;
   gap: 5px;
 }
-.pond-layout-panel__body label:first-child { grid-template-columns: 42px 1fr; }
+.pond-layout-panel__body label:first-child { grid-template-columns: 58px minmax(0, 1fr); }
+.pond-layout-panel__body { overflow-x: hidden; box-sizing: border-box; }
+.pond-layout-panel__body input[type='range'] { min-width: 0; width: 100%; }
 .pond-layout-panel__body select,
 .pond-layout-panel__body input[type='number'] { width: 100%; min-width: 0; }
 

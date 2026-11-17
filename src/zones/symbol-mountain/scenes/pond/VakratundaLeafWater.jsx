@@ -7,14 +7,34 @@ import './VakratundaLeafWater.css';
 // Everything is computed from the LIVE water path; there are no leaf slots.
 const VW = 1024;
 const VH = 670;
-const SOURCE = { x: 172, y: 408 };
+const SOURCE = { x: 192, y: 441 };
 const ROCK = { x: 417, y: 401, rx: 87, ry: 65 };
 const POND = { x: 750, y: 435, rx: 124, ry: 66 };
 const STEP = 7;
+const DEFAULT_GEOMETRY = { source: SOURCE, rock: ROCK, pond: POND };
 const DEFAULT_LEAVES = [
-  { id: 1, x: 262, y: 494, angle: 30 },
-  { id: 2, x: 540, y: 494, angle: -35 },
+  { id: 1, x: 380, y: 263, angle: 30 },
+  { id: 2, x: 639, y: 283, angle: -35 },
 ];
+const THIRD_LEAF = { id: 3, x: 735, y: 310, angle: -28 };
+
+// Layout-debug helpers: pondLayout stores stage-% points; the game works in 1024x670 stage px.
+const pxX = (pct) => (pct / 100) * VW;
+const pxY = (pct) => (pct / 100) * VH;
+export function layoutToLeafGeometry(layout) {
+  const oval = (entry, base) => {
+    const rx = pxX(entry.size);
+    return { x: pxX(entry.x), y: pxY(entry.y), rx, ry: rx * (base.ry / base.rx) };
+  };
+  return {
+    source: { x: pxX(layout.leafSource.x), y: pxY(layout.leafSource.y) },
+    rock: oval(layout.leafRock, ROCK),
+    pond: oval(layout.leafPond, POND),
+  };
+}
+export function layoutToLeafStarts(layout) {
+  return [1, 2, 3].map((id) => ({ id, x: pxX(layout[`leaf${id}`].x), y: pxY(layout[`leaf${id}`].y) }));
+}
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 const hitsOval = (x, y, oval) =>
   ((x - oval.x) / oval.rx) ** 2 + ((y - oval.y) / oval.ry) ** 2 < 1;
@@ -28,9 +48,10 @@ const hitsOval = (x, y, oval) =>
  *   repeatedly spin water in circles.
  * - Reaching the pond is determined by water geometry, not leaf count/placement.
  */
-export function simulateVakratundaFlow(leaves) {
-  let x = SOURCE.x;
-  let y = SOURCE.y;
+export function simulateVakratundaFlow(leaves, geometry = DEFAULT_GEOMETRY) {
+  const { source, rock, pond } = geometry;
+  let x = source.x;
+  let y = source.y;
   let angle = 0;
   let remainingSteer = 0;
   const points = [[x, y]];
@@ -67,14 +88,14 @@ export function simulateVakratundaFlow(leaves) {
       reason = 'edge';
       break;
     }
-    if (hitsOval(nextX, nextY, ROCK)) {
+    if (hitsOval(nextX, nextY, rock)) {
       reason = 'rock';
       break;
     }
     x = nextX;
     y = nextY;
     points.push([x, y]);
-    if (hitsOval(x, y, POND)) {
+    if (hitsOval(x, y, pond)) {
       reason = 'pond';
       break;
     }
@@ -104,8 +125,22 @@ export default function VakratundaLeafWater({
   onFirstAttempt = () => {},
   allowThirdLeaf = true,
   showDebug = false,
+  geometry = DEFAULT_GEOMETRY,
+  leafStarts = null,
 }) {
-  const [leaves, setLeaves] = useState(() => DEFAULT_LEAVES.map((leaf) => ({ ...leaf })));
+  const [leaves, setLeaves] = useState(() => DEFAULT_LEAVES.map((leaf) => {
+    const start = leafStarts?.find((s) => s.id === leaf.id);
+    return start ? { ...leaf, x: start.x, y: start.y } : { ...leaf };
+  }));
+  // Layout debug: moving a leaf's start point in the panel repositions that leaf (until the
+  // child has touched any leaf, so real play is never overridden).
+  useEffect(() => {
+    if (!leafStarts || dragRef.current) return;
+    setLeaves((previous) => previous.map((leaf) => {
+      const start = leafStarts.find((s) => s.id === leaf.id);
+      return start && (start.x !== leaf.x || start.y !== leaf.y) && !leaf.moved ? { ...leaf, x: start.x, y: start.y } : leaf;
+    }));
+  }, [leafStarts]);
   const [selected, setSelected] = useState(null);
   const [extraAdded, setExtraAdded] = useState(false);
   const [hasAdjusted, setHasAdjusted] = useState(false);
@@ -113,8 +148,11 @@ export default function VakratundaLeafWater({
   const dragRef = useRef(null);
   const svgRef = useRef(null);
   const notifiedRef = useRef(false);
-  const flow = useMemo(() => simulateVakratundaFlow(leaves), [leaves]);
+  const flow = useMemo(() => simulateVakratundaFlow(leaves, geometry), [leaves, geometry]);
+  const { source, rock, pond } = geometry;
+  const artEnd = 360;
   const path = useMemo(() => smoothPath(flow.points), [flow.points]);
+  // The painted SVG supplies the banks and the resting water up to the rock; live water sits on top.
   const atPond = hasAdjusted && flow.reason === 'pond' && flow.contacts.length >= 2;
   const tip = flow.points[flow.points.length - 1];
 
@@ -169,8 +207,8 @@ export default function VakratundaLeafWater({
     setLeaves((previous) => previous.map((leaf) => {
       if (leaf.id !== drag.id) return leaf;
       const updated = drag.mode === 'rotate'
-        ? { ...leaf, angle: clamp(Math.atan2(point.y - leaf.y, point.x - leaf.x) * 180 / Math.PI, -68, 68) }
-        : { ...leaf, x: clamp(point.x - drag.offsetX, 58, VW - 60), y: clamp(point.y - drag.offsetY, 201, VH - 42) };
+        ? { ...leaf, moved: true, angle: clamp(Math.atan2(point.y - leaf.y, point.x - leaf.x) * 180 / Math.PI, -68, 68) }
+        : { ...leaf, moved: true, x: clamp(point.x - drag.offsetX, 58, VW - 60), y: clamp(point.y - drag.offsetY, 150, VH - 42) };
       if (Math.abs(updated.x - leaf.x) + Math.abs(updated.y - leaf.y) + Math.abs(updated.angle - leaf.angle) >= 0.5) {
         drag.changed = true;
       }
@@ -213,26 +251,25 @@ export default function VakratundaLeafWater({
           {/* Feather rather than cutting the painted source at a vertical edge. */}
           <linearGradient id="vak-source-fade" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0" stopColor="white" />
-            <stop offset=".68" stopColor="white" />
+            <stop offset=".95" stopColor="white" />
             <stop offset="1" stopColor="black" />
           </linearGradient>
-          <mask id="vak-source-mask" maskUnits="userSpaceOnUse" x="0" y="296" width="225" height="245">
-            <rect x="0" y="296" width="225" height="245" fill="url(#vak-source-fade)" />
+          <mask id="vak-source-mask" maskUnits="userSpaceOnUse" x="0" y="296" width={artEnd} height="245">
+            <rect x="0" y="296" width={artEnd} height="245" fill="url(#vak-source-fade)" />
           </mask>
-          <clipPath id="vak-source-clip"><rect x="0" y="296" width="225" height="245" /></clipPath>
+          <clipPath id="vak-source-clip"><rect x="0" y="296" width={artEnd} height="245" /></clipPath>
         </defs>
 
         {/* Solid, visible water at rest: no 'Let water flow' button and no 25px teaser line. */}
         {/* Approved artwork supplies the organic grassy banks ONLY at the source. */}
-        <image
-          href={streamSvg} x="-9" y="296" width="705" height="236"
-          preserveAspectRatio="none" clipPath="url(#vak-source-clip)" mask="url(#vak-source-mask)"
-          pointerEvents="none"
-        />
-        <path d={path} className="vak-leaf-game__water-bank-shadow" />
+        <g transform={`translate(${source.x - SOURCE.x} ${source.y - SOURCE.y})`}>
+          <image
+            href={streamSvg} x="-9" y="296" width="705" height="236"
+            preserveAspectRatio="none" clipPath="url(#vak-source-clip)" mask="url(#vak-source-mask)"
+            pointerEvents="none"
+          />
+        </g>
         <path d={path} className="vak-leaf-game__water-body" />
-        <path d={path} className="vak-leaf-game__water-inner" />
-        <path d={path} className="vak-leaf-game__water-highlight" />
         {flow.contacts.map((contact) => (
           <g key={contact.id} pointerEvents="none">
             <circle cx={contact.x} cy={contact.y} r="15" className="vak-leaf-game__contact" />
@@ -263,15 +300,17 @@ export default function VakratundaLeafWater({
         ))}
         {showDebug && (
           <>
-            <ellipse cx={ROCK.x} cy={ROCK.y} rx={ROCK.rx} ry={ROCK.ry} className="vak-leaf-game__debug" />
-            <ellipse cx={POND.x} cy={POND.y} rx={POND.rx} ry={POND.ry} className="vak-leaf-game__debug" />
+            <ellipse cx={rock.x} cy={rock.y} rx={rock.rx} ry={rock.ry} className="vak-leaf-game__debug" />
+            <ellipse cx={pond.x} cy={pond.y} rx={pond.rx} ry={pond.ry} className="vak-leaf-game__debug" />
+            <circle cx={source.x} cy={source.y} r="10" className="vak-leaf-game__debug" />
           </>
         )}
       </svg>
       {!finished && allowThirdLeaf && !extraAdded && (
         <button type="button" className="vak-leaf-game__extra" onClick={() => {
           setExtraAdded(true);
-          setLeaves((previous) => [...previous, { id: 3, x: 640, y: 506, angle: -28 }]);
+          const start = leafStarts?.find((s) => s.id === 3);
+          setLeaves((previous) => [...previous, start ? { ...THIRD_LEAF, x: start.x, y: start.y } : { ...THIRD_LEAF }]);
         }}>+ Third leaf</button>
       )}
       {showDebug && <div className="vak-leaf-game__status">
