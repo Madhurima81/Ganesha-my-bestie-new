@@ -12,6 +12,7 @@ import SceneManager from "../../../../lib/components/scenes/SceneManager";
 import useVoiceGuidance, { estimateSpeechMs } from '../../../../lib/hooks/useVoiceGuidance';
 import useSidebarPause from '../../../../lib/hooks/useSidebarPause';
 import { attachSpeechCue, startCueTimer } from '../../../../lib/utils/speechCue';
+import { getVoClipUrl, playVoClip } from '../../../../lib/audio/voClip';
 import createSpeechStartWatcher from '../../../../lib/utils/speechStartWatch';
 import useGuardedReveal from '../../../../lib/hooks/useGuardedReveal';
 import useFirstLineWatch from '../../../../lib/hooks/useFirstLineWatch';
@@ -408,6 +409,9 @@ const VakratundaGroveContent = ({
     if (webSpeechRef.current) {
       logSceneEvent('vakratunda-grove', 'speech:cancelled-by-stop', { key: webSpeechRef.current.key || null });
     }
+    // A recorded line is an <audio> that speechSynthesis.cancel() can't stop. Fire its end like a
+    // cancelled utterance would (its callback is tracked by playTracked / the games' tokens).
+    { const w = webSpeechRef.current; if (w?.clip) { webSpeechRef.current = null; w.cancelCue?.(); w.clip.stop(true); } }
     speechStartWatcherRef.current?.cancelPending();
     try {
       speechSynthRef.current?.cancel();
@@ -429,6 +433,37 @@ const VakratundaGroveContent = ({
       onStart?.();
       startCueTimer(text, cue); // muted: the hand still lands on the action word's estimated time
       playSilent(text, onEnded);
+      return;
+    }
+    // Recorded clip for this exact line (voiceover/script.csv)? Play it instead of Web Speech, same
+    // lookup as useGaneshaVoice. No clip -> falls through to Web Speech unchanged.
+    const clipUrl = getVoClipUrl(text);
+    if (clipUrl && !document.hidden) {
+      { const prev = webSpeechRef.current; if (prev?.clip) { webSpeechRef.current = null; prev.cancelCue?.(); prev.clip.stop(true); } }
+      speechStartWatcherRef.current?.cancelPending();
+      try { speechSynthRef.current?.cancel(); } catch { /* no-op */ }
+      let clipFinished = false;
+      let safetyTimer = null;
+      const cancelCue = startCueTimer(text, cue);
+      const finishClip = () => {
+        if (clipFinished) return;
+        clipFinished = true;
+        clearTimeout(safetyTimer);
+        if (webSpeechRef.current?.clip === clipHandle) webSpeechRef.current = null;
+        logSceneEvent('vakratunda-grove', 'speech:finished', { key, clip: true });
+        onEnded?.();
+      };
+      const clipHandle = playVoClip(clipUrl, {
+        onStart: () => {
+          logSceneEvent('vakratunda-grove', 'speech:started', { key, clip: true });
+          noteFirstLineStarted();
+          onStart?.();
+        },
+        onEnd: finishClip,
+      });
+      // A clip that stalls (failed load, blocked play) must not freeze the sequence.
+      safetyTimer = setTimeout(() => { clipHandle.stop(false); finishClip(); }, Math.max(8000, text.length * 130));
+      webSpeechRef.current = { utterance: { onend: null, onerror: null }, onEnded: finishClip, key, at: Date.now(), ms: estimateSpeechMs(text), clip: clipHandle, cancelCue };
       return;
     }
     const synth = speechSynthRef.current;
@@ -479,6 +514,8 @@ const VakratundaGroveContent = ({
     webSpeechRef.current = null;
     w.utterance.onend = null;
     w.utterance.onerror = null;
+    w.cancelCue?.();
+    w.clip?.stop(false); // recorded line: stop the audio; the silent timer below carries the callback
     try { speechSynthRef.current?.cancel(); } catch {}
     playSilent(Math.max(0, w.ms - (Date.now() - w.at)), w.onEnded);
   }, [playSilent]);
@@ -655,6 +692,9 @@ const VakratundaGroveContent = ({
 
   useEffect(() => {
     return () => {
+      // Leaving the scene: stop our own recording WITHOUT firing its callback (a cancelled line is
+      // not a finished one, and it must not carry the voice chain on over the next screen).
+      { const w = webSpeechRef.current; if (w?.clip) { webSpeechRef.current = null; w.cancelCue?.(); w.clip.stop(false); } }
       stopWebSpeech();
     };
   }, [stopWebSpeech]);
