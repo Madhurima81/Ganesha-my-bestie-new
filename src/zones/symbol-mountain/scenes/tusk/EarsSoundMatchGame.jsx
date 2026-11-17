@@ -8,6 +8,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
 import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
 import { createSpeechStartWatcher } from '../../../../lib/utils/speechStartWatch';
+import { getVoClipUrl, playVoClip } from '../../../../lib/audio/voClip';
+import { isSuccessLineDone } from '../../../../lib/audio/successLine';
 import { logSceneEvent } from '../../../../lib/utils/sceneEventLog';
 import './EarsSoundMatchGame.css';
 
@@ -299,6 +301,7 @@ const EarsSoundMatchGame = ({
   }
   const speechTokenRef = useRef(0);
   const speakingTextRef = useRef(null);
+  const clipRef = useRef(null); // recorded clip (voClip.js) playing for this game's spoken line
 
   const round = ROUNDS[roundIndex];
   const completedIds = useMemo(() => new Set(completedRounds), [completedRounds]);
@@ -359,6 +362,9 @@ const EarsSoundMatchGame = ({
       }
       audioRef.current = null;
     }
+    // A recorded spoken line is an <audio> that speechSynthesis.cancel() can't stop: stop it too
+    // (without firing its end) so sidebar-open, tab-hide and the next sound all cut it cleanly.
+    { const c = clipRef.current; clipRef.current = null; c?.stop(false); }
     speechWatcherRef.current?.cancelPending({ cancelSpeech: false });
     speakingTextRef.current = null;
     if (typeof window !== 'undefined' && window.speechSynthesis?.cancel) {
@@ -399,6 +405,37 @@ const EarsSoundMatchGame = ({
     // still-playing scene VO keeps going under this mini-game's line.
     track((done) => {
       stopVoice?.();
+      // Recorded clip for this exact line (voiceover/script.csv)? Play it instead of Web Speech,
+      // same lookup as useGaneshaVoice. No clip -> falls through to TTS unchanged.
+      const clipUrl = text ? getVoClipUrl(text) : null;
+      if (clipUrl && !document.hidden) {
+        const clipToken = ++speechTokenRef.current;
+        let clipStartedAt = 0;
+        logSceneEvent(SCENE_LOG_KEY, 'speak:request', { label, priority, clip: true });
+        { const prev = clipRef.current; clipRef.current = null; prev?.stop(false); }
+        speechWatcherRef.current?.cancelPending({ cancelSpeech: false });
+        try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
+        speakingTextRef.current = text;
+        const clip = playVoClip(clipUrl, {
+          onStart: () => {
+            clipStartedAt = Date.now();
+            logSceneEvent(SCENE_LOG_KEY, 'speak:start', { label, clip: true });
+          },
+          onEnd: () => {
+            if (clipRef.current === clip) clipRef.current = null;
+            if (speechTokenRef.current !== clipToken || !aliveRef.current) {
+              logSceneEvent(SCENE_LOG_KEY, 'speak:stale-end', { label, clip: true });
+              return;
+            }
+            if (speakingTextRef.current === text) speakingTextRef.current = null;
+            const elapsedMs = clipStartedAt ? Date.now() - clipStartedAt : 0;
+            logSceneEvent(SCENE_LOG_KEY, 'speak:end', { label, elapsedMs, clip: true });
+            done({ finished: true, elapsedMs, recorded: true, played: clipStartedAt > 0 });
+          },
+        });
+        clipRef.current = clip;
+        return;
+      }
       if (!text || typeof window === 'undefined' || !window.speechSynthesis || typeof SpeechSynthesisUtterance === 'undefined') {
         done({ finished: true, unsupported: true, elapsedMs: 0 });
         return;
@@ -457,15 +494,19 @@ const EarsSoundMatchGame = ({
 
   const markSuccessDoneIfFinished = useCallback((lineResult, doneCount) => {
     if (!aliveRef.current) return;
-    if (!lineResult?.finished || (lineResult.elapsedMs || 0) < SUCCESS_LINE_MIN_MS) {
+    // A recording counts as done when it started and ended normally; the 1.5 s rule is only for the
+    // computer voice (a cancelled utterance fires "ended" at once). See lib/audio/successLine.js.
+    const { done, path } = isSuccessLineDone(lineResult, SUCCESS_LINE_MIN_MS);
+    if (!done) {
       logSceneEvent(SCENE_LOG_KEY, 'success:not-marked-done', {
         doneCount,
+        path,
         elapsedMs: lineResult?.elapsedMs || 0,
         finished: Boolean(lineResult?.finished),
       });
       return;
     }
-    logSceneEvent(SCENE_LOG_KEY, 'success:marked-done', { doneCount, elapsedMs: lineResult.elapsedMs });
+    logSceneEvent(SCENE_LOG_KEY, 'success:marked-done', { doneCount, path, elapsedMs: lineResult.elapsedMs });
     onSuccessDoneRef.current?.(doneCount);
   }, []);
 
@@ -533,6 +574,7 @@ const EarsSoundMatchGame = ({
   useEffect(() => () => {
     if (sidebarReplayRef.current) clearTimeout(sidebarReplayRef.current);
     sidebarReplayRef.current = null;
+    { const c = clipRef.current; clipRef.current = null; c?.stop(false); } // our own <audio>; nothing else stops it on leave
   }, []);
 
   const playSound = useCallback((src, fallbackText = '', onDone = null, volume = 0.72) => {

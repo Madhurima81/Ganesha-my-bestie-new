@@ -3,6 +3,7 @@ import GestureDemo from '../components/feedback/GestureDemo';
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import './BeatPlayerGame.css';
 import { attachSpeechCue, startCueTimer } from '../utils/speechCue';
+import { getVoClipUrl, playVoClip } from '../audio/voClip';
 
 /**
  * Generic "beat player" — renders a game directly from a Visual Flow Editor
@@ -76,7 +77,21 @@ const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 // grab/tap can cut the narration AND let the timeline move on (cancel() alone
 // doesn't reliably fire onend on real devices).
 let activeVoFinish = null;
+// The recorded clip (voClip.js) speakAndWait is currently awaiting, if the line has a recording.
+// speechSynthesis.cancel() cannot stop an <audio>, so every place that cancels speech must stop
+// this too. Stopping it releases the awaiting promise, like cancel() erroring a TTS utterance.
+let activeVoClip = null;
+const stopActiveVoClip = () => {
+  const clip = activeVoClip;
+  if (!clip) return;
+  activeVoClip = null;
+  clip.stop(false); // stop the audio without firing its own end
+  const finish = activeVoFinish;
+  activeVoFinish = null;
+  finish?.();
+};
 const silenceActiveVo = () => {
+  stopActiveVoClip();
   const finish = activeVoFinish;
   activeVoFinish = null;
   try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
@@ -87,6 +102,32 @@ const silenceActiveVo = () => {
 // the teaching hand on the action word. Muted / no-speech lines fire it on the same estimate.
 const speakAndWait = (text, enabled = true, cue = null) => {
   return new Promise((resolve) => {
+    // Recorded clip for this exact line (voiceover/script.csv)? Play it instead of Web Speech, same
+    // lookup as useGaneshaVoice. No clip -> falls through to TTS unchanged.
+    const clipUrl = enabled && text ? getVoClipUrl(text) : null;
+    if (clipUrl && typeof document !== 'undefined' && !document.hidden) {
+      stopActiveVoClip();
+      try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
+      const cancelCue = startCueTimer(text, cue);
+      let clipFinished = false;
+      const finishClip = () => {
+        if (clipFinished) return;
+        clipFinished = true;
+        clearTimeout(clipSafetyTimer);
+        if (activeVoFinish === finishClip) activeVoFinish = null;
+        if (activeVoClip === handle) activeVoClip = null;
+        resolve();
+      };
+      activeVoFinish = finishClip;
+      // A clip that stalls (failed load, blocked play) must not freeze the beat: same idea as the
+      // TTS safety cap below, with room for a long recording.
+      const clipSafetyTimer = setTimeout(() => { handle.stop(false); finishClip(); }, Math.max(8000, text.length * 130));
+      const clip = playVoClip(clipUrl, { onEnd: finishClip });
+      const handle = { stop: (fireEnd) => { cancelCue(); clip.stop(fireEnd); } };
+      activeVoClip = handle;
+      return;
+    }
+
     if (
       !enabled ||
       !text ||
@@ -99,6 +140,7 @@ const speakAndWait = (text, enabled = true, cue = null) => {
     }
 
     try {
+      stopActiveVoClip();
       window.speechSynthesis.cancel();
 
       const utterance = new SpeechSynthesisUtterance(text);
@@ -510,7 +552,9 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
         advanceTimer.current = null;
       }
 
-      // Only cancel speech when we're genuinely leaving this state.
+      // Only cancel speech when we're genuinely leaving this state (pause, tab hide, next state,
+      // unmount). A recorded clip is stopped here too; speechSynthesis.cancel() can't touch it.
+      stopActiveVoClip();
       if (
         typeof window !== 'undefined' &&
         window.speechSynthesis

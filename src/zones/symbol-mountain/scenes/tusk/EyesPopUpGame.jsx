@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
 import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
 import { createSpeechStartWatcher } from '../../../../lib/utils/speechStartWatch';
+import { getVoClipUrl, playVoClip } from '../../../../lib/audio/voClip';
 import { logSceneEvent } from '../../../../lib/utils/sceneEventLog';
 import './EyesPopUpGame.css';
 
@@ -299,6 +300,7 @@ const EyesPopUpGame = ({
     });
   }
   const speechTokenRef = useRef(0);
+  const clipRef = useRef(null); // recorded clip (voClip.js) currently playing for this game's line
 
   const foundIds = useMemo(() => new Set(foundTargets), [foundTargets]);
   const centeredIds = useMemo(() => new Set(centeredTargets), [centeredTargets]);
@@ -378,10 +380,40 @@ const EyesPopUpGame = ({
       onEnd?.(result);
     };
     activeSpeechRef.current = entry;
+    // A new line replaces a recorded clip still playing (speechSynthesis.cancel() can't stop an <audio>).
+    { const prevClip = clipRef.current; clipRef.current = null; prevClip?.stop(false); }
     // Stop the parent scene's own voice engine first — its MP3 audio element
     // isn't touched by window.speechSynthesis.cancel() below, so without this
     // a still-playing scene VO keeps going under this mini-game's line.
     stopVoice?.();
+    // Recorded clip for this exact line (voiceover/script.csv)? Play it instead of Web Speech,
+    // same lookup as useGaneshaVoice. No clip -> falls through to TTS unchanged.
+    const clipUrl = text ? getVoClipUrl(text) : null;
+    if (clipUrl && !document.hidden) {
+      const clipToken = ++speechTokenRef.current;
+      let clipStartedAt = 0;
+      logSceneEvent(SCENE_LOG_KEY, 'speak:request', { label, priority, clip: true });
+      speechWatcherRef.current?.cancelPending({ cancelSpeech: false });
+      try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
+      const clip = playVoClip(clipUrl, {
+        onStart: () => {
+          clipStartedAt = Date.now();
+          logSceneEvent(SCENE_LOG_KEY, 'speak:start', { label, clip: true });
+        },
+        onEnd: () => {
+          if (clipRef.current === clip) clipRef.current = null;
+          if (speechTokenRef.current !== clipToken || !aliveRef.current) {
+            logSceneEvent(SCENE_LOG_KEY, 'speak:stale-end', { label, clip: true });
+            return;
+          }
+          const elapsedMs = clipStartedAt ? Date.now() - clipStartedAt : 0;
+          logSceneEvent(SCENE_LOG_KEY, 'speak:end', { label, elapsedMs, clip: true });
+          done({ finished: true, elapsedMs });
+        },
+      });
+      clipRef.current = clip;
+      return;
+    }
     if (!text || typeof window === 'undefined' || !window.speechSynthesis || typeof SpeechSynthesisUtterance === 'undefined') {
       done({ finished: true, unsupported: true, elapsedMs: 0 });
       return;
@@ -489,6 +521,7 @@ const EyesPopUpGame = ({
           pendingReplayRef.current = null;
         }
         speechWatcherRef.current?.cancelPending({ cancelSpeech: false });
+        { const c = clipRef.current; clipRef.current = null; c?.stop(false); } // recorded clip: stop without firing its end
         try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
       }
     } else if (wasPausedRef.current) {
@@ -763,13 +796,41 @@ const EyesPopUpGame = ({
     after(Math.max(4000, VO_TEXTS.idleHintL2.length * 90 + 2500), stampEnded);
   }, [hintStage, nextHintTarget, isActive, flow, speak, after, l2EndTick]);
 
-  useAppVisibility(null, useCallback(() => {
-    resetIdle();
-  }, [resetIdle]));
+  // Tab hide: a recorded clip is an <audio> that would keep playing in the background, so stop it
+  // WITHOUT firing its end and remember the line; on return replay it from the start (its onEnd
+  // then continues the game). Lines spoken by Web Speech behave exactly as before.
+  useAppVisibility(
+    useCallback(() => {
+      const clip = clipRef.current;
+      if (!clip) return;
+      clipRef.current = null;
+      clip.stop(false);
+      const active = activeSpeechRef.current;
+      if (active && !active.dead) {
+        active.dead = true;
+        interruptedSpeechRef.current = active;
+      }
+      activeSpeechRef.current = null;
+    }, []),
+    useCallback(() => {
+      const entry = interruptedSpeechRef.current;
+      if (entry && !pausedRef.current && !replayTimerRef.current) {
+        interruptedSpeechRef.current = null;
+        pendingReplayRef.current = entry;
+        replayTimerRef.current = setTimeout(() => {
+          replayTimerRef.current = null;
+          pendingReplayRef.current = null;
+          speak(entry.text, entry.onEnd);
+        }, 2000);
+      }
+      resetIdle();
+    }, [resetIdle, speak])
+  );
 
   useEffect(() => () => {
     stopTimers();
     if (replayTimerRef.current) clearTimeout(replayTimerRef.current);
+    { const c = clipRef.current; clipRef.current = null; c?.stop(false); } // our own <audio>; the scene can't stop it
     if (typeof window !== 'undefined' && window.speechSynthesis?.cancel) {
       speechWatcherRef.current?.cancelPending({ cancelSpeech: false });
       window.speechSynthesis.cancel();

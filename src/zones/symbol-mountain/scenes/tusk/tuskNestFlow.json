@@ -433,7 +433,7 @@
       "hints": {
         "mode": "drag-to-target",
         "teachingGesture": true,
-        "teachingGestureCue": { "word": "Drag" },
+        "teachingGestureCue": { "word": "Drag", "cueMs": 7100 },
         "l2VoText": "Add the twig to the nest.",
         "l3VoText": ""
       },
