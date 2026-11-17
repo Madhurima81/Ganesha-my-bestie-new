@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-17 b] - Grove and Suryakoti Bank play recordings (wired)
+**Touched:** VakratundaGroveSimplified.jsx, SuryakotiBankSimplified.jsx.
+**Changed:** speakWebSpeech (the scenes' own direct Web Speech helper) now looks up a recording for the exact line (getVoClipUrl/playVoClip) and falls back to Web Speech. The recording stops on a new line (callback fires, like a cancelled utterance), on mute (silent timer carries the callback) and on leaving the scene (stopped WITHOUT firing its callback); a stalled clip ends after max(8 s, 130 ms/char). Grove clips play now; Bank has no clips yet.
+**Verified:** vite build OK; lint adds no new errors (only old unused-var errors). NO scene-level tests (the scenes are too heavy to load in jest). NOT played on a device.
+**Open:** iPad: Grove start to mandala, sidebar mid-line, 15 s hints, Play Again, and the Sanskrit lines ('Vakratunda!', 'Mahakaya!'). Tab hide mid-line has no special handling (same as the old computer-voice path). Wire scenes 3 and 4 wrappers the same way; record Bank (23 lines).
+
 ## [2026-11-17] - Shloka River scene 1 (Vakratunda Grove) recorded voice: 17 clips; script rows for scenes 1 and 2
 **Touched:** public/audio/river-grove-01,11,12,13,15..21,23..28.mp3 (new), vo-manifest.json (128 clips), voiceover/script.csv + voClipMap.generated.js (rows grove-26..28 and bank-18..23 added by hand).
 **Changed:** Grove lines recorded with ganesha young (50/64) with [warmly]/[gently] delivery tags; the 8 shloka words' pronunciation was listened to and accepted. The Grove's live text is its own webSpeechMap, not voiceGuidance.js: 'Look for another way through.' is spoken (old row grove-14 'Try going around it.' is dead, plus grove-02..09 round lines, 22 and the bare affirmations 05/10). Rows added for that hint and the two 'Say with me' reveal cards; Bank rows added for the four Samaprabha reveal lines and the two 'Say with me' cards.
