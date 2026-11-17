@@ -23,8 +23,8 @@ import StoryProgressHeader from '../components/StoryProgressHeader';
 import AboutMeGaneshaHost from '../components/AboutMeGaneshaHost';
 import bgImage from './assets/images/name_background.webp';
 const GANESHA_POSES = {
-  idle: '/images/ganesha-favorite-blink-anim.webp', // idle = the blink GIF (same as the wrong-answer blink), 2.5 s rest between blinks
-  blink: '/images/ganesha-favorite-blink-anim.webp',
+  idle: '/images/ganesha-favorite-idle-blink.webp', // idle blink (2.5 s rest between blinks); also the wrong-answer Ganesha
+  blink: '/images/ganesha-favorite-idle-blink.webp', // wrong answer = the same idle blink, replayed
   happy: '/images/ganesha-favorite-happy-anim.webp',
 };
 import OpeningModal from '../../shared/components/OpeningModal';
