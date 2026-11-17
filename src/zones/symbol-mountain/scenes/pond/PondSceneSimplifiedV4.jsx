@@ -109,12 +109,23 @@ const VOICE_LINES = {
   earlyRock: 'Keep holding.',
   reedsRound: 'The flowers are in the water’s way. Gently move them aside.',
   earlyReeds: 'A little farther.',
-  trunkSuccess: 'The water reached the lotus.',
+  // Leaf-and-water game (replaces the rock / reeds beats). Opening line names the action; the hand cues on "Drag".
+  leafOpening: 'The rock is blocking the water! Drag a leaf into the water to find another way.',
+  leafPlaced: 'Now turn the leaf to change where the water flows.',
+  leafTurning: 'Look! The water is turning!',
+  trunkSuccess: 'You found another way! The lotus is standing tall.',
+  // Adaptive hint ladder: L1 is visual only, so only L2 / L3 have a line.
+  leafHintPlaceL2: 'Try putting a leaf in the water.',
+  leafHintPlaceL3: 'Move a leaf into the water’s path.',
+  leafHintRotateL2: 'Turn the leaf to change the water’s direction.',
+  leafHintRotateL3: 'Drag the round button to turn the leaf.',
+  leafHintGuideL2: 'Can you turn the water towards the lotus?',
+  leafHintGuideL3: 'Try moving or turning another leaf.',
 
   // Lotus phase (press-and-hold to bloom) — second
   lotusRound: 'Hold the bud to help it bloom.',
   earlyLotus: 'Keep holding.',
-  lotusBloomed: 'The lotus bloomed, even in the muddy pond.',
+  lotusBloomed: 'The lotus bloomed, even in the mud!',
 
   // Completion
   complete: 'You used strength, then gentleness, and helped the lotus bloom.'
@@ -434,6 +445,9 @@ const PondSceneContent = ({
   const [waterStage, setWaterStage] = useState(0);
   const [leafWaterDone, setLeafWaterDone] = useState(false);
   const [leafGameKey, setLeafGameKey] = useState(0);
+  // The opening line has finished (the hint clock starts then) / is at its "Drag" word (short drag hand).
+  const [leafIntroDone, setLeafIntroDone] = useState(false);
+  const [leafIntroDemo, setLeafIntroDemo] = useState(false);
   // ================================================================
 
 
@@ -640,6 +654,8 @@ const PondSceneContent = ({
     setWaterStage(0);
     setLeafWaterDone(false);
     setLeafGameKey((value) => value + 1);
+    setLeafIntroDone(false);
+    setLeafIntroDemo(false);
     setRevealConfig(null);
     resetReveals();
     firstLineStartedRef.current.clear();
@@ -666,12 +682,19 @@ const PondSceneContent = ({
       setPondIntroGesture(true);
       safeSetTimeoutRef.current(() => setPondIntroGesture(false), 6000);
     };
+    // The leaf game's opening line shows the short drag hand on "Drag" (it never shows where to put the leaf).
+    const showLeafHand = () => {
+      setLeafIntroDemo(true);
+      safeSetTimeoutRef.current(() => setLeafIntroDemo(false), 5000);
+    };
     speak(VOICE_LINES[key], {
       age: 7,
       style: 'child',
       moment: key === 'complete' ? 'celebration' : 'encouragement',
       onEnd,
-      cue: ['rockRound', 'reedsRound', 'lotusRound'].includes(key) ? getLineCue(`pond:${key}`, showHand) : null
+      cue: key === 'leafOpening'
+        ? getLineCue('pond:leafOpening', showLeafHand)
+        : ['rockRound', 'reedsRound', 'lotusRound'].includes(key) ? getLineCue(`pond:${key}`, showHand) : null
     });
   }, [isAudioOn, speak]);
 
@@ -924,6 +947,31 @@ const PondSceneContent = ({
   // not on every phase change directly — otherwise the countdown would start
   // before the child has heard the prompt.
 
+  // Leaf game opening line ("…Drag a leaf into the water…"). The hint clock starts only when it ends
+  // (KNOWN_PITFALLS 25). The started-marker is set inside the timer, so a paused/re-run effect can still speak it.
+  useEffect(() => {
+    const leafBeat = [PHASES.INITIAL, PHASES.ROCK_MOVING, PHASES.REEDS_ACTIVE].includes(sceneState?.phase);
+    if (!sceneState?.welcomeShown || !leafBeat || leafWaterDone || leafIntroDone
+      || pondPaused || revealConfig || showSceneCompletion) return undefined;
+    const startTimer = window.setTimeout(() => {
+      if (leftSceneRef.current || firstLineStartedRef.current.has('leaf:opening')) return;
+      firstLineStartedRef.current.add('leaf:opening');
+      speakPondPrompt('leafOpening', () => { if (!leftSceneRef.current) setLeafIntroDone(true); });
+    }, 700);
+    // A line whose "ended" event never arrives must not leave the hint clock off for good.
+    const fallback = window.setTimeout(() => { if (!leftSceneRef.current) setLeafIntroDone(true); }, 12000);
+    return () => { window.clearTimeout(startTimer); window.clearTimeout(fallback); };
+  }, [
+    sceneState?.phase,
+    sceneState?.welcomeShown,
+    leafWaterDone,
+    leafIntroDone,
+    pondPaused,
+    revealConfig,
+    showSceneCompletion,
+    speakPondPrompt,
+  ]);
+
   // ==================== RELOAD / RESUME LOGIC ====================
   // Runs once on mount — same pattern as Modak (empty deps, no isReload check).
   useEffect(() => {
@@ -1151,16 +1199,22 @@ const PondSceneContent = ({
       phase: PHASES.TRUNK_SOLVED,
       progress: { percentage: 50, starsEarned: 0 },
     });
-    // No old rock/flower VO here. VO and hint copy will be replaced separately.
+    // The lotus straightens as the line says so; the Trunk card waits for the line to really end
+    // (same order as the old reeds flow: success line, then the card).
     safeSetTimeout(() => {
+      setShowSparkle('lotus-wake');
       sceneActions.updateState({ lotusUpright: true });
+      triggerMiniGesture('victory', 'center', 1800);
+      safeSetTimeout(() => setShowSparkle(null), LOTUS_GLOW_MS);
       expectReveal('trunk', () => getRevealDetails('trunk'), 'live');
-      safeSetTimeout(() => {
-        sceneActions.updateState({ phase: PHASES.TRUNK_REVEAL });
-        showPondReveal('trunk', 'live');
-      }, 950);
+      speakPondPrompt('trunkSuccess', () => {
+        safeSetTimeout(() => {
+          sceneActions.updateState({ phase: PHASES.TRUNK_REVEAL });
+          showPondReveal('trunk', 'live');
+        }, 1200);
+      });
     }, 950);
-  }, [sceneActions, safeSetTimeout, expectReveal, getRevealDetails, showPondReveal]);
+  }, [sceneActions, safeSetTimeout, expectReveal, getRevealDetails, showPondReveal, speakPondPrompt, triggerMiniGesture]);
 
   const handleRevealComplete = (symbolId) => {
     setRevealConfig(null);
@@ -2114,7 +2168,10 @@ const PondSceneContent = ({
                 paused={pondPaused}
                 active={sceneState.welcomeShown && [PHASES.INITIAL, PHASES.ROCK_MOVING, PHASES.REEDS_ACTIVE].includes(sceneState.phase)}
                 onWaterReached={finishLeafWater}
-                onFirstAttempt={() => { /* First-game VO / hints to be rewritten in next pass. */ }}
+                speakLine={speakPondPrompt}
+                isLineSpeaking={() => !!currentLineKeyRef.current}
+                introDone={leafIntroDone}
+                introDemo={leafIntroDemo}
                 geometry={leafGeometry}
                 leafStarts={leafStarts}
                 showDebug={SHOW_HIT_ZONES || layoutOpen}

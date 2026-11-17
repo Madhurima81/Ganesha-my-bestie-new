@@ -38,6 +38,7 @@ export const VOICE_CUES = {
   'fjg:branchStart':       { word: 'Pull' },   // "…Pull the branch down."
   'fjg:marshStart':        { word: 'Guide' },  // "…Guide Mooshika from safe spot to safe spot."
   'garland:ready':         { word: 'Drag' },   // "The garland is ready! Drag it to Ganesha."
+  'pond:leafOpening':      { word: 'Drag' },   // "…Drag a leaf into the water to find another way."
   'pond:rockRound':        { word: 'Press' },  // "…Press and hold to move it."
   'pond:reedsRound':       { word: 'Gently' }, // "…Gently move them aside."
   'pond:lotusRound':       { word: 'Hold' },   // "Hold the bud to help it bloom."
