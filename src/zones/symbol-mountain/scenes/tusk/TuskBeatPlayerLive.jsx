@@ -5,10 +5,11 @@ import { getTuskNestFlow } from './tuskNestFlowSelect';
 import './TuskPathGame.css'; // reuse the existing stage/background sizing rules
 
 // Shared animal idle art (same source used by Eyes/Ears games)
-import monkeyIdle from './assets/images-opt/tusk-margin35/monkey-new.webp';
-import cowIdle from './assets/images-opt/tusk-margin35/cow-new.webp';
+// Idle animals blink (2.5 s rest between blinks); same size/position as the old still pictures. The elephant has no blink yet.
+import monkeyIdle from './assets/images-opt/tusk-margin35/monkey-blink.webp';
+import cowIdle from './assets/images-opt/tusk-margin35/cow-blink.webp';
 import elephantIdle from './assets/images-opt/tusk-margin35/elephant-new1.webp';
-import peacockIdle from './assets/images-opt/tusk-margin35/peacock-new.webp';
+import peacockIdle from './assets/images-opt/tusk-margin35/peacock-blink.webp';
 import bunnyHelping from './assets/images-opt/margin35/success-gifs/bunny_helping.gif';
 import bgImg from './assets/images/tusk-giving/symbol_mountain_3_bg.webp';
 

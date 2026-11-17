@@ -8,7 +8,7 @@ import usePausableTimers from '../../../../../lib/hooks/usePausableTimers';
 import './SamaprabhaGame.css';
 
 import bgImg from '../assets/images/Samaprabha/samaprabha-bg.webp';
-import fawnWorriedImg from '../assets/images/Samaprabha/fawn-worried.webp';
+import fawnWorriedImg from '../assets/images-opt/Samaprabha/fawn-worried-blink.webp'; // worried fawn, blinks (2.5 s rest)
 import fawnHappyImg from '../assets/images/Samaprabha/fawn-happy.webp';
 import fawnWalkImg from '../assets/images-opt/Samaprabha/fawn-walk.gif';
 import branchImg from '../assets/images-opt/Samaprabha/reveal-branch-new-opt.webp';

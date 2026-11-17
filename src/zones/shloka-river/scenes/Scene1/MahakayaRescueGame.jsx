@@ -14,10 +14,11 @@ import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './MahakayaRescueGame.css';
 
 import raftLogSingle from './assets/images/mahakaya/mahakaya-log-single-opt.webp';
-import elephantCalf from './assets/images/mahakaya/elephant-calf.png';
-import peacockSymbolMountain from '../../../symbol-mountain/scenes/tusk/assets/images/peacock-new-opt.webp';
-import cowSymbolMountain from '../../../symbol-mountain/scenes/tusk/assets/images/cow-new-opt.webp';
-import monkeySymbolMountain from '../../../symbol-mountain/scenes/tusk/assets/images/monkey-new-opt.webp';
+// Waiting animals blink (2.5 s rest between blinks); same size/position as the old still pictures.
+import elephantCalf from './assets/images/mahakaya/waiting-elephant-blink.webp';
+import peacockSymbolMountain from './assets/images/mahakaya/waiting-peacock-blink.webp';
+import cowSymbolMountain from './assets/images/mahakaya/waiting-cow-blink.webp';
+import monkeySymbolMountain from './assets/images/mahakaya/waiting-monkey-blink.webp';
 import waterRipples from './assets/images/water-ripples.gif';
 // Animated versions shown once each animal has landed on the raft.
 import elephantAboard from './assets/images/mahakaya/aboard-elephant.gif';
