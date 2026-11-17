@@ -11,6 +11,10 @@ hut-family-tree-09.mp3,about-me-hut,family-tree,story,"This is my father, Shiva.
 hut-family-tree-10.mp3,about-me-hut,family-tree,story,"This is my mother, Parvati.",P2 | PRONOUNCE: Parvati [PAR-va-ti] | source: family-tree/Familytreegame.jsx:561
 hut-family-tree-11.mp3,about-me-hut,family-tree,story,"This is my brother, Kartikeya.",P2 | PRONOUNCE: Kartikeya [kar-ti-KAY-a] | source: family-tree/Familytreegame.jsx:570
 hut-family-tree-12.mp3,about-me-hut,family-tree,story,And that's me!,P2 | source: family-tree/Familytreegame.jsx:579
+hut-family-tree-13.mp3,about-me-hut,family-tree,instruction,Tap anywhere to close.,P2 | added by hand 2026-11-17 (generator inputs gone) | source: Familytreegame.jsx:323,862 (speakHint, fun-fact card left open)
+hut-family-tree-14.mp3,about-me-hut,family-tree,feedback,"Our family trees are different, and each one tells a story.",P2 | added by hand 2026-11-17 (generator inputs gone) | source: Familytreegame.jsx:257 FINAL_VO.comparison (scene complete)
+hut-family-tree-15.mp3,about-me-hut,family-tree,instruction,You've met my whole family. Tap Continue.,P2 | added by hand 2026-11-17 (generator inputs gone) | source: Familytreegame.jsx:254 RESUME_VO.allPlaced (Continue after Ganesha's tree)
+hut-family-tree-16.mp3,about-me-hut,family-tree,instruction,Continue tapping.,P2 | added by hand 2026-11-17 (generator inputs gone) | source: Familytreegame.jsx:254 RESUME_VO.keepTapping (Continue mid-tree)
 hut-food-01.mp3,about-me-hut,favorite-food,story,"Let’s find my favorites, then yours.",P1 | source: voiceGuidance.js[about-me-hut.favorite-food.opening] (+1 more)
 hut-food-02.mp3,about-me-hut,favorite-food,instruction,Can you guess my favorite food?,P2 | source: about-me-hut/food/Favoritefoodgame.jsx:264
 hut-food-03.mp3,about-me-hut,favorite-food,feedback,Yes — I love modak!,P2 | PRONOUNCE: modak [MO-dak] | source: about-me-hut/food/Favoritefoodgame.jsx:264

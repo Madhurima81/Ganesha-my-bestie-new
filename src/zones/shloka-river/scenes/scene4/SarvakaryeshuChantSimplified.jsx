@@ -30,6 +30,7 @@ import useGuardedReveal from '../../../../lib/hooks/useGuardedReveal';
 import useFirstLineWatch from '../../../../lib/hooks/useFirstLineWatch';
 import createSpeechStartWatcher from '../../../../lib/utils/speechStartWatch';
 import { logSceneEvent } from '../../../../lib/utils/sceneEventLog';
+import { getVoClipUrl, playVoClip } from '../../../../lib/audio/voClip';
 import SceneStallPrompt from '../../../../lib/components/feedback/SceneStallPrompt';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
 import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
@@ -292,6 +293,10 @@ const SarvakaryeshuChantContent = ({
 
   const stopWebSpeech = useCallback(() => {
     if (webSpeechRef.current) logSceneEvent('sarvakaryeshu', 'speech:cancelled-by-stop', { key: webSpeechRef.current.key || null });
+    // A recorded line is an <audio> that speechSynthesis.cancel() can't stop. Like a cancelled
+    // utterance (see speakWebSpeech's onerror), stopping it does NOT fire the line's callback:
+    // a cancelled line is not a finished line.
+    { const w = webSpeechRef.current; if (w?.clip) { webSpeechRef.current = null; w.clip.stop(false); } }
     speechStartWatcherRef.current?.cancelPending();
     try {
       speechSynthRef.current?.cancel();
@@ -327,6 +332,7 @@ const SarvakaryeshuChantContent = ({
       w.utterance.onend = null;
       w.utterance.onerror = null;
     }
+    w?.clip?.stop(false); // our own recording: stop it without firing its callback
     try {
       speechSynthRef.current?.cancel();
     } catch {
@@ -352,6 +358,35 @@ const SarvakaryeshuChantContent = ({
       // Muted: finish on a silent timer matching the line's length, not instantly,
       // so mute never skips a step (DECISIONS.md 2026-09-29).
       playSilent(text, onEnded);
+      return;
+    }
+    // Recorded clip for this exact line (voiceover/script.csv)? Play it instead of Web Speech, same
+    // lookup as useGaneshaVoice. No clip -> falls through to Web Speech unchanged.
+    const clipUrl = getVoClipUrl(text);
+    if (clipUrl && !document.hidden) {
+      { const prev = webSpeechRef.current; if (prev?.clip) { webSpeechRef.current = null; prev.clip.stop(false); } }
+      speechStartWatcherRef.current?.cancelPending();
+      try { speechSynthRef.current?.cancel(); } catch { /* no-op */ }
+      let clipFinished = false;
+      let safetyTimer = null;
+      const finishClip = () => {
+        if (clipFinished) return;
+        clipFinished = true;
+        clearTimeout(safetyTimer);
+        if (webSpeechRef.current?.clip === clipHandle) webSpeechRef.current = null;
+        logSceneEvent('sarvakaryeshu', 'speech:finished', { key, clip: true });
+        onEnded?.();
+      };
+      const clipHandle = playVoClip(clipUrl, {
+        onStart: () => {
+          logSceneEvent('sarvakaryeshu', 'speech:started', { key, clip: true });
+          noteFirstLineStarted();
+        },
+        onEnd: finishClip,
+      });
+      // A clip that stalls (failed load, blocked play) must not freeze the sequence.
+      safetyTimer = setTimeout(() => { clipHandle.stop(false); finishClip(); }, Math.max(8000, text.length * 130));
+      webSpeechRef.current = { utterance: { onend: null, onerror: null }, onEnded: finishClip, key, at: Date.now(), ms: estimateSpeechMs(text), clip: clipHandle };
       return;
     }
     const synth = speechSynthRef.current;
@@ -391,6 +426,7 @@ const SarvakaryeshuChantContent = ({
     webSpeechRef.current = null;
     w.utterance.onend = null;
     w.utterance.onerror = null;
+    w.clip?.stop(false); // recorded line: stop the audio; the silent timer below carries the callback
     try { speechSynthRef.current?.cancel(); } catch {}
     playSilent(Math.max(0, w.ms - (Date.now() - w.at)), w.onEnded);
   }, [playSilent]);
