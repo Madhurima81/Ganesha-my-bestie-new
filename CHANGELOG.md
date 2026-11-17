@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-17] - Shloka River scene 1 (Vakratunda Grove) recorded voice: 17 clips; script rows for scenes 1 and 2
+**Touched:** public/audio/river-grove-01,11,12,13,15..21,23..28.mp3 (new), vo-manifest.json (128 clips), voiceover/script.csv + voClipMap.generated.js (rows grove-26..28 and bank-18..23 added by hand).
+**Changed:** Grove lines recorded with ganesha young (50/64) with [warmly]/[gently] delivery tags; the 8 shloka words' pronunciation was listened to and accepted. The Grove's live text is its own webSpeechMap, not voiceGuidance.js: 'Look for another way through.' is spoken (old row grove-14 'Try going around it.' is dead, plus grove-02..09 round lines, 22 and the bare affirmations 05/10). Rows added for that hint and the two 'Say with me' reveal cards; Bank rows added for the four Samaprabha reveal lines and the two 'Say with me' cards.
+**NOT wired yet:** the Grove and Bank speak through their own speakWebSpeech (direct Web Speech), so these clips do NOT play in those scenes until it gets the clip branch (same as Eyes/Ears, KNOWN_PITFALLS #67). The shared reveal card already plays recordings.
+**Open:** wire speakWebSpeech in VakratundaGroveSimplified.jsx and SuryakotiBankSimplified.jsx (and scenes 3, 4 wrappers), with fake-Audio tests; record Bank (23 lines), then scenes 3 to 5.
+
 ## [2026-11-16] - Kurumedeva: Elephant, Monkey and Beaver help beats use the new GIFs
 **Touched (all on staging, pushed):** 784800d7, 2f6d263a, 59313f37, f0eb1498 - Scene3/KurumedevaGame.jsx/.css, scene3LayoutConfig.js, bridge/Characters + bridge/Bridge assets
 **Changed:**

@@ -221,6 +221,9 @@ river-shloka-01.mp3,shloka-river,vakratunda-grove,shloka,Mahakaya - great form!,
 river-grove-23.mp3,shloka-river,vakratunda-grove,feedback,"You found another way, and made sure everyone could come along.",P1 | source: voiceGuidance.js[shloka-river.vakratunda-grove.sceneComplete]
 river-grove-24.mp3,shloka-river,vakratunda-grove,feedback,You changed your plan and found another way.,P1 | source: shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx:1394
 river-grove-25.mp3,shloka-river,vakratunda-grove,feedback,You made space for others.,P1 | source: shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx:1394
+river-grove-26.mp3,shloka-river,vakratunda-grove,instruction,Look for another way through.,P2 | added by hand 2026-11-17 (generator inputs gone) | source: VakratundaGroveSimplified.jsx:506 (webSpeechMap, hint; the old row grove-14 'Try going around it.' is not spoken)
+river-grove-27.mp3,shloka-river,vakratunda-grove,instruction,"Say with me, I can change my plan and try another way.",P2 | added by hand 2026-11-17 (generator inputs gone) | source: SymbolAutoReveal.jsx:99 (Vakratunda card)
+river-grove-28.mp3,shloka-river,vakratunda-grove,instruction,"Say with me, I can make space in my heart for others.",P2 | added by hand 2026-11-17 (generator inputs gone) | source: SymbolAutoReveal.jsx:99 (Mahakaya card)
 river-bank-01.mp3,shloka-river,suryakoti-bank,story,The river is dark. Let’s bring back some light.,P1 | source: voiceGuidance.js[shloka-river.suryakoti-bank.welcome]
 river-bank-02.mp3,shloka-river,suryakoti-bank,instruction,Rub the glowing spot.,P1 | source: voiceGuidance.js[shloka-river.suryakoti-bank.scene11SuryaHint] (+1 more)
 river-bank-03.mp3,shloka-river,suryakoti-bank,instruction,Keep rubbing.,P1 | source: voiceGuidance.js[shloka-river.suryakoti-bank.surya_hint_keep]
@@ -238,6 +241,12 @@ river-bank-14.mp3,shloka-river,suryakoti-bank,instruction,Deer sees a strange sh
 river-bank-15.mp3,shloka-river,suryakoti-bank,feedback,You brought back the light and saw what was really there.,P1 | source: voiceGuidance.js[shloka-river.suryakoti-bank.sceneComplete]
 river-bank-16.mp3,shloka-river,suryakoti-bank,feedback,You found hope and brought back the light.,P1 | source: shloka-river/scenes/Scene2/SuryakotiBankSimplified.jsx:1115
 river-bank-17.mp3,shloka-river,suryakoti-bank,feedback,You looked closely and saw what was really there.,P1 | source: shloka-river/scenes/Scene2/SuryakotiBankSimplified.jsx:1115
+river-bank-18.mp3,shloka-river,suryakoti-bank,feedback,That part is just a branch.,P2 | added by hand 2026-11-17 (generator inputs gone) | source: SuryakotiBankSimplified.jsx webSpeechMap scene11_sama_reveal_branch
+river-bank-19.mp3,shloka-river,suryakoti-bank,feedback,Those are just reeds and leaves.,P2 | added by hand 2026-11-17 (generator inputs gone) | source: SuryakotiBankSimplified.jsx webSpeechMap scene11_sama_reveal_reeds
+river-bank-20.mp3,shloka-river,suryakoti-bank,feedback,That part is a tree stump.,P2 | added by hand 2026-11-17 (generator inputs gone) | source: SuryakotiBankSimplified.jsx webSpeechMap scene11_sama_reveal_stump
+river-bank-21.mp3,shloka-river,suryakoti-bank,feedback,And those are just rocks and grass.,P2 | added by hand 2026-11-17 (generator inputs gone) | source: SuryakotiBankSimplified.jsx webSpeechMap scene11_sama_reveal_rocks
+river-bank-22.mp3,shloka-river,suryakoti-bank,instruction,"Say with me, I can find hope inside me.",P2 | added by hand 2026-11-17 (generator inputs gone) | source: SymbolAutoReveal.jsx:99 (Suryakoti card)
+river-bank-23.mp3,shloka-river,suryakoti-bank,instruction,"Say with me, I can see what is really there.",P2 | added by hand 2026-11-17 (generator inputs gone) | source: SymbolAutoReveal.jsx:99 (Samaprabha card)
 river-nirvighnam-01.mp3,shloka-river,nirvighnam-chant,story,The way ahead is tricky. Let’s help our friends through.,P1 | source: voiceGuidance.js[shloka-river.nirvighnam-chant.welcome]
 river-nirvighnam-02.mp3,shloka-river,nirvighnam-chant,instruction,Turtle’s way home is blocked. Press and hold the rock to move it.,P1 | source: voiceGuidance.js[shloka-river.nirvighnam-chant.scene12NirvHint]
 river-nirvighnam-03.mp3,shloka-river,nirvighnam-chant,instruction,The branch is still blocking the way. Drag it onto the bank.,P1 | source: voiceGuidance.js[shloka-river.nirvighnam-chant.nirv_branch_intro]
