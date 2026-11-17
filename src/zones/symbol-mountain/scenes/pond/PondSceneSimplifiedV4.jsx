@@ -66,7 +66,7 @@ import SceneStallPrompt from '../../../../lib/components/feedback/SceneStallProm
 // Images
 import pondBgFixed from './assets/images/pond-bg-fixed.webp';
 import pondStreamOverlay from './assets/images/pond-stream-overlay.webp';
-import pondTurtleSad from './assets/images/pond-turtle-sad.webp';
+import pondTurtleSad from './assets/images/pond-turtle-blink.webp'; // the same turtle as Nirvighnam, blinking (2.5 s rest); fitted to the old picture's box
 import lotusDormant from './assets/images/trunk-lotus-dormant-new.webp';
 import lotusUpright from './assets/images/trunk-lotus-upright-new.webp';
 import lotusBloomedImg from './assets/images/trunk-lotus-bloomed-new.webp';
