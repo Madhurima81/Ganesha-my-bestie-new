@@ -42,7 +42,7 @@ import '../../../lib/styles/animations.css';
 
 // Import images
 const GANESHA_POSES = {
-  idle: '/images/ganesha-favorite-idle-blink.webp', // idle Ganesha blinks (2.5 s rest between blinks)
+  idle: '/images/ganesha-favorite-blink-anim.webp', // idle = the blink GIF (same as the wrong-answer blink), 2.5 s rest between blinks
   happy: '/images/ganesha-favorite-happy-anim.webp',
 };
 import dreamsBg from './assets/images/dream_background.webp';

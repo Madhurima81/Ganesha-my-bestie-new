@@ -27,7 +27,7 @@ import OpeningModal from '../../shared/components/OpeningModal';
 import foodBg from './assets/images/fav_background.webp';
 
 const GANESHA_POSES = {
-  idle: '/images/ganesha-favorite-idle-blink.webp', // idle Ganesha blinks (2.5 s rest between blinks)
+  idle: '/images/ganesha-favorite-blink-anim.webp', // idle = the blink GIF (same as the wrong-answer blink), 2.5 s rest between blinks
   blink: '/images/ganesha-favorite-blink-anim.webp',
   happy: '/images/ganesha-favorite-happy-anim.webp',
 };
@@ -2000,7 +2000,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Food Choice Screen */}
       {sceneState.gamePhase === 'food-choice' && (
         <div className="choice-screen">
-          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--favorite" />
+          <AboutMeGaneshaHost image={currentGaneshaImage} restartKey={ganeshaReaction} className="about-me-ganesha-host--favorite" />
           {/* Tap instruction removed */}
           <div className="choices-container food-scene">
             {sceneState.randomFoods.map((food, index) => (
@@ -2028,7 +2028,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Food Correct */}
       {sceneState.gamePhase === 'food-correct' && (
         <div className="correct-screen">
-          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--favorite" />
+          <AboutMeGaneshaHost image={currentGaneshaImage} restartKey={ganeshaReaction} className="about-me-ganesha-host--favorite" />
           <div className="correct-food">
             <img src={modakImg} alt="Modak" className="food-in-hand modak-special" />
           </div>
@@ -2038,7 +2038,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Color Choice */}
       {sceneState.gamePhase === 'color-choice' && (
         <div className="choice-screen">
-          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--favorite" />
+          <AboutMeGaneshaHost image={currentGaneshaImage} restartKey={ganeshaReaction} className="about-me-ganesha-host--favorite" />
           {/* Tap instruction removed */}
           <div className="choices-container color-scene">
             {sceneState.randomColors.map((color, index) => (
@@ -2066,7 +2066,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Color Correct */}
       {sceneState.gamePhase === 'color-correct' && (
         <div className="correct-screen">
-          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--favorite" />
+          <AboutMeGaneshaHost image={currentGaneshaImage} restartKey={ganeshaReaction} className="about-me-ganesha-host--favorite" />
           <div className="correct-food">
             <img src={redImg} alt="Red" className="food-in-hand" />
           </div>
@@ -2076,7 +2076,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Activity Choice */}
       {sceneState.gamePhase === 'activity-choice' && (
         <div className="choice-screen">
-          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--favorite" />
+          <AboutMeGaneshaHost image={currentGaneshaImage} restartKey={ganeshaReaction} className="about-me-ganesha-host--favorite" />
           {/* Tap instruction removed */}
           <div className="choices-container activity-scene">
             {sceneState.randomActivities.map((activity, index) => (
@@ -2104,7 +2104,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Activity Correct */}
       {sceneState.gamePhase === 'activity-correct' && (
         <div className="correct-screen">
-          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--favorite" />
+          <AboutMeGaneshaHost image={currentGaneshaImage} restartKey={ganeshaReaction} className="about-me-ganesha-host--favorite" />
           <div className="correct-food">
             <img src={kidActSingImg} alt="Dancing" className="food-in-hand" />
           </div>
@@ -2125,7 +2125,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Friend Choice */}
       {sceneState.gamePhase === 'friend-choice' && (
         <div className="choice-screen">
-          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--favorite" />
+          <AboutMeGaneshaHost image={currentGaneshaImage} restartKey={ganeshaReaction} className="about-me-ganesha-host--favorite" />
           {/* Tap instruction removed */}
           <div className="choices-container friend-scene">
             {sceneState.randomFriends.map((friend, index) => (
@@ -2154,7 +2154,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Friend Correct */}
       {sceneState.gamePhase === 'friend-correct' && (
         <div className="correct-screen">
-          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--favorite" />
+          <AboutMeGaneshaHost image={currentGaneshaImage} restartKey={ganeshaReaction} className="about-me-ganesha-host--favorite" />
           <div className="correct-food">
             <img src={mouseImg} alt="Mooshika" className="food-in-hand" />
           </div>

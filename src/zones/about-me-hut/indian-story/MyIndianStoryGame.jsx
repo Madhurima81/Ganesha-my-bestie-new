@@ -23,7 +23,7 @@ import StoryProgressHeader from '../components/StoryProgressHeader';
 import AboutMeGaneshaHost from '../components/AboutMeGaneshaHost';
 import bgImage from './assets/images/name_background.webp';
 const GANESHA_POSES = {
-  idle: '/images/ganesha-favorite-idle-blink.webp', // idle Ganesha blinks (2.5 s rest between blinks)
+  idle: '/images/ganesha-favorite-blink-anim.webp', // idle = the blink GIF (same as the wrong-answer blink), 2.5 s rest between blinks
   blink: '/images/ganesha-favorite-blink-anim.webp',
   happy: '/images/ganesha-favorite-happy-anim.webp',
 };
@@ -2603,7 +2603,7 @@ const handleComplete = () => {
       {/* Language Ganesha Phase — 4 Language Guess Game */}
       {phase === STEPS.LANGUAGE_GANESHA && (
         <div className="mis-language-guess-phase" style={{ paddingTop: 'calc(var(--u) * 1.5)', paddingBottom: 'calc(var(--u) * 4)', minHeight: 'var(--app-height, 100vh)' }}>
-          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--left-middle" />
+          <AboutMeGaneshaHost image={currentGaneshaImage} restartKey={ganeshaReaction} className="about-me-ganesha-host--left-middle" />
 
           {/* Play Button Section */}
           <div className="mis-language-play-wrap" style={{ textAlign: 'center', marginTop: 'calc(var(--u) * 2)', marginBottom: 'calc(var(--u) * 0.5)' }}>
@@ -2828,7 +2828,7 @@ const handleComplete = () => {
           flexDirection: 'column',
           alignItems: 'center',
         }}>
-          <AboutMeGaneshaHost image={currentGaneshaImage} className="about-me-ganesha-host--left-middle" />
+          <AboutMeGaneshaHost image={currentGaneshaImage} restartKey={ganeshaReaction} className="about-me-ganesha-host--left-middle" />
 
           {/* Festival Cards Container — Flexbox for proper centering */}
           <div style={{
