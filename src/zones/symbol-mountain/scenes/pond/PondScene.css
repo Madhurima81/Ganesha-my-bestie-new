@@ -723,6 +723,8 @@
   z-index: 2;
   transition: transform 0.1s linear;
   pointer-events: none;
+  /* All lotus poses share one stem base (53.3% across, 92% down), so grow/pop scale from the base and the plant stays planted. */
+  transform-origin: 53.3% 92%;
 }
 
 .pond-lotus-bloom-pop {
