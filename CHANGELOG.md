@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-17 c] - Shloka River: Bank (23) and Nirvighnam Chant (27) recorded; Nirvighnam wired
+**Touched:** public/audio/river-bank-01..23, river-nirvighnam-01..27 (new clips, 50 files), vo-manifest.json (178 clips), voiceover/script.csv + voClipMap.generated.js (rows nirvighnam-25..27 and sarvakaryeshu-41..44 added by hand), NirvighnamChantSimplified.jsx.
+**Changed:** Bank and Nirvighnam lines recorded with ganesha young (50/64), [warmly]/[gently] tags. NirvighnamChantSimplified.speakWebSpeech now plays a recording for an exact-text match and falls back to Web Speech. Unlike the Grove/Bank helpers, this one never fires a cancelled line's callback, so the recording is stopped WITHOUT firing its end on a new line, mute and leaving the scene (a cancelled line is not a finished line); a stalled clip ends after max(8 s, 130 ms/char). Rows added for the live 'Something's still blocking Turtle's way.', the Sarvakaryeshu 'Tusk reminded him...' / 'Sarvakaryeshu! You chose...' lines and the 'Say with me' cards; dead rows (nirvighnam hints, sarvakaryeshu-10..21, 09, 22, 23, 27, 28) are not recorded.
+**Verified:** vite build OK; lint unchanged (20 problems before and after). Bank words checked against a transcript (all 23 lines in order; the quick model heard 'Rob' for 'Rub', listen to bank-02/13). Nirvighnam block 1 transcribed; block 2 cut by silence pattern only. NOT played on a device, no scene-level tests.
+**Open:** iPad: Nirvighnam and Bank end to end (sidebar, 15 s hints, Play Again, Sanskrit lines 'Kurumedeva!' and 'Suryakoti!'). Scene 4 (Sarvakaryeshu, 27 lines in 2 blocks) and scene 5 (Finale) to record; their wrappers to wire.
+
 ## [2026-11-17 b] - Grove and Suryakoti Bank play recordings (wired)
 **Touched:** VakratundaGroveSimplified.jsx, SuryakotiBankSimplified.jsx.
 **Changed:** speakWebSpeech (the scenes' own direct Web Speech helper) now looks up a recording for the exact line (getVoClipUrl/playVoClip) and falls back to Web Speech. The recording stops on a new line (callback fires, like a cancelled utterance), on mute (silent timer carries the callback) and on leaving the scene (stopped WITHOUT firing its callback); a stalled clip ends after max(8 s, 130 ms/char). Grove clips play now; Bank has no clips yet.
