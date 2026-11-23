@@ -345,7 +345,7 @@ const PondSceneContent = ({
     // Leaf-water game (stage % — same stage as everything else). Source/rock/pond are the
     // CENTRES the water physics uses; size on rock/pond = horizontal radius as % of stage width.
     leafSource: { x: 18.2, y: 65.5, size: 0 },
-    leafRock: { x: 46.5, y: 65.3, size: 11 },
+    leafRock: { x: 46.1, y: 66.7, size: 9.8 },
     leafPond: { x: 74.8, y: 63.7, size: 8.5 },
     leaf1: { x: 37.1, y: 39.2, size: 0 },
     leaf2: { x: 62.4, y: 42.2, size: 0 },

@@ -9,9 +9,11 @@ import './VakratundaLeafWater.css';
 const VW = 1024;
 const VH = 670;
 const SOURCE = { x: 192, y: 441 };
-const ROCK = { x: 417, y: 401, rx: 87, ry: 65 };
+// Hugs the visible rock in pond-big-rock.webp (measured: ~194 x 123 px on the 1024 x 670 stage).
+const ROCK = { x: 472, y: 447, rx: 100, ry: 63 };
 const POND = { x: 750, y: 435, rx: 124, ry: 66 };
 const STEP = 7;
+const MAX_STEPS = 125; // longest successful route is ~111 steps (measured), so 125 never blocks a real solution
 const DEFAULT_GEOMETRY = { source: SOURCE, rock: ROCK, pond: POND };
 const DEFAULT_LEAVES = [
   { id: 1, x: 380, y: 263, angle: 30 },
@@ -58,9 +60,9 @@ export function simulateVakratundaFlow(leaves, geometry = DEFAULT_GEOMETRY) {
   const points = [[x, y]];
   const contacts = [];
   const used = new Set();
-  let reason = 'edge';
+  let reason = 'spent'; // ran out of length without reaching anything: it fades away
 
-  for (let i = 0; i < 150; i += 1) {
+  for (let i = 0; i < MAX_STEPS; i += 1) {
     if (remainingSteer <= 0) {
       let closest = null;
       let closestDistance = Infinity;
@@ -213,11 +215,15 @@ export default function VakratundaLeafWater({
   const notifiedRef = useRef(false);
   const flow = useMemo(() => simulateVakratundaFlow(leaves, geometry), [leaves, geometry]);
   const { source, rock, pond } = geometry;
-  const artEnd = 360;
+  const artEnd = 378; // painted banks stop just inside the rock
   const path = useMemo(() => smoothPath(flow.points), [flow.points]);
   // The painted SVG supplies the banks and the resting water up to the rock; live water sits on top.
   const atPond = hasAdjusted && flow.reason === 'pond' && flow.contacts.length >= 2;
   const tip = flow.points[flow.points.length - 1];
+  // Water that reaches nothing (ran off the stage or out of length) thins out over its last ~150px
+  // instead of running hard to the edge. The gradient lies along the end of the path.
+  const fading = flow.reason === 'edge' || flow.reason === 'spent';
+  const fadeFrom = flow.points[Math.max(0, flow.points.length - 22)];
 
   // Latest values for handlers that must not go stale mid-drag.
   const leavesRef = useRef(leaves);
@@ -449,6 +455,22 @@ export default function VakratundaLeafWater({
           <mask id="vak-source-mask" maskUnits="userSpaceOnUse" x="0" y="296" width={artEnd} height="245">
             <rect x="0" y="296" width={artEnd} height="245" fill="url(#vak-source-fade)" />
           </mask>
+          {/* The live water melts into the painted stream at its start instead of starting with a hard cap. */}
+          <linearGradient id="vak-head-fade" gradientUnits="userSpaceOnUse" x1={source.x - 14} y1="0" x2={source.x + 34} y2="0">
+            <stop offset="0" stopColor="black" />
+            <stop offset="1" stopColor="white" />
+          </linearGradient>
+          <mask id="vak-head-mask" maskUnits="userSpaceOnUse" x="0" y="0" width={VW} height={VH}>
+            <rect x="0" y="0" width={VW} height={VH} fill="url(#vak-head-fade)" />
+          </mask>
+          <linearGradient id="vak-tail-fade" gradientUnits="userSpaceOnUse"
+            x1={fadeFrom[0]} y1={fadeFrom[1]} x2={tip[0]} y2={tip[1]}>
+            <stop offset="0" stopColor="white" />
+            <stop offset="1" stopColor="black" />
+          </linearGradient>
+          <mask id="vak-tail-mask" maskUnits="userSpaceOnUse" x="0" y="0" width={VW} height={VH}>
+            <rect x="0" y="0" width={VW} height={VH} fill="url(#vak-tail-fade)" />
+          </mask>
           <clipPath id="vak-source-clip"><rect x="0" y="296" width={artEnd} height="245" /></clipPath>
         </defs>
 
@@ -461,13 +483,15 @@ export default function VakratundaLeafWater({
             pointerEvents="none"
           />
         </g>
-        <path d={path} className="vak-leaf-game__water-body" />
+        <g mask="url(#vak-head-mask)">
+          <path d={path} className="vak-leaf-game__water-body" mask={fading ? 'url(#vak-tail-mask)' : undefined} />
+        </g>
         {flow.contacts.map((contact) => (
           <g key={contact.id} pointerEvents="none">
             <circle cx={contact.x} cy={contact.y} r="15" className="vak-leaf-game__contact" />
           </g>
         ))}
-        <circle cx={tip[0]} cy={tip[1]} r="9" className="vak-leaf-game__tip" />
+        {!fading && <circle cx={tip[0]} cy={tip[1]} r="9" className="vak-leaf-game__tip" />}
         {leaves.map((leaf) => {
           const isTarget = leaf.id === targetLeafId;
           const pulseLeaf = stage === 'place' && level >= 1 && isTarget;

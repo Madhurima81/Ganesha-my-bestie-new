@@ -15,27 +15,20 @@
     <stop offset="0" stop-color="#87daf6"/><stop offset="0.5" stop-color="#4bbce9"/><stop offset="1" stop-color="#319bd9"/>
   </linearGradient>
   <clipPath id="clip-water">
-    <path id="water-shape" d="M -20 114 C 60 92 112 115 170 156 C 225 193 268 207 314 208 L 570 208 L 570 247 L 313 247 C 254 244 209 227 152 189 C 102 158 62 141 -20 160 Z"/>
+    <path id="water-shape" d="M -20 114 C 60 92 112 115 170 156 C 225 193 268 207 314 208 L 590 208 L 590 247 L 313 247 C 254 244 209 227 152 189 C 102 158 62 141 -20 160 Z"/>
   </clipPath>
 </defs>
 
 <!-- Static SOURCE BANKS, limited to the entry section (left). Editable independent layers. -->
 <g id="fixed-source-banks">
   <!-- Narrow soil strip immediately outside the water -->
-  <path id="upper-soil" d="M-20 78 C 54 56 122 81 184 125 C 234 163 271 176 320 176 L348 205 C 282 209 229 194 169 156 C 111 116 61 94 -20 114 Z" fill="url(#bank-brown)"/>
-  <path id="lower-soil" d="M-20 160 C 60 142 101 160 152 190 C 209 228 251 244 313 247 L345 276 C 263 278 206 251 138 210 C 84 179 45 178 -20 197 Z" fill="url(#bank-brown)"/>
-  <path id="upper-grass" d="M-20 67 C 54 45 130 69 193 110 C 242 149 278 159 318 159 L344 181 C 268 184 222 172 170 137 C 110 95 60 77 -20 98 Z" fill="url(#bank-green)"/>
-  <path id="lower-grass" d="M-20 198 C 41 180 82 188 129 217 C 196 263 262 286 342 281 L354 298 C 261 310 193 284 121 237 C 74 209 39 206 -20 218 Z" fill="url(#bank-green)"/>
+  <path id="upper-soil" d="M-20 78 C 54 56 122 81 184 125 C 234 163 271 176 320 176 L590 176 L590 207 L348 207 C 282 209 229 194 169 156 C 111 116 61 94 -20 114 Z" fill="url(#bank-brown)"/>
+  <path id="lower-soil" d="M-20 160 C 60 142 101 160 152 190 C 209 228 251 244 313 247 L590 247 L590 276 L345 276 C 263 278 206 251 138 210 C 84 179 45 178 -20 197 Z" fill="url(#bank-brown)"/>
+  <path id="upper-grass" d="M-20 67 C 54 45 130 69 193 110 C 242 149 278 159 318 159 L590 159 L590 181 L344 181 C 268 184 222 172 170 137 C 110 95 60 77 -20 98 Z" fill="url(#bank-green)"/>
+  <path id="lower-grass" d="M-20 198 C 41 180 82 188 129 217 C 196 263 262 286 342 281 L590 281 L590 298 L354 298 C 261 310 193 284 121 237 C 74 209 39 206 -20 218 Z" fill="url(#bank-green)"/>
   <!-- Slight hand-drawn edge highlights -->
-  <path d="M-18 77 C 53 55 125 78 187 121 C 238 161 276 174 319 173" fill="none" stroke="#d5ae6b" stroke-width="4" opacity=".75" stroke-linecap="round"/>
-  <path d="M-18 197 C 43 180 82 189 135 219 C 197 263 264 283 341 280" fill="none" stroke="#537f32" stroke-width="3.5" opacity=".5" stroke-linecap="round"/>
-  <!-- Banks continue straight along the resting water, from the curve to the rock. -->
-  <path d="M318 176 H570 V208 H318 Z" fill="url(#bank-brown)"/>
-  <path d="M313 247 H570 V276 H345 Z" fill="url(#bank-brown)"/>
-  <path d="M318 159 H570 V181 H318 Z" fill="url(#bank-green)"/>
-  <path d="M342 281 H570 V298 H354 Z" fill="url(#bank-green)"/>
-  <path d="M319 173 H570" fill="none" stroke="#d5ae6b" stroke-width="4" opacity=".75"/>
-  <path d="M341 280 H570" fill="none" stroke="#537f32" stroke-width="3.5" opacity=".5"/>
+  <path d="M-18 77 C 53 55 125 78 187 121 C 238 161 276 174 319 173 L590 173" fill="none" stroke="#d5ae6b" stroke-width="4" opacity=".75" stroke-linecap="round"/>
+  <path d="M-18 197 C 43 180 82 189 135 219 C 197 263 264 283 341 280 L590 280" fill="none" stroke="#537f32" stroke-width="3.5" opacity=".5" stroke-linecap="round"/>
   <g fill="#6b9e39" opacity=".9"><path d="M400 159 l-4 -12 8 7 6 -8 1 15Z"/><path d="M500 298 l-5 -12 10 8 5 -10 1 16Z"/></g>
   <g fill="#6b9e39" opacity=".9">
    <path d="M37 77 l-4 -13 9 8 5 -11 1 17Z"/><path d="M125 84 l-5 -10 10 7 3 -10 4 15Z"/>
@@ -49,8 +42,8 @@
  <g clip-path="url(#clip-water)">
   <rect x="-20" y="70" width="1140" height="270" fill="url(#water-fill)"/>
   <!-- broad soft bankside shade that follows the same centreline -->
-  <path d="M-25 153 C 63 131 102 149 160 185 C 226 229 268 241 318 238 L 570 238" fill="none" stroke="#1788d3" stroke-width="15" opacity=".38" stroke-linecap="round"/>
-  <path d="M-25 119 C 63 97 112 123 170 163 C 230 203 269 214 318 216 L 570 216" fill="none" stroke="#b3eaff" stroke-width="9" opacity=".52" stroke-linecap="round"/>
+  <path d="M-25 153 C 63 131 102 149 160 185 C 226 229 268 241 318 238 L 590 238" fill="none" stroke="#1788d3" stroke-width="15" opacity=".38" stroke-linecap="round"/>
+  <path d="M-25 119 C 63 97 112 123 170 163 C 230 203 269 214 318 216 L 590 216" fill="none" stroke="#b3eaff" stroke-width="9" opacity=".52" stroke-linecap="round"/>
   <!-- sparse flowing highlights, deliberately not a set of parallel stripes -->
   <g id="water-highlight-animated" fill="none" stroke="#d9f8ff" stroke-linecap="round" opacity=".78">
    <path d="M-10 124 Q54 109 112 141 T251 211" stroke-width="3.3"/>
