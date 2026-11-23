@@ -61,9 +61,9 @@ import wishEarthHappy from './assets/images/wish-images/wish-earth-happy.webp';
 import wishBowlEmpty from './assets/images/wish-images/wish-bowl-empty.webp';
 import wishBowlFull from './assets/images/wish-images/wish-bowl-full.webp';
 import plateImg from './assets/images/wish-images/plate.webp';
-import cowImg from './assets/images/wish-images/fav-cow.webp';
-import mouseImg from './assets/images/wish-images/fav-mouse.webp';
-import peacockImg from './assets/images/wish-images/fav-peacock.webp';
+import cowImg from './assets/images/wish-images/fav-cow-blink.webp'; // blinks (2.5 s rest)
+import mouseImg from './assets/images/wish-images/fav-mouse-blink.webp'; // blinks (2.5 s rest)
+import peacockImg from './assets/images/wish-images/fav-peacock-blink.webp'; // blinks (2.5 s rest)
 import appleImg from './assets/images/wish-images/apple.webp';
 import bananaImg from './assets/images/wish-images/banana.webp';
 import breadImg from './assets/images/wish-images/bread.webp';

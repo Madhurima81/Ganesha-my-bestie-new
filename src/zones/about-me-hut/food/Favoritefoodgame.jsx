@@ -38,9 +38,9 @@ import ladooImg from './assets/images/food/fav-ladoo.webp';
 import barfiImg from './assets/images/food/fav-barfi.webp';
 
 // Animal images
-import mouseImg from './assets/images/animal/fav-mouse.webp';
-import cowImg from './assets/images/animal/fav-cow.webp';
-import peacockImg from './assets/images/animal/fav-peacock.webp';
+import mouseImg from './assets/images/animal/fav-mouse-blink.webp'; // blinks (2.5 s rest)
+import cowImg from './assets/images/animal/fav-cow-blink.webp'; // blinks (2.5 s rest)
+import peacockImg from './assets/images/animal/fav-peacock-blink.webp'; // blinks (2.5 s rest)
 
 // Icons
 import favIconFood from './assets/images/food-icon.webp';
