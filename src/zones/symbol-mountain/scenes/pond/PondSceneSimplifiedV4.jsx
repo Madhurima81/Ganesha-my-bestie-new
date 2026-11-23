@@ -131,6 +131,20 @@ const VOICE_LINES = {
   complete: 'You used strength, then gentleness, and helped the lotus bloom.'
 };
 
+// Leaf-game lines that carry a teaching hand, and which hand. The hand appears on the line's
+// action word (see VOICE_CUES 'pond:<key>') and only then: place = short drag, turn = swing the
+// round button (turnBig = wider swing), guide = drag the other leaf.
+const LEAF_HAND_BY_LINE = {
+  leafOpening: 'place',
+  leafPlaced: 'turn',
+  leafHintPlaceL2: 'place',
+  leafHintPlaceL3: 'placeFar',
+  leafHintRotateL2: 'turn',
+  leafHintRotateL3: 'turnBig',
+  leafHintGuideL2: 'turn',
+  leafHintGuideL3: 'guide',
+};
+
 const missionImages = {
   lotus: { before: lotusBefore, after: lotusAfter },
   trunk: { before: trunkBefore, after: trunkAfter }
@@ -447,7 +461,7 @@ const PondSceneContent = ({
   const [leafGameKey, setLeafGameKey] = useState(0);
   // The opening line has finished (the hint clock starts then) / is at its "Drag" word (short drag hand).
   const [leafIntroDone, setLeafIntroDone] = useState(false);
-  const [leafIntroDemo, setLeafIntroDemo] = useState(false);
+  const [leafHand, setLeafHand] = useState(null); // which hand demo the leaf game shows right now (null = none)
   // ================================================================
 
 
@@ -655,7 +669,7 @@ const PondSceneContent = ({
     setLeafWaterDone(false);
     setLeafGameKey((value) => value + 1);
     setLeafIntroDone(false);
-    setLeafIntroDemo(false);
+    setLeafHand(null);
     setRevealConfig(null);
     resetReveals();
     firstLineStartedRef.current.clear();
@@ -682,18 +696,20 @@ const PondSceneContent = ({
       setPondIntroGesture(true);
       safeSetTimeoutRef.current(() => setPondIntroGesture(false), 6000);
     };
-    // The leaf game's opening line shows the short drag hand on "Drag" (it never shows where to put the leaf).
+    // Leaf-game lines show their hand ONLY while the action word is spoken: "Drag" shows the short
+    // drag hand, "turn" shows the hand swinging the round button. It never shows where to put the leaf.
+    const leafHandFor = LEAF_HAND_BY_LINE[key];
     const showLeafHand = () => {
-      setLeafIntroDemo(true);
-      safeSetTimeoutRef.current(() => setLeafIntroDemo(false), 5000);
+      setLeafHand(leafHandFor);
+      safeSetTimeoutRef.current(() => setLeafHand(null), 4500);
     };
     speak(VOICE_LINES[key], {
       age: 7,
       style: 'child',
       moment: key === 'complete' ? 'celebration' : 'encouragement',
       onEnd,
-      cue: key === 'leafOpening'
-        ? getLineCue('pond:leafOpening', showLeafHand)
+      cue: leafHandFor
+        ? getLineCue(`pond:${key}`, showLeafHand)
         : ['rockRound', 'reedsRound', 'lotusRound'].includes(key) ? getLineCue(`pond:${key}`, showHand) : null
     });
   }, [isAudioOn, speak]);
@@ -2171,7 +2187,7 @@ const PondSceneContent = ({
                 speakLine={speakPondPrompt}
                 isLineSpeaking={() => !!currentLineKeyRef.current}
                 introDone={leafIntroDone}
-                introDemo={leafIntroDemo}
+                handCue={leafHand}
                 geometry={leafGeometry}
                 leafStarts={leafStarts}
                 showDebug={SHOW_HIT_ZONES || layoutOpen}

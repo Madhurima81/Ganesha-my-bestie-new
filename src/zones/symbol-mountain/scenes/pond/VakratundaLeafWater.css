@@ -2,6 +2,8 @@
 .vak-leaf-game__svg { display:block; width:100%; height:100%; overflow:visible; pointer-events:none; }
 .vak-leaf-game__svg image, .vak-leaf-game__svg circle { -webkit-user-drag:none; user-select:none; }
 .vak-leaf-game__svg g image, .vak-leaf-game__svg g > circle { pointer-events:auto; touch-action:none; cursor:grab; }
+/* The demo finger is also an <image> inside a <g>, so the rule above made it catch touches and sit on top of the rotate handle. */
+.vak-leaf-game__svg g.vak-leaf-game__finger, .vak-leaf-game__svg g.vak-leaf-game__finger image { pointer-events:none; touch-action:auto; cursor:default; }
 .vak-leaf-game--paused .vak-leaf-game__svg g image,
 .vak-leaf-game--paused .vak-leaf-game__svg g > circle { pointer-events:none; }
 /* Layers deliberately stay bold enough to read on the bright grassy iPad stage. */

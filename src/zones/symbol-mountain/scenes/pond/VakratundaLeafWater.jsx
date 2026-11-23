@@ -188,7 +188,7 @@ export default function VakratundaLeafWater({
   speakLine = null,       // (key, onEnd) => plays a scene VO line (sidebar-safe)
   isLineSpeaking = null,  // () => true while any scene line is speaking
   introDone = true,       // the opening line has finished: the hint clock may start
-  introDemo = false,      // the opening line reached "Drag": show the short drag hand
+  handCue = null,         // hand demo to show RIGHT NOW (set while the action word is spoken): place | placeFar | turn | turnBig | guide
 }) {
   const [leaves, setLeaves] = useState(() => DEFAULT_LEAVES.map((leaf) => {
     const start = leafStarts?.find((s) => s.id === leaf.id);
@@ -425,10 +425,12 @@ export default function VakratundaLeafWater({
     const reach = far ? Math.min(dist, 190) : Math.min(dist, 80);
     return { dx: ((point[0] - leaf.x) / len) * reach, dy: ((point[1] - leaf.y) / len) * reach };
   };
-  const showPlaceDemo = placeLeaf && (introDemo || (stage === 'place' && level >= 2));
-  const placeVec = showPlaceDemo ? dragVector(placeLeaf, level >= 3) : null;
-  const guideVec = stage === 'guide' && level >= 3 && otherLeaf ? dragVector(otherLeaf, false) : null;
-  const rotateDemoLevel = stage !== 'place' ? level : 0;
+  // Hands show only while the spoken action word plays (handCue), never on a loop.
+  const placeVec = placeLeaf && stage === 'place' && (handCue === 'place' || handCue === 'placeFar')
+    ? dragVector(placeLeaf, handCue === 'placeFar') : null;
+  const guideVec = stage === 'guide' && handCue === 'guide' && otherLeaf ? dragVector(otherLeaf, false) : null;
+  const swingSweep = stage !== 'place' && (handCue === 'turn' || handCue === 'turnBig')
+    ? (handCue === 'turnBig' ? 34 : 20) : 0;
 
   return (
     <div className={`vak-leaf-game${paused || finished || !active ? ' vak-leaf-game--paused' : ''}`}>
@@ -522,13 +524,11 @@ export default function VakratundaLeafWater({
               />
               <path d="M-44 -16 L39 -16 M27 -27 L39 -16 L27 -5" className="vak-leaf-game__dir" />
               <text x="77" y="7" textAnchor="middle" fontSize="22" fill="#70491c" pointerEvents="none">↻</text>
-              {isTarget && rotateDemoLevel >= 2 && (
-                <FingerSwing sweep={rotateDemoLevel >= 3 && stage === 'rotate' ? 34 : 20} dur={rotateDemoLevel >= 3 ? 3.2 : 2.4} />
-              )}
+              {isTarget && swingSweep > 0 && <FingerSwing sweep={swingSweep} dur={2.4} />}
             </g>
           );
         })}
-        {placeVec && <FingerDrag x={placeLeaf.x} y={placeLeaf.y} dx={placeVec.dx} dy={placeVec.dy} dur={level >= 3 ? 3 : 2.4} />}
+        {placeVec && <FingerDrag x={placeLeaf.x} y={placeLeaf.y} dx={placeVec.dx} dy={placeVec.dy} dur={2.4} />}
         {guideVec && <FingerDrag x={otherLeaf.x} y={otherLeaf.y} dx={guideVec.dx} dy={guideVec.dy} />}
         {showDebug && (
           <>

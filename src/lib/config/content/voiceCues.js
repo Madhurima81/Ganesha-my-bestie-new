@@ -39,7 +39,14 @@ export const VOICE_CUES = {
   'fjg:marshStart':        { word: 'Guide' },  // "…Guide Mooshika from safe spot to safe spot."
   'garland:ready':         { word: 'Drag' },   // "The garland is ready! Drag it to Ganesha."
   'pond:leafOpening':      { word: 'Drag' },   // "…Drag a leaf into the water to find another way."
-  'pond:rockRound':        { word: 'Press' },  // "…Press and hold to move it."
+  'pond:leafPlaced':       { word: 'turn' },   // "Now turn the leaf…" → hand swings the round button
+  'pond:leafHintPlaceL2':  { word: 'putting' },// "Try putting a leaf in the water."
+  'pond:leafHintPlaceL3':  { word: 'Move' },   // "Move a leaf into the water's path."
+  'pond:leafHintRotateL2': { word: 'Turn' },   // "Turn the leaf to change…"
+  'pond:leafHintRotateL3': { word: 'Drag' },   // "Drag the round button to turn the leaf."
+  'pond:leafHintGuideL2':  { word: 'turn' },   // "Can you turn the water towards the lotus?"
+  'pond:leafHintGuideL3':  { word: 'moving' }, // "Try moving or turning another leaf."
+  'pond:rockRound':       { word: 'Press' },  // "…Press and hold to move it."
   'pond:reedsRound':       { word: 'Gently' }, // "…Gently move them aside."
   'pond:lotusRound':       { word: 'Hold' },   // "Hold the bud to help it bloom."
 };
