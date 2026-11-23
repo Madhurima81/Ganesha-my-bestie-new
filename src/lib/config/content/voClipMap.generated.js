@@ -485,5 +485,10 @@ export const VO_CLIP_BY_TEXT = {
  "the shloka river is waiting for you.": "app-map-02",
  "lambodara lodge is waiting for you.": "app-map-03",
  "look how much we've explored together!": "app-map-04",
- "these are your ganesha powers. tap any one to remember.": "app-progress-01"
+ "these are your ganesha powers. tap any one to remember.": "app-progress-01",
+ "my father is calm and strong. he sits in deep meditation high in the mountains.": "hut-family-tree-17",
+ "my mother is kind and loving. she cares for everyone and fills our home with warmth.": "hut-family-tree-18",
+ "my brother is brave and travels on his peacock.": "hut-family-tree-19",
+ "that's me! i love modaks and helping my friends.": "hut-family-tree-20",
+ "hold on tight! let's go!": "app-ride-01"
 };

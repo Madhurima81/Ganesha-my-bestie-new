@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-11-23] - Mooshika ride plays a recorded line; Family Tree fun-fact rows
+**Touched:** src/lib/components/navigation/MooshikaRideTransition.jsx (+ .test.jsx), voiceover/script.csv + voClipMap.generated.js (rows app-ride-01 and hut-family-tree-17..20 added by hand).
+**Changed:** the ride looks for a recording of "Hold on tight! Let's go!" (no child name, app-ride-01) and plays it through voClip; with no recording it speaks the old line with the name as before. The recording stops on unmount without finishing the transition. Fun-fact rows for the four Family Tree flip cards are added but the facts are still only shown, not spoken.
+**Verified:** 4 new tests (clip plays and the ride ends after it, fallback keeps the name, leaving early stops the clip, muted still ends on time); lint unchanged. NOT played on a device.
+**Open:** record app-ride-01 (the clip does not exist yet, so the old line is still what plays). Word and syllable recordings for Shloka River, intro / zone welcome / map / progress blocks (then wire their own helpers), fun facts (decision pending), Pond leaf lines (other session). Previews in public/audio/words-new and syllables-new are not committed.
+
 ## [2026-11-17 e] - About Me Hut recorded (Family Tree, Food, Dreams, Indian Story + names/cheers), Tap to collect, rows for intro/zone/map
 **Touched:** public/audio/hut-family-tree-01..16, hut-food-01..53, hut-dreams-01..45 (minus 5 unspoken rows), hut-story-01..62, hut-shloka-01, mountain-pond-16 (Tap to collect), vo-manifest.json (403 clips), voiceover/script.csv + voClipMap.generated.js (rows added by hand: Family Tree 13..16, Food 23..53, Dreams 19..45, Story 21..62, and app-intro/zone/map/progress 18 rows for lines NOT yet recorded).
 **Changed:** About Me scenes speak through useVoiceGuidance / useGaneshaVoice / OpeningModal (all clip-aware), so no wiring was needed. Extras recorded: Food option names (30), Dreams kind-action words (4) and 18 'cheer + wish-done' combinations, Story place/region/language/festival names (35). The reveal card 'Tap to collect.' (mountain-pond-16) is now recorded; it plays on the first symbol card of every scene. Unrecorded on purpose: hut-dreams-02 (runtime template), 06/09/12 (wish-done lines are only spoken after a cheer) and 18 ('Great job!' alone).

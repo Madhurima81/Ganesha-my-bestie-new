@@ -1,6 +1,11 @@
 // MooshikaRideTransition.jsx — Chosen avatar rides Mooshika across the sky pan bg
 import React, { useEffect, useRef, useState } from 'react';
 import './MooshikaRideTransition.css';
+import { getVoClipUrl, playVoClip } from '../../audio/voClip';
+
+// Recorded line (voiceover/script.csv, app-ride-01). It has no child name, so one clip works for everyone;
+// with no recording the old computer-voice line (with the name) is used as before.
+const RIDE_LINE = "Hold on tight! Let's go!";
 
 const MooshikaRideTransition = ({ avatarId = 'monkey', profileName, onComplete }) => {
   const completedRef = useRef(false);
@@ -9,7 +14,10 @@ const MooshikaRideTransition = ({ avatarId = 'monkey', profileName, onComplete }
   useEffect(() => {
     const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
     const isAudioOn = audioEnabled === null ? true : audioEnabled === 'true';
-    const canSpeak = isAudioOn && window.speechSynthesis && typeof window.SpeechSynthesisUtterance !== 'undefined';
+    const rideClipUrl = isAudioOn ? getVoClipUrl(RIDE_LINE) : null;
+    let rideClip = null;
+    const canSpeak = Boolean(rideClipUrl)
+      || (isAudioOn && window.speechSynthesis && typeof window.SpeechSynthesisUtterance !== 'undefined');
 
     // Soft whoosh
     try {
@@ -41,7 +49,13 @@ const MooshikaRideTransition = ({ avatarId = 'monkey', profileName, onComplete }
     };
 
     const voTimer = setTimeout(() => {
-      if (canSpeak) {
+      if (rideClipUrl) {
+        // Recorded Ganesha line: ends the ride a moment after it finishes (same pacing as the spoken line).
+        rideClip = playVoClip(rideClipUrl, {
+          volume: 0.9,
+          onEnd: () => { setTimeout(finishTransition, 180); },
+        });
+      } else if (canSpeak) {
         window.speechSynthesis.cancel();
         const u = new window.SpeechSynthesisUtterance(
           `Hold on tight, ${profileName || 'little one'}! Let's go!`
@@ -73,6 +87,7 @@ const MooshikaRideTransition = ({ avatarId = 'monkey', profileName, onComplete }
       clearTimeout(doneTimer);
       if (!completedRef.current) {
         window.speechSynthesis?.cancel();
+        rideClip?.stop(false); // our own recording: stop it without firing its end
       }
     };
   }, [profileName, onComplete]);
