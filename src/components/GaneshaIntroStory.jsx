@@ -3,6 +3,7 @@ import './GaneshaIntroStory.css';
 import VOReplayButton from '../lib/components/feedback/VOReplayButton';
 import { GANESHA_USAGE_SYSTEM } from '../lib/config/ganeshaUsageSystem';
 import WelcomeLayers from '../lib/components/navigation/WelcomeLayers';
+import { getVoClipUrl, playVoClip } from '../lib/audio/voClip';
 
 const GARDEN_BG = '/intro-story/story-garden-bg.webp';
 const AUTO_ADVANCE_PAUSE_MS = 2500;     // breathing room after the voice ends
@@ -26,6 +27,14 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
   const speakTokenRef = useRef(0);
   // Page the child replayed by hand: auto-advance leaves it alone (they are in control now).
   const replayedSlideRef = useRef(-1);
+  // The recorded line (voClip.js) currently playing, if this line has a recording. speechSynthesis.cancel()
+  // cannot stop it, so every place that cancels speech also calls stopClip().
+  const clipRef = useRef(null);
+  const stopClip = useCallback(() => {
+    const clip = clipRef.current;
+    clipRef.current = null;
+    clip?.stop(false); // stop the audio without firing its end (a cancelled line is not a finished line)
+  }, []);
 
   // Pages 1, 3 and 5 share ONE garden background with the characters laid over it. Layer positions
   // (l = left, t = top, w = width) are % of the background picture, so they stay put at any screen size.
@@ -71,6 +80,7 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
   );
 
   const finishStory = () => {
+    stopClip();
     window.speechSynthesis?.cancel?.();
 
     if (profileId) {
@@ -104,12 +114,27 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
     const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
 
     if (audioEnabled === 'false') return false;
-    if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return false;
-    if (!hasSpeechGestureRef.current) return false;
 
     const slide = slides[slideIndex];
 
     if (!slide?.vo) return false;
+
+    // A recording of this exact line (voiceover/script.csv)? Play it instead of Web Speech.
+    const clipUrl = getVoClipUrl(slide.vo);
+    if (clipUrl) {
+      stopClip();
+      try { window.speechSynthesis?.cancel?.(); } catch { /* no-op */ }
+      const clipToken = ++speakTokenRef.current;
+      clipRef.current = playVoClip(clipUrl, {
+        onEnd: () => {
+          if (clipToken === speakTokenRef.current) onDone?.();
+        },
+      });
+      return true;
+    }
+
+    if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return false;
+    if (!hasSpeechGestureRef.current) return false;
 
     const utterance = new window.SpeechSynthesisUtterance(slide.vo);
     const voices = window.speechSynthesis.getVoices?.() || [];
@@ -136,12 +161,13 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
     utterance.pitch = 1;
     utterance.volume = 1;
 
+    stopClip();
     window.speechSynthesis.cancel();
     window.speechSynthesis.resume?.();
     window.speechSynthesis.speak(utterance);
 
     return true;
-  }, [slides]);
+  }, [slides, stopClip]);
 
   useEffect(() => {
     if (!storyStarted) return undefined;
@@ -181,9 +207,10 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
         speechTimerRef.current = null;
       }
 
+      stopClip();
       window.speechSynthesis?.cancel?.();
     };
-  }, [currentSlide, slides, speakSlide, storyStarted]);
+  }, [currentSlide, slides, speakSlide, storyStarted, stopClip]);
 
   useEffect(() => {
     const nextSlide = slides[currentSlide + 1];
@@ -202,9 +229,10 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
         clearTimeout(speechTimerRef.current);
       }
 
+      stopClip();
       window.speechSynthesis?.cancel?.();
     };
-  }, []);
+  }, [stopClip]);
 
   // No "Tap to begin": once the sunray opening ends (or is skipped) page 1 starts by itself.
   // The child already tapped (profile icon / Mooshika ride / Skip), so voice is allowed.
@@ -228,6 +256,7 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
   const handleBack = () => {
     if (currentSlide <= 0) return;
 
+    stopClip();
     window.speechSynthesis?.cancel?.();
     setCurrentSlide((prev) => prev - 1);
   };
@@ -264,6 +293,13 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
     const voTimer = setTimeout(() => {
       try {
         if (localStorage.getItem('ganesha_audio_enabled') === 'false') return;
+        // Recording of the opening line? Play it instead of Web Speech (page 1's voice replaces it).
+        const openingUrl = getVoClipUrl(OPENING_VO);
+        if (openingUrl) {
+          stopClip();
+          clipRef.current = playVoClip(openingUrl);
+          return;
+        }
         if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
         const u = new window.SpeechSynthesisUtterance(OPENING_VO);
         const voices = window.speechSynthesis.getVoices?.() || [];
@@ -281,7 +317,7 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
       clearTimeout(titleTimer);
       clearTimeout(voTimer);
     };
-  }, [showVideoIntro]);
+  }, [showVideoIntro, stopClip]);
 
   if (showVideoIntro) {
     return (

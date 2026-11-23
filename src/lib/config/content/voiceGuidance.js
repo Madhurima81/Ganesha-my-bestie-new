@@ -791,19 +791,22 @@ const PRERECORDED_SYLLABLE_PATHS = {
     nam: '/audio/syllables/nirvighnam-nam.mp3'
   },
   kurumedeva: {
-    kuru: '/audio/syllables/kurume -kuru.mp3',
-    me: '/audio/syllables/kurume-me.mp3',
-    de: '/audio/syllables/deva-de.mp3',
-    va: '/audio/syllables/deva-va.mp3',
-    // The scene's 3rd syllable is the whole "deva" (de + va, trimmed and joined from the two recordings above).
+    // All five clips are in the same voice and named <word>-<syllable>.mp3 (re-recorded 2026-11-23).
+    kuru: '/audio/syllables/kurumedeva-kuru.mp3',
+    me: '/audio/syllables/kurumedeva-me.mp3',
+    de: '/audio/syllables/kurumedeva-de.mp3',
+    va: '/audio/syllables/kurumedeva-va.mp3',
+    // The live scene plays Kuru · me · deva: "deva" is its own recording (one chunk).
     deva: '/audio/syllables/kurumedeva-deva.mp3'
   },
   sarvakaryeshu: {
+    // The four syllables the game uses: sar · va · kar · yeshu (re-recorded 2026-11-23).
     sar: '/audio/syllables/sarvakaryeshu-sar.mp3',
     va: '/audio/syllables/sarvakaryeshu-va.mp3',
-    kar: '/audio/voiceover/sarvakaryeshu/kar.mp3', // was sarvakaryeshu-kar.mp3 (missing); this is the real "kar" clip
+    kar: '/audio/syllables/sarvakaryeshu-kar.mp3',
+    yeshu: '/audio/syllables/sarvakaryeshu-yeshu.mp3',
+    // Older 5-syllable lists (smartwatch widget, coach) still ask for rye / shu; not part of the live game.
     rye: '/audio/syllables/sarvakaryeshu-rye.mp3',
-    yeshu: '/audio/syllables/sarvakaryeshu-shu.mp3',
     shu: '/audio/syllables/sarvakaryeshu-shu.mp3'
   },
   sarvada: {
