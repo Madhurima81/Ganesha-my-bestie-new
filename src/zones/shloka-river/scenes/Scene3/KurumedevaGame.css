@@ -159,7 +159,14 @@
 }
 
 .kuru-beaver.is-walking {
-  animation: kuruBeaverWalk 0.72s ease-in-out infinite;
+  animation: none;
+}
+
+.kuru-beaver,
+.kuru-beaver-baby {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .kuru-object {
@@ -1145,7 +1152,7 @@
 
 .kuru-friend--helping img {
   transform-origin: center bottom;
-  animation: kuruHelping 1.4s ease-in-out infinite;
+  animation: none;
 }
 
 @keyframes kuruHelping {

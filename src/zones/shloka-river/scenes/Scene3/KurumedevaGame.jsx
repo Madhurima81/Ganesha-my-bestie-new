@@ -42,7 +42,8 @@ import beaverAskingImg from './assets/images/bridge/Characters/beaver-asking-bli
 import beaverIdleWorriedImg from './assets/images/bridge/Characters/beaver-idle-worried.webp';
 // Beaver's own helping pose differs per round — matches the beat player's
 // beaver-lift (with Elephant) vs beaver-tie (with Monkey).
-import beaverTieImg from './assets/images/bridge/Characters/beaver-tie.webp';
+import beaverWatchingImg from './assets/images/bridge/Characters/beaver-watching.webp';
+import beaverHappyImg from './assets/images/bridge/Characters/beaver-happy.png';
 import beaverPickPlankAnim from './assets/images/bridge/Characters/beaver-pick-plank.webp'; // plays once, holds last frame (beaver holding the plank)
 // Crossing = looping walk cycle (the beaver keeps walking while it crosses); reunion = hug that plays once and holds.
 import beaverCrossingImg from './assets/images/bridge/Characters/beaver-walking-anim.webp';
@@ -118,6 +119,8 @@ const WAIT_SPOTS = [
   { l: 18, t: 62 },
   { l: 7.7, t: 62.2 },
 ];
+const MONKEY_TIED_PAUSE_MS = 1000; // tied logs stay on screen before Monkey leaves
+const MONKEY_BACK_PAUSE_MS = 600; // Monkey settles on the bank before the plank round
 const WALK_TO_MS = 1000; // amble to the bridge
 const VINE_REVEAL_DELAY_MS = 950;
 // Pause after Elephant's logs land — long enough for the vine reveal to
@@ -302,7 +305,8 @@ const POSE_ASSETS = [
   bridgeStep2Img,
   beaverAskingImg,
   beaverIdleWorriedImg,
-  beaverTieImg,
+  beaverWatchingImg,
+  beaverHappyImg,
   beaverPickPlankAnim,
   beaverCrossingImg,
   babyBeaverWavingImg,
@@ -772,32 +776,42 @@ export default function KurumedevaGame({
       // ---------------------------------------------------------------
       setBridgeWobbling(false);
       setVineReady(false);
-      setBridgeStep(2);
-      setLitCount(SYLLABLES_LIT_AFTER_STEP[1]);
-      window.setTimeout(() => onMicroWin?.(), 0);
-      // kuru_rope_after is chained after the "me" syllable finishes (see
-      // onSyllableLit below) — same race as kuru_logs_after above.
 
       safeAfter(MONKEY_TIE_MS, () => {
-        setFriendImgStates((prev) => {
-          const next = [...prev];
-          next[1] = 'carry';
-          return next;
-        });
-        setFriendPositions((prev) => {
-          const next = [...prev];
-          next[1] = WAIT_SPOTS[1];
-          return next;
-        });
-        setFriendStep(2);
-        setHelpDelivered(false);
-        setHelpTokenPos(HELP_TOKEN_HOME);
+        // Reveal the tied bridge only after Monkey has finished tying.
+        // kuru_rope_after is chained after the "me" syllable finishes (see
+        // onSyllableLit below) — same race as kuru_logs_after above.
+        setBridgeStep(2);
+        setLitCount(SYLLABLES_LIT_AFTER_STEP[1]);
+        window.setTimeout(() => onMicroWin?.(), 0);
 
-        placeDoneRef.current = false;
-        setPlacedCount(0);
-        setPlaceActive(true);
-        setIsRoundSettling(false);
-        onBeatComplete?.(2);
+        // 1) Let the tied logs be seen, 2) Monkey walks back, 3) only then the plank round.
+        safeAfter(MONKEY_TIED_PAUSE_MS, () => {
+          setWalkingIndex(1);
+          setFriendImgStates((prev) => {
+            const next = [...prev];
+            next[1] = 'carry';
+            return next;
+          });
+          setFriendPositions((prev) => {
+            const next = [...prev];
+            next[1] = WAIT_SPOTS[1];
+            return next;
+          });
+
+          safeAfter(WALK_TO_MS + MONKEY_BACK_PAUSE_MS, () => {
+            setWalkingIndex(null);
+            setFriendStep(2);
+            setHelpDelivered(false);
+            setHelpTokenPos(HELP_TOKEN_HOME);
+
+            placeDoneRef.current = false;
+            setPlacedCount(0);
+            setPlaceActive(true);
+            setIsRoundSettling(false);
+            onBeatComplete?.(2);
+          });
+        });
       });
     });
   }, [onBeatComplete, debugLayout.elephantDrop, friendImgStates, friendPositions, friendStep, isPaused, isRoundSettling, markInteraction, onMicroWin, placeActive, playSceneLine, safeAfter, stopSceneVoice]);
@@ -914,7 +928,7 @@ export default function KurumedevaGame({
     setFriendImgStates(['empty', 'empty']);
     setFriendPositions(WAIT_SPOTS.map((spot) => ({ l: spot.l, t: spot.t })));
 
-    safeAfter(420, () => {
+    safeAfter(850, () => {
       setIsRoundSettling(false);
       setPhase('crossing');
       phaseRef.current = 'crossing';
@@ -1279,21 +1293,18 @@ export default function KurumedevaGame({
     return null;
   })();
 
-  // While a friend is walking over/helping (after the ask, before the next
-  // round starts), Beaver's own pose matches which friend it is — lift with
-  // Elephant, tie with Monkey — not just a generic worried/idle look.
-  const isHelpingInProgress = isRoundSettling && helpDelivered && !placeActive;
+  // Beaver only asks, watches her helpers, picks up the plank, then is happy.
   const beaverImg = phase === 'done'
     ? beaverBabyReunionImg
     : phase === 'crossing'
       ? beaverCrossingImg
-      : placeActive
-        ? beaverPickPlankAnim
-        : isHelpingInProgress
-          ? (friendStep === 0 ? beaverIdleWorriedImg : beaverTieImg) // Elephant does the lifting; Beaver just watches
+      : bridgeStep === TOTAL_ROUNDS
+        ? beaverHappyImg
+        : placeActive
+          ? beaverPickPlankAnim // holds its last frame (plank in hands) for the whole plank round
           : canAsk
             ? beaverAskingImg
-            : beaverIdleWorriedImg;
+            : beaverWatchingImg;
 
   return (
     <div className={`kuru-game${hideElements ? ' is-hidden' : ''}${debugMode ? ' is-debugging' : ''}${handPaused ? ' is-paused' : ''}`}>
