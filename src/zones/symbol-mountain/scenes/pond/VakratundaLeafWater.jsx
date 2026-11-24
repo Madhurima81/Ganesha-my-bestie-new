@@ -398,6 +398,8 @@ export default function VakratundaLeafWater({
       startAngle: leaf.angle,
       pointerStartAngle: Math.atan2(point.y - leaf.y, point.x - leaf.x) * 180 / Math.PI,
       startTip: f.points[f.points.length - 1],
+      startFlow: f,
+      previewLeaves: leavesRef.current,
       changed: false,
     };
     setSelected(leaf.id);
@@ -410,7 +412,9 @@ export default function VakratundaLeafWater({
     if (!point) return;
     event.preventDefault();
     event.stopPropagation();
-    setLeaves((previous) => previous.map((leaf) => {
+    // Keep the latest pointer position synchronously available to pointer-up.
+    // React may not have committed the last move when the child releases.
+    const nextLeaves = leavesRef.current.map((leaf) => {
       if (leaf.id !== drag.id) return leaf;
       const updated = drag.mode === 'rotate'
         ? { ...leaf, moved: true, angle: clamp(drag.startAngle + ((Math.atan2(point.y - leaf.y, point.x - leaf.x) * 180 / Math.PI - drag.pointerStartAngle + 540) % 360 - 180), -68, 68) }
@@ -419,8 +423,12 @@ export default function VakratundaLeafWater({
         drag.changed = true;
       }
       return updated;
-    }));
-  }, [paused, finished, screenPoint]);
+    });
+    drag.previewLeaves = nextLeaves;
+    leavesRef.current = nextLeaves;
+    flowRef.current = simulateVakratundaFlow(nextLeaves, geometry);
+    setLeaves(nextLeaves);
+  }, [paused, finished, screenPoint, geometry]);
 
   const endDrag = useCallback((event) => {
     const drag = dragRef.current;
@@ -434,13 +442,16 @@ export default function VakratundaLeafWater({
       // Meaningful manipulation restarts this beat's hint ladder, even after L1/L2.
       resetLadder();
       if (drag.mode === 'rotate') {
-        const leaf = leavesRef.current.find((l) => l.id === drag.id);
-        const f = flowRef.current;
+        const leaf = (drag.previewLeaves || leavesRef.current).find((l) => l.id === drag.id);
+        const f = simulateVakratundaFlow(drag.previewLeaves || leavesRef.current, geometry);
         const endTip = f.points[f.points.length - 1];
         const turned = leaf ? Math.abs(leaf.angle - drag.startAngle) : 0;
         const moved = Math.hypot(endTip[0] - drag.startTip[0], endTip[1] - drag.startTip[1]);
-        // Progress is earned by the child, not by the teaching hand animation.
-        if (leaf && f.used.has(leaf.id) && turned >= 12 && moved >= 50) {
+        // A genuinely rotated leaf counts when it is in the water's path.
+        // The old 50px endpoint threshold blocked ordinary, visibly useful turns.
+        // Check either the before or after contact: rotating can move the tip away.
+        const contacted = drag.startFlow.used.has(drag.id) || f.used.has(drag.id);
+        if (leaf && contacted && turned >= 12 && moved >= 12) {
           if (!hasRotated && (firstLeafId === null || leaf.id === firstLeafId)) {
             setHasRotated(true);
             if (!turningRef.current) {
@@ -459,7 +470,7 @@ export default function VakratundaLeafWater({
       }
     }
     setSelected(null);
-  }, [hasAdjusted, hasRotated, firstLeafId, onFirstAttempt, speakWhenFree, resetLadder]);
+  }, [hasAdjusted, hasRotated, firstLeafId, onFirstAttempt, speakWhenFree, resetLadder, geometry]);
 
   // After success the finished water and leaves stay on screen, frozen.
   if (!active && !finished) return null;
