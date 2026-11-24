@@ -532,7 +532,6 @@ export default function VakratundaLeafWater({
                   onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag}
                 />
               )}
-              <path d="M-44 -16 L39 -16 M27 -27 L39 -16 L27 -5" className="vak-leaf-game__dir" />
               {canRotate && <text x="77" y="7" textAnchor="middle" fontSize="22" fill="#70491c" pointerEvents="none">↻</text>}
               {isTarget && swingSweep > 0 && <FingerSwing sweep={swingSweep} dur={2.4} />}
             </g>

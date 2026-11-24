@@ -23,7 +23,6 @@
 @keyframes vak-leaf-contact { from{transform:scale(.55);opacity:.8} to{transform:scale(1.55);opacity:0} }
 @media(prefers-reduced-motion:reduce){.vak-leaf-game__contact,.vak-leaf-game__water-highlight{animation:none;}}
 
-.vak-leaf-game__dir { fill:none; stroke:#fff9d5; stroke-width:4; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }
 
 
 /* ---- Adaptive hints (visual layer of the ladder) ---- */
