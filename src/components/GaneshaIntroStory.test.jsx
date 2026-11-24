@@ -71,7 +71,7 @@ test('muted / no voice: page turns after the read-time fallback', () => {
 
 test('voice that never reports its end: watchdog still turns the page', () => {
   const { container } = startStory();
-  act(() => { jest.advanceTimersByTime(8000 + 45 * 90 + 2600); });
+  act(() => { jest.advanceTimersByTime(8000 + spoken[0].text.length * 90 + 2600); });
   expect(activeDot(container)).toBe(1);
 });
 
