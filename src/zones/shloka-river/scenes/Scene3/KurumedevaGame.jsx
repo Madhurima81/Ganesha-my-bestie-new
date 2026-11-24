@@ -74,7 +74,7 @@ const FRIENDS = [
     label: 'Elephant',
     idleImg: elephantIdleBananaImg, // idle, eating a banana, before being asked
     helpingImg: elephantHelpingImg, // helping settle the logs into place
-    watchingImg: elephantIdleBananaImg, // placeholder until an elephant-neutral pose exists
+    watchingImg: elephantHelpingImg, // stays in the log-lift pose after helping (never back to idle)
     celebrateImg: elephantCelebrateImg,
     helpBubbleImg: helpBubbleElephantImg,
   },
