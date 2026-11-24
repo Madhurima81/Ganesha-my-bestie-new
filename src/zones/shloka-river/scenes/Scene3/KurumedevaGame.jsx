@@ -19,11 +19,12 @@ import elephantHelpingImg from './assets/images/bridge/Characters/elephant-lift.
 import elephantLiftLogsAnim from './assets/images/bridge/Characters/elephant-lift-logs.webp'; // plays once, holds last frame
 import elephantCarryPlaceAnim from './assets/images/bridge/Characters/elephant-carry-place-logs.webp'; // plays once: carries logs, sets them down, holds last frame
 import logsStackedObj from './assets/images/bridge/Bridge/logs-stacked.webp';
-import elephantHappyImg from './assets/images/bridge/Characters/elephant-happy.webp';
+import elephantCelebrateImg from './assets/images/bridge/Characters/elephant-celebrate.webp';
 import helpBubbleElephantImg from './assets/images/bridge/Characters/help-bubble-elephant-logs.webp';
 import monkeyPlayingTwigImg from './assets/images/bridge/Characters/monkey-playing-twig-blink.webp'; // blinks (2.5 s rest)
 import monkeyHelpingImg from './assets/images/bridge/Characters/monkey-tie.webp';
-import monkeyHappyImg from './assets/images/bridge/Characters/monkey-happy.webp';
+import monkeyNeutralImg from './assets/images/bridge/Characters/monkey-neutral.webp';
+import monkeyCelebrateImg from './assets/images/bridge/Characters/monkey-celebrate.webp';
 import helpBubbleMonkeyImg from './assets/images/Kurumedeva/help-vine.webp';
 
 import plankObj from './assets/images/Kurumedeva/plank-bunny.webp';
@@ -71,17 +72,19 @@ const FRIENDS = [
   {
     ...KURUMEDEVA_LAYOUT.friends[0],
     label: 'Elephant',
-    carryImg: elephantIdleBananaImg, // idle, eating a banana, before being asked and while moving
+    idleImg: elephantIdleBananaImg, // idle, eating a banana, before being asked
     helpingImg: elephantHelpingImg, // helping settle the logs into place
-    emptyImg: elephantHappyImg,
+    watchingImg: elephantIdleBananaImg, // placeholder until an elephant-neutral pose exists
+    celebrateImg: elephantCelebrateImg,
     helpBubbleImg: helpBubbleElephantImg,
   },
   {
     ...KURUMEDEVA_LAYOUT.friends[1],
     label: 'Monkey',
-    carryImg: monkeyPlayingTwigImg, // idle/waiting pose before being asked and while moving
+    idleImg: monkeyPlayingTwigImg, // idle/waiting pose before being asked
     helpingImg: monkeyHelpingImg, // tying the rope
-    emptyImg: monkeyHappyImg,
+    watchingImg: monkeyNeutralImg,
+    celebrateImg: monkeyCelebrateImg,
     helpBubbleImg: helpBubbleMonkeyImg,
   },
 ];
@@ -127,6 +130,7 @@ const VINE_REVEAL_DELAY_MS = 950;
 // read as a beat before "ask Monkey" — but the swap itself is instant
 // (single crossfade), no sliding/wobbling.
 const ELEPHANT_RETURN_MS = 1000;
+const HELPER_CELEBRATE_MS = 1100; // helpers celebrate before Beaver crosses
 const POST_LOG_PAUSE_MS = 900;
 // Elephant help beat: lift -> carry -> place -> small flip -> step1 bridge appears.
 const ELEPHANT_LIFT_MS = 2400; // lift GIF = 8 frames x 300ms (slow enough that the lift reads)
@@ -209,12 +213,12 @@ function debugArtFor(key, pos, layout) {
   const r = pos.r || 0;
   const flip = !!pos.flip;
   const wOf = (k, fallback) => (layout && layout[k] && layout[k].w != null ? layout[k].w : fallback);
-  if (key.startsWith('friend')) return { src: FRIENDS[tail]?.carryImg, w: pos.w || 10, r: 0, flip };
-  if (key.startsWith('helper')) return { src: FRIENDS[tail]?.emptyImg, w: FRIENDS[tail]?.w || 10, r: 0, flip };
+  if (key.startsWith('friend')) return { src: FRIENDS[tail]?.idleImg, w: pos.w || 10, r: 0, flip };
+  if (key.startsWith('helper')) return { src: FRIENDS[tail]?.watchingImg, w: FRIENDS[tail]?.w || 10, r: 0, flip };
   if (key === 'beaverPick') return { src: beaverPickPlankAnim, w: KURUMEDEVA_LAYOUT.beaver.w, r: 0, flip };
   if (key === 'elephantDrop') return { src: elephantCarryPlaceAnim, w: FRIENDS[0]?.w || 10, r: 0, flip: !!FRIENDS[0]?.flip };
   if (key === 'elephantFlip') return { src: logsStackedObj, w: wOf('elephantFlip', MINI_LOG_BUNDLE_W), r: 0 };
-  if (key.startsWith('wait')) return { src: FRIENDS[tail]?.emptyImg, w: FRIENDS[tail]?.w || 10, r: 0, flip };
+  if (key.startsWith('wait')) return { src: FRIENDS[tail]?.watchingImg, w: FRIENDS[tail]?.w || 10, r: 0, flip };
   if (key.startsWith('logPile')) return { src: logsStackedObj, w: wOf('logPile0', LOG_PILE_W), r: 0 };
   if (key === 'vineSpot') return { src: vineObj, w: wOf('vineSpot', VINE_SPOT.w), r: 0 };
   if (key === 'helpTokenHome') return { src: helpHandIconImg, w: 8, r: 0 };
@@ -289,11 +293,12 @@ const POSE_ASSETS = [
   bgImg,
   elephantIdleBananaImg,
   elephantHelpingImg,
-  elephantHappyImg,
+  elephantCelebrateImg,
   helpBubbleElephantImg,
   monkeyPlayingTwigImg,
   monkeyHelpingImg,
-  monkeyHappyImg,
+  monkeyNeutralImg,
+  monkeyCelebrateImg,
   helpBubbleMonkeyImg,
   plankObj,
   logPieceObj,
@@ -371,11 +376,16 @@ export default function KurumedevaGame({
   const [beaverPos, setBeaverPos] = useState(BEAVER_PATH[0]);
   const [litCount, setLitCount] = useState(resumeAtCrossing ? SYLLABLES.length : (seedRounds > 0 ? SYLLABLES_LIT_AFTER_STEP[seedRounds - 1] : 0));
   const [tappedId, setTappedId] = useState(null);
-  // Finished rounds: Elephant stays in his helping pose at the helper spot; Monkey waits to be asked.
-  const [friendImgStates, setFriendImgStates] = useState(() => FRIENDS.map((_, i) => (resumeAtCrossing ? 'empty' : (i === 0 && seedRounds >= 1 ? 'helping' : 'carry'))));
+  // Finished rounds: a helper who has helped watches from the bank; one not yet asked stays idle.
+  const [friendImgStates, setFriendImgStates] = useState(() => FRIENDS.map((_, i) => {
+    if (resumeAtCrossing) return 'watching';
+    if (i === 0 && seedRounds >= 1) return 'watching';
+    if (i === 1 && seedRounds >= 2) return 'watching';
+    return 'idle';
+  }));
   const [friendPositions, setFriendPositions] = useState(() => FRIENDS.map((friend, i) => {
     if (resumeAtCrossing) return { l: WAIT_SPOTS[i].l, t: WAIT_SPOTS[i].t };
-    if (i === 0 && seedRounds >= 1) return { l: HELPER_SPOTS[0].l, t: HELPER_SPOTS[0].t };
+    if (i === 0 && seedRounds >= 1) return { l: WAIT_SPOTS[0].l, t: WAIT_SPOTS[0].t };
     if (i === 1 && seedRounds >= 2) return { l: WAIT_SPOTS[1].l, t: WAIT_SPOTS[1].t };
     return { l: friend.l, t: friend.t };
   }));
@@ -607,7 +617,7 @@ export default function KurumedevaGame({
       setBeaverPos(BEAVER_PATH[0]);
       setLitCount(0);
       setTappedId(null);
-      setFriendImgStates(FRIENDS.map(() => 'carry'));
+      setFriendImgStates(FRIENDS.map(() => 'idle'));
       setFriendPositions(FRIENDS.map((friend) => ({ l: friend.l, t: friend.t })));
       setHelpTokenPos(HELP_TOKEN_HOME);
       setIsDraggingHelp(false);
@@ -679,7 +689,7 @@ export default function KurumedevaGame({
     if (isPaused || phaseRef.current !== 'play') return;
     if (placeActive || isRoundSettling) return;
     if (friendIndex !== friendStep) return;
-    if (friendImgStates[friendIndex] !== 'carry') return;
+    if (friendImgStates[friendIndex] !== 'idle') return;
 
     stopSceneVoice?.();
     markInteraction();
@@ -750,11 +760,16 @@ export default function KurumedevaGame({
           setLitCount(SYLLABLES_LIT_AFTER_STEP[0]);
           window.setTimeout(() => onMicroWin?.(), 0);
           setVineReady(true);
-          // Logs are now the bridge: only THEN Elephant walks back to where he landed after the help-bubble drop.
+          // Logs are now the bridge: Elephant becomes a neutral watcher and walks back to the bank.
+          setFriendImgStates((prev) => {
+            const next = [...prev];
+            next[0] = 'watching';
+            return next;
+          });
           setWalkingIndex(0);
           setFriendPositions((prev) => {
             const next = [...prev];
-            next[0] = HELPER_SPOTS[0];
+            next[0] = WAIT_SPOTS[0];
             return next;
           });
         });
@@ -788,9 +803,10 @@ export default function KurumedevaGame({
         // 1) Let the tied logs be seen, 2) Monkey walks back, 3) only then the plank round.
         safeAfter(MONKEY_TIED_PAUSE_MS, () => {
           setWalkingIndex(1);
+          // Neutral watcher while walking back to the bank.
           setFriendImgStates((prev) => {
             const next = [...prev];
-            next[1] = 'carry';
+            next[1] = 'watching';
             return next;
           });
           setFriendPositions((prev) => {
@@ -923,12 +939,12 @@ export default function KurumedevaGame({
     setBridgeStep(TOTAL_ROUNDS);
     setPlaceActive(false);
     setIsRoundSettling(true);
-    // Bridge is fully done — only now do Elephant and Monkey switch from
-    // their "helping" pose to happy.
-    setFriendImgStates(['empty', 'empty']);
+    // Bridge is fully done — only now do Elephant and Monkey celebrate,
+    // then Beaver crosses.
+    setFriendImgStates(['celebrating', 'celebrating']);
     setFriendPositions(WAIT_SPOTS.map((spot) => ({ l: spot.l, t: spot.t })));
 
-    safeAfter(850, () => {
+    safeAfter(HELPER_CELEBRATE_MS, () => {
       setIsRoundSettling(false);
       setPhase('crossing');
       phaseRef.current = 'crossing';
@@ -1584,14 +1600,16 @@ export default function KurumedevaGame({
           const pos = friendPositions[index];
           const isCurrent = index === friendStep && phase === 'play';
           const isTapped = tappedId === friend.id;
-          const isWaiting = index > friendStep;
+          const isWaiting = index > friendStep && imgState === 'idle';
           const isHelping = imgState === 'helping';
-          const isHelped = imgState === 'empty' && index <= friendStep;
+          const isWatching = imgState === 'watching';
+          const isCelebrating = imgState === 'celebrating';
           const isCrossing = phase === 'crossing' || phase === 'done';
           const isWalking = walkingIndex === index;
-          let friendSprite = imgState === 'carry'
-            ? friend.carryImg
-            : isHelping ? friend.helpingImg : friend.emptyImg;
+          let friendSprite = friend.idleImg;
+          if (isHelping) friendSprite = friend.helpingImg;
+          else if (isWatching) friendSprite = friend.watchingImg;
+          else if (isCelebrating) friendSprite = friend.celebrateImg;
           if (index === 0) {
             if (elephantPhase === 'lifting') friendSprite = elephantLiftLogsAnim;
             else if (elephantPhase === 'carrying' || elephantPhase === 'placing') friendSprite = elephantCarryPlaceAnim;
@@ -1605,14 +1623,15 @@ export default function KurumedevaGame({
               data-friend-id={friend.id}
               className={`
                 kuru-friend
-                ${isCurrent && imgState === 'carry' ? 'is-active' : ''}
+                ${isCurrent && imgState === 'idle' ? 'is-active' : ''}
                 ${isTapped ? 'is-tapped' : ''}
                 ${isWaiting ? 'kuru-friend--waiting' : ''}
                 ${isHelping ? 'kuru-friend--helping' : ''}
-                ${isHelped ? 'kuru-friend--helped' : ''}
+                ${isWatching ? 'kuru-friend--watching' : ''}
+                ${isCelebrating ? 'kuru-friend--celebrating' : ''}
                 ${isCrossing ? 'kuru-friend--crossing' : ''}
                 ${isWalking ? 'is-walking' : ''}
-                ${isCurrent && imgState === 'carry' && canAsk && targetGlow ? 'hint-glow' : ''}
+                ${isCurrent && imgState === 'idle' && canAsk && targetGlow ? 'hint-glow' : ''}
                 ${elephantAnimating ? 'kuru-friend--elephant-action' : ''}
                 ${elephantCarrying ? 'kuru-friend--elephant-carrying' : ''}
               `}
@@ -1627,7 +1646,7 @@ export default function KurumedevaGame({
               }}
             >
               <PoseImage
-                key={elephantAnimating || (index === 1 && isHelping) ? friendSprite : 'pose'} // remount on action swaps: no crossfade, so no "two elephants"
+                key={elephantAnimating || isHelping || isCelebrating ? friendSprite : 'pose'} // remount on action swaps: no crossfade, so no "two elephants"
                 src={friendSprite}
                 alt={friend.label}
                 draggable={false}

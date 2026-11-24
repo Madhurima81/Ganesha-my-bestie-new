@@ -279,13 +279,16 @@
   animation: kuruFriendTap 0.25s ease-out !important;
 }
 
-.kuru-friend--helped {
+.kuru-friend--watching,
+.kuru-friend--celebrating {
   opacity: 1;
   pointer-events: none;
 }
 
-.kuru-friend--helped > .pose-image {
+.kuru-friend--watching > .pose-image,
+.kuru-friend--celebrating > .pose-image {
   transform-origin: center bottom;
+  animation: none;
 }
 
 /* Friend ambling to the gap / back to the bank line. */
