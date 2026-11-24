@@ -113,14 +113,19 @@ const VOICE_LINES = {
   leafOpening: 'The rock is blocking the water! Drag a leaf into the water to find another way.',
   leafPlaced: 'Now drag the little circle to turn the leaf.',
   leafTurning: 'Look! The water is changing direction!',
+  leafSecond: 'Now drag the other leaf into the water’s path to help it reach the lotus.',
   trunkSuccess: 'You found another way! The lotus is standing tall.',
   // Adaptive hint ladder: L1 is visual only, so only L2 / L3 have a line.
   leafHintPlaceL2: 'Try putting a leaf in the water.',
   leafHintPlaceL3: 'Move a leaf into the water’s path.',
-  leafHintRotateL2: 'Try turning the leaf.',
+  leafHintRotateL2: 'Try turning the little circle.',
   leafHintRotateL3: 'Drag the little circle to turn the leaf.',
-  leafHintGuideL2: 'Can you turn the water towards the lotus?',
-  leafHintGuideL3: 'Try moving or turning another leaf.',
+  leafHintGuideL2: 'Can you guide the water towards the lotus?',
+  leafHintGuideL3: 'Try moving or turning a leaf.',
+  leafHintSecondPlaceL2: 'Could the other leaf help?',
+  leafHintSecondPlaceL3: 'Drag the other leaf into the water’s path.',
+  leafHintSecondRotateL2: 'Try turning the second leaf.',
+  leafHintSecondRotateL3: 'Drag its little circle to turn the leaf.',
 
   // Lotus phase (press-and-hold to bloom) — second
   lotusRound: 'Hold the bud to help it bloom.',
@@ -141,6 +146,11 @@ const LEAF_HAND_BY_LINE = {
   leafHintPlaceL3: 'placeFar',
   leafHintRotateL2: 'turn',
   leafHintRotateL3: 'turnBig',
+  leafSecond: 'guide',
+  leafHintSecondPlaceL2: 'guide',
+  leafHintSecondPlaceL3: 'guide',
+  leafHintSecondRotateL2: 'turn',
+  leafHintSecondRotateL3: 'turnBig',
   leafHintGuideL2: 'turn',
   leafHintGuideL3: 'guide',
 };
@@ -2188,6 +2198,7 @@ const PondSceneContent = ({
                 isLineSpeaking={() => !!currentLineKeyRef.current}
                 introDone={leafIntroDone}
                 handCue={leafHand}
+                allowThirdLeaf={false}
                 geometry={leafGeometry}
                 leafStarts={leafStarts}
                 showDebug={SHOW_HIT_ZONES || layoutOpen}

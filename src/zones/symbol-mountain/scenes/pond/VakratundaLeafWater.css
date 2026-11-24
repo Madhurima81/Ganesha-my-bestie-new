@@ -25,6 +25,7 @@
 
 
 
+
 /* ---- Adaptive hints (visual layer of the ladder) ---- */
 .vak-leaf-game__svg image.vak-leaf-game__leaf--hint { transform-box:fill-box; transform-origin:center; animation:vakLeafHintPulse 1.5s ease-in-out infinite; filter:drop-shadow(0 0 8px #ffe48a); }
 .vak-leaf-game__rotate--hint { transform-box:fill-box; transform-origin:center; animation:vakLeafHandlePulse 1.1s ease-in-out infinite; stroke:#ffb300; stroke-width:4; }
@@ -35,3 +36,16 @@
 @keyframes vakLeafArcFade { 0%,100%{opacity:.55;} 50%{opacity:1;} }
 @keyframes vakLeafExtraPulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.08);} }
 @media(prefers-reduced-motion:reduce){.vak-leaf-game__svg image.vak-leaf-game__leaf--hint,.vak-leaf-game__rotate--hint,.vak-leaf-game__arc path,.vak-leaf-game__extra--hint{animation:none;}}
+
+/* The second leaf fades in once the child's first successful rotation redirects water.
+   Only opacity animates: the SVG group transform belongs to drag/rotation state. */
+.vak-leaf-game__second-leaf-reveal {
+  animation: vak-second-leaf-appear 350ms ease-out both;
+}
+@keyframes vak-second-leaf-appear {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vak-leaf-game__second-leaf-reveal { animation: none; }
+}

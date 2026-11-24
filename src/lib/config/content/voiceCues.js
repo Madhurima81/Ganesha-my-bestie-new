@@ -40,11 +40,16 @@ export const VOICE_CUES = {
   'garland:ready':         { word: 'Drag' },   // "The garland is ready! Drag it to Ganesha."
   'pond:leafOpening':      { word: 'Drag' },   // "…Drag a leaf into the water to find another way."
   'pond:leafPlaced':       { word: 'drag' },   // "Now turn the leaf…" → hand swings the round button
+  'pond:leafSecond':       { word: 'drag' },   // "Now drag the other leaf…" → short drag hand
   'pond:leafHintPlaceL2':  { word: 'putting' },// "Try putting a leaf in the water."
   'pond:leafHintPlaceL3':  { word: 'Move' },   // "Move a leaf into the water's path."
   'pond:leafHintRotateL2': { word: 'turning' },   // "Turn the leaf to change…"
   'pond:leafHintRotateL3': { word: 'Drag' },   // "Drag the round button to turn the leaf."
-  'pond:leafHintGuideL2':  { word: 'turn' },   // "Can you turn the water towards the lotus?"
+  'pond:leafHintSecondPlaceL2':  { word: 'other' },   // "Could the other leaf help?"
+  'pond:leafHintSecondPlaceL3':  { word: 'Drag' },    // "Drag the other leaf into the water's path."
+  'pond:leafHintSecondRotateL2': { word: 'turning' }, // "Try turning the second leaf."
+  'pond:leafHintSecondRotateL3': { word: 'Drag' },    // "Drag its little circle to turn the leaf."
+  'pond:leafHintGuideL2':  { word: 'guide' },  // "Can you guide the water towards the lotus?"
   'pond:leafHintGuideL3':  { word: 'moving' }, // "Try moving or turning another leaf."
   'pond:rockRound':       { word: 'Press' },  // "…Press and hold to move it."
   'pond:reedsRound':       { word: 'Gently' }, // "…Gently move them aside."

@@ -130,9 +130,11 @@ const L2_END_LIMIT_MS = 12000; // the speech "ended" event is not always sent: n
 const TICK_MS = 250;
 const FINGER_SIZE = 96;
 const HINT_LINES = {
-  place: ['leafHintPlaceL2', 'leafHintPlaceL3'],
-  rotate: ['leafHintRotateL2', 'leafHintRotateL3'],
-  guide: ['leafHintGuideL2', 'leafHintGuideL3'],
+  placeFirst: ['leafHintPlaceL2', 'leafHintPlaceL3'],
+  rotateFirst: ['leafHintRotateL2', 'leafHintRotateL3'],
+  placeSecond: ['leafHintSecondPlaceL2', 'leafHintSecondPlaceL3'],
+  rotateSecond: ['leafHintSecondRotateL2', 'leafHintSecondRotateL3'],
+  adjust: ['leafHintGuideL2', 'leafHintGuideL3'],
 };
 // The blue touch circle of the hand image sits ~38% across / 18% down the picture.
 const fingerAt = (x, y) => ({ x: x - FINGER_SIZE * 0.38, y: y - FINGER_SIZE * 0.18 });
@@ -180,7 +182,7 @@ export default function VakratundaLeafWater({
   paused = false,
   onWaterReached = () => {},
   onFirstAttempt = () => {},
-  allowThirdLeaf = true,
+  allowThirdLeaf = false,
   showDebug = false,
   geometry = DEFAULT_GEOMETRY,
   leafStarts = null,
@@ -208,12 +210,27 @@ export default function VakratundaLeafWater({
   const [extraAdded, setExtraAdded] = useState(false);
   const [hasAdjusted, setHasAdjusted] = useState(false);
   const [hasRotated, setHasRotated] = useState(false);
+  const [secondRotated, setSecondRotated] = useState(false);
+  const [firstLeafId, setFirstLeafId] = useState(null);
+  const [firstRotateIntroDone, setFirstRotateIntroDone] = useState(false);
+  const [secondIntroDone, setSecondIntroDone] = useState(false);
   const [finished, setFinished] = useState(false);
   const [level, setLevel] = useState(0);
   const [handleCue, setHandleCue] = useState(false);
   const svgRef = useRef(null);
   const notifiedRef = useRef(false);
-  const flow = useMemo(() => simulateVakratundaFlow(leaves, geometry), [leaves, geometry]);
+  // Progressive reveal: initially only leaf 1 exists in the child's playable world.
+  // Leaf 2 enters both the water simulation and the drawing only after the
+  // first leaf has produced a meaningful change of direction (hasRotated).
+  // Keep both leaves editable thereafter; don't re-hide leaf 2 on readjustment.
+  const visibleLeaves = useMemo(
+    () => hasRotated ? leaves : leaves.filter((leaf) => leaf.id === 1),
+    [leaves, hasRotated]
+  );
+  const flow = useMemo(
+    () => simulateVakratundaFlow(visibleLeaves, geometry),
+    [visibleLeaves, geometry]
+  );
   const { source, rock, pond } = geometry;
   const artEnd = 378; // painted banks stop just inside the rock
   const path = useMemo(() => smoothPath(flow.points), [flow.points]);
@@ -234,24 +251,33 @@ export default function VakratundaLeafWater({
   const rotatableRef = useRef(new Set());
   flow.used.forEach((id) => rotatableRef.current.add(id));
 
-  // What the child is doing decides which ladder runs (never keep saying "drag" once the leaf is in the water).
-  const stage = flow.contacts.length === 0 ? 'place' : (hasRotated ? 'guide' : 'rotate');
-  const lastContactId = flow.contacts.length ? flow.contacts[flow.contacts.length - 1].id : null;
-  const unusedLeaves = leaves.filter((leaf) => !flow.used.has(leaf.id));
-  const targetLeafId = stage === 'place'
-    ? (unusedLeaves[0]?.id ?? leaves[0]?.id)
-    : (lastContactId ?? leaves[0]?.id);
-  const placeLeaf = unusedLeaves[0] || null;
-  const otherLeaf = stage === 'guide'
-    ? (unusedLeaves[0] || leaves.find((leaf) => leaf.id !== lastContactId) || null)
-    : null;
+  // Two independent leaf tasks, each with its own placement and rotation ladder.
+  // Never confuse moving leaf two with turning leaf one.
+  const firstContactId = firstLeafId ?? flow.contacts[0]?.id ?? null;
+  const firstIsInFlow = firstContactId !== null && flow.used.has(firstContactId);
+  const secondLeaf = leaves.find((leaf) => leaf.id === 2) ?? null;
+  const secondIsInFlow = !!secondLeaf && flow.used.has(secondLeaf.id);
+  const stage = !firstIsInFlow && !hasRotated ? 'placeFirst'
+    : !hasRotated ? 'rotateFirst'
+    : !secondIsInFlow ? 'placeSecond'
+    : !secondRotated ? 'rotateSecond'
+    : 'adjust';
+  const targetLeafId = stage === 'placeFirst' || stage === 'rotateFirst'
+    ? (firstContactId ?? leaves[0]?.id)
+    : secondLeaf?.id;
+  const placeLeaf = stage === 'placeFirst'
+    ? (leaves.find((leaf) => !flow.used.has(leaf.id)) ?? leaves[0])
+    : stage === 'placeSecond' ? secondLeaf : null;
+  const otherLeaf = stage === 'placeSecond' ? secondLeaf : null;
+  const canStartHints = introDone && (stage !== 'rotateFirst' || firstRotateIntroDone)
+    && (stage !== 'placeSecond' || secondIntroDone);
 
   // ---- voice helpers ----
   const speakingNow = useCallback(() => !!(isLineSpeaking && isLineSpeaking()), [isLineSpeaking]);
   const waitTimersRef = useRef(new Set());
   // Coaching lines never cut a line that is speaking: wait for it to end (up to ~8s), then speak.
-  const speakWhenFree = useCallback((key) => {
-    if (!speakLine) return;
+  const speakWhenFree = useCallback((key, onEnd) => {
+    if (!speakLine) { onEnd?.(); return; }
     const startedAt = Date.now();
     const attempt = () => {
       if (speakingNow() && Date.now() - startedAt < 8000) {
@@ -259,14 +285,14 @@ export default function VakratundaLeafWater({
         waitTimersRef.current.add(id);
         return;
       }
-      speakLine(key);
+      speakLine(key, onEnd);
     };
     attempt();
   }, [speakLine, speakingNow]);
   useEffect(() => () => { waitTimersRef.current.forEach((id) => window.clearTimeout(id)); }, []);
 
   // ---- hint ladder ----
-  const ladderRef = useRef({ idle: 0, l2Start: null, l2End: null, token: 0, stage: 'place' });
+  const ladderRef = useRef({ idle: 0, l2Start: null, l2End: null, token: 0, stage: 'placeFirst' });
   const levelRef = useRef(0);
   const applyLevel = useCallback((next) => { levelRef.current = next; setLevel(next); }, []);
   const resetLadder = useCallback(() => {
@@ -282,10 +308,10 @@ export default function VakratundaLeafWater({
   useEffect(() => { if (paused) resetLadder(); }, [paused, resetLadder]);
 
   useEffect(() => {
-    if (!active || paused || finished || !introDone || atPond) return undefined;
+    if (!active || paused || finished || !canStartHints || atPond) return undefined;
     const id = window.setInterval(() => {
       const ladder = ladderRef.current;
-      if (dragRef.current) return; // a finger on a leaf is not idle time
+      if (dragRef.current || speakingNow()) return; // start/restart idle only when VO has finished
       ladder.idle += TICK_MS;
       const now = Date.now();
       const current = levelRef.current;
@@ -311,20 +337,26 @@ export default function VakratundaLeafWater({
       }
     }, TICK_MS);
     return () => window.clearInterval(id);
-  }, [active, paused, finished, introDone, atPond, speakLine, speakingNow, applyLevel]);
+  }, [active, paused, finished, canStartHints, atPond, speakLine, speakingNow, applyLevel]);
 
-  // ---- immediate "turn the leaf" teaching: the moment a leaf is released in the water ----
+  // Teach rotation after the first leaf reaches the stream; the second leaf gets
+  // a separate spoken introduction after the first successful change of direction.
   const placedRef = useRef(false);
   const turningRef = useRef(false);
   const cueTimerRef = useRef(null);
   useEffect(() => () => { window.clearTimeout(cueTimerRef.current); }, []);
   useEffect(() => {
-    if (placedRef.current || flow.contacts.length < 1 || selected !== null || !active || paused || finished) return;
+    if (firstLeafId === null && flow.contacts.length > 0 && selected === null) {
+      setFirstLeafId(flow.contacts[0].id);
+    }
+  }, [firstLeafId, flow.contacts, selected]);
+  useEffect(() => {
+    if (placedRef.current || !firstIsInFlow || selected !== null || !active || paused || finished || !introDone) return;
     placedRef.current = true;
-    speakWhenFree('leafPlaced');
-    setHandleCue(true); // the round button pulses with the line, not 10s later
+    speakWhenFree('leafPlaced', () => setFirstRotateIntroDone(true));
+    setHandleCue(true);
     cueTimerRef.current = window.setTimeout(() => setHandleCue(false), 4500);
-  }, [flow.contacts.length, selected, active, paused, finished, speakWhenFree]);
+  }, [firstIsInFlow, selected, active, paused, finished, introDone, speakWhenFree]);
 
   // Do not complete the scene from a transient drag-preview. Let the child release
   // the leaf and SEE the water arrive. Repositioning stays possible until then.
@@ -364,9 +396,7 @@ export default function VakratundaLeafWater({
       offsetX: point.x - leaf.x,
       offsetY: point.y - leaf.y,
       startAngle: leaf.angle,
-      // Rotation applies only the pointer's movement, so grabbing the handle off-centre never makes the leaf jump.
-      grabOffset: mode === 'rotate'
-        ? Math.atan2(point.y - leaf.y, point.x - leaf.x) * 180 / Math.PI - leaf.angle : 0,
+      pointerStartAngle: Math.atan2(point.y - leaf.y, point.x - leaf.x) * 180 / Math.PI,
       startTip: f.points[f.points.length - 1],
       changed: false,
     };
@@ -383,7 +413,7 @@ export default function VakratundaLeafWater({
     setLeaves((previous) => previous.map((leaf) => {
       if (leaf.id !== drag.id) return leaf;
       const updated = drag.mode === 'rotate'
-        ? { ...leaf, moved: true, angle: clamp(Math.atan2(point.y - leaf.y, point.x - leaf.x) * 180 / Math.PI - drag.grabOffset, -68, 68) }
+        ? { ...leaf, moved: true, angle: clamp(drag.startAngle + ((Math.atan2(point.y - leaf.y, point.x - leaf.x) * 180 / Math.PI - drag.pointerStartAngle + 540) % 360 - 180), -68, 68) }
         : { ...leaf, moved: true, x: clamp(point.x - drag.offsetX, 58, VW - 60), y: clamp(point.y - drag.offsetY, 150, VH - 42) };
       if (Math.abs(updated.x - leaf.x) + Math.abs(updated.y - leaf.y) + Math.abs(updated.angle - leaf.angle) >= 0.5) {
         drag.changed = true;
@@ -401,26 +431,35 @@ export default function VakratundaLeafWater({
     if (drag.changed) {
       if (!hasAdjusted) onFirstAttempt();
       setHasAdjusted(true);
-      // A genuine attempt that is not progress: a hint already showing stays; with none showing the idle clock restarts.
-      if (levelRef.current === 0) ladderRef.current.idle = 0;
+      // Meaningful manipulation restarts this beat's hint ladder, even after L1/L2.
+      resetLadder();
       if (drag.mode === 'rotate') {
         const leaf = leavesRef.current.find((l) => l.id === drag.id);
         const f = flowRef.current;
         const endTip = f.points[f.points.length - 1];
         const turned = leaf ? Math.abs(leaf.angle - drag.startAngle) : 0;
         const moved = Math.hypot(endTip[0] - drag.startTip[0], endTip[1] - drag.startTip[1]);
-        // "The water is turning" only when a rotation by the child really changed the water's direction.
+        // Progress is earned by the child, not by the teaching hand animation.
         if (leaf && f.used.has(leaf.id) && turned >= 12 && moved >= 50) {
-          setHasRotated(true);
-          if (!turningRef.current) {
-            turningRef.current = true;
-            speakWhenFree('leafTurning');
+          if (!hasRotated && (firstLeafId === null || leaf.id === firstLeafId)) {
+            setHasRotated(true);
+            if (!turningRef.current) {
+              turningRef.current = true;
+              speakWhenFree('leafTurning', () => {
+                // If the child already placed leaf two during this VO, don't ask them to do it again.
+                const alreadyPlaced = flowRef.current.contacts.some((c) => c.id !== leaf.id);
+                if (alreadyPlaced) { setSecondIntroDone(true); return; }
+                speakWhenFree('leafSecond', () => setSecondIntroDone(true));
+              });
+            }
+          } else if (leaf.id !== firstLeafId) {
+            setSecondRotated(true);
           }
         }
       }
     }
     setSelected(null);
-  }, [hasAdjusted, onFirstAttempt, speakWhenFree]);
+  }, [hasAdjusted, hasRotated, firstLeafId, onFirstAttempt, speakWhenFree, resetLadder]);
 
   // After success the finished water and leaves stay on screen, frozen.
   if (!active && !finished) return null;
@@ -432,10 +471,10 @@ export default function VakratundaLeafWater({
     return { dx: ((point[0] - leaf.x) / len) * reach, dy: ((point[1] - leaf.y) / len) * reach };
   };
   // Hands show only while the spoken action word plays (handCue), never on a loop.
-  const placeVec = placeLeaf && stage === 'place' && (handCue === 'place' || handCue === 'placeFar')
+  const placeVec = placeLeaf && (stage === 'placeFirst' || stage === 'placeSecond') && (handCue === 'place' || handCue === 'placeFar')
     ? dragVector(placeLeaf, handCue === 'placeFar') : null;
-  const guideVec = stage === 'guide' && handCue === 'guide' && otherLeaf ? dragVector(otherLeaf, false) : null;
-  const swingSweep = stage !== 'place' && (handCue === 'turn' || handCue === 'turnBig')
+  const guideVec = stage === 'placeSecond' && handCue === 'guide' && otherLeaf ? dragVector(otherLeaf, false) : null;
+  const swingSweep = (stage === 'rotateFirst' || stage === 'rotateSecond' || stage === 'adjust') && (handCue === 'turn' || handCue === 'turnBig')
     ? (handCue === 'turnBig' ? 34 : 20) : 0;
 
   return (
@@ -500,14 +539,15 @@ export default function VakratundaLeafWater({
           </g>
         ))}
         {!fading && <circle cx={tip[0]} cy={tip[1]} r="9" className="vak-leaf-game__tip" />}
-        {leaves.map((leaf) => {
+        {visibleLeaves.map((leaf) => {
           const isTarget = leaf.id === targetLeafId;
-          // The turn handle is taught second: it appears once water has touched this leaf, and stays.
+          const pulseLeaf = (stage === 'placeFirst' || stage === 'placeSecond') && level >= 1 && isTarget;
           const canRotate = flow.used.has(leaf.id) || rotatableRef.current.has(leaf.id);
-          const pulseLeaf = stage === 'place' && level >= 1 && isTarget;
-          const pulseHandle = canRotate && isTarget && ((stage !== 'place' && level >= 1) || handleCue);
+          const pulseHandle = canRotate && isTarget && ((stage !== 'placeFirst' && stage !== 'placeSecond' && level >= 1) || handleCue);
           return (
-            <g key={leaf.id} transform={`translate(${leaf.x} ${leaf.y}) rotate(${leaf.angle})`}>
+            <g key={leaf.id}
+              className={leaf.id === 2 ? 'vak-leaf-game__second-leaf-reveal' : undefined}
+              transform={`translate(${leaf.x} ${leaf.y}) rotate(${leaf.angle})`}>
               {selected === leaf.id && <rect x="-72" y="-37" width="144" height="74" rx="22" className="vak-leaf-game__selection" />}
               <image
                 href={leafPng} x="-65" y="-30" width="130" height="60"
@@ -527,12 +567,14 @@ export default function VakratundaLeafWater({
                 </g>
               )}
               {canRotate && (
-                <circle cx="77" cy="0" r="22" className={`vak-leaf-game__rotate${pulseHandle ? ' vak-leaf-game__rotate--hint' : ''}`}
-                  onPointerDown={(event) => beginDrag(event, leaf, 'rotate')}
-                  onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag}
-                />
+                <>
+                  <circle cx="77" cy="0" r="22" className={`vak-leaf-game__rotate${pulseHandle ? ' vak-leaf-game__rotate--hint' : ''}`}
+                    onPointerDown={(event) => beginDrag(event, leaf, 'rotate')}
+                    onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag}
+                  />
+                  <text x="77" y="7" textAnchor="middle" fontSize="22" fill="#70491c" pointerEvents="none">↻</text>
+                </>
               )}
-              {canRotate && <text x="77" y="7" textAnchor="middle" fontSize="22" fill="#70491c" pointerEvents="none">↻</text>}
               {isTarget && swingSweep > 0 && <FingerSwing sweep={swingSweep} dur={2.4} />}
             </g>
           );
@@ -549,7 +591,7 @@ export default function VakratundaLeafWater({
       </svg>
       {!finished && allowThirdLeaf && !extraAdded && (
         <button type="button"
-          className={`vak-leaf-game__extra${stage === 'guide' && level >= 3 ? ' vak-leaf-game__extra--hint' : ''}`}
+          className={`vak-leaf-game__extra${stage === 'adjust' && level >= 3 ? ' vak-leaf-game__extra--hint' : ''}`}
           onClick={() => {
             setExtraAdded(true);
             const start = leafStarts?.find((s) => s.id === 3);
@@ -557,7 +599,7 @@ export default function VakratundaLeafWater({
           }}>+ Third leaf</button>
       )}
       {showDebug && <div className="vak-leaf-game__status">
-        {flow.reason} · leaf contacts: {flow.contacts.length} · stage {stage} · hint L{level} · {atPond ? 'water at pond' : 'keep experimenting'}
+        {flow.reason} · second leaf: {hasRotated ? 'visible' : 'hidden'} · leaf contacts: {flow.contacts.length} · stage {stage} · hint L{level} · {atPond ? 'water at pond' : 'keep experimenting'}
       </div>}
     </div>
   );
