@@ -22,7 +22,7 @@ import monkeySymbolMountain from './assets/images/mahakaya/waiting-monkey-blink.
 import waterRipples from './assets/images/water-ripples-anim.webp';
 // Animated versions shown once each animal has landed on the raft.
 import elephantAboard from './assets/images/mahakaya/aboard-elephant-anim.webp';
-import peacockAboard from './assets/images/mahakaya/aboard-peacock.gif';
+import peacockAboard from './assets/images/mahakaya/aboard-peacock-anim.webp';
 import cowAboard from './assets/images/mahakaya/aboard-cow-anim.webp';
 import monkeyAboard from './assets/images/mahakaya/aboard-monkey-anim.webp';
 

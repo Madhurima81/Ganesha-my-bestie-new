@@ -2,9 +2,7 @@
 
 Updated 2026-11-23 (branch `staging`, up to commit `9dd59882`). Built from the code and the build output; **nothing has been play-tested scene by scene**, and Jest cannot run on this computer (`identity-obj-proxy` missing).
 
-**Format.** 57 of the 64 project GIFs are now animated WebP (`*-anim.webp`, 11.4 MB to 4.2 MB, same frame delays and loop settings). **7 are still GIFs**, waiting for the artist's WebP versions:
-intro-story family (`story-s5-family`), Kartikeya, Parvati, Mahakaya `aboard-peacock`, Sarvakaryeshu eyes `boy-after`, Samaprabha symbol, Tusk `peacock_happy_feather`.
-The old GIF of each swapped file is still in its folder, unused.
+**Format.** All 64 project GIFs are now animated WebP (`*-anim.webp`). The last 7 (intro-story family, Kartikeya, Parvati, Mahakaya `aboard-peacock`, Sarvakaryeshu eyes `boy-after`, Samaprabha symbol, Tusk `peacock_happy_feather`) were swapped on 2026-11-24 to the artist's own lossless/q95 WebPs, which already carry their loops and rests. The old GIF of each file is still in its folder, unused.
 
 **Legend.** **once** = plays once and holds the last frame. **loop** = repeats. **blink** = loops with a 2.5 s rest on the last (eyes-open) frame, so it blinks naturally instead of continuously.
 **Fitting.** Every blink was fitted onto the old still picture (same content size, bottom-centre aligned), so it replaces that picture with no jump. Script: `scripts/fit_blink_to_static.py`.
@@ -18,7 +16,7 @@ One module per zone, scenes import the same names. Tools: `scripts/gif_to_webp_s
 | Zone | Module | Symbols |
 |---|---|---|
 | Symbol Mountain | `src/zones/symbol-mountain/shared/symbolGifs.js` | Mooshika (new "mouse walks to the Modak"), Trunk, Belly, Eyes, Ears, Tusk, Lotus, Modak |
-| Shloka River | `src/zones/shloka-river/shared/shlokaSymbolGifs.js` | Vakratunda, Mahakaya, Suryakoti, Samaprabha (still a GIF), Nirvighnam, Kurumedeva, Sarvakaryeshu, Sarvada |
+| Shloka River | `src/zones/shloka-river/shared/shlokaSymbolGifs.js` | Vakratunda, Mahakaya, Suryakoti, Samaprabha, Nirvighnam, Kurumedeva, Sarvakaryeshu, Sarvada |
 
 | Place | Shows | Notes |
 |---|---|---|
@@ -37,7 +35,7 @@ One module per zone, scenes import the same names. Tools: `scripts/gif_to_webp_s
 | 1 Modak, flower and garland games | Mooshika = plain **blink** (`mooshika-blink`); Ganesha = the original open-palm Ganesha **blink** (`ganesha-garland-blink`) | both freeze to a still (last frame) while a symbol reveal or the side panel is up |
 | 2 Pond | the sad turtle is the Nirvighnam turtle **blink** | |
 | 3 Tusk, nest game | monkey, cow, peacock, elephant **blink** | |
-| 3 Tusk, Eyes game | worried monkey and worried peacock **blink**; happy monkey once; happy peacock = GIF, once | animal calls play with the happy ones |
+| 3 Tusk, Eyes game | worried monkey and worried peacock **blink**; happy monkey once; happy peacock once | animal calls play with the happy ones |
 | 3 Tusk, Ears game | thirsty elephant, tired cow and hungry cow **blink**; happy elephant and cow once | |
 | 3 Tusk, beat player | bunny helping | loop |
 | 4 Sacred Assembly | all 8 symbols | see section 1 |
@@ -47,12 +45,12 @@ One module per zone, scenes import the same names. Tools: `scripts/gif_to_webp_s
 | Scene | What animates | How |
 |---|---|---|
 | 1 Vakratunda | sad frog and waiting family **blink**; at the reunion the frog's happy and the family's happy GIFs **start together**; water ripples | happy GIFs loop; ripples loop |
-| 1 Mahakaya | waiting elephant, cow, monkey, peacock **blink**; boarded animals loop with a rest until the reveal (peacock = GIF); animal calls | calls play after the syllable, never over Sanskrit |
+| 1 Mahakaya | waiting elephant, cow, monkey, peacock **blink**; boarded animals loop with a rest until the reveal ; animal calls | calls play after the syllable, never over Sanskrit |
 | 2 Suryakoti | sad bunny **blink**; happy bunny | happy: loop |
 | 2 Samaprabha | worried fawn **blinks** until the game is done, then the happy fawn-walk GIF | walk: once |
 | 3 Nirvighnam | sad turtle **blink**; swim; walk | swim: loop; walk: once |
 | 3 Kurumedeva | elephant-with-banana, monkey-with-twig and beaver-asking **blink**; beaver walking; hug; lift / carry / place / pick-plank / vine-knot GIFs (another session) | walking: loop; hug and the help GIFs: once |
-| 4 Sarvakaryeshu, Sarvada | layered rounds: background + Before and After characters | once (eyes After boy = GIF) |
+| 4 Sarvakaryeshu, Sarvada | layered rounds: background + Before and After characters | once  |
 | 5 Finale | orbs use the symbol stills | |
 
 ## 4. About Me Hut
@@ -92,7 +90,7 @@ One module per zone, scenes import the same names. Tools: `scripts/gif_to_webp_s
 
 ## 8. Open
 
-1. The 7 flagged GIFs: swap to WebP when the artist's versions arrive; Kartikeya and Parvati also need the loop with a rest.
+1. (Done 2026-11-24) the 7 flagged GIFs are swapped to WebP.
 2. Play-test every scene: sizes, positions, Before/After timing, blink look, animal-call timing, the symbol-card wait with the WebP files.
 3. Unused leftovers: old GIFs (about 1.7 MB of them sit in `public/` and are copied into the build, but they are not downloaded for offline use), `ganesha-favorite-idle.png`, the old wrong-answer blink, `GMB` trial files.
 4. Uncommitted helpers: `docs/GIF-WebP-Comparison.html`, `docs/gif-webp-map.json`, an unused `story-s5-family-anim.webp`.

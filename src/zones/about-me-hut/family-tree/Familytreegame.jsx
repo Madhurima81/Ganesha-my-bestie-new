@@ -47,8 +47,8 @@ import familyTree from './assets/images/family_tree.webp';
 // Ganesha is the same celebration GIF the other About Me scenes use (public/images/ganesha-favorite-happy.gif, plays once).
 const babyGaneshaImg = '/images/ganesha-favorite-happy-anim.webp';
 import shivaImg from './assets/images/ganesha-gifs/shiva-anim.webp';
-import parvatiImg from './assets/images/ganesha-gifs/parvati.gif';
-import kartikeyaImg from './assets/images/ganesha-gifs/kartikeya.gif';
+import parvatiImg from './assets/images/ganesha-gifs/parvati-anim.webp';
+import kartikeyaImg from './assets/images/ganesha-gifs/kartikeya-anim.webp';
 
 // --- IMPORT ASSETS (Child's Family) ---
 import childDadImg from './assets/images/child/family-dad.webp';

@@ -65,7 +65,7 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
       },
       {
         bg: GARDEN_BG,
-        layers: [{ src: '/intro-story/story-s5-family.gif', l: 29.3, t: 36.1, w: 36.2 }],
+        layers: [{ src: '/intro-story/story-s5-family-anim.webp', l: 29.3, t: 36.1, w: 36.2 }],
         alt: 'Ganesha together with Parvati and Shiva',
         vo: 'And soon, we were all together again!'
       },

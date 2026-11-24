@@ -16,7 +16,7 @@ import eyesAfterImg from './assets/images/sarvakaryeshu/eyes-after.webp';
 // Eyes round is built from layers: one empty playroom + a boy before (distracted, animated) and after (focused, animated).
 import eyesRoomBg from './assets/images/sarvakaryeshu/eyes-layers/playroom-bg.webp';
 import eyesBoyBefore from './assets/images/sarvakaryeshu/eyes-layers/boy-before-anim.webp';
-import eyesBoyAfter from './assets/images/sarvakaryeshu/eyes-layers/boy-after.gif';
+import eyesBoyAfter from './assets/images/sarvakaryeshu/eyes-layers/boy-after-anim.webp';
 // Trunk round: a different garden picture for each state (before: boy hauling the sack; after: boy planting), each with its own animated boy.
 import trunkBgBefore from './assets/images/sarvakaryeshu/trunk-layers/garden-bg-before.webp';
 import trunkBgAfter from './assets/images/sarvakaryeshu/trunk-layers/garden-bg-after.webp';
