@@ -111,14 +111,14 @@ const VOICE_LINES = {
   earlyReeds: 'A little farther.',
   // Leaf-and-water game (replaces the rock / reeds beats). Opening line names the action; the hand cues on "Drag".
   leafOpening: 'The rock is blocking the water! Drag a leaf into the water to find another way.',
-  leafPlaced: 'Now turn the leaf to change where the water flows.',
-  leafTurning: 'Look! The water is turning!',
+  leafPlaced: 'Now drag the little circle to turn the leaf.',
+  leafTurning: 'Look! The water is changing direction!',
   trunkSuccess: 'You found another way! The lotus is standing tall.',
   // Adaptive hint ladder: L1 is visual only, so only L2 / L3 have a line.
   leafHintPlaceL2: 'Try putting a leaf in the water.',
   leafHintPlaceL3: 'Move a leaf into the water’s path.',
-  leafHintRotateL2: 'Turn the leaf to change the water’s direction.',
-  leafHintRotateL3: 'Drag the round button to turn the leaf.',
+  leafHintRotateL2: 'Try turning the leaf.',
+  leafHintRotateL3: 'Drag the little circle to turn the leaf.',
   leafHintGuideL2: 'Can you turn the water towards the lotus?',
   leafHintGuideL3: 'Try moving or turning another leaf.',
 

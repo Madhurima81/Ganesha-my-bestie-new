@@ -230,6 +230,9 @@ export default function VakratundaLeafWater({
   leavesRef.current = leaves;
   const flowRef = useRef(flow);
   flowRef.current = flow;
+  // Leaves the water has ever touched keep their turn handle even if moved out of the stream.
+  const rotatableRef = useRef(new Set());
+  flow.used.forEach((id) => rotatableRef.current.add(id));
 
   // What the child is doing decides which ladder runs (never keep saying "drag" once the leaf is in the water).
   const stage = flow.contacts.length === 0 ? 'place' : (hasRotated ? 'guide' : 'rotate');
@@ -361,6 +364,9 @@ export default function VakratundaLeafWater({
       offsetX: point.x - leaf.x,
       offsetY: point.y - leaf.y,
       startAngle: leaf.angle,
+      // Rotation applies only the pointer's movement, so grabbing the handle off-centre never makes the leaf jump.
+      grabOffset: mode === 'rotate'
+        ? Math.atan2(point.y - leaf.y, point.x - leaf.x) * 180 / Math.PI - leaf.angle : 0,
       startTip: f.points[f.points.length - 1],
       changed: false,
     };
@@ -377,7 +383,7 @@ export default function VakratundaLeafWater({
     setLeaves((previous) => previous.map((leaf) => {
       if (leaf.id !== drag.id) return leaf;
       const updated = drag.mode === 'rotate'
-        ? { ...leaf, moved: true, angle: clamp(Math.atan2(point.y - leaf.y, point.x - leaf.x) * 180 / Math.PI, -68, 68) }
+        ? { ...leaf, moved: true, angle: clamp(Math.atan2(point.y - leaf.y, point.x - leaf.x) * 180 / Math.PI - drag.grabOffset, -68, 68) }
         : { ...leaf, moved: true, x: clamp(point.x - drag.offsetX, 58, VW - 60), y: clamp(point.y - drag.offsetY, 150, VH - 42) };
       if (Math.abs(updated.x - leaf.x) + Math.abs(updated.y - leaf.y) + Math.abs(updated.angle - leaf.angle) >= 0.5) {
         drag.changed = true;
@@ -496,8 +502,10 @@ export default function VakratundaLeafWater({
         {!fading && <circle cx={tip[0]} cy={tip[1]} r="9" className="vak-leaf-game__tip" />}
         {leaves.map((leaf) => {
           const isTarget = leaf.id === targetLeafId;
+          // The turn handle is taught second: it appears once water has touched this leaf, and stays.
+          const canRotate = flow.used.has(leaf.id) || rotatableRef.current.has(leaf.id);
           const pulseLeaf = stage === 'place' && level >= 1 && isTarget;
-          const pulseHandle = isTarget && ((stage !== 'place' && level >= 1) || handleCue);
+          const pulseHandle = canRotate && isTarget && ((stage !== 'place' && level >= 1) || handleCue);
           return (
             <g key={leaf.id} transform={`translate(${leaf.x} ${leaf.y}) rotate(${leaf.angle})`}>
               {selected === leaf.id && <rect x="-72" y="-37" width="144" height="74" rx="22" className="vak-leaf-game__selection" />}
@@ -518,12 +526,14 @@ export default function VakratundaLeafWater({
                   <path d="M66.7 38.5 l10.4 -6 M66.7 38.5 l0 -12" />
                 </g>
               )}
-              <circle cx="77" cy="0" r="19" className={`vak-leaf-game__rotate${pulseHandle ? ' vak-leaf-game__rotate--hint' : ''}`}
-                onPointerDown={(event) => beginDrag(event, leaf, 'rotate')}
-                onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag}
-              />
+              {canRotate && (
+                <circle cx="77" cy="0" r="22" className={`vak-leaf-game__rotate${pulseHandle ? ' vak-leaf-game__rotate--hint' : ''}`}
+                  onPointerDown={(event) => beginDrag(event, leaf, 'rotate')}
+                  onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag}
+                />
+              )}
               <path d="M-44 -16 L39 -16 M27 -27 L39 -16 L27 -5" className="vak-leaf-game__dir" />
-              <text x="77" y="7" textAnchor="middle" fontSize="22" fill="#70491c" pointerEvents="none">↻</text>
+              {canRotate && <text x="77" y="7" textAnchor="middle" fontSize="22" fill="#70491c" pointerEvents="none">↻</text>}
               {isTarget && swingSweep > 0 && <FingerSwing sweep={swingSweep} dur={2.4} />}
             </g>
           );
