@@ -483,10 +483,17 @@ app-zone-06.mp3,app,zone-welcome,instruction,You finished Lambodara Lodge!,P2 | 
 app-map-01.mp3,app,map,story,Come — let's start at Modak Mountain.,P2 | added by hand 2026-11-17 (outside the 13 scenes) | source: CleanMapZone.jsx speakMapVoEvents
 app-map-02.mp3,app,map,story,The Shloka River is waiting for you.,P2 | added by hand 2026-11-17 (outside the 13 scenes) | source: CleanMapZone.jsx speakMapVoEvents
 app-map-03.mp3,app,map,story,Lambodara Lodge is waiting for you.,P2 | added by hand 2026-11-17 (outside the 13 scenes) | source: CleanMapZone.jsx speakMapVoEvents
-app-map-04.mp3,app,map,story,Look how much we've explored together!,P2 | added by hand 2026-11-17 (outside the 13 scenes) | source: CleanMapZone.jsx speakMapVoEvents
+app-map-04.mp3,app,map,story,Look how much we've discovered together!,P2 | added by hand 2026-11-17 (outside the 13 scenes) | source: CleanMapZone.jsx speakMapVoEvents
+app-map-05.mp3,app,map,story,Wonderful! You discovered all the symbols of Symbol Mountain.,P2 | added by hand 2026-11-23 (outside the 13 scenes) | source: CleanMapZone.jsx zone-finished line
+app-map-06.mp3,app,map,story,Beautiful chanting! You completed the Shloka River.,P2 | added by hand 2026-11-23 (outside the 13 scenes) | source: CleanMapZone.jsx zone-finished line
+app-map-07.mp3,app,map,story,I loved learning about you! You completed Lambodara Lodge.,P2 | added by hand 2026-11-23 (outside the 13 scenes) | source: CleanMapZone.jsx zone-finished line
 app-progress-01.mp3,app,progress-popup,instruction,These are your Ganesha powers. Tap any one to remember.,P2 | added by hand 2026-11-17 (outside the 13 scenes) | source: ProgressPopup.jsx GRID_OPEN_VO
 hut-family-tree-17.mp3,about-me-hut,family-tree,story,My father is calm and strong. He sits in deep meditation high in the mountains.,P2 | added by hand 2026-11-23 | source: Familytreegame.jsx ganeshaFamily.funFact (fun-fact card, Father); shown on the flip card, NOT spoken yet
 hut-family-tree-18.mp3,about-me-hut,family-tree,story,My mother is kind and loving. She cares for everyone and fills our home with warmth.,P2 | added by hand 2026-11-23 | source: Familytreegame.jsx ganeshaFamily.funFact (fun-fact card, Mother); shown on the flip card, NOT spoken yet
 hut-family-tree-19.mp3,about-me-hut,family-tree,story,My brother is brave and travels on his peacock.,P2 | added by hand 2026-11-23 | source: Familytreegame.jsx ganeshaFamily.funFact (fun-fact card, Brother); shown on the flip card, NOT spoken yet
 hut-family-tree-20.mp3,about-me-hut,family-tree,story,That's me! I love modaks and helping my friends.,P2 | added by hand 2026-11-23 | source: Familytreegame.jsx ganeshaFamily.funFact (fun-fact card, Ganesha); shown on the flip card, NOT spoken yet
 app-ride-01.mp3,app,mooshika-ride,story,Hold on tight! Let's go!,P2 | added by hand | source: MooshikaRideTransition.jsx (no child name; the old line with the name is the fallback)
+app-zone-07.mp3,app,zone-welcome,instruction,Welcome to Lotus Square!,P2 | added by hand 2026-11-23 | source: ZoneWelcome.jsx speakZoneLine (zone name from ZoneConfig: Lotus Square, a parked zone)
+app-journey-01.mp3,app,map,story,"You did it! You've explored my world, discovered my symbols, and learned so much about me.",P2 | added by hand 2026-11-23 (outside the 13 scenes) | source: CleanMapZone.jsx journey-complete
+app-journey-02.mp3,app,map,story,"And now you have a little of my wisdom to carry with you, wherever you go.",P2 | added by hand 2026-11-23 (outside the 13 scenes) | source: CleanMapZone.jsx journey-complete
+app-progress-02.mp3,app,progress-popup,instruction,Look at everything you've discovered. Tap a petal to remember.,P2 | added by hand 2026-11-23 (outside the 13 scenes) | source: ProgressPopup.jsx Mandala first open

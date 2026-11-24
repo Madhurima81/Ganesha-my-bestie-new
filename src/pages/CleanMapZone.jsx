@@ -6,6 +6,7 @@ import GameStateManager from '../lib/services/GameStateManager';
 import { GANESHA_POSE_ASSETS } from '../lib/config/ganeshaUsageSystem';
 import { isSfxOn } from '../lib/utils/soundPrefs';
 import { ambience } from '../lib/audio/ambience';
+import { getVoClipUrl, playVoClip } from '../lib/audio/voClip';
 import HoldMuteButton from '../lib/components/ui/HoldMuteButton/HoldMuteButton';
 // import ZonePreviewModal from './components/ZonePreviewModal'; // commented out — no preview modal
 import useAudioPreference from '../lib/hooks/useAudioPreference';
@@ -117,6 +118,16 @@ const writeMapFlag = (key) => {
 };
 const getZoneStartedKey = (profileId, zoneId) => `gmb_zone_started_${profileId}_${zoneId}`;
 const getMapUnlockSeenKey = (profileId, zoneId) => `gmb_map_unlock_seen_${profileId}_${zoneId}`;
+// Spoken once per profile, the first time the map is seen with that zone finished.
+const getMapCompleteSeenKey = (profileId, zoneId) => `gmb_map_complete_seen_${profileId}_${zoneId}`;
+// If a finished-zone line and the next zone's "waiting for you" line play together, the second waits for the first.
+const MAP_COMPLETION_LINE_GAP_MS = 5200;
+// Closing message after all three zones: two recordings, the second after the first's length (6.23 s) plus a pause.
+const JOURNEY_COMPLETE_VO = [
+  "You did it! You've explored my world, discovered my symbols, and learned so much about me.",
+  'And now you have a little of my wisdom to carry with you, wherever you go.',
+];
+const JOURNEY_FIRST_LINE_MS = 6300;
 
 
 const ZONE_ART_TO_ZONE_ID = {
@@ -991,6 +1002,8 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   const { isAudioOn } = useAudioPreference();
   const unlockTimersRef = useRef({});
   const voiceTimersRef = useRef([]);
+  // True while a finished-zone line is queued on this load, so the journey line that can follow it waits its turn.
+  const completionLinePendingRef = useRef(false);
   const mushikaTimerRef = useRef(null);
   const labelPulseTimerRef = useRef(null);
   const prevZoneStatesRef = useRef(null);
@@ -1158,20 +1171,42 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   };
 
 
-  const speakMapVoEvents = (events = []) => {
+  // The recorded map line (voClip.js) currently playing, if there is one. speechSynthesis.cancel() cannot stop it.
+  const mapClipRef = useRef(null);
+  const stopMapClip = () => {
+    const clip = mapClipRef.current;
+    mapClipRef.current = null;
+    clip?.stop(false);
+  };
+
+  // `append: true` keeps lines already queued (used when a later line must wait for an earlier one).
+  const speakMapVoEvents = (events = [], { append = false } = {}) => {
     if (!Array.isArray(events) || events.length === 0) return;
     if (typeof window === 'undefined') return;
     if (isMuted) return;
-    if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
+    const canSpeakTts = Boolean(window.speechSynthesis) && typeof window.SpeechSynthesisUtterance !== 'undefined';
+    const hasRecording = events.some((ev) => ev?.text && getVoClipUrl(ev.text));
+    if (!canSpeakTts && !hasRecording) return;
 
-    // Clear any queued lines from previous transition bursts.
-    voiceTimersRef.current.forEach(clearTimeout);
-    voiceTimersRef.current = [];
-    window.speechSynthesis.cancel();
+    if (!append) {
+      // Clear any queued lines from previous transition bursts.
+      voiceTimersRef.current.forEach(clearTimeout);
+      voiceTimersRef.current = [];
+      stopMapClip();
+      window.speechSynthesis?.cancel?.();
+    }
 
     events.forEach(({ text, delay = 0 }) => {
       if (!text) return;
       const timerId = setTimeout(() => {
+        // A recording of this exact line (voiceover/script.csv)? Play it, quietly like the map's other voice.
+        const clipUrl = getVoClipUrl(text);
+        if (clipUrl) {
+          stopMapClip();
+          mapClipRef.current = playVoClip(clipUrl, { volume: 0.55 });
+          return;
+        }
+        if (!canSpeakTts) return;
         try {
           const utterance = new window.SpeechSynthesisUtterance(text);
           utterance.rate = 1.02;
@@ -1221,6 +1256,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     return () => {
       Object.values(unlockTimersRef.current).forEach(clearTimeout);
       voiceTimersRef.current.forEach(clearTimeout);
+      stopMapClip();
       if (walkTimerRef.current) clearTimeout(walkTimerRef.current);
       if (typeof window !== 'undefined' && window.speechSynthesis) {
         window.speechSynthesis.cancel();
@@ -1266,6 +1302,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     if (!isMuted) return;
     voiceTimersRef.current.forEach(clearTimeout);
     voiceTimersRef.current = [];
+    stopMapClip();
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       window.speechSynthesis.cancel();
     }
@@ -1288,12 +1325,27 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         (!profileId || !readMapFlag(getMapUnlockSeenKey(profileId, zoneId)));
     });
 
+    // A zone the child has just finished: say its finished line once per profile. Several unseen at once
+    // (an older profile): mark them all heard and speak only the latest one.
+    let completionLine = null;
+    if (profileId && !DEBUG_UNLOCK_ALL_ZONES) {
+      const unseenDone = PLAYABLE_JOURNEY_ZONE_IDS.filter(
+        (zoneId) => isZoneDone(zoneProgress, zoneId) && !readMapFlag(getMapCompleteSeenKey(profileId, zoneId))
+      );
+      unseenDone.forEach((zoneId) => writeMapFlag(getMapCompleteSeenKey(profileId, zoneId)));
+      if (unseenDone.length) completionLine = MAP_ZONE_COMPLETION_VO[unseenDone[unseenDone.length - 1]] || null;
+    }
+    completionLinePendingRef.current = Boolean(completionLine);
+
     if (unseenUnlock && !DEBUG_UNLOCK_ALL_ZONES) {
       // Persist before scheduling the feedback so later map visits cannot repeat it.
       if (profileId) writeMapFlag(getMapUnlockSeenKey(profileId, unseenUnlock));
       setUnlockingZones(prev => ({ ...prev, [unseenUnlock]: 'normal' }));
       playUnlockChime('normal', !isSfxOn());
-      speakMapVoEvents([{ text: MAP_ZONE_UNLOCK_VO[unseenUnlock], delay: 500 }]);
+      const unlockEvents = [];
+      if (completionLine) unlockEvents.push({ text: completionLine, delay: 500 });
+      unlockEvents.push({ text: MAP_ZONE_UNLOCK_VO[unseenUnlock], delay: completionLine ? 500 + MAP_COMPLETION_LINE_GAP_MS : 500 });
+      speakMapVoEvents(unlockEvents);
       if (unlockTimersRef.current[unseenUnlock]) clearTimeout(unlockTimersRef.current[unseenUnlock]);
       unlockTimersRef.current[unseenUnlock] = setTimeout(() => {
         setUnlockingZones(prev => {
@@ -1303,6 +1355,8 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         });
         delete unlockTimersRef.current[unseenUnlock];
       }, 1400);
+    } else if (completionLine) {
+      speakMapVoEvents([{ text: completionLine, delay: 500 }]);
     } else if (firstLoad && !zoneProgress[ZONE_IDS.SYMBOL]?.hasStarted) {
       speakMapVoEvents([{ text: "Come — let's start at Modak Mountain.", delay: 300 }]);
     }
@@ -1381,10 +1435,14 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     writeMapFlag(seenKey);
     setShowJourneyCelebration(true);
     playUnlockChime('master', !isSfxOn());
-    speakMapVoEvents([{
-      text: "Look how much we've explored together!",
-      delay: 500,
-    }]);
+    // When the last zone's finished line was just queued, this line waits for it instead of cutting it off.
+    const waitsForCompletionLine = completionLinePendingRef.current;
+    // One closing message made of two recordings, after the last zone's finished line (if one is queued).
+    const startDelay = waitsForCompletionLine ? 500 + MAP_COMPLETION_LINE_GAP_MS : 500;
+    speakMapVoEvents([
+      { text: JOURNEY_COMPLETE_VO[0], delay: startDelay },
+      { text: JOURNEY_COMPLETE_VO[1], delay: startDelay + JOURNEY_FIRST_LINE_MS + 700 },
+    ], { append: waitsForCompletionLine });
   }, [journeyComplete]);
 
   useEffect(() => {

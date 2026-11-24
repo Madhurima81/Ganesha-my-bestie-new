@@ -15,6 +15,14 @@ import ProfilePillBtn from '../shared/ProfilePillBtn';
 import { GANESHA_POSE_ASSETS } from '../../config/ganeshaUsageSystem';
 import { playUiTap } from '../../services/AudioService';
 import { createSpeechStartWatcher } from '../../utils/speechStartWatch';
+import { getVoClipUrl, playVoClip } from '../../audio/voClip';
+
+// Recorded finished-zone lines (voiceover/script.csv app-map-05..07), shared with the map.
+const ZONE_FINISHED_LINES = {
+  'symbol-mountain': 'Wonderful! You discovered all the symbols of Symbol Mountain.',
+  'shloka-river': 'Beautiful chanting! You completed the Shloka River.',
+  'about-me-hut': 'I loved learning about you! You completed Lambodara Lodge.',
+};
 import {
   setActiveScene,
   getActiveScene,
@@ -266,6 +274,16 @@ useEffect(() => {
 }, []);
 
 const zoneSpeechWatcherRef = useRef(null);
+// The recorded line (voClip.js) playing for the zone welcome, if there is one. speechSynthesis.cancel() cannot stop it.
+const zoneClipRef = useRef(null);
+const stopZoneClip = () => {
+  const clip = zoneClipRef.current;
+  zoneClipRef.current = null;
+  clip?.stop(false);
+};
+useEffect(() => {
+  return () => stopZoneClip();
+}, []);
 useEffect(() => {
   if (typeof window === 'undefined' || !window.speechSynthesis) return undefined;
   zoneSpeechWatcherRef.current = createSpeechStartWatcher({ speechSynthesis: window.speechSynthesis });
@@ -278,10 +296,19 @@ useEffect(() => {
 const speakZoneLine = (text) => {
   if (!text) return;
   if (typeof window === 'undefined') return;
-  if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
   const audioPreference = localStorage.getItem('ganesha_audio_enabled');
   const isAudioEnabled = audioPreference === null ? true : audioPreference === 'true';
   if (!isAudioEnabled) return;
+  // A recording of this exact line (voiceover/script.csv)? Play it instead of Web Speech.
+  const clipUrl = getVoClipUrl(text);
+  if (clipUrl) {
+    stopZoneClip();
+    zoneSpeechWatcherRef.current?.cancelPending();
+    try { window.speechSynthesis?.cancel?.(); } catch { /* no-op */ }
+    zoneClipRef.current = playVoClip(clipUrl, { volume: 0.9 });
+    return;
+  }
+  if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
   zoneSpeechWatcherRef.current?.cancelPending();
   zoneSpeechWatcherRef.current?.speak({
     buildUtterance: () => {
@@ -927,7 +954,15 @@ const handleReplayIntroStory = () => {
       const isZoneComplete = zoneCompletedCount >= (zoneData?.scenes?.length || 0) && (zoneData?.scenes?.length || 0) > 0;
 
       if (isZoneComplete && !hasHeardZoneVo('complete')) {
-        speakZoneLine(`You finished ${zoneData.name.replaceAll('\n', ' ')}!`);
+        // Same recorded finished-zone line the map speaks. If the map already said it, don't repeat it here.
+        const finishedLine = ZONE_FINISHED_LINES[zoneData.id] || `You finished ${zoneData.name.replaceAll('\n', ' ')}!`;
+        let mapAlreadySaid = false;
+        try {
+          const pid = localStorage.getItem('activeProfileId');
+          mapAlreadySaid = Boolean(pid) && localStorage.getItem(`gmb_map_complete_seen_${pid}_${zoneData.id}`) === 'true';
+          if (pid) localStorage.setItem(`gmb_map_complete_seen_${pid}_${zoneData.id}`, 'true');
+        } catch { /* best effort */ }
+        if (!mapAlreadySaid) speakZoneLine(finishedLine);
         markZoneVoHeard('complete');
         return;
       }
@@ -940,6 +975,7 @@ const handleReplayIntroStory = () => {
 
     return () => {
       clearTimeout(timer);
+      stopZoneClip();
       if (typeof window !== 'undefined' && window.speechSynthesis) {
         window.speechSynthesis.cancel();
       }

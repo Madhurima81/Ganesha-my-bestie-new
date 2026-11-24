@@ -5,13 +5,18 @@ import CloseButton from '../../../components/CloseButton';
 import SanskritVoiceRecorder from '../audio/SanskritVoiceRecorder';
 import AffirmationCard from '../affirmation/AffirmationCard';
 import { getLearningForKey } from '../../config/affirmationLookup';
+import { getVoClipUrl, playVoClip } from '../../audio/voClip';
 import { SYMBOL_MOUNTAIN_GIFS, SYMBOL_MOUNTAIN_STILLS } from '../../../zones/symbol-mountain/shared/symbolGifs';
 import { SHLOKA_SYMBOL_GIFS, SHLOKA_SYMBOL_STILLS } from '../../../zones/shloka-river/shared/shlokaSymbolGifs';
 import { chantCardContent } from '../../../zones/shloka-river/shared/components/chantCardContent';
 
 const AUDIO_PREF_KEY = 'ganesha_audio_enabled';
 
-const GRID_OPEN_VO = 'These are your Ganesha powers. Tap any one to remember.';
+const GRID_OPEN_VO = "Look at everything you've discovered. Tap a petal to remember.";
+// Spoken only the first time a profile opens its Mandala; later opens are quiet.
+const getMandalaVoSeenKey = () => {
+  try { return `gmb_mandala_vo_seen_${localStorage.getItem('activeProfileId') || 'guest'}`; } catch { return 'gmb_mandala_vo_seen_guest'; }
+};
 
 const GRID_TAP_VO = {
   modak: 'Modak... I have joy inside me.',
@@ -250,8 +255,17 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
     voTimersRef.current = [];
   };
 
+  // The recorded line (voClip.js) playing for the popup, if there is one. speechSynthesis.cancel() cannot stop it.
+  const popupClipRef = useRef(null);
+  const stopPopupClip = () => {
+    const clip = popupClipRef.current;
+    popupClipRef.current = null;
+    clip?.stop(false);
+  };
+
   const stopVoice = () => {
     clearVoTimers();
+    stopPopupClip();
     speechEnabledRef.current = false;
     setIsSpeaking(false);
     setIsBreathingCueActive(false);
@@ -264,6 +278,20 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
 
   const speakLine = (text, onEnd) => {
     if (!text || !speechEnabledRef.current || !isGlobalAudioEnabled()) return;
+    // A recording of this exact line (voiceover/script.csv)? Play it instead of Web Speech.
+    const clipUrl = getVoClipUrl(text);
+    if (clipUrl) {
+      stopPopupClip();
+      try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
+      setIsSpeaking(true);
+      popupClipRef.current = playVoClip(clipUrl, {
+        onEnd: () => {
+          popupClipRef.current = null;
+          if (speechEnabledRef.current) onEnd?.();
+        },
+      });
+      return;
+    }
     if (!window?.speechSynthesis) {
       if (speechEnabledRef.current) onEnd?.();
       return;
@@ -301,8 +329,11 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
       return;
     }
 
-    if (type === 'symbols' && !directItemId && !openVoPlayedRef.current && isGlobalAudioEnabled()) {
+    let mandalaVoSeen = true;
+    try { mandalaVoSeen = localStorage.getItem(getMandalaVoSeenKey()) === 'true'; } catch { /* best effort */ }
+    if (type === 'symbols' && !directItemId && !openVoPlayedRef.current && !mandalaVoSeen && isGlobalAudioEnabled()) {
       openVoPlayedRef.current = true;
+      try { localStorage.setItem(getMandalaVoSeenKey(), 'true'); } catch { /* best effort */ }
       speechEnabledRef.current = true;
       const t = setTimeout(() => speakLine(GRID_OPEN_VO, () => setIsSpeaking(false)), 250);
       voTimersRef.current.push(t);

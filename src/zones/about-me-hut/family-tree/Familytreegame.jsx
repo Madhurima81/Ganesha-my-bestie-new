@@ -856,14 +856,26 @@ showTreeSparkles: false,
 
  if (sceneState.gamePhase!== 'ganeshaTree' ||!sceneState.flippedMember ||!isAudioOn) return;
 
+ // Say the fun fact when the card opens (recorded rows hut-family-tree-17..20), then remind how to close
+ // only after it has finished so the reminder never cuts it off.
+ const funFactText = ganeshaFamily.find((m) => m.id === sceneState.flippedMember)?.funFact || '';
+ let funFactTimer = null;
+ if (funFactText) {
+ funFactTimer = setTimeout(() => {
+ speakHint(funFactText, { age: 7, style: 'child', moment: 'encouragement' });
+ }, 400);
+ }
+ const closeHintDelay = funFactText ? Math.max(5000, funFactText.length * 75 + 3500) : 5000;
+
  flipCloseHintTimerRef.current = scheduleTimeout(() => {
  stopVoice();
  stopSpokenVoice();
  speakHint('Tap anywhere to close.', { age: 7, style: 'child', moment: 'encouragement' });
  flipCloseHintTimerRef.current = null;
- }, 5000);
+ }, closeHintDelay);
 
  return () => {
+ clearTimeout(funFactTimer);
  if (flipCloseHintTimerRef.current) {
  if (typeof flipCloseHintTimerRef.current === 'function') {
  flipCloseHintTimerRef.current();

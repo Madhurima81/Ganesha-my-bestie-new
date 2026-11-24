@@ -4,8 +4,9 @@
 //   node voiceover/build-manifest.mjs
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const rows = fs.readFileSync(path.join(root, 'voiceover/script.csv'), 'utf8').split(/\r?\n/).slice(1);
 const wanted = rows.map((r) => r.split(',')[0]).filter((n) => n.endsWith('.mp3')).map((n) => n.slice(0, -4));
 const files = wanted.filter((n) => fs.existsSync(path.join(root, 'public/audio', `${n}.mp3`)));
