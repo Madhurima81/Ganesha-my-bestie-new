@@ -107,20 +107,20 @@ const FRIEND_DROP_RADIUS = {
 };
 const getFriendDropRadius = (friend) => FRIEND_DROP_RADIUS[friend.id] ?? Math.max(6, friend.w * 0.55);
 // The walking GIF only fills ~86% of its square canvas (the play poses fill ~96% of a 10% box), so it needs 11.2 to look the same size.
-const BEAVER_CROSSING_W = 11.2;
-const BEAVER_REUNION_W = 8.5;
+const BEAVER_CROSSING_W = 9.5;
+const BEAVER_REUNION_W = 7.2;
 // Where each friend walks when asked for help. Elephant arrives beside the
 // bridge/logs; Monkey arrives on the bridge for the tying beat.
 // Where Elephant ends up after carrying the logs / where the small log bundle flips. Tune in debug.
-const ELEPHANT_DROP_SPOT = { l: 37.5, t: 68 };
+const ELEPHANT_DROP_SPOT = { l: 37.5, t: 64 };
 const ELEPHANT_FLIP_SPOT = { l: 52.2, t: 72.5 };
 const HELPER_SPOTS = [
-  { l: 19.1, t: 61.2 },
-  { l: 56.6, t: 68 },
+  { l: 19.1, t: 57.2 },
+  { l: 56.6, t: 69.3 },
 ];
 const WAIT_SPOTS = [
-  { l: 18, t: 62 },
-  { l: 7.7, t: 62.2 },
+  { l: 18, t: 58 },
+  { l: 7.7, t: 63.5 },
 ];
 const MONKEY_TIED_PAUSE_MS = 1000; // tied logs stay on screen before Monkey leaves
 const MONKEY_BACK_PAUSE_MS = 600; // Monkey settles on the bank before the plank round
