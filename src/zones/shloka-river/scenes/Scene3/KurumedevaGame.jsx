@@ -108,7 +108,7 @@ const FRIEND_DROP_RADIUS = {
 const getFriendDropRadius = (friend) => FRIEND_DROP_RADIUS[friend.id] ?? Math.max(6, friend.w * 0.55);
 // The walking GIF only fills ~86% of its square canvas (the play poses fill ~96% of a 10% box), so it needs 11.2 to look the same size.
 const BEAVER_CROSSING_W = 9.5;
-const BEAVER_REUNION_W = 7.2;
+const BEAVER_REUNION_W = 8.8;
 // Where each friend walks when asked for help. Elephant arrives beside the
 // bridge/logs; Monkey arrives on the bridge for the tying beat.
 // Where Elephant ends up after carrying the logs / where the small log bundle flips. Tune in debug.
