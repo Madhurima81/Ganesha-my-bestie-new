@@ -144,7 +144,7 @@ export const VO_CLIP_BY_TEXT = {
  "tap to collect.": "mountain-pond-16",
  "the rock is blocking the water! drag a leaf into the water to find another way.": "mountain-pond-17",
  "now drag the little circle to turn the leaf.": "mountain-pond-18",
- "look! the water is changing direction!": "mountain-pond-19",
+ "you turned the leaf!": "mountain-pond-19",
  "you found another way! the lotus is standing tall.": "mountain-pond-20",
  "try putting a leaf in the water.": "mountain-pond-21",
  "move a leaf into the water's path.": "mountain-pond-22",

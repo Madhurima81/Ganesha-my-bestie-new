@@ -446,12 +446,11 @@ export default function VakratundaLeafWater({
         const f = simulateVakratundaFlow(drag.previewLeaves || leavesRef.current, geometry);
         const endTip = f.points[f.points.length - 1];
         const turned = leaf ? Math.abs(leaf.angle - drag.startAngle) : 0;
-        const moved = Math.hypot(endTip[0] - drag.startTip[0], endTip[1] - drag.startTip[1]);
         // A genuinely rotated leaf counts when it is in the water's path.
         // The old 50px endpoint threshold blocked ordinary, visibly useful turns.
         // Check either the before or after contact: rotating can move the tip away.
         const contacted = drag.startFlow.used.has(drag.id) || f.used.has(drag.id);
-        if (leaf && contacted && turned >= 12 && moved >= 12) {
+        if (leaf && contacted && turned >= 12) {
           if (!hasRotated && (firstLeafId === null || leaf.id === firstLeafId)) {
             setHasRotated(true);
             if (!turningRef.current) {

@@ -112,7 +112,7 @@ const VOICE_LINES = {
   // Leaf-and-water game (replaces the rock / reeds beats). Opening line names the action; the hand cues on "Drag".
   leafOpening: 'The rock is blocking the water! Drag a leaf into the water to find another way.',
   leafPlaced: 'Now drag the little circle to turn the leaf.',
-  leafTurning: 'Look! The water is changing direction!',
+  leafTurning: 'You turned the leaf!',
   leafSecond: 'Now drag the other leaf into the water’s path to help it reach the lotus.',
   trunkSuccess: 'You found another way! The lotus is standing tall.',
   // Adaptive hint ladder: L1 is visual only, so only L2 / L3 have a line.
